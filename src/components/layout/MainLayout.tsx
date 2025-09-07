@@ -14,7 +14,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { menuOpen, setMenuOpen, handleMenuClose } = useSidebar();
 
   return (
-    <div className="min-h-screen bg-gray-200">
+    <div className="min-h-screen bg-mesh">
       <div className="flex flex-col lg:flex lg:flex-1 min-h-screen">
         {/* Mobile toggle button */}
         <MobileTopBar onMenuClick={() => setMenuOpen(true)} />

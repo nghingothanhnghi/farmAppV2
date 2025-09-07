@@ -59,8 +59,8 @@ const SchedulerPage: React.FC = () => {
                     </div>
                     <div className="text-right flex gap-3">
                         <div className="flex gap-2">
-                            <Badge label={`Running: ${health?.running_count}`} variant="success" />
-                            <Badge label={`Stopped: ${health?.stopped_count}`} variant="danger" />
+                            <Badge label={`🟢 Running: ${health?.running_count}`} variant="success" />
+                            <Badge label={`🔴 Stopped: ${health?.stopped_count}`} variant="danger" />
                         </div>
                     </div>
                 </div>

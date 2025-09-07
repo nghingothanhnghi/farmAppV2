@@ -18,7 +18,7 @@ interface ActuatorCardProps {
 const getActuatorIcon = (type: string): ReactNode => {
     switch (type.toLowerCase()) {
         case 'pump':
-            return <IconRipple size={16} className="text-blue-500" />;
+            return <IconRipple size={16} className="text-blue-600" />;
         case 'water_pump':
             return <IconDroplet size={16} className="text-blue-500" />;
         case 'light':
@@ -35,8 +35,9 @@ const getActuatorIcon = (type: string): ReactNode => {
 const getActuatorColor = (type: string): { bg: string; hover: string } => {
     switch (type.toLowerCase()) {
         case 'pump':
+            return { bg: 'bg-blue-600', hover: 'hover:bg-blue-700' };
         case 'water_pump':
-            return { bg: 'bg-blue-500 shadow', hover: 'hover:bg-blue-600' };
+            return { bg: 'bg-blue-500', hover: 'hover:bg-blue-600' };
         case 'light':
             return { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-600' };
         case 'fan':
@@ -55,10 +56,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     onToggle,
     onControl,
 }) => {
-    // Use different state depending on variant
-    // const isActive = variant === "control"
-    //     ? actuator.current_state // real-time ON/OFF state
-    //     : actuator.is_active;    // enabled/disabled state when linked
+
     const isActive = actuator.current_state; // real-time ON/OFF state
     const colors = getActuatorColor(actuator.type);
 

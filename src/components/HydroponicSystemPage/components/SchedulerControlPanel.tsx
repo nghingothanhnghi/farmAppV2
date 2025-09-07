@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconCalendarTime } from '@tabler/icons-react';
 import ButtonGroup from '../../common/ButtonGroup';
 import Button from '../../common/Button';
 import { playSound } from '../../../utils/sound';
@@ -41,7 +42,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
     <div className="bg-gray-100 rounded-lg p-4">
       <div className='flex items-center justify-between mb-1'>
         <div className="flex items-center space-x-2">
-          <span className="text-lg">🤖</span>
+          <IconCalendarTime size={16} />
           <h3 className="text-sm font-medium text-gray-700">{title}</h3>
         </div>
         <div className="flex items-center space-x-2">

@@ -6,6 +6,8 @@ import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../../../com
 import Button from '../../../components/common/Button';
 import type { HydroDevice } from '../../../models/interfaces/HydroSystem';
 import ActuatorCard from './ActuatorCard';
+import EmptyState from '../../common/EmptyState';
+import noDataAnimation from '../../../assets/lottie/empty_data.json'
 
 type Props = {
     formData: Partial<HydroDevice>;
@@ -70,7 +72,7 @@ const DeviceForm: React.FC<Props> = ({
                         </FormGroup>
                     ))}
                 </div>
-                <div className='flex flex-col border border-gray-100 rounded-lg space-y-0.5'>
+                <div className='flex flex-col shadow-sm border border-gray-100 rounded-lg space-y-0.5'>
                     <div className='p-4'>
                         <h3 className="text-sm font-medium text-gray-700 line-clamp-1">Linked Actuators</h3>
                     </div>
@@ -95,7 +97,10 @@ const DeviceForm: React.FC<Props> = ({
                             ))}
                         </div>
                     ) : (
-                        <p className="text-sm text-zinc-500">No actuators linked to this device.</p>
+                                <EmptyState
+          animationData={noDataAnimation}
+          message="No actuators linked to this device"
+        />
                     )}
                 </div>
             </div>

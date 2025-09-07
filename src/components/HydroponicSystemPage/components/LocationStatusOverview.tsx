@@ -19,7 +19,7 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
   if (!status) {
     return (
       <div className="bg-gray-50 p-4 rounded-lg">
-        <p className="text-gray-600">
+        <p className="text-gray-700">
           {loading
             ? "Loading location status..."
             : "No location status data available. Click \"Refresh Data\" to load."}
