@@ -1,6 +1,8 @@
 import { Outlet, Route, Routes } from "react-router";
+import LandingLayout from "./components/layout/LandingLayout";
 import MainLayout from './components/layout/MainLayout';
 import './App.css';
+import LandingPage from "./components/LandingPage/LandingPage";
 import LoginPage from "./components/Auth/LoginPage";
 import SignUpPage from "./components/Auth/SignUpPage";
 import EditUserPage from "./components/Auth/EditUserPage";
@@ -18,16 +20,84 @@ import PrivateRoute from "./components/common/PrivateRoute";
 
 function App() {
   return (
-    <MainLayout>
-      <Routes>
+    // <MainLayout>
+    //   <Routes>
+    //     <Route path="/login" element={<LoginPage />} />
+    //     <Route path="/sign-up" element={<SignUpPage />} />
+    //     <Route path="/reset-password" element={<ResetPasswordPage />} />
+    //     <Route
+    //       path="/users/:id/edit"
+    //       element={
+    //         <PrivateRoute>
+    //           <EditUserPage />
+    //         </PrivateRoute>
+    //       }
+    //     />
+    //     <Route
+    //       path="/users"
+    //       element={
+    //         <PrivateRoute>
+    //           <UserManagementPage />
+    //         </PrivateRoute>
+    //       }
+    //     />
+
+    //     <Route
+    //       path="/assignment-role"
+    //       element={
+    //         <PrivateRoute>
+    //           <RoleAssignmentForm />
+    //         </PrivateRoute>
+    //       }
+    //     />
+    //     <Route
+    //       path="/"
+    //       element={
+    //         <PrivateRoute>
+    //           <DevicePage />
+    //         </PrivateRoute>
+    //       }
+    //     />
+
+    //     <Route path="/migrate" element={<MigrationPage />} />
+    //     <Route path="/add-transform-data" element={<MigrationWizardPage />} />
+
+    //     <Route path="/ar-detection" element={<ARDetectionPage />} />
+    //     <Route path="/model-training" element={<ModelTrainingPage />} />
+    //     <Route
+    //       path="/hydroponic-system"
+    //       element={
+    //         <PrivateRoute>
+    //           <HydroponicSystemPage />
+    //         </PrivateRoute>
+
+    //       }
+    //     />
+    //     <Route path="/hydro-devices" element={<HydroponicDevicePage />} />
+    //     <Route path="/hydro-devices/new-device" element={<HydroponicDevicePage />} />
+    //     <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
+    //     <Route path="/scheduler-health" element={<SchedulerPage />} />
+
+    //     <Route path="*" element={<Outlet />} />
+    //   </Routes>
+    // </MainLayout>
+
+    <Routes>
+      {/* Public auth pages (LandingLayout) */}
+      <Route element={<LandingLayout />}>
+        <Route path="" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/sign-up" element={<SignUpPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+      </Route>
+
+      {/* Dashboard / Admin routes (MainLayout) */}
+      <Route element={<MainLayout />}>
         <Route
-          path="/users/:id/edit"
+          path="/"
           element={
             <PrivateRoute>
-              <EditUserPage />
+              <DevicePage />
             </PrivateRoute>
           }
         />
@@ -39,7 +109,14 @@ function App() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/users/:id/edit"
+          element={
+            <PrivateRoute>
+              <EditUserPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/assignment-role"
           element={
@@ -48,18 +125,10 @@ function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <DevicePage />
-            </PrivateRoute>
-          }
-        />
 
+        {/* Other dashboard features */}
         <Route path="/migrate" element={<MigrationPage />} />
         <Route path="/add-transform-data" element={<MigrationWizardPage />} />
-
         <Route path="/ar-detection" element={<ARDetectionPage />} />
         <Route path="/model-training" element={<ModelTrainingPage />} />
         <Route
@@ -68,17 +137,18 @@ function App() {
             <PrivateRoute>
               <HydroponicSystemPage />
             </PrivateRoute>
-
           }
         />
         <Route path="/hydro-devices" element={<HydroponicDevicePage />} />
         <Route path="/hydro-devices/new-device" element={<HydroponicDevicePage />} />
         <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
         <Route path="/scheduler-health" element={<SchedulerPage />} />
+      </Route>
 
-        <Route path="*" element={<Outlet />} />
-      </Routes>
-    </MainLayout>
+      {/* Catch-all fallback */}
+      <Route path="*" element={<Outlet />} />
+    </Routes>
+
   );
 }
 
