@@ -3,9 +3,6 @@ import { getTemplateByClientId } from '../../../services/templateService';
 import type { Template } from '../../../models/types/Template';
 import DropdownButton from '../../common/DropdownButton';
 import { useAlert } from '../../../contexts/alertContext';
-
-
-
 interface DropdownItem {
   label: React.ReactNode;
   value: string;

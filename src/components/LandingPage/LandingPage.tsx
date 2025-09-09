@@ -1,8 +1,8 @@
-import React, { Suspense, useMemo, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router';
 import {
   IconDroplet, IconChartBar, IconRipple, IconLeaf,
-  IconBolt, IconShoppingCart, IconBrandFacebook, IconBrandYoutube
+  IconBolt, IconShoppingCart
 } from '@tabler/icons-react';
 import HeroSection from './components/HeroSection';
 

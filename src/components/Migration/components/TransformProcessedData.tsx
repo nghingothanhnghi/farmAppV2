@@ -4,6 +4,7 @@ import CodeMirror from '@uiw/react-codemirror';
 import { json } from '@codemirror/lang-json';
 import Form, { FormGroup, FormLabel, FormActions } from "../../common/Form";
 import Button from '../../common/Button';
+import { createTemplate } from '../../../services/templateService';
 interface TransformProcessedDataProps {
     onCompleteStep?: () => void;
     goBack?: () => void;
@@ -16,10 +17,33 @@ const TransformProcessedData: React.FC<TransformProcessedDataProps> = ({ onCompl
     const [jsonInput, setJsonInput] = useState('{}');
     const [loading, setLoading] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        
-    };
+const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const parsed = JSON.parse(jsonInput);
+
+      await createTemplate({
+        client_id: clientId,
+        mapping: parsed,
+      });
+
+      setAlert({ type: 'success', message: 'Template created successfully' });
+
+      if (onCompleteStep) {
+        onCompleteStep();
+      }
+    } catch (err: any) {
+      console.error(err);
+      setAlert({
+        type: 'error',
+        message: err?.response?.data?.detail || 'Failed to create template',
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
     return (
         <Form onSubmit={handleSubmit} className="space-y-6 max-w-xl mx-auto">
             <FormGroup>

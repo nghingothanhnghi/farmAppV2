@@ -1,6 +1,6 @@
 // src/components/common/CameraControls.tsx
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
-import { IconArrowUp, IconArrowDown, IconArrowLeft, IconArrowRight, IconCrosshair, IconPower, IconCameraBolt } from "@tabler/icons-react";
+import { IconArrowUp, IconArrowDown, IconArrowLeft, IconArrowRight, IconCrosshair } from "@tabler/icons-react";
 import { motion } from "framer-motion";
 import type { Direction, CameraControlsProps } from "../../models/interfaces/Camera";
 
@@ -160,13 +160,6 @@ export default function CameraControls({
       className={` ${className ?? ""
       }`}
     >
-      {/* Header */}
-      {/* <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <IconCameraBolt className={`w-5 h-5 ${powered ? "text-emerald-600" : "text-zinc-400"}`} />
-          <span className="font-semibold">Camera Controls</span>
-        </div>
-      </div> */}
 
       {/* D-Pad */}
       <div className={`opacity-${powered ? "100" : "60"}`}>

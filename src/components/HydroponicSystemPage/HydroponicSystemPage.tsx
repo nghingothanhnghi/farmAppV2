@@ -29,7 +29,7 @@ const HydroponicSystemPage: React.FC = () => {
   const {
     deviceStatusList,
     sensorData,
-    thresholds,
+    // thresholds,
     alerts,
     controlActions,
     loading,

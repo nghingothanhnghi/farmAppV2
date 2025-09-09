@@ -100,7 +100,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
               step={10}                 // default nudge step
               stepRange={{ min: 1, max: 45 }}
               disabled={!location || loading}
-              className="absolute bottom-2 right-2 z-10 w-[200px] height-[100px]"
+              className="absolute bottom-2 right-2 z-10 w-[250px] height-[100px]"
             />
           </HoverSlideIn>
         </div>

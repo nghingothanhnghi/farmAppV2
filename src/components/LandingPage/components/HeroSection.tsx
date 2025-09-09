@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useMemo, useRef } from 'react';
 import { Canvas, useFrame} from '@react-three/fiber';
 import { Html, OrbitControls, useGLTF, Sky, GradientTexture, PerspectiveCamera } from '@react-three/drei';
-import { a, useSpring } from '@react-spring/three';
+import { useSpring } from '@react-spring/three';
 import * as THREE from 'three';
 import { Link } from 'react-router';
 import { useWebGLSupport } from '../../../hooks/useWebGLSupport';
@@ -22,8 +22,8 @@ type AnnotationProps = {
 // --- Annotations ---
 const ANNOTATIONS: AnnotationData[] = [
     { id: 1, title: 'Pingping', desc: 'Main reservoir where water is distributed.', position: [2, 3, 0] },
-    { id: 2, title: 'Water Tank', desc: 'Stores nutrient-rich water for circulation.', position: [5, 0, 0] },
-    { id: 3, title: 'Water Pump', desc: 'Pumps water to keep the system flowing.', position: [1, 1, 2] },
+    { id: 2, title: 'Water Tank', desc: 'Stores nutrient-rich water for circulation.', position: [4, 0, 1] },
+    { id: 3, title: 'Water Pump', desc: 'Pumps water to keep the system flowing.', position: [3.5, 0, 1] },
     { id: 4, title: 'Interconnected Pingping', desc: 'Connects all pipes together.', position: [4, 0, -2] },
     { id: 5, title: 'Plants', desc: 'Hydroponic plants growing with nutrient water.', position: [0, 4, 1] },
     { id: 6, title: 'Outlet Pipe', desc: 'Excess water exits through this pipe.', position: [-2, 0, -3] },
