@@ -88,12 +88,14 @@ const TemplateCreator: React.FC<TemplateCreatorProps> = ({ onTemplateCreated, go
                     label="Back"
                     variant="secondary"
                     onClick={goBack}
+                    rounded='lg'
                 />
                 <Button
                     type="submit"
                     label={loading ? 'Creating...' : 'Create Template'}
                     disabled={loading || !clientId}
                     variant="primary"
+                    rounded='lg'
                 />
             </FormActions>
         </Form>

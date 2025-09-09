@@ -122,52 +122,57 @@ const EditUserPage: React.FC = () => {
   return (
     <div>
       <PageTitle title="Edit Profile" />
-      <Form onSubmit={handleSubmit} className="max-w-xl mx-auto">
-        {/* Profile Image */}
-        <div className="flex flex-col items-center mb-6">
-          <Avatar
-            imageUrl={previewUrl || user?.image_url}
-            size={128}
-            rounded="full"
-            className="mb-2"
-          />
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-          
-        </div>
-        {fields.map(([name, label, type, required]) => (
-          <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
-            <div className="space-y-1">
-              <FormLabel htmlFor={name}>{label}</FormLabel>
-            </div>
-            <div>
-              <FormInput
-                id={name}
-                name={name}
-                type={type}
-                value={formData[name]}
-                onChange={handleChange}
-                required={required}
+      <Form onSubmit={handleSubmit}>
+        {/* Wallpaper + Avatar */}
+        <div className="relative w-full h-40 rounded-2xl bg-mesh-blue-purple">
+          <div className="absolute -bottom-28 left-5">
+            <div className="flex flex-col items-center mb-6">
+              <Avatar
+                imageUrl={previewUrl || user?.image_url}
+                size={128}
+                rounded="full"
+                className="mb-2"
               />
-              {fieldErrors[name] && (
-                <p className="text-red-500 text-xs mt-1">{fieldErrors[name]}</p>
-              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </div>
-          </FormGroup>
-        ))}
-        <hr className="my-10 border-t border-zinc-950/5 dark:border-white/5" />
-        <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Button
-            type="submit"
-            label={loading ? 'Saving...' : 'Save Changes'}
-            disabled={loading}
-            variant="primary"
-            rounded='lg'
-          />
-        </FormActions>
+          </div>
+        </div>
+        <div className="max-w-xl mx-auto bg-white dark:bg-zinc-900 shadow-lg rounded-xl p-6 relative -top-10">
+          {fields.map(([name, label, type, required]) => (
+            <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
+              <div className="space-y-1">
+                <FormLabel htmlFor={name}>{label}</FormLabel>
+              </div>
+              <div>
+                <FormInput
+                  id={name}
+                  name={name}
+                  type={type}
+                  value={formData[name]}
+                  onChange={handleChange}
+                  required={required}
+                />
+                {fieldErrors[name] && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors[name]}</p>
+                )}
+              </div>
+            </FormGroup>
+          ))}
+          <hr className="my-10 border-t border-zinc-950/5 dark:border-white/5" />
+          <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Button
+              type="submit"
+              label={loading ? 'Saving...' : 'Save Changes'}
+              disabled={loading}
+              variant="primary"
+              rounded='lg'
+            />
+          </FormActions>
+        </div>
       </Form>
     </div>
   );

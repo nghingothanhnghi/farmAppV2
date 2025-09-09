@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { getTemplateByClientId } from '../../../services/templateService';
 import type { Template } from '../../../models/types/Template';
 import DropdownButton from '../../common/DropdownButton';
+import TemplateCard from './TemplateCard';
 import { useAlert } from '../../../contexts/alertContext';
+
 interface DropdownItem {
   label: React.ReactNode;
   value: string;
@@ -16,7 +18,7 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ templates }) => {
   const { setAlert } = useAlert();
   const [clientIds, setClientIds] = useState<DropdownItem[]>([]);
   const [selectedClientId, setSelectedClientId] = useState<string>('');
-    const [visibleTemplates, setVisibleTemplates] = useState<Template[]>([]);
+  const [visibleTemplates, setVisibleTemplates] = useState<Template[]>([]);
 
   useEffect(() => {
     const uniqueClientIds = Array.from(
@@ -53,29 +55,20 @@ const TemplateSelector: React.FC<TemplateSelectorProps> = ({ templates }) => {
   return (
     <div className="space-y-4">
       <div>
-        <label className="block mb-1 font-medium">Select Client ID</label>
         <DropdownButton
           label={selectedClientId || 'All Clients'}
           items={clientIds}
           onSelect={handleClientSelect}
-          className="w-[250px]"
+          className="w-[200px] bg-transparent"
         />
       </div>
 
-    {visibleTemplates.length > 0 ? (
-        visibleTemplates.map((template) => (
-          <div key={template.id} className="border rounded p-3 bg-gray-50">
-            <h3 className="font-semibold text-gray-800 mb-2">
-              Template for <span className="text-blue-600">{template.client_id}</span>
-            </h3>
-            <pre className="bg-white p-3 rounded text-sm overflow-auto max-h-[400px] border">
-              {JSON.stringify(template.mapping, null, 2)}
-            </pre>
-          </div>
-        ))
+      {visibleTemplates.length > 0 ? (
+        visibleTemplates.map((t) => <TemplateCard key={t.id} template={t} />)
       ) : (
         <p className="text-gray-500">No templates available.</p>
       )}
+
     </div>
   );
 };

@@ -76,12 +76,14 @@ const TransformProcessedData: React.FC<TransformProcessedDataProps> = ({ onCompl
                     label="Back"
                     variant="secondary"
                     onClick={goBack}
+                    rounded='lg'
                 />
                 <Button
                     type="submit"
                     label={loading ? 'Creating...' : 'Create Template'}
                     disabled={loading || !clientId}
                     variant="primary"
+                    rounded='lg'
                 />
             </FormActions>
         </Form>

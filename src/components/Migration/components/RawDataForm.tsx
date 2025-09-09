@@ -123,6 +123,7 @@ const RawDataForm = ({ onSuccess }: { onSuccess?: () => void }) => {
           variant="primary"
           className="md:w-auto"
           fullWidth={true}
+          rounded='lg'
         />
       </FormActions>
     </Form>
