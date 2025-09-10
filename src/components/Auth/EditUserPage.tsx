@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router';
+import { IconCamera } from '@tabler/icons-react';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../common/Form';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
@@ -124,24 +125,32 @@ const EditUserPage: React.FC = () => {
       <PageTitle title="Edit Profile" />
       <Form onSubmit={handleSubmit}>
         {/* Wallpaper + Avatar */}
-        <div className="relative w-full h-40 rounded-2xl bg-mesh-blue-purple">
-          <div className="absolute -bottom-28 left-5">
-            <div className="flex flex-col items-center mb-6">
+        <div className="relative mx-auto max-w-4xl h-40 rounded-2xl bg-mesh-blue-purple">
+          <div className="absolute left-1/2 -translate-x-1/2 -bottom-5 lg:-bottom-25 lg:left-6 lg:translate-x-0 z-10">
+            <div className="flex flex-col items-center mb-6 relative">
               <Avatar
                 imageUrl={previewUrl || user?.image_url}
                 size={128}
                 rounded="full"
                 className="mb-2"
               />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
+                <input
+                id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className='hidden'
+                />
+              <label
+                htmlFor="file-upload"
+                className="absolute bottom-2 right-2 bg-white dark:bg-zinc-800 rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 z-10"
+              >
+                <IconCamera className="w-5 h-5 text-gray-700 dark:text-gray-200" />
+              </label>
             </div>
           </div>
         </div>
-        <div className="max-w-xl mx-auto bg-white dark:bg-zinc-900 shadow-lg rounded-xl p-6 relative -top-10">
+        <div className="mx-auto max-w-[35rem] bg-white dark:bg-zinc-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10">
           {fields.map(([name, label, type, required]) => (
             <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
               <div className="space-y-1">
