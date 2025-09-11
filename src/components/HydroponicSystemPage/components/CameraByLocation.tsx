@@ -13,6 +13,7 @@ import CameraControls from '../../common/CameraControls';
 import type { Direction } from '../../../models/interfaces/Camera';
 import { useHoverSlide } from '../../../hooks/useHoverSlide';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
+import HydroFarmMapPanel from './HydroFarmMapPanel';
 
 interface CameraByLocationProps {
   location?: string;
@@ -144,6 +145,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
               </div>
             </div>
             <hr className="my-2 w-full border-t border-zinc-950/5 dark:border-white/5" />
+            <HydroFarmMapPanel />
           </div>
         </div>
 

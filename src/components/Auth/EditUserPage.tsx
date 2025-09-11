@@ -126,7 +126,7 @@ const EditUserPage: React.FC = () => {
       <Form onSubmit={handleSubmit}>
         {/* Wallpaper + Avatar */}
         <div className="relative mx-auto max-w-4xl h-40 rounded-2xl bg-mesh-blue-purple">
-          <div className="absolute left-1/2 -translate-x-1/2 -bottom-5 lg:-bottom-25 lg:left-6 lg:translate-x-0 z-10">
+          <div className="absolute left-1/2 -translate-x-1/2 -bottom-5 xl:-bottom-25 xl:left-6 xl:translate-x-0 z-10">
             <div className="flex flex-col items-center mb-6 relative">
               <Avatar
                 imageUrl={previewUrl || user?.image_url}
@@ -150,7 +150,7 @@ const EditUserPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mx-auto max-w-[35rem] bg-white dark:bg-zinc-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10">
+        <div className="mx-auto max-w-[35rem] bg-white dark:bg-zinc-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10 lg:left-10">
           {fields.map(([name, label, type, required]) => (
             <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
               <div className="space-y-1">
