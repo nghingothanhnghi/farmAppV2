@@ -30,7 +30,6 @@ function getDeviceStatusColor(device: SystemStatusPerDevice) {
 
 export default function HydroFarmMapPanel() {
     const { deviceStatusList } = useHydroSystem();
-    const [selectedDevice, setSelectedDevice] = useState<SystemStatusPerDevice | null>(null);
     const [popover, setPopover] = useState<{
         device: SystemStatusPerDevice;
         x: number;
