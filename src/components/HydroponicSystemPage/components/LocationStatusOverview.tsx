@@ -33,22 +33,22 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
       key: "total_expected",
       label: "Total Expected",
       value: status.total_expected,
-      bg: "bg-blue-50",
-      text: "text-blue-600",
+      bg: "bg-blue-50 dark:bg-blue-900/30",
+      text: "text-blue-600 dark:text-blue-300",
     },
     {
       key: "total_detected",
       label: "Total Detected",
       value: status.total_detected,
-      bg: "bg-green-50",
-      text: "text-green-600",
+      bg: "bg-green-50 dark:bg-green-900/30",
+      text: "text-green-600 dark:text-green-300",
     },
     {
       key: "validated_count",
       label: "Validated",
       value: status.validated_count,
-      bg: "bg-purple-50",
-      text: "text-purple-600",
+      bg: "bg-purple-50 dark:bg-purple-900/30",
+      text: "text-purple-600 dark:text-purple-300",
     },
     {
       key: "avg_confidence",
@@ -56,8 +56,8 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
       value: status.detection_confidence_avg
         ? `${(status.detection_confidence_avg * 100).toFixed(1)}%`
         : "N/A",
-      bg: "bg-yellow-50",
-      text: "text-yellow-600",
+      bg: "bg-yellow-50 dark:bg-yellow-900/30",
+      text: "text-yellow-600 dark:text-yellow-300",
     },
   ];
 

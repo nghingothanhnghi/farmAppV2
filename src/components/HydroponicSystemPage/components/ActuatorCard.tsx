@@ -68,7 +68,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     });
 
     return (
-        <div className="bg-gray-100 rounded-lg px-4 py-2">
+        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
             <div className='flex items-center justify-between mb-1'>
                 <div className="flex items-center space-x-2">
                     <span className="text-lg">{getActuatorIcon(actuator.type)}</span>

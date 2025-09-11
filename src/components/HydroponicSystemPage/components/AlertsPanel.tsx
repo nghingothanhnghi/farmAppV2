@@ -30,24 +30,24 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
   const getAlertColor = (type: SystemAlert['type']) => {
     switch (type) {
       case 'error':
-        return 'border-red-400 bg-red-50';
+        return 'border-red-400 bg-red-50 dark:bg-red-950/40';
       case 'warning':
-        return 'border-yellow-400 bg-yellow-50';
+        return 'border-yellow-400 bg-yellow-50 dark:bg-yellow-950/40';
       case 'info':
-        return 'border-blue-400 bg-blue-50';
+        return 'border-blue-400 bg-blue-50 dark:bg-blue-950/40';
       default:
-        return 'border-gray-400 bg-gray-50';
+        return 'border-gray-400 bg-gray-50 dark:bg-gray-800';
     }
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+    <div className="rounded-lg shadow-md bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800">System Alerts</h2>
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">System Alerts</h2>
         <div className="flex items-center space-x-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${activeAlerts.length > 0
-              ? 'bg-red-100 text-red-800'
-              : 'bg-green-100 text-green-800'
+            ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
             }`}>
             {activeAlerts.length} Active
           </span>
@@ -56,7 +56,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
 
       <div className="space-y-3 max-h-64 overflow-y-auto">
         {activeAlerts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
             <div className="text-4xl mb-2">✅</div>
             <p>No active alerts</p>
             <p className="text-sm">System is running normally</p>
@@ -71,10 +71,10 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
                 <div className="flex items-start space-x-3">
                   <span className="text-lg">{getAlertIcon(alert.type)}</span>
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-800">
+                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
                       {alert.message}
                     </p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                       {new Date(alert.timestamp).toLocaleString()}
                     </p>
                   </div>
@@ -82,7 +82,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
                 <Button
                   label="Resolve"
                   onClick={() => onResolveAlert(alert.id)}
-                  className="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white"
+                  className="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white dark:bg-gray-700 dark:hover:bg-gray-600"
                   rounded='lg'
                   size='xs'
                 />
@@ -94,9 +94,9 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
       </div>
 
       {alerts.filter(alert => alert.resolved).length > 0 && (
-        <div className="mt-4 pt-4 border-t">
-          <details className="text-sm text-gray-600">
-            <summary className="cursor-pointer hover:text-gray-800">
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+          <details className="text-sm text-gray-600 dark:text-gray-300">
+            <summary className="cursor-pointer hover:text-gray-800 dark:hover:text-gray-100">
               View resolved alerts ({alerts.filter(alert => alert.resolved).length})
             </summary>
             <div className="mt-2 space-y-2">
@@ -105,8 +105,8 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
                 .slice(0, 5)
                 .map((alert) => (
                   <div key={alert.id} className="p-2 bg-gray-50 rounded text-xs">
-                    <span className="text-gray-500">✓</span> {alert.message}
-                    <span className="text-gray-400 ml-2">
+                    <span className="text-gray-500 dark:text-gray-400">✓</span> {alert.message}
+                    <span className="text-gray-400 dark:text-gray-500 ml-2">
                       {new Date(alert.timestamp).toLocaleString()}
                     </span>
                   </div>

@@ -17,7 +17,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
   return (
     <div>
       {/* Tab navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-white/5">
         <nav className="-mb-px flex space-x-8">
           {tabs.map((tab) => (
             <button

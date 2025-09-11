@@ -1,7 +1,8 @@
 // src/components/Settings/components/GeneralTab.tsx
 
 import React, { useState, useEffect } from 'react';
-import { FormGroup, FormLabel, FormSelect } from '../../common/Form';
+import { FormGroup, FormLabel} from '../../common/Form';
+import DropdownButton from '../../common/DropdownButton';
 
 
 const GeneralTab: React.FC = () => {
@@ -24,6 +25,17 @@ const GeneralTab: React.FC = () => {
         }
         localStorage.setItem('theme', value);
     };
+
+    const languageItems = [
+        { label: 'English', value: 'en' },
+        { label: 'Vietnamese', value: 'vi' },
+    ];
+
+    const themeItems = [
+        { label: 'Light', value: 'light' },
+        { label: 'Dark', value: 'dark' },
+        { label: 'System Default', value: 'system' },
+    ];
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-semibold mb-7">General Settings</h3>
@@ -33,14 +45,13 @@ const GeneralTab: React.FC = () => {
                     <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
                 </div>
                 <div>
-                    <FormSelect
-                        id="language"
-                        value={language}
-                        onChange={(e) => setLanguage(e.target.value)}
-                    >
-                        <option value="en">English</option>
-                        <option value="vi">Vietnamese</option>
-                    </FormSelect>
+                    <DropdownButton
+                        label={languageItems.find((item) => item.value === language)?.label || 'Select'}
+                        items={languageItems}
+                        onSelect={(item) => setLanguage(item.value)}
+                        size="sm"
+                        className=" md:w-auto bg-transparent"
+                    />
                 </div>
             </FormGroup>
             <hr role="presentation" className="my-5 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
@@ -50,16 +61,13 @@ const GeneralTab: React.FC = () => {
                     <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
                 </div>
                 <div>
-                    <FormSelect
-                        id="theme"
-                        value={theme}
-                        onChange={(e) => setTheme(e.target.value)}
-                       
-                    >
-                        <option value="light">Light</option>
-                        <option value="dark">Dark</option>
-                        <option value="system">System Default</option>
-                    </FormSelect>
+                    <DropdownButton
+                        label={themeItems.find((item) => item.value === theme)?.label || 'Select'}
+                        items={themeItems}
+                        onSelect={(item) => setTheme(item.value)}
+                        size="sm"
+                        className=" md:w-auto bg-transparent"
+                    />
                 </div>
             </FormGroup>
         </div>

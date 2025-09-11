@@ -55,10 +55,10 @@ const Button: React.FC<ButtonProps> = ({
 
   const variantStyles = {
     primary: 'bg-orange-600 text-white hover:bg-orange-700',
-    secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-300',
+    secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
     danger: 'bg-red-600 text-white hover:bg-red-700',
-    link: 'bg-transparent text-blue-600 hover:underline p-0',
-    dark: 'bg-gray-800 text-white hover:bg-black',
+    link: 'bg-transparent text-blue-600 hover:underline p-0 dark:text-blue-400',
+    dark: 'bg-gray-800 text-white hover:bg-black dark:bg-gray-900 dark:hover:bg-black',
   };
 
   const roundedStyles = {

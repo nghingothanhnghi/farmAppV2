@@ -91,7 +91,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         max={max}
         step={step}
         disabled={disabled}
-        className={`w-full bg-transparent placeholder:text-slate-400 text-slate-700 border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-300 shadow-sm focus:shadow [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none`}
+        className={`w-full bg-transparent dark:bg-gray-800 dark:text-gray-100 placeholder:text-slate-400 dark:placeholder:text-gray-500 text-slate-700 border border-slate-200 dark:border-gray-700 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 dark:focus:border-gray-500 hover:border-slate-300 dark:hover:border-gray-600 shadow-sm focus:shadow [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none`}
         accept={accept}
         multiple={multiple}
         ref={ref}
@@ -126,11 +126,11 @@ export const FormSelect: React.FC<FormSelectProps> = ({
           value={value}
           onChange={onChange}
           disabled={disabled}
-          className={`w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md appearance-none cursor-pointer ${className}`}
+          className={`w-full bg-transparent dark:bg-gray-800 dark:text-gray-100 placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 dark:border-gray-700 rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 dark:focus:border-gray-500 hover:border-slate-400 dark:hover:border-gray-600 shadow-sm focus:shadow-md appearance-none cursor-pointer ${className}`}
         >
           {children}
         </select>
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.2" stroke="currentColor" className="h-5 w-5 ml-1 absolute top-2 right-2.5 text-slate-700 dark:text-gray-300">
           <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 15 12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" />
         </svg>
       </div>
@@ -218,7 +218,7 @@ useEffect(() => {
           onKeyDown={e => handleKeyDown(i, e)}
           onPaste={handlePaste}
           disabled={disabled}
-          className="w-10 h-12 text-center text-xl border border-slate-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500"
+          className="w-10 h-12 text-center text-xl border border-slate-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md shadow-sm focus:outline-none focus:border-blue-500 dark:focus:border-blue-400"
         />
       ))}
 
@@ -267,9 +267,9 @@ export const FormToggle: React.FC<FormToggleProps> = ({
         onChange={onChange}
         className="peer sr-only"
       />
-      <span className="absolute inset-y-0 start-0 m-0.5 h-3 w-3 rounded-full bg-white transition-[inset-inline-start] peer-checked:start-4" />
+      <span className="absolute inset-y-0 start-0 m-0.5 h-3 w-3 rounded-full bg-white dark:bg-gray-700 transition-[inset-inline-start] peer-checked:start-4" />
       {label && (
-        <span className="ml-3 text-sm text-gray-700 absolute top-1.5 left-16">
+        <span className="ml-3 text-sm text-gray-700 dark:text-gray-300 absolute top-1.5 left-16">
           {label}
         </span>
       )}

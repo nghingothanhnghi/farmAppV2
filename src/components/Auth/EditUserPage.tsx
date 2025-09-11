@@ -150,7 +150,7 @@ const EditUserPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mx-auto max-w-[35rem] bg-white dark:bg-zinc-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10 lg:left-10">
+        <div className="mx-auto max-w-[35rem] bg-white dark:bg-gray-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10 lg:left-10">
           {fields.map(([name, label, type, required]) => (
             <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
               <div className="space-y-1">
@@ -172,7 +172,7 @@ const EditUserPage: React.FC = () => {
             </FormGroup>
           ))}
           <hr className="my-10 border-t border-zinc-950/5 dark:border-white/5" />
-          <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4">
             <Button
               type="submit"
               label={loading ? 'Saving...' : 'Save Changes'}

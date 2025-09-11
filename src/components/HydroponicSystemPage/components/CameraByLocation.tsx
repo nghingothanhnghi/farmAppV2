@@ -106,7 +106,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
           </HoverSlideIn>
         </div>
         {/* Panel placeholders */}
-        <div className="border border-gray-100 p-4 rounded-lg shadow bg-white h-full">
+        <div className="border p-4 rounded-lg shadow bg-white border-gray-100 dark:bg-gray-900 dark:border-white/5 h-full">
           <div className="flex flex-col items-center gap-2 mb-3">
             <div className="flex space-x-1 w-full">
               {!isCameraEnabled ? (

@@ -56,7 +56,7 @@ const Modal: React.FC<ModalProps> = ({
     `}
     >
       <div
-        className={`bg-white rounded-3xl border border-gray-300 shadow-md flex flex-col
+        className={`bg-white rounded-3xl border border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 shadow-md flex flex-col
         transition-all duration-300 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
           } 
         ${fullWidth ? 'w-full max-w-4/5' : modalSizeClasses[size] || modalSizeClasses.medium} 
@@ -69,7 +69,7 @@ const Modal: React.FC<ModalProps> = ({
         {variant === 'sidebar' ? (
           <div className='flex'>
             {/* Left side (tabs + close) */}
-            <div className="w-1/3 bg-gray-100 p-4 flex flex-col border-r border-gray-200">
+            <div className="w-1/3 p-4 flex flex-col border-r border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
               <div className='flex justify-between align-middle'>
                 <Button
                   variant="secondary"
@@ -89,7 +89,7 @@ const Modal: React.FC<ModalProps> = ({
                     className={`
                         w-full text-left px-3 py-2 rounded-lg text-sm
                         ${tab.icon ? 'flex items-center' : ''}
-                        ${activeTab === tab.id ? 'bg-white text-black' : 'text-gray-700'}
+                        ${activeTab === tab.id ? 'bg-white text-black dark:bg-gray-700 dark:text-gray-100' : 'text-gray-700 dark:text-gray-100'}
                       `}
                   >
                     {tab.icon && <span className="mr-2">{tab.icon}</span>} {/* ✅ Render icon */}
@@ -115,7 +115,6 @@ const Modal: React.FC<ModalProps> = ({
                 )}
                 {showCloseButton && (
                   <Button
-                    variant="secondary"
                     icon={<IconX size={18} />}
                     iconOnly
                     label="Close"

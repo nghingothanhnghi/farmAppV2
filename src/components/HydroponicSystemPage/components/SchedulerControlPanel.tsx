@@ -39,16 +39,16 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
   const running = !!schedulerState;
 
   return (
-    <div className="bg-gray-100 rounded-lg p-4">
+    <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
       <div className='flex items-center justify-between mb-1'>
         <div className="flex items-center space-x-2">
           <IconCalendarTime size={16} />
-          <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">{title}</h3>
         </div>
         <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${running ? 'bg-green-600' : 'bg-gray-400'}`}></div>
-          <span className="text-xs text-gray-600">
-            <span className={` font-medium ${running ? 'text-green-600' : 'text-gray-400'}`}>
+          <div className={`w-2 h-2 rounded-full ${running ? 'bg-green-600 dark:bg-green-400' : 'bg-gray-400 dark:bg-green-400'}`}></div>
+          <span className="text-[0.625rem] text-gray-600">
+            <span className={` font-medium ${running ? 'text-green-600 dark:text-green-300' : 'text-gray-400 dark:text-gray-500'}`}>
               {running ? 'Running' : 'Stopped'}
             </span>
           </span>
@@ -56,7 +56,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
       </div>
 
       <div className="flex items-center justify-between space-x-5">
-        <div className="flex-1 text-[0.625rem] text-gray-600 line-clamp-2">
+        <div className="flex-1 text-[0.625rem] text-gray-600 dark:text-gray-400 line-clamp-2">
           {summary}
         </div>
 

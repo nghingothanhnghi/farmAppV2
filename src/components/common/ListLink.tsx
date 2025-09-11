@@ -23,8 +23,8 @@ const ListLink: React.FC<ListLinkProps> = ({
         flex items-center
         ${isIconOnly ? 'justify-center w-10 h-10 p-2' : 'space-x-3 px-4 py-2'}
         rounded-lg transition-colors duration-200
-        hover:bg-gray-300 dark:hover:bg-zinc-800 hover:text-gray-800
-        ${isActive ? 'bg-gray-300 text-gray-800 dark:bg-zinc-800' : 'text-gray-800 dark:text-zinc-300'}
+        hover:bg-gray-300 dark:hover:bg-gray-700 dark:hover:text-gray-100 hover:text-gray-800
+        ${isActive ? 'bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-100' : 'text-gray-800 dark:text-zinc-300'}
       `}
     >
       {icon && <div className="text-xl">{icon}</div>}
