@@ -88,9 +88,9 @@ export default function HydroFarmMapPanel() {
                                 y: number;
                             };
                             return (
-                                <div className="bg-white shadow rounded p-2 text-xs">
+                                <div className="bg-white dark:bg-gray-800/80 dark:border-gray-700 shadow rounded p-2 text-xs dark:text-gray-200">
                                     <div className="font-semibold">{d.device_name}</div>
-                                    <div className="text-gray-500">{d.location}</div>
+                                    <div className="text-gray-500 dark:text-gray-400">{d.location}</div>
                                     <div>🌡 {d.sensors.temperature}°C</div>
                                     <div>💧 {d.sensors.moisture}%</div>
                                     <div>📊 {d.sensors.water_level}%</div>

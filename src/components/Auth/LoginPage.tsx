@@ -66,93 +66,95 @@ const LoginPage: React.FC = () => {
 
 
   return (
-    <div>
-      <PageTitle
-        title="Login"
-      />
-      <Form onSubmit={handleSubmit} className="sm:w-1/4 w-full mx-auto">
-        {loading &&
-          <LinearProgress
-            position='absolute'
-            thickness="h-1"
-            duration={3000}
-          />}
-        <div className='flex flex-col gap-y-6'>
-          <div className='space-y-1 text-center'>
-            <FormLabel htmlFor="code">Good to See You Again!</FormLabel>
-            <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">We won’t judge 😬</p>
-          </div>
-          <div>
-            <FormGroup className='flex flex-col space-y-2'>
-              <FormInput
-                id="username"
-                name="username"
-                type="text"
-                value={username}
-                placeholder="Username"
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-              {fieldErrors.username && (
-                <p className="text-red-500 text-xs mt-1">{fieldErrors.username}</p>
-              )}
-            </FormGroup>
-            <FormGroup className='flex flex-col space-y-2'>
-              <div className='relative'>
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-mesh transition-colors duration-300">
+      <div className="w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
+        <PageTitle
+          title="Login"
+        />
+        <Form onSubmit={handleSubmit} className="sm:w-1/4 w-full mx-auto">
+          {loading &&
+            <LinearProgress
+              position='absolute'
+              thickness="h-1"
+              duration={3000}
+            />}
+          <div className='flex flex-col gap-y-6'>
+            <div className='space-y-1 text-center'>
+              <FormLabel htmlFor="code">Good to See You Again!</FormLabel>
+              <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">We won’t judge 😬</p>
+            </div>
+            <div>
+              <FormGroup className='flex flex-col space-y-2'>
                 <FormInput
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  placeholder="Password"
-                  onChange={(e) => setPassword(e.target.value)}
+                  id="username"
+                  name="username"
+                  type="text"
+                  value={username}
+                  placeholder="Username"
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
-                <Button
-                  onClick={togglePassword}
-                  variant="link"
-                  icon={showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
-                  iconOnly
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"
-                  rounded='full'
-                />
+                {fieldErrors.username && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.username}</p>
+                )}
+              </FormGroup>
+              <FormGroup className='flex flex-col space-y-2'>
+                <div className='relative'>
+                  <FormInput
+                    id="password"
+                    name="password"
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    placeholder="Password"
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                  <Button
+                    onClick={togglePassword}
+                    variant="link"
+                    icon={showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                    iconOnly
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"
+                    rounded='full'
+                  />
+                </div>
+                {fieldErrors.password && (
+                  <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
+                )}
+              </FormGroup>
+              <div className="text-right">
+                <Link
+                  to="/reset-password"
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  Forgot Password?
+                </Link>
               </div>
-              {fieldErrors.password && (
-                <p className="text-red-500 text-xs mt-1">{fieldErrors.password}</p>
-              )}
-            </FormGroup>
-            <div className="text-right">
-              <Link
-                to="/reset-password"
-                className="text-sm text-blue-600 hover:underline"
-              >
-                Forgot Password?
-              </Link>
             </div>
           </div>
-        </div>
-        <FormActions className="space-y-3 flex flex-col">
-          <Button
-            type="submit"
-            label={loading ? 'Logging in...' : 'Login'}
-            onClick={() => { }}
-            variant="primary"
-            disabled={loading}
-            fullWidth
-            rounded='lg'
-          />
-          <p className="text-center text-sm text-gray-600 mb-5">
-            Don’t have an account?{' '}
-            <Link
-              to="/sign-up"
-              className="text-blue-600 hover:underline"
+          <FormActions className="space-y-3 flex flex-col">
+            <Button
+              type="submit"
+              label={loading ? 'Logging in...' : 'Login'}
+              onClick={() => { }}
+              variant="primary"
+              disabled={loading}
+              fullWidth
+              rounded='lg'
+            />
+            <p className="text-center text-sm text-gray-600 mb-5">
+              Don’t have an account?{' '}
+              <Link
+                to="/sign-up"
+                className="text-blue-600 hover:underline"
 
-            >
-              Sign up
-            </Link>
-          </p>
-        </FormActions>
-      </Form>
+              >
+                Sign up
+              </Link>
+            </p>
+          </FormActions>
+        </Form>
+      </div>
     </div>
 
   );

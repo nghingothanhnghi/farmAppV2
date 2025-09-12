@@ -69,7 +69,6 @@ const TemplateCreator: React.FC<TemplateCreatorProps> = ({ onTemplateCreated, go
                     required
                 />
             </FormGroup>
-
             <FormGroup>
                 <FormLabel htmlFor="template_mapping">Template Mapping (JSON)</FormLabel>
                 <div className="border rounded-md overflow-hidden">

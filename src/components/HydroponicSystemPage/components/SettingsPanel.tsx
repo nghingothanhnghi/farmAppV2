@@ -197,7 +197,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       </div>
       <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
       <FormActions
-        className='lg:static fixed bottom-0 left-0 right-0 p-4 bg-white grid grid-cols-1 md:grid-cols-2 gap-4'
+        className='lg:static fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'
       >
         <Button
           type="submit"

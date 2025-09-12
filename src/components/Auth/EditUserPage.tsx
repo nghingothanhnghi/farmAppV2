@@ -150,7 +150,7 @@ const EditUserPage: React.FC = () => {
             </div>
           </div>
         </div>
-        <div className="mx-auto max-w-[35rem] bg-white dark:bg-gray-900 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10 lg:left-10">
+        <div className="mx-auto max-w-[35rem] bg-white dark:bg-gray-900 border dark:border-gray-700 shadow-lg rounded-xl px-10 pt-20 lg:p-15 relative -top-15 lg:-top-10 lg:left-10">
           {fields.map(([name, label, type, required]) => (
             <FormGroup key={name} className="grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2">
               <div className="space-y-1">

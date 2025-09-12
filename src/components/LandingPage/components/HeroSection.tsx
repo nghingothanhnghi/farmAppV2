@@ -1,10 +1,12 @@
 import React, { Suspense, useState, useMemo, useRef } from 'react';
-import { Canvas, useFrame} from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { Html, OrbitControls, useGLTF, Sky, GradientTexture, PerspectiveCamera } from '@react-three/drei';
-import { useSpring } from '@react-spring/three';
+import { useSpring, a } from '@react-spring/three';
 import * as THREE from 'three';
 import { Link } from 'react-router';
 import { useWebGLSupport } from '../../../hooks/useWebGLSupport';
+import { useTheme } from "../../../hooks/useTheme";
+import { Popover } from '../../common/Popover';
 
 // --- Types ---
 type AnnotationData = {
@@ -70,45 +72,55 @@ function Annotation({ data, onClick }: AnnotationProps) {
 
 
 function CameraController({ target }: { target?: [number, number, number] }) {
-  const camRef = useRef<THREE.PerspectiveCamera>(null);
-  const controlsRef = useRef<any>(null); // simplest
+    const camRef = useRef<THREE.PerspectiveCamera>(null);
+    const controlsRef = useRef<any>(null); // simplest
 
 
 
-  const { camPos, camLook } = useSpring({
-    camPos: target ? [target[0], target[1] + 2, target[2] + 5] : [0, 3, 15],
-    camLook: target || [0, 0, 0],
-    config: { tension: 80, friction: 20 },
-  });
-
-  useFrame(() => {
-    if (!camRef.current || !controlsRef.current) return;
-
-    // Animate camera position
-    camPos.to((x: number, y: number, z: number) => {
-      camRef.current!.position.set(x, y, z);
+    const { camPos, camLook } = useSpring({
+        camPos: target ? [target[0], target[1] + 2, target[2] + 5] : [0, 3, 15],
+        camLook: target || [0, 0, 0],
+        config: { tension: 80, friction: 20 },
     });
 
-    // Animate controls target and lookAt
-    camLook.to((x: number, y: number, z: number) => {
-      controlsRef.current!.target.set(x, y, z);
-      controlsRef.current!.update();
-      camRef.current!.lookAt(x, y, z);
-    });
-  });
+    useFrame(() => {
+        if (!camRef.current || !controlsRef.current) return;
 
-  return (
-    <>
-      <PerspectiveCamera ref={camRef} makeDefault fov={40} />
-      <OrbitControls ref={controlsRef} minDistance={5} maxDistance={25} />
-    </>
-  );
+        // Animate camera position
+        camPos.to((x: number, y: number, z: number) => {
+            camRef.current!.position.set(x, y, z);
+        });
+
+        // Animate controls target and lookAt
+        camLook.to((x: number, y: number, z: number) => {
+            controlsRef.current!.target.set(x, y, z);
+            controlsRef.current!.update();
+            camRef.current!.lookAt(x, y, z);
+        });
+    });
+
+    return (
+        <>
+            <PerspectiveCamera ref={camRef} makeDefault fov={40} />
+            <OrbitControls ref={controlsRef} minDistance={5} maxDistance={25} />
+        </>
+    );
 }
 
 
 // --- Hero Section ---
 const HeroSection: React.FC = () => {
+    const { isDark } = useTheme(); // ✅ reads from localStorage + system
+
+    const { color1, color2, color3 } = useSpring({
+        color1: isDark ? "#0a0a0a" : "#cfe8ff",
+        color2: isDark ? "#141414" : "#e9f4ff",
+        color3: isDark ? "#1a1a1a" : "#ffffff",
+        config: { mass: 1, tension: 200, friction: 26 }, // smooth spring
+    });
+
     const [active, setActive] = useState<AnnotationData | null>(null);
+
     const supported = useWebGLSupport();
     if (!supported) {
         return (
@@ -128,8 +140,11 @@ const HeroSection: React.FC = () => {
     return (
         <section className="relative isolate overflow-hidden h-screen">
             <div className="absolute inset-0 z-0">
-                    <Canvas gl={{ powerPreference: "high-performance", preserveDrawingBuffer: true }} camera={{ position: [0, 3, 15], fov: 40 }}>
-                        <fog attach="fog" args={['#e6f3ff', 30, 120]} />
+                <Canvas gl={{ powerPreference: "high-performance", preserveDrawingBuffer: true }} camera={{ position: [0, 3, 15], fov: 40 }}>
+                    <fog attach="fog" args={['#e6f3ff', 30, 120]} />
+                    {isDark ? (
+                        <color attach="background" args={["#0a0a0a"]} />
+                    ) : (
                         <Sky
                             distance={450000}
                             sunPosition={[20, 15, -10]}
@@ -140,35 +155,42 @@ const HeroSection: React.FC = () => {
                             inclination={0.49}
                             azimuth={0.25}
                         />
-                        <mesh position={[0, 6, -50]} scale={[120, 70, 1]}>
-                            <planeGeometry args={[1, 1]} />
-                            <meshBasicMaterial toneMapped={false}>
-                                <GradientTexture
-                                    stops={[0, 0.55, 1]}
-                                    colors={['#cfe8ff', '#e9f4ff', '#ffffff']}
-                                    size={1024}
-                                />
-                            </meshBasicMaterial>
-                        </mesh>
+                    )}
+                    <mesh position={[0, 6, -50]} scale={[120, 70, 1]}>
+                        <planeGeometry args={[1, 1]} />
+                        <meshBasicMaterial toneMapped={false}>
+                            <GradientTexture
+                                stops={[0, 0.55, 1]}
+                                colors={[color1.get(), color2.get(), color3.get()]} // animated colors
+                                size={1024}
+                            />
+                        </meshBasicMaterial>
+                    </mesh>
 
-                        <ambientLight intensity={0.6} />
-                        <directionalLight position={[10, 15, -5]} intensity={1.2} />
+                    <ambientLight intensity={0.6} />
+                    <directionalLight position={[10, 15, -5]} intensity={1.2} />
 
-                        <Suspense fallback={null}>
-                            <HydroFarmModel position={[5, 0, 0]} />
-                        </Suspense>
+                    <Suspense fallback={null}>
+                        <HydroFarmModel position={[5, 0, 0]} />
+                    </Suspense>
 
-                        {ANNOTATIONS.map((a) => (
-                            <Annotation key={a.id} data={a} onClick={setActive} />
-                        ))}
+                    {ANNOTATIONS.map((a) => (
+                        <Annotation key={a.id} data={a} onClick={setActive} />
+                    ))}
 
-                        <CameraController target={active?.position} />
-                        {/* <OrbitControls minDistance={5} maxDistance={25} autoRotate autoRotateSpeed={0.2} /> */}
-                    </Canvas>
+                    <CameraController target={active?.position} />
+                    {/* <OrbitControls minDistance={5} maxDistance={25} autoRotate autoRotateSpeed={0.2} /> */}
+                </Canvas>
 
 
                 {active && (
-                    <div className="absolute bottom-10 left-1/2 z-20 w-80 -translate-x-1/2 rounded-xl bg-white p-4 shadow-lg ring-1 ring-zinc-200 dark:bg-zinc-900 dark:ring-white/10">
+                    <Popover
+                        open={!!active}
+                        anchorX={window.innerWidth / 2} // center horizontally
+                        anchorY={window.innerHeight - 80} // 80px from bottom
+                        placement="top"
+                        onClose={() => setActive(null)}
+                    >
                         <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">
                             {active.title}
                         </h3>
@@ -179,7 +201,8 @@ const HeroSection: React.FC = () => {
                         >
                             Close
                         </button>
-                    </div>
+                    </Popover>
+
                 )}
 
                 <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-white/70 via-transparent to-white/90 dark:from-zinc-900/70 dark:via-transparent dark:to-zinc-950/90" />

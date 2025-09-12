@@ -33,7 +33,7 @@ const AlertDropdown: React.FC<AlertDropdownProps> = ({
                 variant="secondary"
                 icon={
                     <div className="relative">
-                        <IconBell size={18} className="text-gray-600" />
+                        <IconBell size={18} />
                         {alerts.some((a) => !a.resolved) && (
                             <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold px-1.5 py-[1px] rounded-full min-w-[18px] text-center leading-tight">
                                 {alerts.filter((a) => !a.resolved).length}

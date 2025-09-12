@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect, useRef } from 'react';
+import React, { useMemo, useEffect, useRef, useState } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
@@ -24,8 +24,15 @@ const DataGrid: React.FC<DataGridProps> = ({
 }) => {
 
   const gridApiRef = useRef<any>(null); // Store Grid API reference
-
   const {t, i18n} = useTranslation();
+
+  // 🔥 Get theme from localStorage (same as GeneralTab)
+  const [userTheme, setUserTheme] = useState(localStorage.getItem('theme') || 'system');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode = userTheme === 'dark' || (userTheme === 'system' && prefersDark);
+
+  const appliedTheme = isDarkMode ? 'ag-theme-alpine-dark' : theme;
+  
   const defaultColDef = useMemo(() => ({
     sortable: true,
     filter: true,
@@ -44,7 +51,7 @@ const DataGrid: React.FC<DataGridProps> = ({
       gridApiRef.current.refreshHeader(); // ✅ Refresh column headers
       gridApiRef.current.refreshCells({ force: true }); // ✅ Refresh table content
     }
-  }, [localeText]);
+  }, [localeText, appliedTheme]);
 
 
 const noRowsOverlay = `
@@ -63,7 +70,7 @@ const noRowsOverlay = `
 
 
   return (
-    <div className={`${theme} w-full`} style={{ height }}>
+    <div className={`${appliedTheme} w-full`} style={{ height }}>
       <AgGridReact
         onGridReady={(params) => {
           gridApiRef.current = params.api; // Store the Grid API reference

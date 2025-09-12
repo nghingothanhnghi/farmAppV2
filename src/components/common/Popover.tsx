@@ -45,7 +45,7 @@ export function Popover({
   return createPortal(
     <div
       ref={popoverRef}
-      className="absolute z-[9999] bg-white shadow-lg rounded-xl p-3 text-sm border border-gray-200"
+      className="absolute z-[9999] bg-white shadow-lg rounded-xl p-3 text-sm border border-gray-200 dark:bg-zinc-900 dark:border-white/10 dark:ring-white/10"
       style={{
         left: anchorX,
         top: anchorY,
@@ -57,7 +57,7 @@ export function Popover({
     >
       {showArrow && (
         <div
-          className="absolute w-3 h-3 bg-white border border-gray-200 rotate-45"
+          className="absolute w-3 h-3 bg-white border border-gray-200 dark:bg-zinc-900 dark:border-white/10 dark:ring-white/10 rotate-45"
           style={{
             left: "50%",
             transform: "translateX(-50%)",

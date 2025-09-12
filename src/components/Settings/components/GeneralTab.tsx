@@ -1,30 +1,15 @@
 // src/components/Settings/components/GeneralTab.tsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { FormGroup, FormLabel} from '../../common/Form';
 import DropdownButton from '../../common/DropdownButton';
+import { useTheme } from "../../../hooks/useTheme";
 
 
 const GeneralTab: React.FC = () => {
     const [language, setLanguage] = useState('en');
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
-
-    useEffect(() => {
-        applyTheme(theme);
-    }, [theme]);
-
-    const applyTheme = (value: string) => {
-        const root = document.documentElement;
-        if (value === 'dark') {
-            root.classList.add('dark');
-        } else if (value === 'light') {
-            root.classList.remove('dark');
-        } else {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            root.classList.toggle('dark', prefersDark);
-        }
-        localStorage.setItem('theme', value);
-    };
+    // const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
+    const { theme, setTheme } = useTheme();
 
     const languageItems = [
         { label: 'English', value: 'en' },
@@ -64,7 +49,7 @@ const GeneralTab: React.FC = () => {
                     <DropdownButton
                         label={themeItems.find((item) => item.value === theme)?.label || 'Select'}
                         items={themeItems}
-                        onSelect={(item) => setTheme(item.value)}
+                        onSelect={(item) => setTheme(item.value as "light" | "dark" | "system")}
                         size="sm"
                         className=" md:w-auto bg-transparent"
                     />

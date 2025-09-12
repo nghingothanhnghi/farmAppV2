@@ -49,10 +49,10 @@ const SchedulerPage: React.FC = () => {
             <PageTitle
                 title="Scheduler Health"
             />
-            <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+            <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
                 <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                        <h3 className="text-sm font-medium text-gray-700">
+                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">
                             Overall Scheduler Status
                         </h3>
                         <small>Total Jobs: {health?.job_count}</small>
@@ -83,16 +83,24 @@ const SchedulerPage: React.FC = () => {
                 </div>
                 {health?.jobs && health.jobs.length > 0 && (
                     <div className="mt-6">
-                        <h4 className="text-sm font-semibold text-gray-600 mb-2">Scheduled Jobs</h4>
+                        <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-100 mb-2">Scheduled Jobs</h4>
                         <ul className="space-y-2">
                             {health.jobs.map((job) => (
                                 <li
                                     key={job.id}
-                                    className="flex items-center justify-between border rounded px-4 py-2 bg-gray-50"
+                                    className="
+                                        flex items-center justify-between
+                                        rounded-xl px-4 py-3
+                                      bg-gray-50 dark:bg-gray-800/80
+                                        border border-gray-200 dark:border-gray-700
+                                        shadow-sm hover:shadow-md
+                                        hover:scale-[1.01] transition-all duration-200 ease-out
+                                        backdrop-blur-sm
+                                    "
                                 >
                                     <div>
-                                        <p className="text-sm font-medium text-gray-800">{job.name}</p>
-                                        <p className="text-xs text-gray-500">ID: {job.id}</p>
+                                        <p className="text-sm font-medium text-gray-800 dark:text-gray-200">{job.name}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">ID: {job.id}</p>
                                     </div>
                                     <Badge
                                         label={job.status === "running" ? "Running" : "Stopped"}

@@ -26,8 +26,8 @@ const SensorChart: React.FC<SensorChartProps> = ({
   // Check if data is empty or undefined
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-4">{title}</h3>
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-4">{title}</h3>
         <EmptyState
           animationData={noDataAnimation}
           message="No data available for this sensor yet"
@@ -51,14 +51,14 @@ const SensorChart: React.FC<SensorChartProps> = ({
 
   return (
 
-    <div className="bg-white rounded-lg shadow-md border border-gray-100 p-6">
+    <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg shadow-md border border-gray-100 p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-medium text-gray-700">{title}</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">{title}</h3>
         <div className="text-right">
           <div className="text-2xl font-bold" style={{ color }}>
             {currentValue?.toFixed(1)} {unit}
           </div>
-          <div className="text-sm text-gray-500">
+          <div className="text-sm text-gray-500 dark:text-gray-300">
             {trend === 'up' && '↗ Rising'}
             {trend === 'down' && '↘ Falling'}
             {trend === 'stable' && '→ Stable'}

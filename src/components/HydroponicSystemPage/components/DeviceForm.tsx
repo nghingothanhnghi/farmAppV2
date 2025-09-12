@@ -72,9 +72,9 @@ const DeviceForm: React.FC<Props> = ({
                         </FormGroup>
                     ))}
                 </div>
-                <div className='flex flex-col shadow-sm border border-gray-100 rounded-lg space-y-0.5'>
+                <div className='flex flex-col shadow-sm border border-gray-100 dark:border-gray-700 rounded-lg space-y-0.5'>
                     <div className='p-4'>
-                        <h3 className="text-sm font-medium text-gray-700 line-clamp-1">Linked Actuators</h3>
+                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Linked Actuators</h3>
                     </div>
 
                     {actuators.length > 0 ? (
@@ -97,20 +97,15 @@ const DeviceForm: React.FC<Props> = ({
                             ))}
                         </div>
                     ) : (
-                                <EmptyState
-          animationData={noDataAnimation}
-          message="No actuators linked to this device"
-        />
+                        <EmptyState
+                            animationData={noDataAnimation}
+                            message="No actuators linked to this device"
+                        />
                     )}
                 </div>
             </div>
-
-
             <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-
-
-
-            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pe-0 bg-white grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pe-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button
                     type="button"
                     label="Back"
