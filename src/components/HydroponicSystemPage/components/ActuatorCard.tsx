@@ -74,7 +74,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     <span className="text-lg">{getActuatorIcon(actuator.type)}</span>
                     <div className='flex-1'>
                         <div className="flex items-center space-x-2">
-                            <h3 className="text-[0.625rem] font-medium text-gray-700">{actuator.name}</h3>
+                            <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
                             <div className="flex items-center space-x-1">
                                 <div
                                     className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-400'}`}

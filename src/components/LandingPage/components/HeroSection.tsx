@@ -70,29 +70,46 @@ function Annotation({ data, onClick }: AnnotationProps) {
     );
 }
 
-
 function CameraController({ target }: { target?: [number, number, number] }) {
     const camRef = useRef<THREE.PerspectiveCamera>(null);
-    const controlsRef = useRef<any>(null); // simplest
+    const controlsRef = useRef<any>(null);
+    // Keep track of last camera state
+    const lastPos = useRef<[number, number, number]>([0, 3, 15]);
+    const lastLook = useRef<[number, number, number]>([0, 0, 0]);
 
-
-
-    const { camPos, camLook } = useSpring({
-        camPos: target ? [target[0], target[1] + 2, target[2] + 5] : [0, 3, 15],
-        camLook: target || [0, 0, 0],
+    // One persistent spring
+    const [{ camPos, camLook }, api] = useSpring(() => ({
+        camPos: lastPos.current,
+        camLook: lastLook.current,
         config: { tension: 80, friction: 20 },
-    });
+    }));
+
+    React.useEffect(() => {
+        const nextPos: [number, number, number] = target
+            ? [target[0], target[1] + 2, target[2] + 5]
+            : [0, 3, 15];
+
+        const nextLook: [number, number, number] = target || [0, 0, 0];
+
+        // ✅ Explicitly pass `from` as a plain object with correct tuple types
+        api.start({
+            from: { camPos: [...lastPos.current], camLook: [...lastLook.current] },
+            to: { camPos: nextPos, camLook: nextLook },
+            onChange: (result) => {
+                // Safely update refs as camera animates
+                const pos = result.value.camPos as [number, number, number];
+                const look = result.value.camLook as [number, number, number];
+                lastPos.current = pos;
+                lastLook.current = look;
+            },
+        });
+    }, [target, api]);
 
     useFrame(() => {
         if (!camRef.current || !controlsRef.current) return;
 
-        // Animate camera position
-        camPos.to((x: number, y: number, z: number) => {
-            camRef.current!.position.set(x, y, z);
-        });
-
-        // Animate controls target and lookAt
-        camLook.to((x: number, y: number, z: number) => {
+        camPos.to((x, y, z) => camRef.current!.position.set(x, y, z));
+        camLook.to((x, y, z) => {
             controlsRef.current!.target.set(x, y, z);
             controlsRef.current!.update();
             camRef.current!.lookAt(x, y, z);
@@ -102,7 +119,13 @@ function CameraController({ target }: { target?: [number, number, number] }) {
     return (
         <>
             <PerspectiveCamera ref={camRef} makeDefault fov={40} />
-            <OrbitControls ref={controlsRef} minDistance={5} maxDistance={25} />
+            <OrbitControls
+                ref={controlsRef}
+                minDistance={5}
+                maxDistance={25}
+                enableDamping
+                dampingFactor={0.08}
+            />
         </>
     );
 }
@@ -179,7 +202,6 @@ const HeroSection: React.FC = () => {
                     ))}
 
                     <CameraController target={active?.position} />
-                    {/* <OrbitControls minDistance={5} maxDistance={25} autoRotate autoRotateSpeed={0.2} /> */}
                 </Canvas>
 
 

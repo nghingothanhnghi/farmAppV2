@@ -35,7 +35,7 @@ const features: FeatureItem[] = [
 
 const AboutSection: React.FC = () => {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
+    <section className="mx-auto max-w-6xl px-6 py-16 h-screen flex items-center">
       <div className="grid gap-8 md:grid-cols-2">
         {/* Left text content */}
         <div>

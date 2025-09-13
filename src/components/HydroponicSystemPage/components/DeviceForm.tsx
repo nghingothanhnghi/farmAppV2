@@ -72,7 +72,7 @@ const DeviceForm: React.FC<Props> = ({
                         </FormGroup>
                     ))}
                 </div>
-                <div className='flex flex-col shadow-sm border border-gray-100 dark:border-gray-700 rounded-lg space-y-0.5'>
+                <div className='flex flex-col shadow-sm border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700 rounded-lg space-y-0.5'>
                     <div className='p-4'>
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Linked Actuators</h3>
                     </div>
