@@ -59,12 +59,12 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     }, [isOpen]);
 
     const dropdownContent = (
-        <div className="z-50 fixed w-64 max-h-72 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5"
+        <div className="z-50 fixed w-64 max-h-72 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 border"
             style={{ top: position.top, left: position.left }}
         >
             <ul>
                 {options.map((option, idx) => (
-                    <li key={idx} className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 hover:bg-gray-200">
+                    <li key={idx} className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-900 hover:bg-gray-200">
                         <input
                             type="checkbox"
                             checked={selectedValues.includes(option.value)}

@@ -48,8 +48,8 @@ const AlertDropdown: React.FC<AlertDropdownProps> = ({
             />
 
             {open && (
-                <div className="absolute left-0 z-50 mt-2 w-[360px] bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
-                    <div className="flex border-b border-gray-200">
+                <div className="absolute left-0 z-50 mt-2 w-[360px] bg-white border border-gray-200 dark:bg-gray-700 dark:border-white/5 rounded-xl shadow-lg overflow-hidden">
+                    <div className="flex border-b border-gray-200 dark:border-white/5">
                         <button className={getTabClass('alerts')} onClick={() => setTab('alerts')}>
                             Alerts
                         </button>
@@ -57,7 +57,6 @@ const AlertDropdown: React.FC<AlertDropdownProps> = ({
                             Activity Log
                         </button>
                     </div>
-
                     <div className="max-h-[400px] overflow-y-auto">
                         {tab === 'alerts' ? (
                             <AlertsPanel alerts={alerts} onResolveAlert={onResolveAlert} />

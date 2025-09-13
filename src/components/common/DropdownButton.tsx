@@ -240,7 +240,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
                         {items.map((item, index) => (
                             <li
                                 key={index}
-                                className={`flex items-center px-4 py-2 cursor-pointer text-sm ${index === focusedIndex ? '' : ''
+                                className={`flex items-center px-4 py-2 cursor-pointer text-sm dark:hover:bg-gray-900 ${index === focusedIndex ? '' : ''
                                     }`}
                                 onClick={() => handleSelect(item)}
                                 onMouseEnter={() => setFocusedIndex(index)}
