@@ -1,7 +1,4 @@
 import React from 'react';
-import {
-  IconDroplet, IconLeaf, IconBolt, 
-} from '@tabler/icons-react';
 import HeroSection from './components/HeroSection';
 import AboutSection from './components/AboutSection';
 import FeaturesSection from './components/FeaturesSection';
