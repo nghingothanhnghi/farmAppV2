@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useMemo, useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Html, OrbitControls, useGLTF, Sky, GradientTexture, PerspectiveCamera } from '@react-three/drei';
-import { useSpring, a } from '@react-spring/three';
+import { useSpring} from '@react-spring/three';
 import * as THREE from 'three';
 import { Link } from 'react-router';
 import { useWebGLSupport } from '../../../hooks/useWebGLSupport';
