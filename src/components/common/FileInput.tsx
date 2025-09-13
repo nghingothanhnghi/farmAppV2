@@ -98,7 +98,7 @@ const FileInput: React.FC<FileInputProps> = ({
       <div className="relative inline-block">
         <label
           htmlFor={id}
-          className={`w-full max-w-sm min-w-[200px] inline-flex items-center justify-center px-4 py-2 gap-2 rounded-lg font-medium focus:outline-none transition-colors bg-gray-100 text-gray-800 hover:bg-gray-300 cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''
+          className={`w-full max-w-sm min-w-[200px] inline-flex items-center justify-center px-4 py-2 gap-2 rounded-lg font-medium focus:outline-none transition-colors bg-gray-100 border border-slate-200 text-gray-800 hover:bg-gray-300 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700 dark:border-gray-700 cursor-pointer ${disabled ? 'opacity-50 cursor-not-allowed' : ''
             } ${className}`}
         >
           <span>{label}</span>

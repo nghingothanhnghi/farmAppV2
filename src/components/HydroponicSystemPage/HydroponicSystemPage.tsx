@@ -176,7 +176,7 @@ const HydroponicSystemPage: React.FC = () => {
             <div className='flex-1'>
               <CameraByLocation location={currentDevice?.location} />
             </div>
-            <div className='lg:w-[350px] space-y-0.5 flex flex-col max-h-full'>
+            <div className='lg:w-[350px] space-y-2 flex flex-col max-h-full'>
               {/* Location Panel */}
               <LocationPanel
                 title={currentDevice?.location || "Unknown Location"}

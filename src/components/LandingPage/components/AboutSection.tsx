@@ -35,22 +35,24 @@ const features: FeatureItem[] = [
 
 const AboutSection: React.FC = () => {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16 h-screen flex items-center">
-      <div className="grid gap-8 md:grid-cols-2">
+    <section className="mx-auto max-w-6xl px-6 py-20 lg:h-screen flex items-center">
+      <div className="grid gap-8 lg:gap-40 md:grid-cols-2">
         {/* Left text content */}
-        <div>
-          <h2 className="text-2xl font-semibold text-zinc-900 dark:text-white">
+        <div className="space-y-6">
+          <h2 className="text-2xl sm:text-4xl font-semibold text-zinc-900 dark:text-white">
             About Our Farm
           </h2>
-          <p className="mt-4 text-zinc-600 dark:text-zinc-300">
-            Hydroponics lets you grow plants in a controlled, soil-less
-            environment. Our platform helps you manage pH, EC, water flow,
-            lighting, and nutrients with automation and insights.
-          </p>
-          <p className="mt-3 text-zinc-600 dark:text-zinc-300">
-            Scale from a small balcony setup to a multi-channel commercial
-            system while keeping consistency, health, and yields high.
-          </p>
+          <div className="mt-4 space-y-4 text-zinc-600 dark:text-zinc-300">
+            <p>
+              Hydroponics lets you grow plants in a controlled, soil-less
+              environment. Our platform helps you manage pH, EC, water flow,
+              lighting, and nutrients with automation and insights.
+            </p>
+            <p>
+              Scale from a small balcony setup to a multi-channel commercial
+              system while keeping consistency, health, and yields high.
+            </p>
+          </div>
         </div>
 
         {/* Right card with features */}

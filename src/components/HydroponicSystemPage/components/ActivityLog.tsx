@@ -1,6 +1,8 @@
 // src/components/HydroponicSystemPage/components/ActivityLog.tsx
 import React from 'react';
 import type { ControlAction } from '../../../models/interfaces/HydroSystem';
+import { IconMoodEmpty } from '@tabler/icons-react';
+import EmptyState from '../../common/EmptyState';
 
 interface ActivityLogProps {
   actions: ControlAction[];
@@ -27,18 +29,17 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ actions, className }) => {
 
       <div className="space-y-3 max-h-80 overflow-y-auto">
         {actions.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <div className="text-4xl mb-2">📋</div>
-            <p>No recent activity</p>
-            <p className="text-sm">System actions will appear here</p>
-          </div>
+          <EmptyState
+            icon={<IconMoodEmpty size={48} />}
+            message="No recent activity"
+          />
         ) : (
           actions.map((action, index) => (
             <div
               key={`${action.timestamp}-${index}`}
               className={`p-3 rounded-lg border transition-all duration-200 ${action.success
-                  ? 'border-green-200 bg-green-50 dark:border-green-700 dark:bg-green-900/20'
-                  : 'border-red-200 bg-red-50 dark:border-red-700 dark:bg-red-900/20'
+                ? 'border-green-200 bg-green-50 dark:border-green-700 dark:bg-green-900/20'
+                : 'border-red-200 bg-red-50 dark:border-red-700 dark:bg-red-900/20'
                 }`}
             >
               <div className="flex items-start space-x-3">
@@ -51,8 +52,8 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ actions, className }) => {
                       {action.action}
                     </p>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${action.success
-                        ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
-                        : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+                      : 'bg-red-100 text-red-800 dark:bg-red-800 dark:text-red-100'
                       }`}>
                       {action.success ? 'Success' : 'Failed'}
                     </span>

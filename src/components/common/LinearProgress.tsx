@@ -20,7 +20,7 @@ const LinearProgress: React.FC<LinearProgressProps> = ({ position = 'relative', 
   }, [duration]);
 
   return (
-    <div className={`w-full bg-gray-200 ${position} start-0 top-0`}>
+    <div className={`w-full bg-gray-200 dark:bg-gray-900 ${position} start-0 top-0`}>
       <div
         className={`bg-blue-500 ${thickness}`}
         style={{ width: `${progress}%`, transition: `width ${duration / 100}ms linear` }}

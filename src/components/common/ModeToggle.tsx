@@ -48,7 +48,7 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
       }}
       className={`flex items-center justify-between rounded-xl border transition-all 
         ${sizeClass.container} 
-        ${isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white'}
+        ${isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white dark:border-zinc-600 dark:bg-zinc-700'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow cursor-pointer'}
       `}
     >
@@ -57,11 +57,11 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
         <div
           className={`relative rounded-full transition-colors duration-300 
           ${sizeClass.toggle} 
-          ${isActive ? 'bg-blue-500' : 'bg-gray-300'}
+          ${isActive ? 'bg-blue-500' : 'bg-gray-300 dark:bg-zinc-500'}
         `}
         >
           <div
-            className={`absolute rounded-full bg-white transition-transform duration-300 ease-in-out 
+            className={`absolute rounded-full bg-white dark:bg-zinc-100 transition-transform duration-300 ease-in-out 
             ${sizeClass.knob} ${sizeClass.knobOffset}
             ${isActive ? 'translate-x-full' : 'translate-x-0'}
           `}
@@ -75,7 +75,7 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
           disabled={disabled}
         />
       </div>
-      <span className="text-gray-900 min-w-[40px] max-w-[70px] truncate overflow-hidden whitespace-nowrap">{nextLabel}</span>
+      <span className="text-gray-900 dark:text-white min-w-[40px] max-w-[70px] truncate overflow-hidden whitespace-nowrap">{nextLabel}</span>
     </label>
   );
 };

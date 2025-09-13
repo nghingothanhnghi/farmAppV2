@@ -88,12 +88,14 @@ export default function HydroFarmMapPanel() {
                                 y: number;
                             };
                             return (
-                                <div className="bg-white dark:bg-gray-800/80 dark:border-gray-700 shadow rounded p-2 text-xs dark:text-gray-200">
+                                <div className="bg-white dark:bg-gray-950 dark:border-gray-700 shadow rounded p-2 text-xs dark:text-gray-200">
                                     <div className="font-semibold">{d.device_name}</div>
                                     <div className="text-gray-500 dark:text-gray-400">{d.location}</div>
-                                    <div>🌡 {d.sensors.temperature}°C</div>
-                                    <div>💧 {d.sensors.moisture}%</div>
-                                    <div>📊 {d.sensors.water_level}%</div>
+                                    <div>🌡️ Temp: {d.sensors.temperature}°C</div>
+                                    <div>💧 Huminity: {d.sensors.humidity}%</div>
+                                    <div>🌱 Moisture: {d.sensors.moisture}%</div>
+                                    <div>☀️ Light: {d.sensors.light} lx</div>
+                                    <div>🚰 Water: {d.sensors.water_level}%</div>                                         
                                 </div>
                             );
                         }}
@@ -137,26 +139,27 @@ export default function HydroFarmMapPanel() {
             >
                 {popover && (
                     <div>
-                        <h3 className="text-sm font-semibold">{popover.device.device_name}</h3>
-                        <p className="text-xs text-gray-500 mb-1">{popover.device.location}</p>
+                        <h3 className="text-sm font-semibold dark:text-gray-100">{popover.device.device_name}</h3>
+                        <p className="text-xs text-gray-500 dark:text-gray-300 mb-1">{popover.device.location}</p>
 
-                        <div className="space-y-1 text-xs">
-                            <div>🌡 Temp: {popover.device.sensors.temperature}°C</div>
-                            <div>💧 Moisture: {popover.device.sensors.moisture}%</div>
-                            <div>💡 Light: {popover.device.sensors.light} lx</div>
-                            <div>📊 Water: {popover.device.sensors.water_level}%</div>
+                        <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs dark:text-gray-300">
+                            <div>🌡️ Temp: {popover.device.sensors.temperature}°C</div>
+                            <div>💧 Huminity: {popover.device.sensors.humidity}%</div>
+                            <div>🌱 Moisture: {popover.device.sensors.moisture}%</div>
+                            <div>☀️ Light: {popover.device.sensors.light} lx</div>
+                            <div>🚰 Water: {popover.device.sensors.water_level}%</div>
                         </div>
-
-                        <div className="mt-2 border-t pt-1">
-                            <h4 className="text-xs font-semibold">Actuators</h4>
+                        <hr className="my-2 w-full border-t border-zinc-950/5 dark:border-white/5" />
+                        <div className="mt-2">
+                            <h4 className="mt-2 text-xs font-semibold dark:text-gray-200">Actuators</h4>
                             {popover.device.actuators.length > 0 ? (
-                                <ul className="space-y-1">
+                                <ul className="grid grid-cols-2 gap-x-4 gap-y-1 dark:text-gray-300">
                                     {popover.device.actuators.map((a) => (
                                         <li key={a.id} className="text-xs">
                                             {a.type} –{" "}
                                             <span
                                                 className={
-                                                    a.current_state ? "text-green-600 font-medium" : "text-gray-500"
+                                                    a.current_state ? "text-green-600 font-medium" : "text-gray-500 dark:text-gray-400"
                                                 }
                                             >
                                                 {a.current_state ? "ON" : "OFF"}
@@ -165,7 +168,7 @@ export default function HydroFarmMapPanel() {
                                     ))}
                                 </ul>
                             ) : (
-                                <p className="text-gray-500 italic text-xs">No actuators</p>
+                                <p className="text-gray-500 dark:text-gray-300 italic text-xs">No actuators</p>
                             )}
                         </div>
                     </div>

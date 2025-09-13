@@ -273,13 +273,13 @@ const ModelTrainingPage: React.FC = () => {
           type="info"
           title="About YOLOv8 Training"
           message={
-            <div className="training-info flex flex-col gap-4 text-gray-900 lg:pr-64">
+            <div className="training-info flex flex-col gap-4 text-gray-900 dark:text-gray-200 lg:pr-64">
               <p>
                 YOLOv8 (You Only Look Once) is a state-of-the-art object detection model.
                 Training a custom model allows you to detect specific objects in images.
               </p>
               <h3 className="font-medium text-purple-700">💡 Training Tips</h3>
-              <List items={trainingTips} showIcons listStyle="none" className="text-gray-800" />
+              <List items={trainingTips} showIcons listStyle="none" className="text-gray-800 dark:text-gray-300" />
             </div>
           }
           dismissible
@@ -473,7 +473,7 @@ const ModelTrainingPage: React.FC = () => {
             <div className='space-y-1'>
               <FormLabel htmlFor="trainLabels">Training Labels:</FormLabel>
               <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
-                <code className='bg-gray-100 font-mono px-1 py-0.5 rounded'>.txt</code> files corresponding to each image, with bounding boxes and class ids.
+                <code className='bg-gray-100 dark:bg-gray-800 font-mono px-1 py-0.5 rounded'>.txt</code> files corresponding to each image, with bounding boxes and class ids.
               </p>
             </div>
             <div>
@@ -485,8 +485,8 @@ const ModelTrainingPage: React.FC = () => {
                 accept=".txt"
                 required
               />
-              <small>Select multiple label files (<code className='bg-gray-100 font-mono px-1 py-0.5 rounded'>.txt</code> in YOLO format – one object per line). <code className="bg-gray-100 text-red-600 font-mono px-1 py-0.5 rounded">class_id x_center y_center width height</code>.</small>
-              <small>Example: <code className='bg-gray-100 font-mono px-1 py-0.5 rounded'>0 0.5 0.5 0.2 0.3</code></small>
+              <small>Select multiple label files (<code className='bg-gray-100 font-mono px-1 py-0.5 rounded'>.txt</code> in YOLO format – one object per line). <code className="bg-gray-100 dark:bg-gray-800  text-red-600 font-mono px-1 py-0.5 rounded">class_id x_center y_center width height</code>.</small>
+              <small>Example: <code className='bg-gray-100 dark:bg-gray-800 font-mono px-1 py-0.5 rounded'>0 0.5 0.5 0.2 0.3</code></small>
               <div className='mt-5'>
                 <h6 className='text-base/6 font-medium text-zinc-500 sm:text-sm/6 dark:text-zinc-400'>Tips:</h6>
                 <List
@@ -494,7 +494,7 @@ const ModelTrainingPage: React.FC = () => {
                     [
                       {
                         id: 1,
-                        content: <>Must match the training images <b>one-to-one</b> (same filename, <code className="bg-gray-100 font-mono px-1 py-0.5 rounded">.txt</code>).</>,
+                        content: <>Must match the training images <b>one-to-one</b> (same filename, <code className="bg-gray-100 dark:bg-gray-800 font-mono px-1 py-0.5 rounded">.txt</code>).</>,
                         icon: <IconCheck className="text-green-500" size={16} />,
                       },
                       {
@@ -562,7 +562,7 @@ const ModelTrainingPage: React.FC = () => {
             <div className='space-y-1'>
               <FormLabel htmlFor="valLabels">Validation Labels (Optional):</FormLabel>
               <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">
-                <code className='bg-gray-100 font-mono px-1 py-0.5 rounded'>.txt</code> files matching validation images in YOLO format.
+                <code className='bg-gray-100 dark:bg-gray-800 font-mono px-1 py-0.5 rounded'>.txt</code> files matching validation images in YOLO format.
               </p>
             </div>
             <div>

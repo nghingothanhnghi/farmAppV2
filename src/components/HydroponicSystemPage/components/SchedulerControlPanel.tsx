@@ -39,14 +39,19 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
   const running = !!schedulerState;
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-4">
+    <div className="bg-gray-100 border border-gray-100 dark:border-white/5 dark:bg-gray-900 rounded-lg p-4">
       <div className='flex items-center justify-between mb-1'>
         <div className="flex items-center space-x-2">
           <IconCalendarTime size={16} />
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">{title}</h3>
         </div>
         <div className="flex items-center space-x-2">
-          <div className={`w-2 h-2 rounded-full ${running ? 'bg-green-600 dark:bg-green-400' : 'bg-gray-400 dark:bg-green-400'}`}></div>
+          <div
+            className={`w-2 h-2 rounded-full ${running
+                ? 'bg-green-600 dark:bg-green-400'
+                : 'bg-gray-400 dark:bg-gray-500' // ✅ stays gray in dark mode too
+              }`}
+          ></div>
           <span className="text-[0.625rem] text-gray-600">
             <span className={` font-medium ${running ? 'text-green-600 dark:text-green-300' : 'text-gray-400 dark:text-gray-500'}`}>
               {running ? 'Running' : 'Stopped'}

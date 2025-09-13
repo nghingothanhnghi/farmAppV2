@@ -71,11 +71,17 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
   }));
 
   return (
-    <div className='flex-1 bg-gray-100 dark:bg-gray-900 rounded-lg overflow-y-auto space-y-0.5 transition-colors'>
+    <div className='flex-1 bg-gray-100 border border-gray-100 dark:border-white/5 dark:bg-gray-900 rounded-lg overflow-y-auto space-y-0.5 transition-colors'>
       {/* Summary Stats */}
       {systemStatus?.actuators && systemStatus.actuators.length > 0 && (
-        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg py-3 px-4 transition-colors">
-          <div className="flex items-center justify-between p-2 rounded-lg border border-zinc-950/5 dark:border-white/5">
+        <div className="bg-gray-100 dark:bg-gray-900 rounded-t-xl transition-colors">
+          <div
+            className="
+            flex items-center justify-between p-2 
+            rounded-t-xl border border-gray-200 dark:border-white/5
+            bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800
+            shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+          >
             <div className="flex space-x-4 items-center dark:text-gray-200">
               <Badge size="xsmall">
                 Total: {systemStatus.actuators.length}

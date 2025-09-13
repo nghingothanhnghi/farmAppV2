@@ -1,5 +1,6 @@
 import React from 'react';
 import type { LocationStatusResponse } from '../../../models/interfaces/HardwareDetection';
+import Spinner from '../../common/Spinner';
 
 interface LocationStatusOverviewProps {
   status?: LocationStatusResponse | null;
@@ -18,8 +19,9 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
 }) => {
   if (!status) {
     return (
-      <div className="bg-gray-50 p-4 rounded-lg">
-        <p className="text-gray-700">
+      <div className="bg-gray-50 dark:bg-gray-900 p-4 rounded-lg">
+        <Spinner size={32} />
+        <p className="text-gray-700 dark:text-gray-300 text-center mt-2">
           {loading
             ? "Loading location status..."
             : "No location status data available. Click \"Refresh Data\" to load."}
