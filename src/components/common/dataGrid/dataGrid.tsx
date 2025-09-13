@@ -27,7 +27,7 @@ const DataGrid: React.FC<DataGridProps> = ({
   const {t, i18n} = useTranslation();
 
   // 🔥 Get theme from localStorage (same as GeneralTab)
-  const [userTheme, setUserTheme] = useState(localStorage.getItem('theme') || 'system');
+  const userTheme = localStorage.getItem('theme') || 'system';
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const isDarkMode = userTheme === 'dark' || (userTheme === 'system' && prefersDark);
 
