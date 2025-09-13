@@ -19,7 +19,7 @@ const Announcement: React.FC<IAnnouncementProps> = ({
     case 'info':
       meshBackground = `
         bg-gradient-to-br from-blue-100 via-sky-200 to-blue-300
-        dark:from-blue-900 dark:via-blue-800 dark:to-blue-700
+        dark:from-blue-950 dark:via-violet-800 dark:to-pink-700
       `;
       break;
     case 'success':

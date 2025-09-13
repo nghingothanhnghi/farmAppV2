@@ -119,13 +119,13 @@ const DeviceListDemoPage: React.FC<DeviceListDemoPageProps> = ({ isDemoMode, tog
                   type="info"
                   title="Gesture Guide"
                   message={
-                    <div className="training-info flex flex-col gap-4 text-gray-900 lg:pr-64">
+                    <div className="training-info flex flex-col gap-4 text-gray-900 dark:text-gray-200 lg:pr-64">
                       <p>
                         This is a demo of the Android device streaming feature using simulated devices.
                         You can view the screen of each device in real-time and interact with them.
                       </p>
                       <h3 className="font-medium text-purple-700">💡 Guides</h3>
-                      <List items={trainingTips} showIcons listStyle="none" className="text-gray-800" />
+                      <List items={trainingTips} showIcons listStyle="none" className="text-gray-800 dark:text-gray-300" />
                     </div>
                   }
                   dismissible

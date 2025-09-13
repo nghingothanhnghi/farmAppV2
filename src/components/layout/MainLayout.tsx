@@ -26,7 +26,7 @@ const MainLayout: React.FC = () => {
             menuOpen ? "lg:pl-64" : "lg:pl-18"
           }`}
         >
-          <div className="grow p-6 lg:rounded-3xl lg:bg-white lg:p-10 lg:shadow-xs lg:dark:bg-gray-900 lg:dark:text-gray-100">
+          <div className="grow p-6 lg:rounded-3xl lg:bg-white border border-gray-200 lg:p-10 lg:shadow-xs lg:dark:bg-gray-900 lg:dark:text-gray-100 dark:border dark:border-white/5">
             {/* Router children go here */}
             <Outlet />
           </div>

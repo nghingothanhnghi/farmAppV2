@@ -46,8 +46,7 @@ const DeviceScreen: React.FC<DeviceScreenProps> = ({ deviceSerial, onClose }) =>
       <div className="p-4 border-b border-gray-200 dark:border-white/5">
         <div className="flex justify-between items-center">
           <div>
-            <h2 className="text-lg font-semibold">Device Screen</h2>
-            <div className="text-xs text-gray-500 flex items-center mt-1">
+            <div className="text-xs text-gray-500 flex items-center">
               <span className="inline-block w-2 h-2 bg-green-500 rounded-full mr-1"></span>
               Interactive: Tap or swipe on screen
             </div>
@@ -65,15 +64,14 @@ const DeviceScreen: React.FC<DeviceScreenProps> = ({ deviceSerial, onClose }) =>
         </div>
       </div>
 
-      <div className="p-4">
+      <div className="p-0">
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
             {error}
           </div>
         )}
-
-        <div className="flex justify-center mb-4">
-          <div className="relative border border-gray-300 rounded-lg overflow-hidden bg-gray-100" style={{ minHeight: '630px', minWidth: '200px' }}>
+        <div className="flex justify-center">
+          <div className="relative border border-gray-300 overflow-hidden bg-gray-100" style={{ minHeight: '300px', minWidth: '200px' }}>
             {loading ? (
               <LinearProgress
                 position="absolute" // or 'fixed' if you want it on top of screen
@@ -103,14 +101,14 @@ const DeviceScreen: React.FC<DeviceScreenProps> = ({ deviceSerial, onClose }) =>
             )}
           </div>
         </div>
-
-        <div className="flex justify-center space-x-2">
+        <div className="flex justify-center space-x-2 p-4">
           <Button
             label={isStreaming ? "Stop Stream" : "Start Stream"}
             onClick={handleToggleStream}
             variant={isStreaming ? "danger" : "primary"}
             disabled={loading}
-            rounded='lg'
+            rounded='sm'
+            size='sm'
           />
           {!isStreaming && (
             <Button
@@ -118,7 +116,8 @@ const DeviceScreen: React.FC<DeviceScreenProps> = ({ deviceSerial, onClose }) =>
               onClick={handleRefresh}
               variant="secondary"
               disabled={loading}
-              rounded='lg'
+              rounded='sm'
+              size='sm'
             />
           )}
         </div>

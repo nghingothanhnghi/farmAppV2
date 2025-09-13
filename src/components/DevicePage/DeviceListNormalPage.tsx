@@ -107,7 +107,7 @@ const DeviceListNormalPage: React.FC<DeviceListNormalPageProps> = ({ isDemoMode,
                 <DeviceConnectedList devices={devices} layout='vertical' />
                 {/* Tap Controls */}
                 <div className="bg-white border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800
-            shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] rounded-lg p-6">
+            shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] rounded-lg p-4">
                   <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Send Tap Command</h3>
                   <div className="mt-5 grid grid-cols-2 gap-4 mb-4">
                     <div>
