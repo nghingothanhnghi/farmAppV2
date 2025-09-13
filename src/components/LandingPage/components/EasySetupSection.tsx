@@ -1,4 +1,3 @@
-import React from "react";
 import SetupCard from "./SetupCard";
 
 const STEPS_HOME = [
