@@ -11,6 +11,11 @@ import Announcement from '../Announcement/Announcement';
 import List from '../common/List';
 import DeviceConnectedList from './components/DeviceConnectedList';
 
+interface DeviceListDemoPageProps {
+  isDemoMode: boolean;
+  toggleMode: () => void;
+}
+
 const trainingTips = [
   {
     id: 1,
@@ -24,7 +29,7 @@ const trainingTips = [
   },
 ];
 
-const DeviceListDemoPage: React.FC = () => {
+const DeviceListDemoPage: React.FC<DeviceListDemoPageProps> = ({ isDemoMode, toggleMode }) => {
   const [showAnnouncement, setShowAnnouncement] = useState(true);
   const { setAlert } = useAlert();
   const { devices, loading, error, fetchDevices } = useDevices();
@@ -57,6 +62,13 @@ const DeviceListDemoPage: React.FC = () => {
         title="Android Device Streaming Demo"
         actions={
           <>
+            <Button
+              label={isDemoMode ? "Switch to Normal Mode" : "Switch to Demo Mode"}
+              onClick={toggleMode}
+              variant="secondary"
+              rounded="lg"
+              className='mr-4'
+            />
             <div className='text-sm text-gray-500 mr-4'>
               Connected Devices <b className='text-green-500'>({devices.length})</b>
             </div>

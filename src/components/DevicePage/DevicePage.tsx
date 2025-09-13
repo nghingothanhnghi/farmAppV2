@@ -14,15 +14,11 @@ function DevicePage() {
 
     return (
         <React.Fragment>
-            <div className="mb-4 flex justify-end">
-                <Button
-                    label={isDemoMode ? "Switch to Normal Mode" : "Switch to Demo Mode"}
-                    onClick={toggleMode}
-                    variant="secondary"
-                    rounded='lg'
-                />
-            </div>
-            {isDemoMode ? <DeviceListDemoPage /> : <DeviceListNormalPage />}
+            {isDemoMode ? (
+                <DeviceListDemoPage isDemoMode={isDemoMode} toggleMode={toggleMode} />
+            ) : (
+                <DeviceListNormalPage isDemoMode={isDemoMode} toggleMode={toggleMode} />
+            )}
         </React.Fragment>
     );
 }
