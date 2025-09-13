@@ -52,7 +52,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 gap-3 h-full'>
         {/* Video and Canvas Container */}
         <div
-          className="relative h-full flex flex-col row-span-2 col-span-2 rounded-lg overflow-hidden bg-gray-900"
+          className="relative h-full flex flex-col row-span-2 col-span-2 rounded-lg overflow-hidden bg-gray-900 dark:bg-black/20"
           {...bind}
         >
           {loading && (
