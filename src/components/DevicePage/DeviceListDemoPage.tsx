@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDevices } from '../../hooks/useDevices';
 import { useAlert } from '../../contexts/alertContext';
 import { IconClick, IconSwipeRight } from '@tabler/icons-react';
@@ -25,14 +25,15 @@ const trainingTips = [
 ];
 
 const DeviceListDemoPage: React.FC = () => {
+  const [showAnnouncement, setShowAnnouncement] = useState(true);
   const { setAlert } = useAlert();
   const { devices, loading, error, fetchDevices } = useDevices();
 
   // Fetch devices on mount
   useEffect(() => {
-  const interval = setInterval(fetchDevices, 30000);
-  return () => clearInterval(interval);
-}, [fetchDevices]);
+    const interval = setInterval(fetchDevices, 30000);
+    return () => clearInterval(interval);
+  }, [fetchDevices]);
 
   useEffect(() => {
     if (error) {
@@ -78,7 +79,7 @@ const DeviceListDemoPage: React.FC = () => {
         }
       />
       {loading ? (
-          <LinearProgress position="absolute" thickness="h-1" duration={3000} />
+        <LinearProgress position="absolute" thickness="h-1" duration={3000} />
       ) : (
         <>
           {devices.length === 0 ? (
@@ -101,31 +102,37 @@ const DeviceListDemoPage: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-8">
-              <Announcement
-                type="info"
-                title="Gesture Guide"
-                message={
-                  <div className="training-info flex flex-col gap-4 text-gray-900 lg:pr-64">
-                    <p>
-                      This is a demo of the Android device streaming feature using simulated devices.
-                      You can view the screen of each device in real-time and interact with them.
-                    </p>
-                    <h3 className="font-medium text-purple-700">💡 Guides</h3>
-                    <List items={trainingTips} showIcons listStyle="none" className="text-gray-800" />
-                  </div>
-                }
-                dismissible
-                onDismiss={() => console.log('closed')}
-                className='mb-8'
-              />
-
-              {devices.length > 0 && (
-                <>
-                  <DeviceConnectedList devices={devices} layout='vertical' />
-                  <DeviceScreenGrid devices={devices} loading={loading} />
-                </>
+              {showAnnouncement && (
+                <Announcement
+                  type="info"
+                  title="Gesture Guide"
+                  message={
+                    <div className="training-info flex flex-col gap-4 text-gray-900 lg:pr-64">
+                      <p>
+                        This is a demo of the Android device streaming feature using simulated devices.
+                        You can view the screen of each device in real-time and interact with them.
+                      </p>
+                      <h3 className="font-medium text-purple-700">💡 Guides</h3>
+                      <List items={trainingTips} showIcons listStyle="none" className="text-gray-800" />
+                    </div>
+                  }
+                  dismissible
+                  onDismiss={() => setShowAnnouncement(false)}
+                  className='mb-8'
+                />
               )}
 
+
+              {devices.length > 0 && (
+                <div className='flex flex-col lg:flex-row gap-6'>
+                  <div className='flex-1'>
+                    <DeviceScreenGrid devices={devices} loading={loading} />
+                  </div>
+                  <div className='lg:w-[350px] space-y-2 flex flex-col max-h-full'>
+                    <DeviceConnectedList devices={devices} layout='vertical' />
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </>

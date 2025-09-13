@@ -14,7 +14,7 @@ export default [
 
   // Main app layout
   layout("components/layout/MainLayout.tsx", [
-    index("components/pages/DeviceControllerPage.tsx"),
+    index("devices-controller/pages/DeviceControllerPage.tsx"),
     route("ar-detection", "components/ARDetectionPage/ARDetectionPage.tsx"),
     route("model-training", "components/ModelTraining/ModelTrainingPage.tsx"),
     route("hydroponic-system", "components/HydroponicSystemPage/HydroponicSystemPage.tsx"),

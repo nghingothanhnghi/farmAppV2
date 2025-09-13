@@ -32,7 +32,7 @@ function App() {
       {/* Dashboard / Admin routes (MainLayout) */}
       <Route element={<MainLayout />}>
         <Route
-          path="/"
+          path="/devices-controller"
           element={
             <PrivateRoute>
               <DevicePage />

@@ -53,7 +53,6 @@ const DeviceScreenGrid: React.FC<DeviceScreenGridProps> = ({ devices, loading = 
 
   return (
     <div className='min-h-[900px]'>
-      <h2 className="text-xl font-semibold mb-4">Device Screens</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {devices.map((deviceSerial) => (
           <div

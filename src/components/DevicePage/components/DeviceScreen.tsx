@@ -42,8 +42,8 @@ const DeviceScreen: React.FC<DeviceScreenProps> = ({ deviceSerial, onClose }) =>
   };
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
-      <div className="p-4 border-b border-gray-200">
+    <div className="bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-700 shadow rounded-lg overflow-hidden">
+      <div className="p-4 border-b border-gray-200 dark:border-white/5">
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-lg font-semibold">Device Screen</h2>

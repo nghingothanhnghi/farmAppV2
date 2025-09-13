@@ -101,7 +101,7 @@ const DeviceListNormalPage: React.FC = () => {
           )}
 
           {/* Tap Controls */}
-          <div className="mt-8 bg-white shadow rounded-lg p-6">
+          <div className="mt-8 bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-700 shadow rounded-lg p-6">
             <h2 className="text-lg font-semibold mb-4">Send Tap Command</h2>
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>

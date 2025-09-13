@@ -38,7 +38,7 @@ export default function SideMenu({ open = false, onClose }: SideMenuProps) {
                     <Header appName={APP_NAME} onClose={onClose} />
                     <div className="flex flex-1 flex-col overflow-y-auto p-4 space-y-0.5">
                         <ListLink to="/scheduler-health" onClick={handleLinkClick} icon={<IconCalendarCheck size={16} />} label="Scheduler Health" />
-                        <ListLink to="/" onClick={handleLinkClick} icon={<IconDeviceMobileCheck size={16} />} label="Device Controller" />
+                        <ListLink to="/devices-controller" onClick={handleLinkClick} icon={<IconDeviceMobileCheck size={16} />} label="Devices Controller" />
                         <ListLink to="/ar-detection" onClick={handleLinkClick} icon={<IconCamera size={16} />} label="AR Object Detection" />
                         <ListLink to="/model-training" onClick={handleLinkClick} icon={<IconBrain size={16} />} label="Train YOLOv8 Model" />
                         <ListLink to="/hydroponic-system" onClick={handleLinkClick} icon={<IconPlant size={16} />} label="Hydroponic System" />

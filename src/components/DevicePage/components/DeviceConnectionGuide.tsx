@@ -52,7 +52,7 @@ const DeviceConnectionGuide: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white shadow rounded-lg p-6">
+    <div className="bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-700 shadow rounded-lg p-6">
       <h2 className="text-xl font-semibold mb-4">Device Connection Guide</h2>
 
       {error && (

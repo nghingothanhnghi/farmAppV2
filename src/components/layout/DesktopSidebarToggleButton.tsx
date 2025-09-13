@@ -41,7 +41,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
             />
             <div className="flex flex-1 flex-col overflow-y-auto space-y-0.5 pt-8 ">
                 <ListLink to="/scheduler-health" icon={<IconCalendarCheck size={16} />} label="Health Schedule" iconOnlyMode={true} />
-                <ListLink to="/" icon={<IconDeviceMobileCheck size={16} />} label="Device Controller" iconOnlyMode={true} />
+                <ListLink to="/devices-controller" icon={<IconDeviceMobileCheck size={16} />} label="Devices Controller" iconOnlyMode={true} />
                 <ListLink to="/ar-detection" icon={<IconCamera size={16} />} label="AR Detection" iconOnlyMode={true} />
                 <ListLink to="/model-training" icon={<IconBrain size={16} />} label="Model Training" iconOnlyMode={true} />
                 <ListLink to="/hydroponic-system" icon={<IconPlant size={16} />} label="Hydroponics" iconOnlyMode={true} />
