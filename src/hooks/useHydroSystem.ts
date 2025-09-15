@@ -63,17 +63,6 @@ export const useHydroSystem = () => {
     [deviceStatusList]
   );
 
-  const fetchSystemStatusPerDevice = useCallback(async () => {
-    try {
-      const data = await systemService.getSystemStatus();
-      setDeviceStatusList(data);
-      checkForAlerts(data);
-    } catch (err) {
-      setError('Failed to fetch system status');
-      console.error(err);
-    }
-  }, []);
-
   const fetchSensorData = useCallback(async () => {
     try {
       const data = await systemService.getLatestSensorData();
@@ -236,6 +225,33 @@ export const useHydroSystem = () => {
 
     setAlerts(prev => [...prev.filter(a => !a.resolved), ...newAlerts]);
   }, []);
+
+ const fetchSystemStatusPerDevice = useCallback(async () => {
+  try {
+    const data = await systemService.getSystemStatus();
+    setDeviceStatusList(data);
+    setError(null); // clear any previous error
+    checkForAlerts(data);
+  } catch (err: any) {
+    // Detect Axios timeout / abort
+    if (err.code === "ECONNABORTED" || err.message?.includes("aborted")) {
+      console.warn("System status request timed out — skipping error display");
+      return; // ✅ do not set error, just skip this cycle
+    }
+
+    const detail = err?.response?.data?.detail;
+
+    if (detail === "No devices found for this user") {
+      setDeviceStatusList([]);
+      setError(null); // show empty state, not error
+    } else {
+      setError(detail || "Failed to fetch system status");
+    }
+
+    console.error("fetchSystemStatusPerDevice error:", err);
+  }
+}, [checkForAlerts]);
+
 
   const createControlHandler = (
     label: string,

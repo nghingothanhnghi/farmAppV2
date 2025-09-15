@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
+import { useSearchParams } from "react-router";
+import { motion } from "framer-motion";
 
 interface Tab {
   id: string;
@@ -14,25 +16,74 @@ interface TabsProps {
 }
 
 const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [indicatorProps, setIndicatorProps] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Read ?tab= from URL on mount and sync with parent
+  useEffect(() => {
+    const tabFromUrl = searchParams.get("tab");
+    if (tabFromUrl && tabFromUrl !== activeTab) {
+      onTabChange(tabFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Update URL when activeTab changes
+  useEffect(() => {
+    setSearchParams((prev) => {
+      const newParams = new URLSearchParams(prev);
+      newParams.set("tab", activeTab);
+      return newParams;
+    });
+  }, [activeTab, setSearchParams]);
+
+  // Recalculate indicator position when activeTab changes
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const activeButton = containerRef.current.querySelector<HTMLButtonElement>(
+      `button[data-id="${activeTab}"]`
+    );
+
+    if (activeButton) {
+      const { offsetLeft, offsetWidth } = activeButton;
+      setIndicatorProps({ left: offsetLeft, width: offsetWidth });
+    }
+  }, [activeTab, tabs]);
   return (
     <div>
       {/* Tab navigation */}
       <div className="border-b border-gray-200 dark:border-white/5">
-        <nav className="-mb-px flex space-x-8">
+        <nav ref={containerRef} className="relative -mb-px flex space-x-8">
           {tabs.map((tab) => (
             <button
               key={tab.id}
+              data-id={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`py-2 px-1 border-b-2 font-medium text-sm ${
-                activeTab === tab.id
-                  ? "border-blue-500 text-blue-600 dark:text-gray-100"
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
+              className={`relative py-2 px-1 font-medium text-sm cursor-pointer focus:outline-none ${activeTab === tab.id
+                  ? "text-orange-600 dark:text-gray-100"
+                  : "text-gray-500 hover:text-gray-700"
+                }`}
             >
               {tab.icon && <span className="mr-2">{tab.icon}</span>}
               {tab.label}
             </button>
           ))}
+          {/* Animated border indicator */}
+          <motion.div
+            className="absolute bottom-0 h-0.5 bg-orange-600 rounded-full"
+            layout
+            animate={{
+              left: indicatorProps.left,
+              width: indicatorProps.width,
+            }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 30,
+            }}
+          />
         </nav>
       </div>
 

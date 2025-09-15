@@ -39,6 +39,7 @@ const HydroponicSystemPage: React.FC = () => {
   const navigate = useNavigate();
   // const [activeTab, setActiveTab] = useState<'overview' | 'charts' | 'settings' | 'hardware'>('overview');
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState("overview");
 
   // Automatically select first device on load
   useEffect(() => {
@@ -55,6 +56,86 @@ const HydroponicSystemPage: React.FC = () => {
       deviceStatusList[0]
     );
   }, [deviceStatusList, activeDeviceId]);
+
+  // Show loading state if still fetching and no devices yet
+if (loading && deviceStatusList.length === 0) {
+  return (
+    <div className="hydroponic-system-page min-h-screen">
+      <PageTitle title="Hydroponic System Dashboard" />
+      <LinearProgress
+        position="absolute"
+        thickness="h-1"
+        duration={3000}
+      />
+    </div>
+  );
+}
+
+// ✅ Handle "No devices found" gracefully (instead of error)
+if (error && error.includes("No devices found for this user")) {
+  return (
+    <div className="hydroponic-system-page min-h-screen">
+      <PageTitle title="Hydroponic System Dashboard" />
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+        <div className="text-gray-400 text-4xl mb-4">📦</div>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
+        <p className="text-gray-600 mb-4">
+          You don’t have any devices connected yet.
+          Please add a hydroponic device to get started.
+        </p>
+        <Button
+          label="➕ Add Device"
+          onClick={() => navigate('/hydro-devices')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+          rounded="lg"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Generic connection/server error
+if (error) {
+  return (
+    <div className="hydroponic-system-page min-h-screen">
+      <PageTitle title="Hydroponic System Dashboard" />
+      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+        <div className="text-red-500 text-4xl mb-4">⚠️</div>
+        <h3 className="text-lg font-semibold text-red-800 mb-2">Connection Error</h3>
+        <p className="text-red-600 mb-4">{error}</p>
+        <Button
+          label="Retry Connection"
+          onClick={actions.refreshData}
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2"
+          rounded="lg"
+        />
+      </div>
+    </div>
+  );
+}
+
+// Fallback if no devices but no error (rare case)
+if (!loading && deviceStatusList.length === 0) {
+  return (
+    <div className="hydroponic-system-page min-h-screen">
+      <PageTitle title="Hydroponic System Dashboard" />
+      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+        <div className="text-gray-400 text-4xl mb-4">📦</div>
+        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
+        <p className="text-gray-600 mb-4">
+          You don’t have any devices connected yet.
+          Please add a hydroponic device to get started.
+        </p>
+        <Button
+          label="➕ Add Device"
+          onClick={() => navigate('/hydro-devices')}
+          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+          rounded="lg"
+        />
+      </div>
+    </div>
+  );
+}
 
   const getSensorCount = (sensors: Record<string, any> | undefined): number => {
     if (!sensors) return 0;
@@ -103,67 +184,6 @@ const HydroponicSystemPage: React.FC = () => {
     if (waterLevel < deviceThresholds.water_level_min) return 'warning';
     return 'normal';
   };
-
-
-  if (loading && !deviceStatusList) {
-    return (
-      <div className="hydroponic-system-page min-h-screen">
-        <PageTitle title="Hydroponic System Dashboard" />
-        <LinearProgress
-          position='absolute'
-          thickness="h-1"
-          duration={3000}
-        />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="hydroponic-system-page min-h-screen">
-        <PageTitle
-          title="Hydroponic System Dashboard"
-        />
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <div className="text-red-500 text-4xl mb-4">⚠️</div>
-          <h3 className="text-lg font-semibold text-red-800 mb-2">Connection Error</h3>
-          <p className="text-red-600 mb-4">{error}</p>
-          <Button
-            label='Retry Connection'
-            onClick={actions.refreshData}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2"
-            rounded='lg'
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // If no devices exist
-  if (!loading && deviceStatusList.length === 0) {
-    return (
-      <div className="hydroponic-system-page min-h-screen">
-        <PageTitle title="Hydroponic System Dashboard" />
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-          <div className="text-gray-400 text-4xl mb-4">📦</div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
-          <p className="text-gray-600 mb-4">
-            You don’t have any devices connected yet.
-            Please add a hydroponic device to get started.
-          </p>
-          <Button
-            label="➕ Add Device"
-            onClick={() => navigate('/hydro-devices')}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
-            rounded="lg"
-          />
-        </div>
-      </div>
-    );
-  }
-
-
-  const [activeTab, setActiveTab] = useState("overview");
 
   const tabs = [
     {

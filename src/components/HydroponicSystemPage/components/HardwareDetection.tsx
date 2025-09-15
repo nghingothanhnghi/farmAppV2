@@ -112,7 +112,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
     <div className="space-y-10 mx-auto max-w-4xl">
       <div className='flex justify-between mt-10 mb-6'>
         <div className='space-y-0.5'>
-          <h3 className="text-base font-medium text-gray-700">{location}</h3>
+          <h3 className="text-base font-medium text-gray-700 dark:text-gray-200">{location}</h3>
           {/* Connection Status */}
           <Badge
             variant={isWebSocketConnected ? 'success' : 'danger'}
@@ -175,7 +175,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
 
       {/* Location Status Overview */}
       <div className="mb-6">
-        <h3 className="text-base font-medium text-gray-700 mb-4">Location Status Overview</h3>
+        <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Location Status Overview</h3>
         <LocationStatusOverview status={currentLocationStatus} loading={loading} columns={4} />
       </div>
 
@@ -183,7 +183,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
       {/* Hardware Detections List */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-base font-medium text-gray-700 mb-4">Recent Detections</h3>
+          <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Recent Detections</h3>
           <span className="text-sm text-gray-500">
             {locationDetections.length} detection{locationDetections.length !== 1 ? 's' : ''} found
           </span>
@@ -283,7 +283,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
             ))}
           </div>
         ) : (
-          <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+          <div className="bg-gray-50 border-2 border-dashed border-gray-300 dark:bg-gray-900 dark:border-gray-700 rounded-lg p-8 text-center">
             <div className="text-gray-400 mb-4">
               <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
@@ -320,8 +320,8 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
       )}
 
       {/* Detection Results Summary */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-xl font-semibold mb-4">Detection Results</h2>
+      <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg shadow mb-6">
+        <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Detection Results</h3>
 
         {detectionSummaries.length > 0 ? (
           <div className="space-y-4">
@@ -381,16 +381,15 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
             ))}
           </div>
         ) : (
-          <div className="bg-gray-50 p-4 rounded-lg">
+          <div className="bg-gray-50 border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-4 rounded-lg">
             <p className="text-gray-600">No detection summaries available.</p>
           </div>
         )}
       </div>
 
       {/* Hardware Detection Tools */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Hardware Detection Tools</h2>
-
+      <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg shadow">
+        <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Hardware Detection Tools</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Available Locations */}
           <div>
@@ -413,7 +412,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
 
           {/* Hardware Types */}
           <div>
-            <h3 className="font-medium mb-2">Supported Hardware Types</h3>
+            <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Supported Hardware Types</h3>
             {hardwareTypes.length > 0 ? (
               <div className="max-h-32 overflow-y-auto">
                 <ul className="text-sm space-y-1">
@@ -432,7 +431,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
 
           {/* Condition Statuses */}
           <div>
-            <h3 className="font-medium mb-2">Condition Statuses</h3>
+            <h3 className="text-base font-medium text-gray-700 dark:text-gray-200 mb-4">Condition Statuses</h3>
             {conditionStatuses.length > 0 ? (
               <div className="max-h-32 overflow-y-auto">
                 <ul className="text-sm space-y-1">
