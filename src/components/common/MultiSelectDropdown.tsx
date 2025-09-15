@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import Button from './Button';
+import { FormCheckbox } from './Form';
 
 interface Option {
     label: string;
@@ -25,6 +26,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [selectedValues, setSelectedValues] = useState<string[]>(() =>
         options.filter((o) => o.checked).map((o) => o.value)
@@ -43,11 +45,13 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         onChange?.(newSelected);
     };
 
+
     useEffect(() => {
         // If parent sends new options, update selected
         setSelectedValues(options.filter((o) => o.checked).map((o) => o.value));
     }, [options]);
 
+    // Calculate dropdown position
     useEffect(() => {
         if (isOpen && buttonRef.current) {
             const rect = buttonRef.current.getBoundingClientRect();
@@ -58,19 +62,51 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         }
     }, [isOpen]);
 
+    // ✅ Close dropdown on outside click
+    useEffect(() => {
+        if (!isOpen) return;
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(e.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(e.target as Node)
+            ) {
+                setIsOpen(false);
+            }
+        };
+
+        const handleEscape = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') setIsOpen(false);
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleEscape);
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleEscape);
+        };
+    }, [isOpen]);
+
+
     const dropdownContent = (
-        <div className="z-50 fixed w-64 max-h-72 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 border"
+        <div
+            className="z-50 fixed w-64 max-h-72 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 border"
             style={{ top: position.top, left: position.left }}
+            ref={dropdownRef}
         >
             <ul>
                 {options.map((option, idx) => (
-                    <li key={idx} className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-900 hover:bg-gray-200">
-                        <input
-                            type="checkbox"
+                    <li
+                        key={idx}
+                        className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-900 hover:bg-gray-200"
+                        onClick={() => !option.disabled && handleToggleOption(option.value)}
+                    >
+                        <FormCheckbox
+                            id={`option-${idx}`}
                             checked={selectedValues.includes(option.value)}
-                            disabled={option.disabled}
                             onChange={() => handleToggleOption(option.value)}
-                            className="accent-blue-500 cursor-pointer"
+                            disabled={option.disabled}
                         />
                         <span
                             className={`text-sm ${option.disabled ? 'text-gray-400 line-through' : ''}`}

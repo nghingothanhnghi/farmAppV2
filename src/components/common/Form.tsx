@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
-
+import { motion } from "framer-motion";
 interface FormProps {
   onSubmit: (e: React.FormEvent) => void;
   children: ReactNode;
@@ -276,6 +276,133 @@ export const FormToggle: React.FC<FormToggleProps> = ({
     </label>
   );
 };
+
+interface FormCheckboxProps {
+  id: string;
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label?: string;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const FormCheckbox: React.FC<FormCheckboxProps> = ({
+  id,
+  checked,
+  onChange,
+  label,
+  disabled = false,
+  className = "",
+}) => {
+  return (
+    <label
+      htmlFor={id}
+      className={`flex items-center gap-2 cursor-pointer select-none ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+    >
+      <div className="relative">
+        <input
+          type="checkbox"
+          id={id}
+          checked={checked}
+          onChange={onChange}
+          disabled={disabled}
+          className="sr-only"
+        />
+        <motion.div
+          initial={false}
+          animate={{
+            backgroundColor: checked ? "#3b82f6" : "transparent",
+            borderColor: checked ? "#3b82f6" : "#d1d5db",
+          }}
+          transition={{ duration: 0.2 }}
+          className="w-5 h-5 border rounded-md flex items-center justify-center"
+        >
+          {checked && (
+            <motion.svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="white"
+              strokeWidth="3"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              initial={{ pathLength: 0 }}
+              animate={{ pathLength: 1 }}
+              transition={{ duration: 0.2 }}
+              className="w-3 h-3"
+            >
+              <path d="M5 13l4 4L19 7" />
+            </motion.svg>
+          )}
+        </motion.div>
+      </div>
+      {label && (
+        <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
+      )}
+    </label>
+  );
+};
+
+interface FormRadioProps {
+  name: string;
+  id: string;
+  checked: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  label?: string;
+  disabled?: boolean;
+  className?: string;
+}
+
+export const FormRadio: React.FC<FormRadioProps> = ({
+  name,
+  id,
+  checked,
+  onChange,
+  label,
+  disabled = false,
+  className = "",
+}) => {
+  return (
+    <label
+      htmlFor={id}
+      className={`flex items-center gap-2 cursor-pointer select-none ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+    >
+      <div className="relative">
+        <input
+          type="radio"
+          id={id}
+          name={name}
+          checked={checked}
+          onChange={onChange}
+          disabled={disabled}
+          className="sr-only"
+        />
+        <motion.div
+          initial={false}
+          animate={{
+            borderColor: checked ? "#3b82f6" : "#d1d5db",
+          }}
+          transition={{ duration: 0.2 }}
+          className="w-5 h-5 border rounded-full flex items-center justify-center"
+        >
+          {checked && (
+            <motion.div
+              layoutId={`radio-dot-${name}`} // allows smooth animation between radios in the same group
+              className="w-3 h-3 rounded-full bg-blue-500"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            />
+          )}
+        </motion.div>
+      </div>
+      {label && (
+        <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
+      )}
+    </label>
+  );
+};
+
 
 
 export default Form;

@@ -46,9 +46,9 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
       onClick={() => {
         if (!disabled) onToggle();
       }}
-      className={`flex items-center justify-between rounded-xl border transition-all 
+      className={`flex items-center justify-between rounded-xl border transition-all dark:bg-gray-700
         ${sizeClass.container} 
-        ${isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white dark:border-zinc-600 dark:bg-zinc-700'}
+        ${isActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 bg-white dark:bg-gray-700 dark:border-zinc-600'}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow cursor-pointer'}
       `}
     >
@@ -75,7 +75,7 @@ const ModeToggle: React.FC<ModeToggleProps> = ({
           disabled={disabled}
         />
       </div>
-      <span className="text-gray-900 dark:text-white min-w-[40px] max-w-[70px] truncate overflow-hidden whitespace-nowrap">{nextLabel}</span>
+      <span className="text-gray-900 dark:text-zinc-400 min-w-[40px] max-w-[70px] truncate overflow-hidden whitespace-nowrap">{nextLabel}</span>
     </label>
   );
 };
