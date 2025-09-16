@@ -2,8 +2,6 @@
 import React, { useState } from 'react';
 import DeviceListDemoPage from './DeviceListDemoPage';
 import DeviceListNormalPage from './DeviceListNormalPage';
-import Button from '../common/Button';
-
 
 function DevicePage() {
     const [isDemoMode, setIsDemoMode] = useState<boolean>(true);
