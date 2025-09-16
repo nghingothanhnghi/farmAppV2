@@ -18,6 +18,7 @@ export default [
     route("ar-detection", "components/ARDetectionPage/ARDetectionPage.tsx"),
     route("model-training", "components/ModelTraining/ModelTrainingPage.tsx"),
     route("hydroponic-system", "components/HydroponicSystemPage/HydroponicSystemPage.tsx"),
+    route("payments", "components/Payments/PaymentManagementPage.tsx"),
   ]),
 
 ] satisfies RouteConfig;

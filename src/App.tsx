@@ -15,6 +15,7 @@ import HydroponicSystemPage from "./components/HydroponicSystemPage/HydroponicSy
 import { HydroponicDevicePage } from "./components/HydroponicSystemPage";
 import RoleAssignmentForm from "./components/RoleAssignment";
 import SchedulerPage from "./components/SchedulerPage";
+import { PaymentManagementPage } from "./components/Payments";
 import { MigrationPage, MigrationWizardPage } from "./components/Migration";
 import PrivateRoute from "./components/common/PrivateRoute";
 
@@ -60,6 +61,15 @@ function App() {
           element={
             <PrivateRoute>
               <RoleAssignmentForm />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/payments"
+          element={
+            <PrivateRoute>
+              <PaymentManagementPage />
             </PrivateRoute>
           }
         />
