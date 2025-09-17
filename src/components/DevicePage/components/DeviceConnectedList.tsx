@@ -18,7 +18,7 @@ const DeviceConnectedList: React.FC<DeviceConnectedListProps> = ({ devices, layo
             <div className='flex items-center justify-between mb-4'>
                 <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Connected Devices ({devices.length})</h3>
             </div>
-            <div className={`grid ${gridClasses} space-y-0.5`}>
+            <div className={`grid ${gridClasses} space-y-2`}>
                 {devices.map((device, index) => (
                     <div key={index} className="bg-gray-50 px-4 py-2 rounded-lg border border-gray-200 dark:bg-gray-800/80 dark:border-white/5 shadow-sm">
                         <div className="flex items-center">

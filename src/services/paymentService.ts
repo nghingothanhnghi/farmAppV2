@@ -7,6 +7,11 @@ export interface ApiResponse<T> {
   message?: string;
 }
 
+export interface PaginatedPayments {
+  results: PaymentOut[];
+  total: number;
+}
+
 export const paymentService = {
   // ─────────────────────────────
   // 🟢 CRUD for Payments
@@ -23,6 +28,13 @@ export const paymentService = {
 
   async getPaymentsByClient(clientId: string, filters?: Record<string, unknown>): Promise<PaymentOut[]> {
     const response = await apiClient.get<PaymentOut[]>(`/payments/client/${clientId}`, {
+      params: filters ?? {},
+    });
+    return response.data;
+  },
+
+    async getAllPayments(filters?: Record<string, unknown>): Promise<PaginatedPayments> {
+    const response = await apiClient.get<PaginatedPayments>("/payments", {
       params: filters ?? {},
     });
     return response.data;

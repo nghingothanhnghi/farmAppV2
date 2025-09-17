@@ -1,3 +1,5 @@
+// src/hooks/useHasAnyRole.ts
+// Custom hook to check if the current user has any of the specified roles
 import { useAuth } from '../contexts/authContext';
 
 const useHasAnyRole = (roleNames: string[]): boolean => {

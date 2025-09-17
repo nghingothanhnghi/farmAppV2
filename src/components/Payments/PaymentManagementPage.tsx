@@ -1,3 +1,5 @@
+// src/components/Payments/PaymentManagementPage.tsx
+
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useAlert } from "../../contexts/alertContext";
 import { paymentService } from "../../services/paymentService";
@@ -10,9 +12,12 @@ import DropdownButton from "../common/DropdownButton";
 import Modal from "../common/Modal";
 import LinearProgress from "../common/LinearProgress";
 import { IconAlertCircle } from "@tabler/icons-react";
+import OrderForm from "./components/OrderForm";
+import  useHasAnyRole  from "../../hooks/useHasAnyRole";
 
 const PaymentManagementPage: React.FC = () => {
     const { setAlert } = useAlert();
+    const isSuperAdmin = useHasAnyRole(["super_admin"]);
     const [payments, setPayments] = useState<PaymentOut[]>([]);
     const [loading, setLoading] = useState(true);
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -20,8 +25,26 @@ const PaymentManagementPage: React.FC = () => {
 
     const fetchPayments = useCallback(async () => {
         try {
-            // 🔄 Fetch all payments (adjust if you want client/user filters)
-            const res = await paymentService.getPaymentsByClient("all");
+            let res: PaymentOut[] = [];
+
+            if (isSuperAdmin) {
+                // 🔄 Super admin: fetch all payments (paginated)
+                const allPayments = await paymentService.getAllPayments();
+                res = allPayments.results;
+            } else {
+                // 🔄 Regular user: fetch only their payments
+                // Replace 'myUserId' / 'myClientId' with your auth context values
+                const myUserId = 1; // get from auth context
+                const myClientId = "client-123"; // get from auth context
+
+                // Fetch by user first
+                res = await paymentService.getPaymentsByUser(myUserId);
+
+                // Optionally, fetch by client if needed
+                // const clientPayments = await paymentService.getPaymentsByClient(myClientId);
+                // res = [...res, ...clientPayments];
+            }
+
             setPayments(res);
         } catch (err) {
             console.error("Failed to fetch payments:", err);
@@ -29,7 +52,7 @@ const PaymentManagementPage: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    }, [setAlert]);
+    }, [setAlert, isSuperAdmin]);
 
     useEffect(() => {
         fetchPayments();
@@ -143,7 +166,11 @@ const PaymentManagementPage: React.FC = () => {
 
     return (
         <div>
-            <PageTitle title="Payment Management" />
+            <PageTitle 
+            title="Payment Management"
+            
+            />
+            <OrderForm/>
             <DataGrid
                 rowData={payments}
                 columnDefs={columnDefs}
