@@ -617,9 +617,13 @@ export const useHydroSystem = () => {
   }, [fetchSystemStatusPerDevice, fetchSensorData, fetchThresholds, fetchAvailableLocations, fetchHardwareTypes, fetchConditionStatuses]);
 
   useEffect(() => {
-    const interval = setInterval(() => refreshData(false), 5000);
-    return () => clearInterval(interval);
-  }, [refreshData]);
+  // ✅ Only poll if devices exist
+  if (deviceStatusList.length === 0) return;
+
+  const interval = setInterval(() => refreshData(false), 5000);
+  return () => clearInterval(interval);
+}, [deviceStatusList.length, refreshData]);
+
 
   // Cleanup WebSocket on unmount
   useEffect(() => {

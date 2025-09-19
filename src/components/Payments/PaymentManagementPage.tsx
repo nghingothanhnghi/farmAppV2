@@ -12,8 +12,10 @@ import DropdownButton from "../common/DropdownButton";
 import Modal from "../common/Modal";
 import LinearProgress from "../common/LinearProgress";
 import { IconAlertCircle } from "@tabler/icons-react";
-import OrderForm from "./components/OrderForm";
-import  useHasAnyRole  from "../../hooks/useHasAnyRole";
+import PaymentTabs from "./components/PaymentTabs";
+import useHasAnyRole from "../../hooks/useHasAnyRole";
+import SideContentPanel from "../common/SideContentPanel";
+import { useSideContent } from "../../hooks/useSideContent";
 
 const PaymentManagementPage: React.FC = () => {
     const { setAlert } = useAlert();
@@ -22,6 +24,12 @@ const PaymentManagementPage: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPayment, setSelectedPayment] = useState<PaymentOut | null>(null);
+
+    const sideContent = useSideContent();
+
+    const openPaymentTabs = () => {
+        sideContent.openSide(<PaymentTabs />);
+    };
 
     const fetchPayments = useCallback(async () => {
         try {
@@ -166,11 +174,22 @@ const PaymentManagementPage: React.FC = () => {
 
     return (
         <div>
-            <PageTitle 
-            title="Payment Management"
-            
+            <PageTitle
+                title="Payment Management"
+                actions={(
+                    <Button
+                        label="New Payment"
+                        variant="primary"
+                        size="sm"
+                        onClick={openPaymentTabs}
+                    />
+                )}
             />
-            <OrderForm/>
+
+            <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
+                <PaymentTabs />
+            </SideContentPanel>
+
             <DataGrid
                 rowData={payments}
                 columnDefs={columnDefs}

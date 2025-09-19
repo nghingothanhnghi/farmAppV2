@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 
 interface Tab {
   id: string;
-  label: string;
+  label: React.ReactNode;
   icon?: React.ReactNode;
   content: React.ReactNode;
 }

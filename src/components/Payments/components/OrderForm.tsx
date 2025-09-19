@@ -5,7 +5,11 @@ import { useAuth } from "../../../contexts/authContext";
 import { paymentService } from "../../../services/paymentService";
 import type { PaymentCreate } from "../../../models/interfaces/Payment";
 
-const OrderForm: React.FC = () => {
+interface OrderFormProps {
+  onCreated?: (payment: any) => void;
+}
+
+const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
   const { user, isAuthenticated, setShowLoginModal } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -36,6 +40,8 @@ const OrderForm: React.FC = () => {
           amount: Number(order.amount),
         } as PaymentCreate);
         setConfirmation(created);
+        // ✅ Notify parent so tab label updates
+        onCreated?.(created);
       } finally {
         setLoading(false);
       }
