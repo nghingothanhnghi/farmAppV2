@@ -9,7 +9,7 @@ interface Props {
 const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult }) => {
   return (
     <div className="mt-6">
-      <h2 className="text-lg font-semibold mb-2">Your Tickets</h2>
+      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">Your Tickets</h3>
       {tickets.length === 0 && <p className="text-gray-500">No tickets yet.</p>}
       {tickets.map(ticket => {
         const prize = prizes[ticket.id];

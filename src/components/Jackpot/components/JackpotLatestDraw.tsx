@@ -11,8 +11,8 @@ const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, nextDrawLabel }) => {
   return (
     <>
       {latestDraw && (
-        <div className="mb-4 p-4 bg-gray-100 rounded-lg shadow">
-          <h2 className="text-lg font-semibold">Kết quả kỳ quay gần nhất</h2>
+        <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
+          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">Kết quả kỳ quay gần nhất</h3>
           <p className="mt-2">
             <strong>Ngày quay:</strong>{' '}
             {new Date(latestDraw.draw_date).toLocaleString()}

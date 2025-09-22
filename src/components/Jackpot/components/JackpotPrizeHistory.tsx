@@ -10,8 +10,8 @@ const JackpotPrizeHistory: React.FC<Props> = ({ prizeHistory }) => {
   if (!prizeHistory) return null;
 
   return (
-    <div className="mt-4 bg-green-50 border border-green-200 rounded-xl p-3 shadow-sm">
-      <h3 className="font-bold text-green-800">🏆 Thống kê trúng thưởng</h3>
+    <div className="bg-green-50 dark:bg-green-900/30 p-4 rounded-lg">
+      <h3 className="text-sm font-medium text-green-900 dark:text-green-300">🏆 Thống kê trúng thưởng</h3>
       <ul className="mt-2 space-y-1 text-green-700">
         <li>🎰 Jackpot 1: <strong>{prizeHistory.totalJackpot1 ?? 0}</strong></li>
         <li>🎰 Jackpot 2: <strong>{prizeHistory.totalJackpot2 ?? 0}</strong></li>

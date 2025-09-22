@@ -15,10 +15,10 @@ const JackpotRulesPanel: React.FC<JackpotRulesProps> = ({ rules }) => {
   }
 
   return (
-    <div className="p-4 bg-gray-50 rounded-lg shadow mb-4">
-      <h2 className="text-lg font-semibold mb-2">📜 Thể lệ Jackpot 6/55</h2>
+    <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
+      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">📜 Thể lệ Jackpot 6/55</h3>
 
-      <ul className="list-disc pl-5 space-y-1 text-sm text-gray-700">
+      <ul className="list-disc pl-5 space-y-1 text-gray-500 dark:text-gray-400">
         <li>
           <strong>Giá vé tối thiểu:</strong> {rules.min_price.toLocaleString()}₫
         </li>

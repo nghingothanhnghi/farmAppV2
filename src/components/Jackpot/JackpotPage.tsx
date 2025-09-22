@@ -9,6 +9,7 @@ import JackpotNumberSelector from './components/JackpotNumberSelector';
 import JackpotTicketsList from './components/JackpotTicketsList';
 import JackpotPrizeHistory from './components/JackpotPrizeHistory';
 import BuyTicketPanel from './components/BuyTicketPanel';
+import PageTitle from '../common/PageTitle';
 
 const JackpotPage: React.FC = () => {
     const { latestDraw, nextDrawLabel, rules, tickets: initialTickets, loading, error, actions, prizeHistory } = useJackpot();
@@ -31,52 +32,60 @@ const JackpotPage: React.FC = () => {
 
     return (
 
-        <div className="p-4 max-w-xl mx-auto">
-            <h1 className="text-2xl font-bold mb-4">🎰 Jackpot 6/55</h1>
-
-            <JackpotRulesPanel rules={rules} />
-
-            {loading && <p className="text-gray-500">Loading data...</p>}
-            {error && (
-                <p className="text-red-500 mb-4">
-                    {error}
-                    <button
-                        onClick={actions.fetchInitialData}
-                        className="ml-2 text-blue-600 underline"
-                    >
-                        Retry
-                    </button>
-                </p>
-            )}
-
-            {/* Prize history summary + probabilities */}
-            <JackpotPrizeHistory prizeHistory={prizeHistory} />
-
-            <JackpotLatestDraw latestDraw={latestDraw} nextDrawLabel={nextDrawLabel} />
-
-            <JackpotNumberSelector
-                numbers={numbers}
-                setNumbers={setNumbers}
-                numberRange={rules?.number_range ?? Array.from({ length: 55 }, (_, i) => i + 1)}
-                requiredNumbers={requiredNumbers}
+        <div>
+            <PageTitle
+                title="Jackpot 6/55"
             />
+            <div className="mx-auto max-w-4xl">
+                {loading && <p className="text-gray-500">Loading data...</p>}
+                {error && (
+                    <p className="text-red-500 mb-4">
+                        {error}
+                        <button
+                            onClick={actions.fetchInitialData}
+                            className="ml-2 text-blue-600 underline"
+                        >
+                            Retry
+                        </button>
+                    </p>
+                )}
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+                    <div className='lg:col-span-2 space-y-2'>
+                        <JackpotNumberSelector
+                            numbers={numbers}
+                            setNumbers={setNumbers}
+                            numberRange={rules?.number_range ?? Array.from({ length: 55 }, (_, i) => i + 1)}
+                            requiredNumbers={requiredNumbers}
+                        />
+                        <JackpotRulesPanel rules={rules} />
+                    </div>
+                    <div className='flex flex-col space-y-2'>
+                        {/* User's Tickets List */}
+                        <JackpotTicketsList
+                            tickets={tickets}
+                            prizes={prizes}
+                            onCheckResult={handleCheckResult}
+                        />
+                        <hr className='my-2 w-full border-t border-zinc-950/5 dark:border-white/5' />
+                        {/* Buy Ticket + PlayType Panel */}
+                        <BuyTicketPanel
+                            numbers={numbers}
+                            setNumbers={setNumbers}
+                            playType={playType}
+                            setPlayType={setPlayType}
+                            requiredNumbers={requiredNumbers}
+                            onTicketPurchased={(ticket) => setTickets(prev => [...prev, ticket])} // ✅ update local tickets
+                        />
+                        <JackpotLatestDraw latestDraw={latestDraw} nextDrawLabel={nextDrawLabel} />
 
-            {/* Buy Ticket + PlayType Panel */}
-            <BuyTicketPanel
-                numbers={numbers}
-                setNumbers={setNumbers}
-                playType={playType}
-                setPlayType={setPlayType}
-                requiredNumbers={requiredNumbers}
-                onTicketPurchased={(ticket) => setTickets(prev => [...prev, ticket])} // ✅ update local tickets
-            />
-            {/* User's Tickets List */}
-            <JackpotTicketsList
-                tickets={tickets}
-                prizes={prizes}
-                onCheckResult={handleCheckResult}
-            />
+                        {/* Prize history summary + probabilities */}
+                        <JackpotPrizeHistory prizeHistory={prizeHistory} />
+                    </div>
+                </div>
+            </div>
         </div>
+
+
     );
 };
 
