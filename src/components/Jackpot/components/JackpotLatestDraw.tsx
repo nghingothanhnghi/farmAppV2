@@ -1,4 +1,5 @@
 import type { Draw } from '../../../models/interfaces/Jackpot';
+import Announcement from '../../Announcement/Announcement';
 
 interface Props {
   latestDraw: Draw | null;
@@ -11,28 +12,35 @@ const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, nextDrawLabel }) => {
   return (
     <>
       {latestDraw && (
-        <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
+        <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">Kết quả kỳ quay gần nhất</h3>
-          <p className="mt-2">
-            <strong>Ngày quay:</strong>{' '}
-            {new Date(latestDraw.draw_date).toLocaleString()}
-          </p>
-          <p>
-            <strong>Số trúng:</strong>{' '}
-            {latestDraw.numbers.length > 0
-              ? latestDraw.numbers.join(', ')
-              : 'Chưa có kết quả'}
-          </p>
-          {latestDraw.bonus_number && (
-            <p>
-              <strong>Số bonus:</strong> {latestDraw.bonus_number}
-            </p>
+          <dl className="-my-3 divide-y divide-gray-200 dark:divide-white/5 text-xs">
+            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+              <dt className="text-gray-900 dark:text-gray-200">Ngày quay:</dt>
+              <dd className="text-gray-700 dark:text-gray-400 sm:col-span-2">{new Date(latestDraw.draw_date).toLocaleString()}</dd>
+            </div>
+            <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+              <dt className="text-gray-900 dark:text-gray-200">Số trúng:</dt>
+              <dd className="text-gray-700 dark:text-gray-400 sm:col-span-2">
+                {latestDraw.numbers.length > 0
+                  ? latestDraw.numbers.join(', ')
+                  : 'Chưa có kết quả'}</dd>
+            </div>
+            {latestDraw.bonus_number && (
+              <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
+                <dt className="text-gray-900 dark:text-gray-200">Số bonus:</dt>
+                <dd className="text-gray-700 dark:text-gray-400 sm:col-span-2">{latestDraw.bonus_number}</dd>
+              </div>
+            )}
+          </dl>
+          {nextDrawLabel && (
+            <Announcement
+              type="info"
+              title="Kỳ quay tiếp theo"
+              message={nextDrawLabel}
+              className='mt-4 mb-0'
+            />
           )}
-        </div>
-      )}
-      {nextDrawLabel && (
-        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-800 text-center">
-          <strong>Kỳ quay tiếp theo:</strong> {nextDrawLabel}
         </div>
       )}
     </>

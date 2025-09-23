@@ -38,9 +38,9 @@ export const useJackpot = () => {
     return draw;
   }, []);
 
-    /**
-   * Fetch aggregated prize history (monthly, quarterly, yearly)
-   */
+  /**
+ * Fetch aggregated prize history (monthly, quarterly, yearly)
+ */
   const fetchPrizeHistory = useCallback(async (range: 'month' | 'quarter' | 'year' = 'month') => {
     try {
       const data = await jackpotService.getPrizeHistory(range);
@@ -71,14 +71,44 @@ export const useJackpot = () => {
   }, [fetchRules, fetchLatestDraw, fetchPrizeHistory]);
 
   /**
+* Fetch tickets for a user and update local state
+*/
+  const fetchUserTickets = useCallback(async (userId: number) => {
+    try {
+      setLoading(true);
+      const data = await jackpotService.getTicketsByUser(userId);
+
+      // Extract both tickets and prizes
+      const normalizedTickets = data.map((item: any) => item.ticket);
+      setTickets(normalizedTickets);
+
+      // Optional: if you want to prefill prizes state
+      // setPrizes(Object.fromEntries(data.map((item: any) => [item.ticket.id, item.prize ?? 'No prize'])));
+
+      return normalizedTickets;
+    } catch (err: any) {
+      console.error('Failed to fetch user tickets', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch user tickets');
+      return [];
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+
+
+  /**
    * Buy a ticket and add it to local state
    */
   const buyTicket = useCallback(async (ticketInput: TicketCreateInput) => {
     try {
       setLoading(true);
-      const ticket = await jackpotService.buyTicket(ticketInput);
-      setTickets(prev => [...prev, ticket]);
-      return ticket;
+      const newTicket = await jackpotService.buyTicket(ticketInput);
+
+      // ✅ Optimistically update tickets state instead of refetching all
+      setTickets(prev => [...prev, newTicket]);
+
+      return newTicket;
     } catch (err: any) {
       setError(err.response?.data?.detail ?? 'Failed to buy ticket');
       throw err;
@@ -101,6 +131,8 @@ export const useJackpot = () => {
       setLoading(false);
     }
   }, []);
+
+
 
   /**
    * ✅ Derived: Calculate next draw date based on rules.draw_days + rules.draw_time
@@ -162,9 +194,12 @@ export const useJackpot = () => {
     });
   }, [nextDrawDate]);
 
+  // 🔄 Initial fetch + auto polling every minute
   useEffect(() => {
     fetchInitialData();
-  }, [fetchInitialData]);
+    const interval = setInterval(fetchLatestDraw, 60_000); // poll every 60s
+    return () => clearInterval(interval);
+  }, [fetchInitialData, fetchLatestDraw]);
 
   useEffect(() => {
     if (rules) {
@@ -187,6 +222,7 @@ export const useJackpot = () => {
       fetchRules,
       fetchLatestDraw,
       fetchInitialData,
+      fetchUserTickets,
       buyTicket,
       checkTicket,
     },

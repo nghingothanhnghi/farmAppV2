@@ -43,6 +43,14 @@ export const jackpotService = {
   },
 
   /**
+   * Get all tickets for a specific user
+   */
+  getTicketsByUser: async (userId: number): Promise<Ticket[]> => {
+    const response = await apiClient.get<Ticket[]>(`/jackpot/tickets/user/${userId}`);
+    return response.data;
+  },
+
+  /**
    * Get aggregated prize statistics for a given range (month, quarter, year)
    */
   getPrizeHistory: async (

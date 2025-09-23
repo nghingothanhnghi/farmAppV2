@@ -4,7 +4,7 @@ import type { PlayType, Ticket } from '../../../models/interfaces/Jackpot';
 import Button from '../../common/Button';
 import { useAuth } from '../../../contexts/authContext';
 import { useAlert } from '../../../contexts/alertContext';
-import { useJackpot } from '../../../hooks/useJackpot';
+import { useJackpotContext } from '../../../contexts/jackpotContext';
 import { FormGroup, FormLabel, FormSelect } from '../../common/Form';
 
 interface Props {
@@ -16,10 +16,10 @@ interface Props {
     onTicketPurchased?: (ticket: Ticket) => void; // ✅ callback
 }
 
-const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPlayType, requiredNumbers, onTicketPurchased }) => {
+const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPlayType, requiredNumbers }) => {
     const { user, isAuthenticated } = useAuth();
     const { setAlert } = useAlert();
-    const { latestDraw, loading, actions } = useJackpot();
+    const { latestDraw, loading, actions } = useJackpotContext();
 
     const handleBuyTicket = async () => {
         if (!isAuthenticated || !user) {
@@ -43,8 +43,6 @@ const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPla
             });
             setAlert({ type: 'success', message: `Ticket #${ticket.id} purchased successfully!` });
             setNumbers([]); // reset selection
-            // ✅ Notify parent to update tickets
-            onTicketPurchased?.(ticket);
         } catch (err: any) {
             setAlert({ type: 'error', message: err?.message || 'Failed to buy ticket.' });
         }
@@ -53,8 +51,8 @@ const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPla
     return (
         <div>
             {/* Play Type Selector */}
-            <FormGroup className='space-y-2'>
-                <FormLabel htmlFor="playType" className='text-sm'>Chọn cách chơi</FormLabel>
+            <FormGroup>
+                <FormLabel htmlFor="playType" className='text-sm mb-2'>Chọn cách chơi</FormLabel>
                 <FormSelect
                     id="playType"
                     value={playType}

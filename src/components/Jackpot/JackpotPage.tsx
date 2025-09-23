@@ -1,8 +1,9 @@
 // src/components/Jackpot/JackpotPage.tsx
 
-import { useState } from 'react';
-import { useJackpot } from '../../hooks/useJackpot';
-import type { PlayType, PrizeResult, Ticket } from '../../models/interfaces/Jackpot';
+import { useState, useEffect } from 'react';
+import { useJackpotContext } from '../../contexts/jackpotContext';
+import { useAuth } from '../../contexts/authContext';
+import type { PlayType, PrizeResult } from '../../models/interfaces/Jackpot';
 import JackpotRulesPanel from './components/JackpotRulesPanel';
 import JackpotLatestDraw from './components/JackpotLatestDraw';
 import JackpotNumberSelector from './components/JackpotNumberSelector';
@@ -12,14 +13,21 @@ import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
 
 const JackpotPage: React.FC = () => {
-    const { latestDraw, nextDrawLabel, rules, tickets: initialTickets, loading, error, actions, prizeHistory } = useJackpot();
+    const { user } = useAuth();
+    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory } = useJackpotContext();
     const [numbers, setNumbers] = useState<number[]>([]);
     const [playType, setPlayType] = useState<PlayType>('basic');
-    const [tickets, setTickets] = useState<Ticket[]>(initialTickets); // ✅ local tickets state
     const [prizes, setPrizes] = useState<Record<number, PrizeResult | string>>({});
 
     // Derive required number count (fallback to 6 if rules not loaded)
     const requiredNumbers = rules?.number_range?.length ? 6 : 6;
+
+    // ✅ Fetch user tickets when user logs in
+    useEffect(() => {
+        if (user) {
+            actions.fetchUserTickets(user.id);
+        }
+    }, [user, actions.fetchUserTickets]);
 
     const handleCheckResult = async (ticketId: number) => {
         setPrizes(prev => ({ ...prev, [ticketId]: 'Checking...' }));
@@ -50,7 +58,7 @@ const JackpotPage: React.FC = () => {
                     </p>
                 )}
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-                    <div className='lg:col-span-2 space-y-2'>
+                    <div className='lg:col-span-2 space-y-6'>
                         <JackpotNumberSelector
                             numbers={numbers}
                             setNumbers={setNumbers}
@@ -58,6 +66,8 @@ const JackpotPage: React.FC = () => {
                             requiredNumbers={requiredNumbers}
                         />
                         <JackpotRulesPanel rules={rules} />
+                        {/* Prize history summary + probabilities */}
+                        <JackpotPrizeHistory prizeHistory={prizeHistory} />
                     </div>
                     <div className='flex flex-col space-y-2'>
                         {/* User's Tickets List */}
@@ -74,12 +84,8 @@ const JackpotPage: React.FC = () => {
                             playType={playType}
                             setPlayType={setPlayType}
                             requiredNumbers={requiredNumbers}
-                            onTicketPurchased={(ticket) => setTickets(prev => [...prev, ticket])} // ✅ update local tickets
                         />
                         <JackpotLatestDraw latestDraw={latestDraw} nextDrawLabel={nextDrawLabel} />
-
-                        {/* Prize history summary + probabilities */}
-                        <JackpotPrizeHistory prizeHistory={prizeHistory} />
                     </div>
                 </div>
             </div>
