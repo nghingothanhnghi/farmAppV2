@@ -41,7 +41,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
   };
 
   return (
-    <div className="rounded-lg shadow-md bg-white border border-gray-100 dark:bg-gray-900 dark:border-gray-700 p-6">
+    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">System Alerts</h2>
         <div className="flex items-center space-x-2">

@@ -52,7 +52,8 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
       <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 gap-3 h-full'>
         {/* Video and Canvas Container */}
         <div
-          className="relative h-full flex flex-col row-span-2 col-span-2 rounded-lg overflow-hidden bg-gray-900 dark:bg-black/20"
+          className="relative h-full flex flex-col row-span-2 col-span-2 rounded-lg overflow-hidden bg-gray-900 dark:bg-black/40 border border-gray-200 dark:border-white/5
+        shadow-inner dark:shadow-[inset_0_2px_4px_rgba(255,255,255,0.05),inset_0_-2px_6px_rgba(0,0,0,0.5)] transition-all duration-300"
           {...bind}
         >
           {loading && (
@@ -106,7 +107,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
           </HoverSlideIn>
         </div>
         {/* Panel placeholders */}
-        <div className="border p-4 rounded-lg shadow bg-white border-gray-100 dark:bg-gray-900 dark:border-white/5 h-full">
+        <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 h-full">
           <div className="flex flex-col items-center gap-2 mb-3">
             <div className="flex space-x-1 w-full">
               {!isCameraEnabled ? (

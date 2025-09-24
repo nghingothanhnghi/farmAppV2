@@ -1,14 +1,24 @@
 // src/services/jackpotService.ts
 
 import apiClient from '../api/client';
-import type { Draw, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
 
 export const jackpotService = {
   /**
    * Create a new draw
    */
-  createDraw: async (): Promise<Draw> => {
-    const response = await apiClient.post<Draw>('/jackpot/draw');
+  createDraw: async (input: DrawCreateInput): Promise<Draw> => {
+    const payload: any = {
+      draw_type: input.draw_type ?? 'auto',
+    };
+
+    if (input.draw_date) payload.draw_date = input.draw_date;
+    if (input.draw_type === 'manual') {
+      payload.numbers = input.numbers;
+      payload.bonus_number = input.bonus_number;
+    }
+
+    const response = await apiClient.post<Draw>('/jackpot/draw', payload);
     return response.data;
   },
 

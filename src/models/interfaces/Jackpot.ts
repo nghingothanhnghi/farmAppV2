@@ -1,10 +1,25 @@
 // src/models/interfaces/Jackpot.ts
+
+export type DrawType = "auto" | "manual" | "smart_auto";
+export type DrawStatus = "pending" | "completed" | "cancelled";
+
+
 export interface Draw {
   id: number;
   draw_date: string;
   numbers: number[];
   bonus_number: number;
+  draw_type: DrawType;   // ✅ strongly typed instead of string
+  status: DrawStatus;
 }
+
+export interface DrawCreateInput {
+  draw_date?: string;   // allow manual selection of draw date
+  numbers?: number[];
+  bonus_number?: number;
+  draw_type?: DrawType; // defaults to auto
+}
+
 
 export type PlayType = "basic" | "bao5" | "bao7" | "bao8" | "bao9";
 

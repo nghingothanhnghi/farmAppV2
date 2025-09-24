@@ -23,7 +23,7 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ actions, className }) => {
 
   return (
     <div
-      className={`bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg shadow-md border border-gray-100 p-6 ${className}`}
+      className={`bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 ${className}`}
     >
       <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-4">Activity Log</h2>
 

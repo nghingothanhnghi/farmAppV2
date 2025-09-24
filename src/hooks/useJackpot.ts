@@ -1,7 +1,7 @@
 // src/hooks/useJackpot.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { jackpotService } from '../services/jackpotService';
-import type { Draw, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
 export const useJackpot = () => {
   const [rules, setRules] = useState<JackpotRules | null>(null);
   const [latestDraw, setLatestDraw] = useState<Draw | null>(null);
@@ -29,7 +29,7 @@ export const useJackpot = () => {
     } catch (err: any) {
       if (err.response?.status === 404) {
         console.warn('No draws found — creating first draw...');
-        draw = await jackpotService.createDraw();
+        draw = await jackpotService.createDraw({ draw_type: "auto" });
       } else {
         throw err;
       }
@@ -132,7 +132,26 @@ export const useJackpot = () => {
     }
   }, []);
 
-
+  /**
+   * ✅ NEW: Create a draw (manual, auto, or smart_auto)
+   */
+ const createDraw = useCallback(
+  async (input: DrawCreateInput): Promise<Draw | null> => {
+    try {
+      setLoading(true);
+      const newDraw = await jackpotService.createDraw(input);
+      setLatestDraw(newDraw);
+      return newDraw;
+    } catch (err: any) {
+      console.error('Failed to create draw', err);
+      setError(err.response?.data?.detail ?? 'Failed to create draw');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  },
+  []
+);
 
   /**
    * ✅ Derived: Calculate next draw date based on rules.draw_days + rules.draw_time
@@ -225,6 +244,7 @@ export const useJackpot = () => {
       fetchUserTickets,
       buyTicket,
       checkTicket,
+      createDraw,
     },
   };
 };

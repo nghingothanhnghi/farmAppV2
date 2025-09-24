@@ -35,21 +35,21 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
       key: "total_expected",
       label: "Total Expected",
       value: status.total_expected,
-      bg: "bg-blue-50 dark:bg-blue-900/30",
+      bg: "bg-blue-50 border border-blue-200 dark:bg-gray-800 dark:border-white/5 bg-gradient-to-b from-blue-50 to-blue-100 shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:from-blue-950 dark:to-blue-900/30",
       text: "text-blue-600 dark:text-blue-300",
     },
     {
       key: "total_detected",
       label: "Total Detected",
       value: status.total_detected,
-      bg: "bg-green-50 dark:bg-green-900/30",
+      bg: "bg-green-50 border border-green-200 dark:bg-gray-800 dark:border-white/5 bg-gradient-to-b from-green-50 to-green-100 shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:from-green-950 dark:to-green-900/30",
       text: "text-green-600 dark:text-green-300",
     },
     {
       key: "validated_count",
       label: "Validated",
       value: status.validated_count,
-      bg: "bg-purple-50 dark:bg-purple-900/30",
+      bg: "bg-purple-50 border border-purple-200 dark:bg-gray-800 dark:border-white/5 bg-gradient-to-b from-purple-50 to-purple-100 shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:from-purple-950 dark:to-purple-900/30",
       text: "text-purple-600 dark:text-purple-300",
     },
     {
@@ -58,7 +58,7 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
       value: status.detection_confidence_avg
         ? `${(status.detection_confidence_avg * 100).toFixed(1)}%`
         : "N/A",
-      bg: "bg-yellow-50 dark:bg-yellow-900/30",
+      bg: "bg-yellow-50 border border-yellow-200 dark:bg-gray-800 dark:border-white/5 bg-gradient-to-b from-yellow-50 to-yellow-100 shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:from-yellow-950 dark:to-yellow-900/30",
       text: "text-yellow-600 dark:text-yellow-300",
     },
   ];
@@ -79,7 +79,7 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
   return (
     <div className={`grid ${gridCols} gap-4`}>
       {visibleCards.map((card) => (
-        <div key={card.key} className={`${card.bg} p-4 rounded-lg`}>
+        <div key={card.key} className={`${card.bg} p-4 rounded-lg transition-all duration-300`}>
           <h3 className={`text-sm font-medium ${card.text.replace("600", "900")}`}>
             {card.label}
           </h3>

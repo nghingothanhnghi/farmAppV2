@@ -39,7 +39,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
   const running = !!schedulerState;
 
   return (
-    <div className="bg-gray-100 border border-gray-100 dark:border-white/5 dark:bg-gray-900 rounded-lg p-4">
+    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
       <div className='flex items-center justify-between mb-1'>
         <div className="flex items-center space-x-2">
           <IconCalendarTime size={16} />

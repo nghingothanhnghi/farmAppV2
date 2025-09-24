@@ -16,7 +16,7 @@ import { HydroponicDevicePage } from "./components/HydroponicSystemPage";
 import RoleAssignmentForm from "./components/RoleAssignment";
 import SchedulerPage from "./components/SchedulerPage";
 import { PaymentManagementPage } from "./components/Payments";
-import { JackpotPage } from "./components/Jackpot";
+import { JackpotPage, CreateDrawPage } from "./components/Jackpot";
 import { MigrationPage, MigrationWizardPage } from "./components/Migration";
 import PrivateRoute from "./components/common/PrivateRoute";
 
@@ -79,6 +79,14 @@ function App() {
           element={
             <PrivateRoute>
               <JackpotPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/jackpot/create"
+          element={
+            <PrivateRoute>
+              <CreateDrawPage />
             </PrivateRoute>
           }
         />

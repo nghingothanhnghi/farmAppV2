@@ -26,7 +26,7 @@ const SensorChart: React.FC<SensorChartProps> = ({
   // Check if data is empty or undefined
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-4">{title}</h3>
         <EmptyState
           animationData={noDataAnimation}
@@ -51,7 +51,7 @@ const SensorChart: React.FC<SensorChartProps> = ({
 
   return (
 
-    <div className="bg-white dark:bg-gray-900 dark:border-gray-700 rounded-lg shadow-md border border-gray-100 p-6">
+    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">{title}</h3>
         <div className="text-right">

@@ -1,5 +1,6 @@
 import React from 'react';
 import Button from '../../common/Button';
+import Badge from '../../common/Badge';
 
 interface Props {
     numbers: number[];
@@ -14,11 +15,39 @@ const JackpotNumberSelector: React.FC<Props> = ({
     numberRange,
     requiredNumbers,
 }) => {
+
+    const handleSelect = (num: number) => {
+        setNumbers(prev =>
+            prev.length < requiredNumbers
+                ? [...prev, num] // ✅ allow duplicates
+                : prev
+        );
+    };
+
+    const handleRemove = (index: number) => {
+        setNumbers(prev => prev.filter((_, i) => i !== index));
+    };
     return (
         <>
-            <p className="text-sm text-gray-600 mb-2">
-                Đã chọn: {numbers.length}/{requiredNumbers} số
-            </p>
+            <div className='flex justify-between mb-2'>
+                <p className="text-sm text-gray-600 mb-2">
+                    Đã chọn: {numbers.length}/{requiredNumbers} số
+                </p>
+                {/* ✅ Show selected numbers */}
+                {numbers.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                        {numbers.map((num, index) => (
+                            <button
+                                key={index}
+                                onClick={() => handleRemove(index)}
+                                className="px-2 py-1 text-sm rounded-md bg-blue-500 text-white hover:bg-blue-600 transition"
+                            >
+                                {num.toString().padStart(2, '0')} ✕
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
             <div className="grid grid-cols-6 gap-2 mb-4">
                 {numberRange.map(num => {
                     const selected = numbers.includes(num);
@@ -29,15 +58,21 @@ const JackpotNumberSelector: React.FC<Props> = ({
                             size="sm"
                             rounded="md"
                             variant={selected ? 'primary' : 'secondary'}
-                            onClick={() =>
-                                setNumbers(prev =>
-                                    selected
-                                        ? prev.filter(n => n !== num)
-                                        : prev.length < requiredNumbers
-                                            ? [...prev, num]
-                                            : prev
-                                )
-                            }
+                            // onClick={() =>
+                            //     // setNumbers(prev =>
+                            //     //     selected
+                            //     //         ? prev.filter(n => n !== num)
+                            //     //         : prev.length < requiredNumbers
+                            //     //             ? [...prev, num]
+                            //     //             : prev
+                            //     // )
+                            //     setNumbers(prev =>
+                            //         prev.length < requiredNumbers
+                            //             ? [...prev, num] // ✅ always add, even if already selected
+                            //             : prev
+                            //     )
+                            // }
+                            onClick={() => handleSelect(num)}
                         />
                     );
                 })}

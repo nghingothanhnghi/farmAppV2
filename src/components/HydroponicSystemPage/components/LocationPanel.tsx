@@ -9,7 +9,7 @@ interface LocationPanelProps {
 
 const LocationPanel: React.FC<LocationPanelProps> = ({ title, description, imageUrl }) => {
   return (
-    <div className="w-full flex flex-row-reverse items-start gap-4 p-4 bg-gray-100 border border-gray-100 dark:bg-gray-900 dark:border-white/5 rounded-lg min-h-[6rem]">
+    <div className="w-full flex flex-row-reverse items-start gap-4 p-4 min-h-[6rem] bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
       <img
         alt={title}
         src={imageUrl || IconMap}
