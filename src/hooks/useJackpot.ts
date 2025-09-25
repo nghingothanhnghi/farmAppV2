@@ -1,16 +1,19 @@
 // src/hooks/useJackpot.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { jackpotService } from '../services/jackpotService';
-import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat, SalesSummaryResponse, NextSuggestionResponse } from '../models/interfaces/Jackpot';
 export const useJackpot = () => {
   const [rules, setRules] = useState<JackpotRules | null>(null);
   const [latestDraw, setLatestDraw] = useState<Draw | null>(null);
+  const [currentDraw, setCurrentDraw] = useState<Draw | null>(null);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [prizeHistory, setPrizeHistory] = useState<PrizeHistorySummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [ticketCountStats, setTicketCountStats] = useState<TicketCountStat[]>([]);
   const [numberFrequency, setNumberFrequency] = useState<NumberFrequencyStat | null>(null);
+  const [salesSummary, setSalesSummary] = useState<SalesSummaryResponse | null>(null);
+  const [nextSuggestion, setNextSuggestion] = useState<NextSuggestionResponse | null>(null);
   /**
    * Fetch Jackpot Rules
    */
@@ -23,20 +26,111 @@ export const useJackpot = () => {
   /**
    * Fetch the latest draw, auto-create one if not found
    */
+  // const fetchLatestDraw = useCallback(async () => {
+  //   let draw: Draw | null = null;
+  //   try {
+  //     draw = await jackpotService.getLatestDraw();
+  //   } catch (err: any) {
+  //     if (err.response?.status === 404) {
+  //       console.warn('No draws found — creating first draw...');
+  //       draw = await jackpotService.createDraw({ draw_type: "automatic" });
+  //     } else {
+  //       throw err;
+  //     }
+  //   }
+  //   setLatestDraw(draw);
+
+  // if (draw) {
+  //   console.log('🎯 Latest draw received:', draw);
+  //   console.log(
+  //     '📅 Draw date (local):',
+  //     new Date(draw.draw_date).toLocaleString('vi-VN', {
+  //       weekday: 'long',
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //     })
+  //   );
+  // }
+
+  //   return draw;
+  // }, []);
+
+  /** Fetch or create the current active draw */
+  // const fetchCurrentDraw = useCallback(async () => {
+  //   try {
+  //     const draw = await jackpotService.getCurrentDraw();
+  //     setCurrentDraw(draw);
+
+  //   if (draw) {
+  //     console.log('🎯 Current draw received:', draw);
+  //     console.log('📅 Scheduled draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
+  //       weekday: 'long',
+  //       hour: '2-digit',
+  //       minute: '2-digit',
+  //     }));
+  //   }
+
+  //     return draw;
+  //   } catch (err: any) {
+  //     console.error('Failed to fetch current draw', err);
+  //     setError(err.response?.data?.detail ?? 'Failed to fetch current draw');
+  //     return null;
+  //   }
+  // }, []);
+
+    /** Fetch latest completed draw */
   const fetchLatestDraw = useCallback(async () => {
-    let draw: Draw | null = null;
     try {
-      draw = await jackpotService.getLatestDraw();
+      const draw = await jackpotService.getLatestDraw();
+      setLatestDraw(draw);
+      if (draw) {
+        console.log('🎯 Latest draw received:', draw);
+        console.log('📅 Draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
+          weekday: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+        }));
+      }
+      return draw;
     } catch (err: any) {
       if (err.response?.status === 404) {
-        console.warn('No draws found — creating first draw...');
-        draw = await jackpotService.createDraw({ draw_type: "auto" });
+        console.warn('No completed draws — skipping latestDraw.');
+        setLatestDraw(null);
+        return null;
       } else {
         throw err;
       }
     }
-    setLatestDraw(draw);
-    return draw;
+  }, []);
+
+  /** Fetch or create the next scheduled draw */
+  const fetchCurrentDraw = useCallback(async () => {
+    try {
+      let draw = await jackpotService.getCurrentDraw();
+
+      // If no scheduled draw exists, create one automatically
+      if (!draw) {
+        console.warn('No scheduled draw found — creating one...');
+        draw = await jackpotService.createDraw({ draw_type: 'automatic' });
+      }
+
+      setCurrentDraw(draw);
+
+      if (draw) {
+        console.log('🎯 Current draw received:', draw);
+        console.log('📅 Scheduled draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
+          weekday: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+        }));
+      }
+
+      return draw;
+    } catch (err: any) {
+      console.error('Failed to fetch current draw', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch current draw');
+      return null;
+    }
   }, []);
 
   /**
@@ -62,7 +156,12 @@ export const useJackpot = () => {
       setLoading(true);
       setError(null);
 
-      await Promise.all([fetchRules(), fetchLatestDraw(), fetchPrizeHistory()]);
+      await Promise.all([
+        fetchRules(),
+        fetchLatestDraw(),
+        fetchCurrentDraw(),
+        fetchPrizeHistory(),
+      ]);
     } catch (err: any) {
       console.error('Failed to fetch jackpot data', err);
       setError(err.response?.data?.detail ?? 'Failed to fetch jackpot data');
@@ -104,10 +203,19 @@ export const useJackpot = () => {
   const buyTicket = useCallback(async (ticketInput: TicketCreateInput) => {
     try {
       setLoading(true);
+      if (!currentDraw || currentDraw.status !== 'scheduled') {
+        throw new Error('No active draw available');
+      }
+
       const newTicket = await jackpotService.buyTicket(ticketInput);
 
       // ✅ Optimistically update tickets state instead of refetching all
       setTickets(prev => [...prev, newTicket]);
+      // ✅ Refresh analytics after buying a ticket
+      fetchTicketCountByDraw();
+      fetchNumberFrequency();
+      fetchSalesSummary();
+      fetchNextSuggestion();
 
       return newTicket;
     } catch (err: any) {
@@ -116,7 +224,7 @@ export const useJackpot = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [currentDraw]);
 
   /**
    * Check ticket result by ID
@@ -134,27 +242,26 @@ export const useJackpot = () => {
   }, []);
 
   /**
-   * ✅ NEW: Create a draw (manual, auto, or smart_auto)
+   * ✅ NEW: Create a draw (manual, automatic, or smart_auto)
    */
- const createDraw = useCallback(
-  async (input: DrawCreateInput): Promise<Draw | null> => {
-    try {
-      setLoading(true);
-      const newDraw = await jackpotService.createDraw(input);
-      setLatestDraw(newDraw);
-      return newDraw;
-    } catch (err: any) {
-      console.error('Failed to create draw', err);
-      setError(err.response?.data?.detail ?? 'Failed to create draw');
-      return null;
-    } finally {
-      setLoading(false);
-    }
-  },
-  []
-);
-
-
+  const createDraw = useCallback(
+    async (input: DrawCreateInput): Promise<Draw | null> => {
+      try {
+        setLoading(true);
+        const newDraw = await jackpotService.createDraw(input);
+        setLatestDraw(newDraw);
+        if (newDraw.status === 'scheduled') setCurrentDraw(newDraw);
+        return newDraw;
+      } catch (err: any) {
+        console.error('Failed to create draw', err);
+        setError(err.response?.data?.detail ?? 'Failed to create draw');
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   /** Fetch ticket count per draw */
   const fetchTicketCountByDraw = useCallback(async () => {
@@ -178,6 +285,33 @@ export const useJackpot = () => {
     } catch (err: any) {
       console.error('Failed to fetch number frequency', err);
       setError(err.response?.data?.detail ?? 'Failed to fetch number frequency');
+      return null;
+    }
+  }, []);
+
+
+  /** Fetch sales summary */
+  const fetchSalesSummary = useCallback(async () => {
+    try {
+      const data = await jackpotService.getSalesSummary();
+      setSalesSummary(data);
+      return data;
+    } catch (err: any) {
+      console.error('Failed to fetch sales summary', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch sales summary');
+      return null;
+    }
+  }, []);
+
+  /** Fetch next suggestion */
+  const fetchNextSuggestion = useCallback(async (topK: number = 20) => {
+    try {
+      const data = await jackpotService.getNextSuggestion(topK);
+      setNextSuggestion(data);
+      return data;
+    } catch (err: any) {
+      console.error('Failed to fetch next suggestion', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch next suggestion');
       return null;
     }
   }, []);
@@ -245,9 +379,12 @@ export const useJackpot = () => {
   // 🔄 Initial fetch + auto polling every minute
   useEffect(() => {
     fetchInitialData();
-    const interval = setInterval(fetchLatestDraw, 60_000); // poll every 60s
+    const interval = setInterval(() => {
+      fetchCurrentDraw();
+      fetchLatestDraw();
+    }, 60_000);
     return () => clearInterval(interval);
-  }, [fetchInitialData, fetchLatestDraw]);
+  }, [fetchInitialData, fetchCurrentDraw, fetchLatestDraw]);
 
   useEffect(() => {
     if (rules) {
@@ -259,6 +396,7 @@ export const useJackpot = () => {
 
   return {
     latestDraw,
+    currentDraw,
     rules,
     tickets,
     prizeHistory,
@@ -268,9 +406,12 @@ export const useJackpot = () => {
     nextDrawLabel, // ✅ expose formatted string
     ticketCountStats,
     numberFrequency,
+    salesSummary,      // ✅ expose sales summary
+    nextSuggestion,    // ✅ expose next suggestion
     actions: {
       fetchRules,
       fetchLatestDraw,
+      fetchCurrentDraw,
       fetchInitialData,
       fetchUserTickets,
       buyTicket,
@@ -278,6 +419,8 @@ export const useJackpot = () => {
       createDraw,
       fetchTicketCountByDraw,
       fetchNumberFrequency,
+      fetchSalesSummary,   // ✅ expose fetcher
+      fetchNextSuggestion, // ✅ expose fetcher
     },
   };
 };

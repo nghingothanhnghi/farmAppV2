@@ -10,6 +10,9 @@ import JackpotLatestDraw from './components/JackpotLatestDraw';
 import JackpotNumberSelector from './components/JackpotNumberSelector';
 import JackpotTicketsList from './components/JackpotTicketsList';
 import JackpotPrizeHistory from './components/JackpotPrizeHistory';
+import JackpotNumberFrequencyPanel from './components/JackpotNumberFrequencyPanel';
+import JackpotAnalyticsPanel from './components/JackpotAnalyticsPanel';
+import JackpotTicketCountPanel from './components/JackpotTicketCountPanel';
 import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
@@ -18,7 +21,7 @@ import { IconPlus } from '@tabler/icons-react';
 const JackpotPage: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency } = useJackpotContext();
+    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency, salesSummary, nextSuggestion } = useJackpotContext();
     const [numbers, setNumbers] = useState<number[]>([]);
     const [playType, setPlayType] = useState<PlayType>('basic');
     const [prizes, setPrizes] = useState<Record<number, PrizeResult | string>>({});
@@ -33,6 +36,8 @@ const JackpotPage: React.FC = () => {
         }
         actions.fetchTicketCountByDraw();
         actions.fetchNumberFrequency();
+        actions.fetchSalesSummary();
+        actions.fetchNextSuggestion(20);
     }, [user, actions.fetchUserTickets]);
 
     const handleCheckResult = async (ticketId: number) => {
@@ -84,21 +89,23 @@ const JackpotPage: React.FC = () => {
                         <JackpotRulesPanel rules={rules} />
                         {/* Prize history summary + probabilities */}
                         <JackpotPrizeHistory prizeHistory={prizeHistory} />
-                        <div>
-                            <h2 className="text-xl font-bold">🎟️ Ticket Count per Draw</h2>
-                            <ul>
-                                {ticketCountStats.map(stat => (
-                                    <li key={stat.draw_id}>
-                                        Draw #{stat.draw_id} ({new Date(stat.draw_date).toLocaleString()}): {stat.ticket_count} tickets
-                                    </li>
-                                ))}
-                            </ul>
+                        <div className='space-y-6'>
+                            <JackpotTicketCountPanel ticketCountStats={ticketCountStats} />
 
-                            <h2 className="text-xl font-bold mt-4">🔥 Hot Numbers</h2>
-                            <div>{numberFrequency?.hot_numbers.map(n => `${n.number} (${n.count})`).join(', ')}</div>
+                            {numberFrequency && (
+                                <JackpotNumberFrequencyPanel
+                                    hotNumbers={numberFrequency.hot_numbers}
+                                    coldNumbers={numberFrequency.cold_numbers}
+                                    loading={loading}
+                                    maxNumber={55}
+                                />
+                            )}
 
-                            <h2 className="text-xl font-bold mt-4">❄️ Cold Numbers</h2>
-                            <div>{numberFrequency?.cold_numbers.map(n => `${n.number} (${n.count})`).join(', ')}</div>
+                            <JackpotAnalyticsPanel
+                                salesSummary={salesSummary}
+                                nextSuggestion={nextSuggestion}
+                            />
+
                         </div>
                     </div>
                     <div className='flex flex-col space-y-2'>

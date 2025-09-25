@@ -1,4 +1,4 @@
-// src/components/Jackpot/components/JackpotRules.tsx
+// src/components/Jackpot/components/JackpotRulesPanel.tsx
 import React from 'react';
 import type { JackpotRules } from '../../../models/interfaces/Jackpot';
 import Spinner from '../../common/Spinner';

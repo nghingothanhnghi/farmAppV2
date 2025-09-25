@@ -1,7 +1,8 @@
 // src/services/jackpotService.ts
 
 import apiClient from '../api/client';
-import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat, SalesSummaryResponse,
+  NextSuggestionResponse } from '../models/interfaces/Jackpot';
 
 export const jackpotService = {
   /**
@@ -9,7 +10,7 @@ export const jackpotService = {
    */
   createDraw: async (input: DrawCreateInput): Promise<Draw> => {
     const payload: any = {
-      draw_type: input.draw_type ?? 'auto',
+      draw_type: input.draw_type ?? 'automatic',
     };
 
     if (input.draw_date) payload.draw_date = input.draw_date;
@@ -43,6 +44,14 @@ export const jackpotService = {
    */
   getLatestDraw: async (): Promise<Draw> => {
     const response = await apiClient.get<Draw>('/jackpot/draw/latest');
+    return response.data;
+  },
+
+    /**
+   * Get the current scheduled/active draw (creates one if none exists)
+   */
+  getCurrentDraw: async (): Promise<Draw> => {
+    const response = await apiClient.get<Draw>('/jackpot/draw/current');
     return response.data;
   },
 
@@ -90,6 +99,22 @@ export const jackpotService = {
     return res.data;
   },
 
+  /**
+   * Get sales summary (total tickets, revenue)
+   */
+  getSalesSummary: async (): Promise<SalesSummaryResponse> => {
+    const res = await apiClient.get(`/jackpot/analytics/sales-summary`);
+    return res.data;
+  },
 
+  /**
+   * Suggest next numbers for the draw
+   */
+  getNextSuggestion: async (topK: number = 20): Promise<NextSuggestionResponse> => {
+    const res = await apiClient.get(`/jackpot/analytics/next-suggestion`, {
+      params: { top_k: topK },
+    });
+    return res.data;
+  },
 
 };

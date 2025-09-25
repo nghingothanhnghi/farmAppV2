@@ -1,7 +1,7 @@
 // src/models/interfaces/Jackpot.ts
 
-export type DrawType = "auto" | "manual" | "smart_auto";
-export type DrawStatus = "pending" | "completed" | "cancelled";
+export type DrawType = "automatic" | "manual" | "smart_auto";
+export type DrawStatus = "scheduled" | "completed" | "cancelled";
 
 
 export interface Draw {
@@ -85,4 +85,16 @@ export interface TicketCountStat {
 export interface NumberFrequencyStat {
   hot_numbers: { number: number; count: number }[];
   cold_numbers: { number: number; count: number }[];
+}
+
+
+export interface SalesSummaryResponse {
+  total_tickets: number;
+  unit_price: number;
+  total_revenue: number;
+}
+
+export interface NextSuggestionResponse {
+  suggested_numbers: number[];
+  strategy: string;
 }

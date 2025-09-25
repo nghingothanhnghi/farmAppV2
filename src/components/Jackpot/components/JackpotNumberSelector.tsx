@@ -48,30 +48,17 @@ const JackpotNumberSelector: React.FC<Props> = ({
                     </div>
                 )}
             </div>
-            <div className="grid grid-cols-6 gap-2 mb-4">
+            <div className="grid grid-cols-10 gap-2 mb-4">
                 {numberRange.map(num => {
                     const selected = numbers.includes(num);
                     return (
                         <Button
                             key={num}
                             label={num.toString().padStart(2, '0')}
-                            size="sm"
-                            rounded="md"
+                            size="xs"
+                            className='w-10 h-10'
+                            rounded="full"
                             variant={selected ? 'primary' : 'secondary'}
-                            // onClick={() =>
-                            //     // setNumbers(prev =>
-                            //     //     selected
-                            //     //         ? prev.filter(n => n !== num)
-                            //     //         : prev.length < requiredNumbers
-                            //     //             ? [...prev, num]
-                            //     //             : prev
-                            //     // )
-                            //     setNumbers(prev =>
-                            //         prev.length < requiredNumbers
-                            //             ? [...prev, num] // ✅ always add, even if already selected
-                            //             : prev
-                            //     )
-                            // }
                             onClick={() => handleSelect(num)}
                         />
                     );
