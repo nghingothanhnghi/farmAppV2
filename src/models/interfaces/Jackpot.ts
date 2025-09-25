@@ -69,3 +69,20 @@ export interface PrizeHistorySummary {
   totalPrizeValue: number; // sum of all prizes
   probabilities?: PrizeProbabilities;
 }
+
+/**
+ * Analytics: Ticket count per draw
+ */
+export interface TicketCountStat {
+  draw_id: number;
+  draw_date: string; // ISO string (UTC)
+  ticket_count: number;
+}
+
+/**
+ * Analytics: Hot/Cold number frequency
+ */
+export interface NumberFrequencyStat {
+  hot_numbers: { number: number; count: number }[];
+  cold_numbers: { number: number; count: number }[];
+}

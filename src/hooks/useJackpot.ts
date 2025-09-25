@@ -1,7 +1,7 @@
 // src/hooks/useJackpot.ts
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { jackpotService } from '../services/jackpotService';
-import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat } from '../models/interfaces/Jackpot';
 export const useJackpot = () => {
   const [rules, setRules] = useState<JackpotRules | null>(null);
   const [latestDraw, setLatestDraw] = useState<Draw | null>(null);
@@ -9,7 +9,8 @@ export const useJackpot = () => {
   const [prizeHistory, setPrizeHistory] = useState<PrizeHistorySummary | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
+  const [ticketCountStats, setTicketCountStats] = useState<TicketCountStat[]>([]);
+  const [numberFrequency, setNumberFrequency] = useState<NumberFrequencyStat | null>(null);
   /**
    * Fetch Jackpot Rules
    */
@@ -153,6 +154,34 @@ export const useJackpot = () => {
   []
 );
 
+
+
+  /** Fetch ticket count per draw */
+  const fetchTicketCountByDraw = useCallback(async () => {
+    try {
+      const data = await jackpotService.getTicketCountByDraw();
+      setTicketCountStats(data);
+      return data;
+    } catch (err: any) {
+      console.error('Failed to fetch ticket count per draw', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch ticket count per draw');
+      return [];
+    }
+  }, []);
+
+  /** Fetch number frequency (hot/cold numbers) */
+  const fetchNumberFrequency = useCallback(async (limit: number = 10) => {
+    try {
+      const data = await jackpotService.getNumberFrequency(limit);
+      setNumberFrequency(data);
+      return data;
+    } catch (err: any) {
+      console.error('Failed to fetch number frequency', err);
+      setError(err.response?.data?.detail ?? 'Failed to fetch number frequency');
+      return null;
+    }
+  }, []);
+
   /**
    * ✅ Derived: Calculate next draw date based on rules.draw_days + rules.draw_time
    */
@@ -237,6 +266,8 @@ export const useJackpot = () => {
     error,
     nextDrawDate,  // ✅ expose raw Date
     nextDrawLabel, // ✅ expose formatted string
+    ticketCountStats,
+    numberFrequency,
     actions: {
       fetchRules,
       fetchLatestDraw,
@@ -245,6 +276,8 @@ export const useJackpot = () => {
       buyTicket,
       checkTicket,
       createDraw,
+      fetchTicketCountByDraw,
+      fetchNumberFrequency,
     },
   };
 };

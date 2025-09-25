@@ -1,7 +1,7 @@
 // src/services/jackpotService.ts
 
 import apiClient from '../api/client';
-import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary } from '../models/interfaces/Jackpot';
+import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat } from '../models/interfaces/Jackpot';
 
 export const jackpotService = {
   /**
@@ -71,6 +71,25 @@ export const jackpotService = {
     );
     return response.data;
   },
+
+    /**
+   * Get ticket count per draw
+   */
+  getTicketCountByDraw: async (): Promise<TicketCountStat[]> => {
+    const res = await apiClient.get(`/jackpot/analytics/ticket-count`);
+    return res.data;
+  },
+
+  /**
+   * Get number frequency (hot/cold numbers)
+   */
+  getNumberFrequency: async (limit: number = 10): Promise<NumberFrequencyStat> => {
+    const res = await apiClient.get(`/jackpot/analytics/number-frequency`, {
+      params: { limit },
+    });
+    return res.data;
+  },
+
 
 
 };

@@ -1,6 +1,7 @@
 // src/components/Jackpot/JackpotPage.tsx
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { useJackpotContext } from '../../contexts/jackpotContext';
 import { useAuth } from '../../contexts/authContext';
 import type { PlayType, PrizeResult } from '../../models/interfaces/Jackpot';
@@ -11,10 +12,13 @@ import JackpotTicketsList from './components/JackpotTicketsList';
 import JackpotPrizeHistory from './components/JackpotPrizeHistory';
 import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
+import Button from '../common/Button';
+import { IconPlus } from '@tabler/icons-react';
 
 const JackpotPage: React.FC = () => {
+    const navigate = useNavigate();
     const { user } = useAuth();
-    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory } = useJackpotContext();
+    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency } = useJackpotContext();
     const [numbers, setNumbers] = useState<number[]>([]);
     const [playType, setPlayType] = useState<PlayType>('basic');
     const [prizes, setPrizes] = useState<Record<number, PrizeResult | string>>({});
@@ -27,6 +31,8 @@ const JackpotPage: React.FC = () => {
         if (user) {
             actions.fetchUserTickets(user.id);
         }
+        actions.fetchTicketCountByDraw();
+        actions.fetchNumberFrequency();
     }, [user, actions.fetchUserTickets]);
 
     const handleCheckResult = async (ticketId: number) => {
@@ -39,10 +45,20 @@ const JackpotPage: React.FC = () => {
     };
 
     return (
-
         <div>
             <PageTitle
                 title="Jackpot 6/55"
+                actions={
+                    <Button
+                        variant="secondary"
+                        icon={<IconPlus size={18} />}
+                        iconOnly
+                        rounded='full'
+                        label="Create Draw"
+                        className='bg-transparent'
+                        onClick={() => navigate('/jackpot/create')}
+                    />
+                }
             />
             <div className="mx-auto max-w-4xl">
                 {loading && <p className="text-gray-500">Loading data...</p>}
@@ -68,6 +84,22 @@ const JackpotPage: React.FC = () => {
                         <JackpotRulesPanel rules={rules} />
                         {/* Prize history summary + probabilities */}
                         <JackpotPrizeHistory prizeHistory={prizeHistory} />
+                        <div>
+                            <h2 className="text-xl font-bold">🎟️ Ticket Count per Draw</h2>
+                            <ul>
+                                {ticketCountStats.map(stat => (
+                                    <li key={stat.draw_id}>
+                                        Draw #{stat.draw_id} ({new Date(stat.draw_date).toLocaleString()}): {stat.ticket_count} tickets
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <h2 className="text-xl font-bold mt-4">🔥 Hot Numbers</h2>
+                            <div>{numberFrequency?.hot_numbers.map(n => `${n.number} (${n.count})`).join(', ')}</div>
+
+                            <h2 className="text-xl font-bold mt-4">❄️ Cold Numbers</h2>
+                            <div>{numberFrequency?.cold_numbers.map(n => `${n.number} (${n.count})`).join(', ')}</div>
+                        </div>
                     </div>
                     <div className='flex flex-col space-y-2'>
                         {/* User's Tickets List */}
@@ -90,8 +122,6 @@ const JackpotPage: React.FC = () => {
                 </div>
             </div>
         </div>
-
-
     );
 };
 
