@@ -1,6 +1,6 @@
 import React from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../common/Button';
-import Badge from '../../common/Badge';
 
 interface Props {
     numbers: number[];
@@ -33,20 +33,36 @@ const JackpotNumberSelector: React.FC<Props> = ({
                 <p className="text-sm text-gray-600 mb-2">
                     Đã chọn: {numbers.length}/{requiredNumbers} số
                 </p>
-                {/* ✅ Show selected numbers */}
-                {numbers.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                        {numbers.map((num, index) => (
-                            <button
-                                key={index}
-                                onClick={() => handleRemove(index)}
-                                className="px-2 py-1 text-sm rounded-md bg-blue-500 text-white hover:bg-blue-600 transition"
-                            >
-                                {num.toString().padStart(2, '0')} ✕
-                            </button>
-                        ))}
-                    </div>
-                )}
+                <AnimatePresence initial={false}>
+                    {/* ✅ Show selected numbers */}
+                    {numbers.length > 0 && (
+                        <motion.div
+                            className="flex flex-wrap gap-2 mb-4"
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.25 }}
+                        >
+                            {numbers.map((num, index) => (
+                                <motion.div
+                                    key={`${num}-${index}`}
+                                    initial={{ scale: 0.8, opacity: 0 }}
+                                    animate={{ scale: 1, opacity: 1 }}
+                                    exit={{ scale: 0.8, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                >
+                                    <Button
+                                        // key={index}
+                                        label={`${num.toString().padStart(2, '0')} ✕`}
+                                        size="xxs"
+                                        rounded="full"
+                                        onClick={() => handleRemove(index)}
+                                    />
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
             <div className="grid grid-cols-10 gap-2 mb-4">
                 {numberRange.map(num => {

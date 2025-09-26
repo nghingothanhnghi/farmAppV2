@@ -16,10 +16,13 @@ import JackpotTicketCountPanel from './components/JackpotTicketCountPanel';
 import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
+import Spinner from '../common/Spinner';
+import Announcement from '../Announcement/Announcement';
 import { IconPlus } from '@tabler/icons-react';
 
 const JackpotPage: React.FC = () => {
     const navigate = useNavigate();
+    const [showAnnouncement, setShowAnnouncement] = useState(false);
     const { user } = useAuth();
     const { latestDraw, currentDraw, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency, salesSummary, nextSuggestion } = useJackpotContext();
     const [numbers, setNumbers] = useState<number[]>([]);
@@ -39,6 +42,13 @@ const JackpotPage: React.FC = () => {
         actions.fetchSalesSummary();
         actions.fetchNextSuggestion(20);
     }, [user, actions.fetchUserTickets]);
+
+    useEffect(() => {
+        if (error) {
+            setShowAnnouncement(true);
+        }
+    }, [error]);
+
 
     const handleCheckResult = async (ticketId: number) => {
         setPrizes(prev => ({ ...prev, [ticketId]: 'Checking...' }));
@@ -66,18 +76,28 @@ const JackpotPage: React.FC = () => {
                 }
             />
             <div className="mx-auto max-w-4xl">
-                {loading && <p className="text-gray-500">Loading data...</p>}
-                {error && (
-                    <p className="text-red-500 mb-4">
-                        {error}
-                        <button
-                            onClick={actions.fetchInitialData}
-                            className="ml-2 text-blue-600 underline"
-                        >
-                            Retry
-                        </button>
-                    </p>
+                {loading && <Spinner size={32} />}
+                {error && showAnnouncement && (
+                    <Announcement
+                        type="error"
+                        title="Something went wrong"
+                        message={
+                            <>
+                                {error}
+                                <button
+                                    onClick={actions.fetchInitialData}
+                                    className="ml-2 underline text-sm text-blue-800 dark:text-blue-300"
+                                >
+                                    Retry
+                                </button>
+                            </>
+                        }
+                        dismissible
+                        onDismiss={() => setShowAnnouncement(false)}
+                        size="xs"
+                    />
                 )}
+
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
                     <div className='lg:col-span-2 space-y-6'>
                         <JackpotNumberSelector

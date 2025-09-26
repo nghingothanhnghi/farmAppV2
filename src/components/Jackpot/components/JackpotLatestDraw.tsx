@@ -38,6 +38,7 @@ const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, currentDraw }) => {
               title="Kỳ quay tiếp theo"
               message={formatDateVN(currentDraw.draw_date)}
               className='mt-4 mb-0'
+              size='sm'
             />
           )}
         </div>

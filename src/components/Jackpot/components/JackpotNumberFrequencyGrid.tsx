@@ -30,9 +30,9 @@ const JackpotNumberFrequencyGrid: React.FC<Props> = ({
         const isCold = coldMap.has(num);
         const count = hotMap.get(num) ?? coldMap.get(num) ?? 0;
 
-        let bg = 'bg-gray-200 text-gray-700'; // default
-        if (isHot) bg = 'bg-red-500 text-white';
-        else if (isCold) bg = 'bg-blue-500 text-white';
+        let bg = 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200'; // default
+        if (isHot) bg = 'bg-red-500 text-white dark:bg-red-600 dark:text-white';
+        else if (isCold) bg = 'bg-blue-500 text-white dark:bg-blue-600 dark:text-white';
 
         return (
           <div

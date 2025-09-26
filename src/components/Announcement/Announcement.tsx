@@ -1,5 +1,5 @@
 import React from 'react';
-import type { IAnnouncementProps } from '../../models/interfaces/IAnnouncement';
+import type { IAnnouncementProps, AnnouncementSize } from '../../models/interfaces/IAnnouncement';
 import { IconX } from '@tabler/icons-react';
 import Button from '../common/Button';
 
@@ -10,7 +10,7 @@ const Announcement: React.FC<IAnnouncementProps> = ({
   dismissible = false,
   onDismiss,
   className = '',
-
+  size = 'md',
 }) => {
 
   let meshBackground = '';
@@ -48,15 +48,46 @@ const Announcement: React.FC<IAnnouncementProps> = ({
       break;
   }
 
+    // 🎯 Define size classes
+  const sizeClasses: Record<AnnouncementSize, { container: string; title: string; message: string }> = {
+    xxs: {
+      container: 'p-2 text-xs',
+      title: 'text-sm',
+      message: 'text-xs',
+    },
+    xs: {
+      container: 'p-3 text-sm',
+      title: 'text-base',
+      message: 'text-sm',
+    },
+    sm: {
+      container: 'p-4 text-sm',
+      title: 'text-lg',
+      message: 'text-sm',
+    },
+    md: {
+      container: 'p-6 text-base',
+      title: 'text-xl',
+      message: 'text-base',
+    },
+    lg: {
+      container: 'p-8 text-lg',
+      title: 'text-2xl',
+      message: 'text-lg',
+    },
+  };
+
+  const { container, title: titleClass, message: messageClass } = sizeClasses[size];
+
   return (
-    <div className={`relative overflow-hidden rounded-lg shadow-md p-4 lg:p-10 mb-4  ${meshBackground} ${className}`}>
+    <div className={`relative overflow-hidden rounded-lg shadow-md p-4 lg:p-10 mb-4 ${container} ${meshBackground} ${className}`}>
       {/* Optional blurred mesh background layer */}
       <div className="absolute inset-0 -z-10 blur-2xl opacity-30 pointer-events-none" />
 
       <div className="flex justify-between items-start">
         <div className="text-gray-900 dark:text-gray-100">
-          {title && <strong className="block font-semibold mb-1 text-lg">{title}</strong>}
-          <div className="text-sm leading-relaxed">{message}</div>
+          {title && <strong className={`block font-semibold mb-1 ${titleClass}`}>{title}</strong>}
+          <div className={`${messageClass} leading-relaxed`}>{message}</div>
         </div>
 
         {dismissible && (
