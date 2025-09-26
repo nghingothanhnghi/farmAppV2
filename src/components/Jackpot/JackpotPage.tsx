@@ -21,7 +21,7 @@ import { IconPlus } from '@tabler/icons-react';
 const JackpotPage: React.FC = () => {
     const navigate = useNavigate();
     const { user } = useAuth();
-    const { latestDraw, nextDrawLabel, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency, salesSummary, nextSuggestion } = useJackpotContext();
+    const { latestDraw, currentDraw, rules, tickets, loading, error, actions, prizeHistory, ticketCountStats, numberFrequency, salesSummary, nextSuggestion } = useJackpotContext();
     const [numbers, setNumbers] = useState<number[]>([]);
     const [playType, setPlayType] = useState<PlayType>('basic');
     const [prizes, setPrizes] = useState<Record<number, PrizeResult | string>>({});
@@ -124,7 +124,7 @@ const JackpotPage: React.FC = () => {
                             setPlayType={setPlayType}
                             requiredNumbers={requiredNumbers}
                         />
-                        <JackpotLatestDraw latestDraw={latestDraw} nextDrawLabel={nextDrawLabel} />
+                        <JackpotLatestDraw latestDraw={latestDraw} currentDraw={currentDraw} />
                     </div>
                 </div>
             </div>

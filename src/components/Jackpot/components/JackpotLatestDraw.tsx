@@ -1,14 +1,13 @@
 import type { Draw } from '../../../models/interfaces/Jackpot';
 import Announcement from '../../Announcement/Announcement';
+import { formatDateVN } from '../../../utils/formatters';
 
 interface Props {
   latestDraw: Draw | null;
-  nextDrawLabel: string | null
+  currentDraw: Draw | null
 }
 
-const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, nextDrawLabel }) => {
-  if (!latestDraw && !nextDrawLabel) return null;
-
+const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, currentDraw }) => {
   return (
     <>
       {latestDraw && (
@@ -17,7 +16,7 @@ const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, nextDrawLabel }) => {
           <dl className="-my-3 divide-y divide-gray-200 dark:divide-white/5 text-xs">
             <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
               <dt className="text-gray-900 dark:text-gray-200">Ngày quay:</dt>
-              <dd className="text-gray-700 dark:text-gray-400 sm:col-span-2">{new Date(latestDraw.draw_date).toLocaleString()}</dd>
+              <dd className="text-gray-700 dark:text-gray-400 sm:col-span-2">{formatDateVN(latestDraw.draw_date)}</dd>
             </div>
             <div className="grid grid-cols-1 gap-1 py-3 sm:grid-cols-3 sm:gap-4">
               <dt className="text-gray-900 dark:text-gray-200">Số trúng:</dt>
@@ -33,11 +32,11 @@ const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, nextDrawLabel }) => {
               </div>
             )}
           </dl>
-          {nextDrawLabel && (
+          {currentDraw && (
             <Announcement
               type="info"
               title="Kỳ quay tiếp theo"
-              message={nextDrawLabel}
+              message={formatDateVN(currentDraw.draw_date)}
               className='mt-4 mb-0'
             />
           )}

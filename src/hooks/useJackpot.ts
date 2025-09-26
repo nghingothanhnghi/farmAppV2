@@ -316,66 +316,6 @@ export const useJackpot = () => {
     }
   }, []);
 
-  /**
-   * ✅ Derived: Calculate next draw date based on rules.draw_days + rules.draw_time
-   */
-  const nextDrawDate = useMemo(() => {
-    if (!rules?.draw_days || !rules?.draw_time) return null;
-
-    const today = new Date();
-    const todayDay = today.getDay(); // 0=Sun,1=Mon,...
-    const [hour, minute] = rules.draw_time.split(':').map(Number);
-
-    // Normalize draw_days to numbers 0-6 (support English day names from backend)
-    const englishMap: Record<string, number> = {
-      sunday: 0,
-      monday: 1,
-      tuesday: 2,
-      wednesday: 3,
-      thursday: 4,
-      friday: 5,
-      saturday: 6,
-    };
-
-    const drawDays = rules.draw_days
-      .map(d => englishMap[d.toLowerCase()])
-      .filter(d => d !== undefined)
-      .sort();
-
-    if (drawDays.length === 0) return null;
-
-    let candidate: Date | null = null;
-    for (let i = 0; i <= 7; i++) {
-      const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + i);
-      nextDate.setHours(hour, minute, 0, 0);
-
-      if (drawDays.includes(nextDate.getDay()) && nextDate > today) {
-        candidate = nextDate;
-        break;
-      }
-    }
-
-    // If no match found in next 7 days, just pick first draw day next week
-    if (!candidate) {
-      const nextDate = new Date(today);
-      nextDate.setDate(today.getDate() + ((7 - todayDay) % 7) + drawDays[0]);
-      nextDate.setHours(hour, minute, 0, 0);
-      candidate = nextDate;
-    }
-
-    return candidate;
-  }, [rules]);
-
-  const nextDrawLabel = useMemo(() => {
-    if (!nextDrawDate) return null;
-    return nextDrawDate.toLocaleDateString('vi-VN', {
-      weekday: 'long',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  }, [nextDrawDate]);
-
   // 🔄 Initial fetch + auto polling every minute
   useEffect(() => {
     fetchInitialData();
@@ -389,10 +329,10 @@ export const useJackpot = () => {
   useEffect(() => {
     if (rules) {
       console.log('🎯 Jackpot rules received:', rules);
-      console.log('📅 Next draw date:', nextDrawDate);
-      console.log('📝 Next draw label:', nextDrawLabel);
+      // console.log('📅 Next draw date:', nextDrawDate);
+      // console.log('📝 Next draw label:', nextDrawLabel);
     }
-  }, [rules, nextDrawDate, nextDrawLabel]);
+  }, [rules]);
 
   return {
     latestDraw,
@@ -402,8 +342,8 @@ export const useJackpot = () => {
     prizeHistory,
     loading,
     error,
-    nextDrawDate,  // ✅ expose raw Date
-    nextDrawLabel, // ✅ expose formatted string
+    // nextDrawDate,  // ✅ expose raw Date
+    // nextDrawLabel, // ✅ expose formatted string
     ticketCountStats,
     numberFrequency,
     salesSummary,      // ✅ expose sales summary
