@@ -135,7 +135,6 @@ const JackpotPage: React.FC = () => {
                             prizes={prizes}
                             onCheckResult={handleCheckResult}
                         />
-                        <hr className='my-2 w-full border-t border-zinc-950/5 dark:border-white/5' />
                         {/* Buy Ticket + PlayType Panel */}
                         <BuyTicketPanel
                             numbers={numbers}

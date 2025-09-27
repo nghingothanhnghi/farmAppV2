@@ -36,7 +36,7 @@ const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult })
           message="Bạn chưa có vé nào. Hãy mua ngay để tham gia kỳ quay tiếp theo!"
         />
       )}
-      <div className="max-h-30 overflow-y-auto mt-2 pr-1">
+      <div className="max-h-30 overflow-y-auto mt-2 pr-1 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
         <AnimatePresence>
           {sortedTickets.map(ticket => {
             const prize = prizes[ticket.id];

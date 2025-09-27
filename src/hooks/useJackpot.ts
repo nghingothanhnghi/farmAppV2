@@ -78,18 +78,15 @@ export const useJackpot = () => {
   //   }
   // }, []);
 
-    /** Fetch latest completed draw */
+  /** Fetch latest completed draw */
   const fetchLatestDraw = useCallback(async () => {
     try {
       const draw = await jackpotService.getLatestDraw();
-      setLatestDraw(draw);
-      if (draw) {
-        console.log('🎯 Latest draw received:', draw);
-        console.log('📅 Draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
-          weekday: 'long',
-          hour: '2-digit',
-          minute: '2-digit',
-        }));
+      if (draw && draw.status === 'completed') {
+        setLatestDraw(draw);
+        console.log('🎯 Latest completed draw:', draw);
+      } else {
+        setLatestDraw(null);
       }
       return draw;
     } catch (err: any) {
@@ -97,34 +94,26 @@ export const useJackpot = () => {
         console.warn('No completed draws — skipping latestDraw.');
         setLatestDraw(null);
         return null;
-      } else {
-        throw err;
       }
+      throw err;
     }
   }, []);
 
-  /** Fetch or create the next scheduled draw */
+  /** ✅ Fetch or create the next *scheduled* draw */
   const fetchCurrentDraw = useCallback(async () => {
     try {
       let draw = await jackpotService.getCurrentDraw();
-
-      // If no scheduled draw exists, create one automatically
       if (!draw) {
         console.warn('No scheduled draw found — creating one...');
         draw = await jackpotService.createDraw({ draw_type: 'automatic' });
       }
 
-      setCurrentDraw(draw);
-
-      if (draw) {
-        console.log('🎯 Current draw received:', draw);
-        console.log('📅 Scheduled draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
-          weekday: 'long',
-          hour: '2-digit',
-          minute: '2-digit',
-        }));
+      if (draw && draw.status === 'scheduled') {
+        setCurrentDraw(draw);
+        console.log('🎯 Current scheduled draw:', draw);
+      } else {
+        setCurrentDraw(null);
       }
-
       return draw;
     } catch (err: any) {
       console.error('Failed to fetch current draw', err);
@@ -244,24 +233,24 @@ export const useJackpot = () => {
   /**
    * ✅ NEW: Create a draw (manual, automatic, or smart_auto)
    */
-  const createDraw = useCallback(
-    async (input: DrawCreateInput): Promise<Draw | null> => {
-      try {
-        setLoading(true);
-        const newDraw = await jackpotService.createDraw(input);
+  const createDraw = useCallback(async (input: DrawCreateInput) => {
+    try {
+      setLoading(true);
+      const newDraw = await jackpotService.createDraw(input);
+      if (newDraw.status === 'completed') {
         setLatestDraw(newDraw);
-        if (newDraw.status === 'scheduled') setCurrentDraw(newDraw);
-        return newDraw;
-      } catch (err: any) {
-        console.error('Failed to create draw', err);
-        setError(err.response?.data?.detail ?? 'Failed to create draw');
-        return null;
-      } finally {
-        setLoading(false);
+      } else if (newDraw.status === 'scheduled') {
+        setCurrentDraw(newDraw);
       }
-    },
-    []
-  );
+      return newDraw;
+    } catch (err: any) {
+      console.error('Failed to create draw', err);
+      setError(err.response?.data?.detail ?? 'Failed to create draw');
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   /** Fetch ticket count per draw */
   const fetchTicketCountByDraw = useCallback(async () => {

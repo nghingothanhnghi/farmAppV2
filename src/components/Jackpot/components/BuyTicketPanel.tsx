@@ -19,32 +19,32 @@ interface Props {
 const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPlayType, requiredNumbers }) => {
     const { user, isAuthenticated } = useAuth();
     const { setAlert } = useAlert();
-    const { latestDraw, loading, actions } = useJackpotContext();
+    const { currentDraw, loading, actions } = useJackpotContext();
 
     const handleBuyTicket = async () => {
         if (!isAuthenticated || !user) {
-            setAlert({ type: 'warning', message: 'Please log in to buy a ticket.' });
+            setAlert({ type: 'warning', message: '⚠️ Vui lòng đăng nhập để mua vé số.' });
             return;
         }
-        if (!latestDraw) {
-            setAlert({ type: 'info', message: 'No active draw available.' });
+        if (!currentDraw || currentDraw.status !== 'scheduled') {
+            setAlert({ type: 'info', message: '⏳ Hiện chưa có kỳ quay nào đang mở bán vé.' });
             return;
         }
         if (numbers.length !== requiredNumbers) {
-            setAlert({ type: 'warning', message: `Please select exactly ${requiredNumbers} numbers.` });
+            setAlert({ type: 'warning', message: `🎯 Bạn cần chọn chính xác ${requiredNumbers} con số` });
             return;
         }
         try {
             const ticket = await actions.buyTicket({
                 user_id: user.id,
-                draw_id: latestDraw.id,
+                draw_id: currentDraw.id,
                 numbers,
                 play_type: playType,
             });
-            setAlert({ type: 'success', message: `Ticket #${ticket.id} purchased successfully!` });
+            setAlert({ type: 'success', message: `🎉 Bạn đã mua vé #${ticket.id} thành công! Chúc may mắn 🍀` });
             setNumbers([]); // reset selection
         } catch (err: any) {
-            setAlert({ type: 'error', message: err?.message || 'Failed to buy ticket.' });
+            setAlert({ type: 'error', message: err?.message || '❌ Mua vé thất bại. Vui lòng thử lại.' });
         }
     };
 

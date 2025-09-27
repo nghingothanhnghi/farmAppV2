@@ -34,9 +34,16 @@ interface FormLabelProps {
   className?: string;
 }
 
-export const FormLabel: React.FC<FormLabelProps> = ({ htmlFor, children, className = 'dark:text-gray-100' }) => {
+export const FormLabel: React.FC<FormLabelProps> = ({
+  htmlFor,
+  children,
+  className = '',
+}) => {
   return (
-    <label htmlFor={htmlFor} className={className}>
+    <label
+      htmlFor={htmlFor}
+      className={`block text-sm font-medium text-gray-700 dark:text-gray-100 ${className}`}
+    >
       {children}
     </label>
   );

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import type { IAnnouncementProps, AnnouncementSize } from '../../models/interfaces/IAnnouncement';
 import { IconX } from '@tabler/icons-react';
+import { playSound } from '../../utils/sound';
 import Button from '../common/Button';
 
 const Announcement: React.FC<IAnnouncementProps> = ({
@@ -12,6 +13,13 @@ const Announcement: React.FC<IAnnouncementProps> = ({
   className = '',
   size = 'md',
 }) => {
+
+    // 🔊 Play sound when announcement mounts
+  useEffect(() => {
+    if (type === 'error') playSound('error');
+    else if (type === 'warning' || type === 'info') playSound('alert');
+    else if (type === 'success') playSound('success');
+  }, [type]);
 
   let meshBackground = '';
 
