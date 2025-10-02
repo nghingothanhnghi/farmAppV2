@@ -23,61 +23,6 @@ export const useJackpot = () => {
     return data;
   }, []);
 
-  /**
-   * Fetch the latest draw, auto-create one if not found
-   */
-  // const fetchLatestDraw = useCallback(async () => {
-  //   let draw: Draw | null = null;
-  //   try {
-  //     draw = await jackpotService.getLatestDraw();
-  //   } catch (err: any) {
-  //     if (err.response?.status === 404) {
-  //       console.warn('No draws found — creating first draw...');
-  //       draw = await jackpotService.createDraw({ draw_type: "automatic" });
-  //     } else {
-  //       throw err;
-  //     }
-  //   }
-  //   setLatestDraw(draw);
-
-  // if (draw) {
-  //   console.log('🎯 Latest draw received:', draw);
-  //   console.log(
-  //     '📅 Draw date (local):',
-  //     new Date(draw.draw_date).toLocaleString('vi-VN', {
-  //       weekday: 'long',
-  //       hour: '2-digit',
-  //       minute: '2-digit',
-  //     })
-  //   );
-  // }
-
-  //   return draw;
-  // }, []);
-
-  /** Fetch or create the current active draw */
-  // const fetchCurrentDraw = useCallback(async () => {
-  //   try {
-  //     const draw = await jackpotService.getCurrentDraw();
-  //     setCurrentDraw(draw);
-
-  //   if (draw) {
-  //     console.log('🎯 Current draw received:', draw);
-  //     console.log('📅 Scheduled draw date (local):', new Date(draw.draw_date).toLocaleString('vi-VN', {
-  //       weekday: 'long',
-  //       hour: '2-digit',
-  //       minute: '2-digit',
-  //     }));
-  //   }
-
-  //     return draw;
-  //   } catch (err: any) {
-  //     console.error('Failed to fetch current draw', err);
-  //     setError(err.response?.data?.detail ?? 'Failed to fetch current draw');
-  //     return null;
-  //   }
-  // }, []);
-
   /** Fetch latest completed draw */
   const fetchLatestDraw = useCallback(async () => {
     try {
@@ -308,12 +253,22 @@ export const useJackpot = () => {
   // 🔄 Initial fetch + auto polling every minute
   useEffect(() => {
     fetchInitialData();
-    const interval = setInterval(() => {
-      fetchCurrentDraw();
-      fetchLatestDraw();
+
+    const interval = setInterval(async () => {
+      const current = await fetchCurrentDraw();
+
+      // ✅ When current draw is completed → refresh latest & schedule next
+      if (current && current.status === "completed") {
+        console.log("🎉 Draw just completed → refreshing latest & scheduling next");
+
+        await fetchLatestDraw();   // grab the completed one
+        await fetchCurrentDraw();  // backend ensures next scheduled
+      }
     }, 60_000);
+
     return () => clearInterval(interval);
   }, [fetchInitialData, fetchCurrentDraw, fetchLatestDraw]);
+
 
   useEffect(() => {
     if (rules) {

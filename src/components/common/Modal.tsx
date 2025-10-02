@@ -69,7 +69,7 @@ const Modal: React.FC<ModalProps> = ({
         {variant === 'sidebar' ? (
           <div className='flex'>
             {/* Left side (tabs + close) */}
-            <div className="w-1/3 p-4 flex flex-col border-r border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100">
+            <div className="w-1/3 p-4 flex flex-col border-r border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 transition-all duration-300">
               <div className='flex justify-between align-middle'>
                 <Button
                   variant="secondary"

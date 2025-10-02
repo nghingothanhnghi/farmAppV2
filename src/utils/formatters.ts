@@ -42,9 +42,12 @@ export const formatTimeCountDown = (seconds: number) => {
 export const formatDateVN = (dateString: string | Date): string => {
   const date = typeof dateString === 'string' ? new Date(dateString) : dateString;
   return date.toLocaleString('vi-VN', {
-    weekday: 'long',
-    hour: '2-digit',
-    minute: '2-digit',
+    weekday: "long", // Thứ
+    day: "2-digit",  // Ngày
+    month: "2-digit", // Tháng
+    year: "numeric",  // Năm
+    hour: "2-digit",
+    minute: "2-digit",
   });
 };
 

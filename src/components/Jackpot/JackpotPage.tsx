@@ -15,6 +15,7 @@ import JackpotAnalyticsPanel from './components/JackpotAnalyticsPanel';
 import JackpotTicketCountPanel from './components/JackpotTicketCountPanel';
 import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
+import Tabs from '../common/Tabs';
 import Button from '../common/Button';
 import Spinner from '../common/Spinner';
 import Announcement from '../Announcement/Announcement';
@@ -28,7 +29,7 @@ const JackpotPage: React.FC = () => {
     const [numbers, setNumbers] = useState<number[]>([]);
     const [playType, setPlayType] = useState<PlayType>('basic');
     const [prizes, setPrizes] = useState<Record<number, PrizeResult | string>>({});
-
+    const [activeTab, setActiveTab] = useState('overview');
     // Derive required number count (fallback to 6 if rules not loaded)
     const requiredNumbers = rules?.number_range?.length ? 6 : 6;
 
@@ -59,10 +60,131 @@ const JackpotPage: React.FC = () => {
         }));
     };
 
+    const tabs = [
+        {
+            id: 'overview',
+            label: 'Overview',
+            content: (
+                <div className='space-y-6'>
+                    {loading && (
+                        <div className="flex justify-center py-8">
+                            <Spinner size={32} />
+                        </div>
+                    )}
+                    {error && showAnnouncement && (
+                        <Announcement
+                            type="error"
+                            title="Something went wrong"
+                            message={
+                                <>
+                                    {error}
+                                    <button
+                                        onClick={actions.fetchInitialData}
+                                        className="ml-2 underline text-sm text-blue-800 dark:text-blue-300"
+                                    >
+                                        Retry
+                                    </button>
+                                </>
+                            }
+                            dismissible
+                            onDismiss={() => setShowAnnouncement(false)}
+                            size="xs"
+                        />
+                    )}
+                    {!loading && (
+                        <div className='flex flex-col lg:flex-row gap-6'>
+                            <div className='flex-1'>
+                                <JackpotAnalyticsPanel
+                                    salesSummary={salesSummary}
+                                    nextSuggestion={nextSuggestion}
+                                    ticketCountStats={ticketCountStats}
+                                    hotNumbers={numberFrequency?.hot_numbers ?? []}
+                                    coldNumbers={numberFrequency?.cold_numbers ?? []}
+                                    loading={loading}
+                                    maxNumber={55}
+                                />
+                            </div>
+                            <div className='lg:w-[350px] flex flex-col max-h-ful space-y-6'>
+                                {/* Prize history summary + probabilities */}
+                                <JackpotPrizeHistory prizeHistory={prizeHistory} />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ),
+        },
+        {
+            id: 'tickets',
+            label: 'Tickets',
+            content: (
+                <div className='space-y-6'>
+                    {loading && (
+                        <div className="flex justify-center py-8">
+                            <Spinner size={32} />
+                        </div>
+                    )}
+                    {error && showAnnouncement && (
+                        <Announcement
+                            type="error"
+                            title="Something went wrong"
+                            message={
+                                <>
+                                    {error}
+                                    <button
+                                        onClick={actions.fetchInitialData}
+                                        className="ml-2 underline text-sm text-blue-800 dark:text-blue-300"
+                                    >
+                                        Retry
+                                    </button>
+                                </>
+                            }
+                            dismissible
+                            onDismiss={() => setShowAnnouncement(false)}
+                            size="xs"
+                        />
+                    )}
+                    {!loading && (
+
+                        <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
+                            <div className='lg:col-span-2 space-y-6'>
+                                <JackpotNumberSelector
+                                    numbers={numbers}
+                                    setNumbers={setNumbers}
+                                    numberRange={rules?.number_range ?? Array.from({ length: 55 }, (_, i) => i + 1)}
+                                    requiredNumbers={requiredNumbers}
+                                />
+                                <JackpotRulesPanel rules={rules} />
+
+                            </div>
+                            <div className='flex flex-col space-y-2'>
+                                {/* User's Tickets List */}
+                                <JackpotTicketsList
+                                    tickets={tickets}
+                                    prizes={prizes}
+                                    onCheckResult={handleCheckResult}
+                                />
+                                {/* Buy Ticket + PlayType Panel */}
+                                <BuyTicketPanel
+                                    numbers={numbers}
+                                    setNumbers={setNumbers}
+                                    playType={playType}
+                                    setPlayType={setPlayType}
+                                    requiredNumbers={requiredNumbers}
+                                />
+                                <JackpotLatestDraw latestDraw={latestDraw} currentDraw={currentDraw} />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            ),
+        }
+    ];
+
     return (
-        <div>
+        <div className='min-h-screen'>
             <PageTitle
                 title="Jackpot 6/55"
+                subtitle="Tham gia quay số trúng thưởng với giải đặc biệt lên đến hàng tỷ đồng!. Chọn 6 số bất kỳ từ 01 đến 55."
                 actions={
                     <Button
                         variant="secondary"
@@ -75,7 +197,8 @@ const JackpotPage: React.FC = () => {
                     />
                 }
             />
-            <div className="mx-auto max-w-4xl">
+            <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+            {/* <div className="mx-auto max-w-4xl">
                 {loading && <Spinner size={32} />}
                 {error && showAnnouncement && (
                     <Announcement
@@ -97,56 +220,7 @@ const JackpotPage: React.FC = () => {
                         size="xs"
                     />
                 )}
-
-                <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
-                    <div className='lg:col-span-2 space-y-6'>
-                        <JackpotNumberSelector
-                            numbers={numbers}
-                            setNumbers={setNumbers}
-                            numberRange={rules?.number_range ?? Array.from({ length: 55 }, (_, i) => i + 1)}
-                            requiredNumbers={requiredNumbers}
-                        />
-                        <JackpotRulesPanel rules={rules} />
-                        {/* Prize history summary + probabilities */}
-                        <JackpotPrizeHistory prizeHistory={prizeHistory} />
-                        <div className='space-y-6'>
-                            <JackpotTicketCountPanel ticketCountStats={ticketCountStats} />
-
-                            {numberFrequency && (
-                                <JackpotNumberFrequencyPanel
-                                    hotNumbers={numberFrequency.hot_numbers}
-                                    coldNumbers={numberFrequency.cold_numbers}
-                                    loading={loading}
-                                    maxNumber={55}
-                                />
-                            )}
-
-                            <JackpotAnalyticsPanel
-                                salesSummary={salesSummary}
-                                nextSuggestion={nextSuggestion}
-                            />
-
-                        </div>
-                    </div>
-                    <div className='flex flex-col space-y-2'>
-                        {/* User's Tickets List */}
-                        <JackpotTicketsList
-                            tickets={tickets}
-                            prizes={prizes}
-                            onCheckResult={handleCheckResult}
-                        />
-                        {/* Buy Ticket + PlayType Panel */}
-                        <BuyTicketPanel
-                            numbers={numbers}
-                            setNumbers={setNumbers}
-                            playType={playType}
-                            setPlayType={setPlayType}
-                            requiredNumbers={requiredNumbers}
-                        />
-                        <JackpotLatestDraw latestDraw={latestDraw} currentDraw={currentDraw} />
-                    </div>
-                </div>
-            </div>
+            </div> */}
         </div>
     );
 };

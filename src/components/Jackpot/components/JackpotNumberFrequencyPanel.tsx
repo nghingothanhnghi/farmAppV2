@@ -1,13 +1,11 @@
 // src/components/Jackpot/components/JackpotRules.tsx
 import React, { useState } from 'react';
+import { IconLayoutGrid, IconChartBarPopular } from '@tabler/icons-react';
+import type { NumberFrequency } from '../../../models/interfaces/Jackpot';
 import JackpotNumberFrequencyChart from './JackpotNumberFrequencyChart';
 import JackpotNumberFrequencyGrid from './JackpotNumberFrequencyGrid';
 import Spinner from '../../common/Spinner';
 import Button from '../../common/Button';
-interface NumberFrequency {
-    number: number;
-    count: number;
-}
 
 interface Props {
     hotNumbers: NumberFrequency[];
@@ -38,11 +36,16 @@ const JackpotNumberFrequencyPanel: React.FC<Props> = ({
                     🔥 Hot & ❄️ Cold Numbers
                 </h3>
                 <Button
-                    label={viewMode === 'chart' ? 'Switch to Grid' : 'Switch to Chart'}
                     variant="secondary"
-                    size="sm"
+                    icon={viewMode === 'chart'
+                        ? <IconLayoutGrid size={18} />   // some grid icon
+                        : <IconChartBarPopular size={18} />
+                    }
+                    iconOnly
+                    label="Close"
+                    className='bg-transparent'
                     onClick={() => setViewMode(viewMode === 'chart' ? 'grid' : 'chart')}
-                    rounded='lg'
+                    rounded='full'
                 />
             </div>
             <p className="text-sm text-gray-500 dark:text-gray-400">

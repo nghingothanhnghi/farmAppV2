@@ -66,7 +66,7 @@ const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPla
                 </FormSelect>
             </FormGroup>
             <Button
-                label={loading ? 'Processing...' : 'Buy Ticket'}
+                label={loading ? 'Đang xử lý...' : 'Mua Vé'}
                 onClick={handleBuyTicket}
                 disabled={loading || numbers.length !== requiredNumbers}
                 fullWidth

@@ -11,6 +11,8 @@ interface Props {
 }
 
 const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult }) => {
+  console.log('Prizes:', prizes);
+  console.log('Tickets:', tickets);
   // Sort latest first
   const sortedTickets = tickets.slice().reverse();
 
@@ -28,8 +30,8 @@ const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult })
     }
   }, [tickets]); // runs whenever tickets change
   return (
-    <div className="mt-6">
-      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">Your Tickets</h3>
+    <div className="">
+      <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">Vé của bạn</h3>
       {tickets.length === 0 && (
         <EmptyState
           icon={<IconMoodEmpty size={48} />}

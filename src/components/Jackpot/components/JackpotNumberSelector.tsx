@@ -29,7 +29,7 @@ const JackpotNumberSelector: React.FC<Props> = ({
     };
     return (
         <>
-            <div className='flex justify-between mb-2'>
+            <div className='flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2'>
                 <p className="text-sm text-gray-600 mb-2">
                     Đã chọn: {numbers.length}/{requiredNumbers} số
                 </p>
@@ -64,7 +64,7 @@ const JackpotNumberSelector: React.FC<Props> = ({
                     )}
                 </AnimatePresence>
             </div>
-            <div className="grid grid-cols-10 gap-2 mb-4">
+            <div className="grid grid-cols-7 md:grid-cols-10 gap-2 mb-4">
                 {numberRange.map(num => {
                     const selected = numbers.includes(num);
                     return (

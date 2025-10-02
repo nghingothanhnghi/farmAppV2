@@ -8,9 +8,11 @@ export interface Draw {
   id: number;
   draw_date: string;
   numbers: number[];
-  bonus_number: number;
+  bonus_number?: number | null;
   draw_type: DrawType;   // ✅ strongly typed instead of string
   status: DrawStatus;
+  current_jackpot1: number; // 💡 missing
+  current_jackpot2: number; // 💡 missing
 }
 
 export interface DrawCreateInput {
@@ -29,6 +31,7 @@ export interface Ticket {
   numbers: number[];
   play_type: PlayType;
   draw_id: number;
+  result?: PrizeResult;
 }
 
 export interface PrizeResult {
@@ -60,13 +63,34 @@ export interface PrizeProbabilities {
   four_numbers: number;
   three_numbers: number;
 }
+export interface PrizeCategory {
+  count: number;
+  value: number;
+}
+
+export interface PrizeTotals {
+  winners: number;
+  value: number;
+}
+
 export interface PrizeHistorySummary {
+  // --- old flat keys (backward compatibility) ---
   totalJackpot1: number;
   totalJackpot2: number;
   totalFirst: number;
   totalSecond: number;
   totalThird: number;
-  totalPrizeValue: number; // sum of all prizes
+  totalPrizeValue: number;
+
+  // --- new nested objects ---
+  Jackpot1: PrizeCategory;
+  Jackpot2: PrizeCategory;
+  First: PrizeCategory;
+  Second: PrizeCategory;
+  Third: PrizeCategory;
+
+  totals: PrizeTotals;
+
   probabilities?: PrizeProbabilities;
 }
 
@@ -82,11 +106,15 @@ export interface TicketCountStat {
 /**
  * Analytics: Hot/Cold number frequency
  */
-export interface NumberFrequencyStat {
-  hot_numbers: { number: number; count: number }[];
-  cold_numbers: { number: number; count: number }[];
+export interface NumberFrequency {
+  number: number;
+  count: number;
 }
 
+export interface NumberFrequencyStat {
+  hot_numbers: NumberFrequency[];
+  cold_numbers: NumberFrequency[];
+}
 
 export interface SalesSummaryResponse {
   total_tickets: number;

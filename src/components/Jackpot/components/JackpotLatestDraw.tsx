@@ -8,6 +8,8 @@ interface Props {
 }
 
 const JackpotLatestDraw: React.FC<Props> = ({ latestDraw, currentDraw }) => {
+  console.log("latestDraw numbers:", latestDraw?.numbers, typeof latestDraw?.numbers);
+
   return (
     <>
       {latestDraw && (

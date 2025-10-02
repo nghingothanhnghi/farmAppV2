@@ -50,12 +50,12 @@ const SchedulerPage: React.FC = () => {
                 title="Scheduler Health"
             />
             <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
-                <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+                    <div className="flex items-center justify-between mb-2 sm:justify-start gap-1 sm:gap-2 sm:mb-0">
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100">
                             Overall Scheduler Status
                         </h3>
-                        <small>Total Jobs: {health?.job_count}</small>
+                        <small className="dark:text-gray-100">Total Jobs: {health?.job_count}</small>
                     </div>
                     <div className="text-right flex gap-3">
                         <div className="flex gap-2">
