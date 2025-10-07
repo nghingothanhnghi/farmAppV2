@@ -27,8 +27,8 @@ const PaymentManagementPage: React.FC = () => {
 
     const sideContent = useSideContent();
 
-    const openPaymentTabs = () => {
-        sideContent.openSide(<PaymentTabs />);
+    const openPaymentTabs = (initialPayment?: PaymentOut) => {
+        sideContent.openSide(<PaymentTabs onPaymentCreated={handlePaymentCreated} initialPayment={initialPayment} />);
     };
 
     const fetchPayments = useCallback(async () => {
@@ -101,6 +101,15 @@ const PaymentManagementPage: React.FC = () => {
         }
     };
 
+    // 🔥 Refresh when payment created
+    const handlePaymentCreated = (payment: PaymentOut) => {
+        setPayments((prev) => [payment, ...prev]); // prepend newest
+        setAlert({ message: `Payment #${payment.reference_id ?? payment.id} created!`, type: "success" });
+    };
+
+
+
+
     const columnDefs = useMemo(
         () => [
             { headerName: "ID", field: "id", width: 80 },
@@ -135,9 +144,15 @@ const PaymentManagementPage: React.FC = () => {
                 headerName: "Actions",
                 field: "actions",
                 pinned: "right",
-                width: 200,
+                width: 250,
                 cellRenderer: ({ data }: any) => (
                     <div className="flex gap-2 justify-center">
+                        <Button
+                            label="View"
+                            variant="primary"
+                            size="xs"
+                            onClick={() => openPaymentTabs(data)}
+                        />
                         <DropdownButton
                             label="Set Status"
                             variant="secondary"
@@ -181,13 +196,13 @@ const PaymentManagementPage: React.FC = () => {
                         label="New Payment"
                         variant="primary"
                         size="sm"
-                        onClick={openPaymentTabs}
+                        onClick={() => openPaymentTabs()}
                     />
                 )}
             />
 
             <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
-                <PaymentTabs />
+                <PaymentTabs onPaymentCreated={handlePaymentCreated} />
             </SideContentPanel>
 
             <DataGrid

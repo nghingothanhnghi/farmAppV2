@@ -44,6 +44,7 @@ const SensorChart: React.FC<SensorChartProps> = ({
   }));
 
 
+
   const currentValue = chartData[chartData.length - 1].value;
   const previousValue = chartData[chartData.length - 2]?.value ?? currentValue;
   const trend = currentValue > previousValue ? 'up' : currentValue < previousValue ? 'down' : 'stable';

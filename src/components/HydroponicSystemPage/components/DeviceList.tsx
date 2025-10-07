@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconMoodEmpty } from '@tabler/icons-react';
 import { deviceService } from "../../../services/hydroDeviceService";
 import { useAlert } from "../../../contexts/alertContext";
 import type { HydroDevice } from "../../../models/interfaces/HydroSystem";
@@ -9,6 +9,7 @@ import Modal from '../../common/Modal';
 import Badge from '../../common/Badge';
 import Button from "../../common/Button";
 import LinearProgress from '../../common/LinearProgress';
+import EmptyState from '../../common/EmptyState';
 
 type Props = {
   onSelect?: (device: HydroDevice) => void;
@@ -106,11 +107,11 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
   }
 
   if (!devices.length) {
-    return <p className="text-gray-500">No devices found.</p>;
+    return <EmptyState
+            icon={<IconMoodEmpty size={48} />}
+            message="No devices found."
+          />
   }
-
-
-
 
   return (
     <>

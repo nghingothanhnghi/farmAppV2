@@ -31,6 +31,7 @@ export interface Ticket {
   numbers: number[];
   play_type: PlayType;
   draw_id: number;
+  draw?: Draw;
   result?: PrizeResult;
 }
 

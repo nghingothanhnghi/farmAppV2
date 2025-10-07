@@ -119,16 +119,16 @@ if (!loading && deviceStatusList.length === 0) {
   return (
     <div className="hydroponic-system-page min-h-screen">
       <PageTitle title="Hydroponic System Dashboard" />
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+      <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 py-44 text-center">
         <div className="text-gray-400 text-4xl mb-4">📦</div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
-        <p className="text-gray-600 mb-4">
+        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-100">No Devices Found</h3>
+        <p className="text-gray-900 dark:text-gray-200 mb-4">
           You don’t have any devices connected yet.
           Please add a hydroponic device to get started.
         </p>
         <Button
           label="➕ Add Device"
-          onClick={() => navigate('/hydro-devices')}
+          onClick={() => navigate('/hydro-devices/new-device')}
           className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
           rounded="lg"
         />
@@ -190,7 +190,7 @@ if (!loading && deviceStatusList.length === 0) {
       id: "overview",
       label: "Overview",
       icon: "📊",
-      content: (
+      content: activeTab === "overview" && (
         <div className="space-y-6">
           <div className='flex flex-col lg:flex-row gap-6'>
             <div className='flex-1'>
@@ -283,7 +283,7 @@ if (!loading && deviceStatusList.length === 0) {
       id: "charts",
       label: "Charts",
       icon: "📈",
-      content: (
+      content: activeTab === "charts" && (
         <div className="space-y-6">
           <SensorChart
             data={sensorData}
@@ -329,7 +329,7 @@ if (!loading && deviceStatusList.length === 0) {
       id: "hardware",
       label: "Hardware Detection",
       icon: "📷",
-      content: currentDevice?.location && (
+      content: activeTab === "hardware" && currentDevice?.location && (
         <HardwareDetection location={currentDevice.location} />
       ),
     },
@@ -337,7 +337,7 @@ if (!loading && deviceStatusList.length === 0) {
       id: "settings",
       label: "Settings",
       icon: "⚙️",
-      content: (
+      content: activeTab === "settings" && (
         <SettingsPanel
           thresholds={currentDevice?.automation?.thresholds || null}
           onUpdateThresholds={(newThresholds) => {

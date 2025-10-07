@@ -10,9 +10,7 @@ import JackpotLatestDraw from './components/JackpotLatestDraw';
 import JackpotNumberSelector from './components/JackpotNumberSelector';
 import JackpotTicketsList from './components/JackpotTicketsList';
 import JackpotPrizeHistory from './components/JackpotPrizeHistory';
-import JackpotNumberFrequencyPanel from './components/JackpotNumberFrequencyPanel';
 import JackpotAnalyticsPanel from './components/JackpotAnalyticsPanel';
-import JackpotTicketCountPanel from './components/JackpotTicketCountPanel';
 import BuyTicketPanel from './components/BuyTicketPanel';
 import PageTitle from '../common/PageTitle';
 import Tabs from '../common/Tabs';
@@ -64,7 +62,7 @@ const JackpotPage: React.FC = () => {
         {
             id: 'overview',
             label: 'Overview',
-            content: (
+            content: activeTab === "overview" && (
                 <div className='space-y-6'>
                     {loading && (
                         <div className="flex justify-center py-8">
@@ -116,7 +114,7 @@ const JackpotPage: React.FC = () => {
         {
             id: 'tickets',
             label: 'Tickets',
-            content: (
+            content: activeTab === "tickets" && (
                 <div className='space-y-6'>
                     {loading && (
                         <div className="flex justify-center py-8">
@@ -156,7 +154,7 @@ const JackpotPage: React.FC = () => {
                                 <JackpotRulesPanel rules={rules} />
 
                             </div>
-                            <div className='flex flex-col space-y-2'>
+                            <div className='flex flex-col space-y-4'>
                                 {/* User's Tickets List */}
                                 <JackpotTicketsList
                                     tickets={tickets}
@@ -198,29 +196,6 @@ const JackpotPage: React.FC = () => {
                 }
             />
             <Tabs tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-            {/* <div className="mx-auto max-w-4xl">
-                {loading && <Spinner size={32} />}
-                {error && showAnnouncement && (
-                    <Announcement
-                        type="error"
-                        title="Something went wrong"
-                        message={
-                            <>
-                                {error}
-                                <button
-                                    onClick={actions.fetchInitialData}
-                                    className="ml-2 underline text-sm text-blue-800 dark:text-blue-300"
-                                >
-                                    Retry
-                                </button>
-                            </>
-                        }
-                        dismissible
-                        onDismiss={() => setShowAnnouncement(false)}
-                        size="xs"
-                    />
-                )}
-            </div> */}
         </div>
     );
 };

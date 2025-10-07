@@ -11,11 +11,22 @@ interface PaymentTab {
   data?: any; // Payment data if viewing/editing
 }
 
-const PaymentTabs: React.FC = () => {
+interface PaymentTabsProps {
+  onPaymentCreated?: (payment: any) => void; // <-- add this
+  initialPayment?: any; // 👈 payment to open initially
+}
+
+const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment }) => {
   const [tabs, setTabs] = useState<PaymentTab[]>([
     { id: "new", label: "#Draft", type: "create" },
   ]);
   const [activeTab, setActiveTab] = useState<string>("new");
+
+   React.useEffect(() => {
+    if (initialPayment) {
+      openViewTab(initialPayment);
+    }
+  }, [initialPayment]);
 
   /** ✅ Update tab label after OrderForm creates a payment */
   const updateTabLabel = (id: string, newLabel: string, data?: any) => {
@@ -27,36 +38,75 @@ const PaymentTabs: React.FC = () => {
   };
 
   const openViewTab = (payment: any) => {
-    const id = `view-${payment.id}`;
-    if (!tabs.find((t) => t.id === id)) {
-      setTabs((prev) => [
-        ...prev,
-        {
-          id,
-          label: `#${payment.reference_id ?? payment.id}`,
-          type: "view",
-          data: payment,
-        },
-      ]);
-    }
-    setActiveTab(id);
-  };
+  const viewId = `view-${payment.id}`;
+  const editId = `edit-${payment.id}`;
 
-  const openEditTab = (payment: any) => {
-    const id = `edit-${payment.id}`;
-    if (!tabs.find((t) => t.id === id)) {
-      setTabs((prev) => [
-        ...prev,
-        {
-          id,
-          label: `#${payment.reference_id ?? payment.id} (edit)`,
-          type: "edit",
-          data: payment,
-        },
-      ]);
+  setTabs((prev) => {
+    // If already have a view tab, just activate
+    if (prev.some((t) => t.id === viewId)) {
+      setActiveTab(viewId);
+      return prev;
     }
-    setActiveTab(id);
-  };
+
+    // If currently an edit tab, convert it back to view
+    if (prev.some((t) => t.id === editId)) {
+      return prev.map((t) =>
+        t.id === editId
+          ? {
+              ...t,
+              id: viewId,
+              label: `#${payment.reference_id ?? payment.id}`,
+              type: "view",
+              data: payment,
+            }
+          : t
+      );
+    }
+
+    // Otherwise create a fresh view tab
+    return [
+      ...prev,
+      {
+        id: viewId,
+        label: `#${payment.reference_id ?? payment.id}`,
+        type: "view",
+        data: payment,
+      },
+    ];
+  });
+
+  setActiveTab(viewId);
+};
+
+const openEditTab = (payment: any) => {
+  const viewId = `view-${payment.id}`;
+  const editId = `edit-${payment.id}`;
+
+  setTabs((prev) => {
+    let updatedTabs = [...prev];
+
+    // 🔹 Remove current view tab if open
+    updatedTabs = updatedTabs.filter((t) => t.id !== viewId);
+
+    // 🔹 If we already have an edit tab, just activate it
+    if (updatedTabs.some((t) => t.id === editId)) {
+      setActiveTab(editId);
+      return updatedTabs;
+    }
+
+    // 🔹 Add a new edit tab
+    updatedTabs.push({
+      id: editId,
+      label: `#${payment.reference_id ?? payment.id} (edit)`,
+      type: "edit",
+      data: payment,
+    });
+
+    setActiveTab(editId);
+    return updatedTabs;
+  });
+};
+
 
   const closeTab = (id: string) => {
     setTabs((prev) => prev.filter((t) => t.id !== id));
@@ -99,6 +149,8 @@ const PaymentTabs: React.FC = () => {
               `#${payment.reference_id ?? payment.id}`,
               payment
             );
+            // 🔥 Notify parent (PaymentManagementPage)
+            onPaymentCreated?.(payment);
           }}
         />
       ) : tab.type === "view" ? (
@@ -116,7 +168,11 @@ const PaymentTabs: React.FC = () => {
           </button>
         </div>
       ) : (
-        <OrderForm /> // Future: Pass tab.data to prefill edit form
+        <OrderForm mode="edit" initialData={tab.data} onUpdated={(updated) => {
+          // Update the tab data and convert back to view
+          setTabs(prev => prev.map(t => t.id === tab.id ? { ...t, type: "view", data: updated, label: `#${updated.reference_id ?? updated.id}` } : t));
+          setActiveTab(tab.id); // Keep same tab active
+        }} />
       ),
   }));
 

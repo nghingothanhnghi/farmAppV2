@@ -49,7 +49,7 @@ const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPla
     };
 
     return (
-        <div>
+        <div className='space-y-4'>
             {/* Play Type Selector */}
             <FormGroup>
                 <FormLabel htmlFor="playType" className='text-sm mb-2'>Chọn cách chơi</FormLabel>

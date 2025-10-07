@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import type { Ticket, PrizeResult } from '../../../models/interfaces/Jackpot';
 import EmptyState from '../../common/EmptyState';
 import { IconMoodEmpty } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '../../common/Button';
+import { formatDateVN } from '../../../utils/formatters';
 interface Props {
   tickets: Ticket[];
   prizes: Record<number, PrizeResult | string>;
@@ -14,7 +15,9 @@ const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult })
   console.log('Prizes:', prizes);
   console.log('Tickets:', tickets);
   // Sort latest first
-  const sortedTickets = tickets.slice().reverse();
+  // const sortedTickets = tickets.slice().reverse();
+  const sortedTickets = useMemo(() => tickets.slice().reverse(), [tickets]);
+
 
   // Track the latest ticket ID to highlight it
   const [highlightedId, setHighlightedId] = useState<number | null>(null);
@@ -64,6 +67,11 @@ const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult })
                     {ticket.numbers.join(', ')}
                     <div className='flex items-center space-x-2 text-[0.625rem] mt-0.5'>
                       <span className=' text-gray-700 dark:text-gray-400 line-clamp-3'>#{ticket.id} — ({ticket.play_type})</span>
+                      {ticket.draw && (
+                        <span className="text-[0.625rem] text-gray-500 dark:text-gray-400">
+                          Kỳ quay: {formatDateVN(ticket.draw.draw_date)}
+                        </span>
+                      )}
                       {typeof prize === 'string' && (
                         <span
                           className={`${prize === 'No prize' ? 'text-gray-500' : 'text-blue-500'
@@ -84,9 +92,13 @@ const JackpotTicketsList: React.FC<Props> = ({ tickets, prizes, onCheckResult })
                 <Button
                   label="Kiểm tra"
                   onClick={() => onCheckResult(ticket.id)}
-                  className="px-3 py-1 text-xs bg-gray-500 hover:bg-gray-600 text-white dark:bg-gray-700 dark:hover:bg-gray-600"
+                  variant={
+                    ticket.draw?.status === "scheduled"
+                      ? "secondary" // outlined/neutral for upcoming draw
+                      : "primary"   // filled for completed draws
+                  }
                   rounded='lg'
-                  size='xs'
+                  size='xxs'
                 />
               </motion.div>
             );

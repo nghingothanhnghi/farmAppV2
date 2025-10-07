@@ -7,17 +7,22 @@ import type { PaymentCreate } from "../../../models/interfaces/Payment";
 
 interface OrderFormProps {
   onCreated?: (payment: any) => void;
+  mode?: "create" | "edit";
+  initialData?: any;
+  onUpdated?: (payment: any) => void;
 }
 
-const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
+const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initialData, onUpdated }) => {
   const { user, isAuthenticated, setShowLoginModal } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [order, setOrder] = useState<Partial<PaymentCreate>>({
-    client_id: "",
-    provider: "manual", // default provider
-    amount: 0,
-    currency: "VND",
+  const [order, setOrder] = useState<Partial<PaymentCreate & { status?: string; extra_metadata?: any }>>({
+    client_id: initialData?.client_id || "",
+    provider: initialData?.provider || "manual",
+    amount: initialData?.amount || 0,
+    currency: initialData?.currency || "VND",
+    status: initialData?.status || "pending",
+    extra_metadata: initialData?.extra_metadata || {},
   });
   const [confirmation, setConfirmation] = useState<any>(null);
 
@@ -32,16 +37,26 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
       }
       try {
         setLoading(true);
-        const created = await paymentService.createPayment({
-          ...order,
-          user_id: user.id,
-          client_id: order.client_id ?? "default-client",
-          provider: order.provider ?? "manual",
-          amount: Number(order.amount),
-        } as PaymentCreate);
-        setConfirmation(created);
-        // ✅ Notify parent so tab label updates
-        onCreated?.(created);
+        if (mode === "edit" && initialData) {
+          // For edit, only update status (based on PaymentUpdate interface)
+          const updated = await paymentService.updatePayment(initialData.id, {
+            status: order.status || initialData.status, // Assuming status is added to order state
+            extra_metadata: order.extra_metadata || initialData.extra_metadata,
+          });
+          setConfirmation(updated);
+          onUpdated?.(updated);
+        } else {
+          const created = await paymentService.createPayment({
+            ...order,
+            user_id: user.id,
+            client_id: order.client_id ?? "default-client",
+            provider: order.provider ?? "manual",
+            amount: Number(order.amount),
+          } as PaymentCreate);
+          setConfirmation(created);
+          // ✅ Notify parent so tab label updates
+          onCreated?.(created);
+        }
       } finally {
         setLoading(false);
       }
@@ -99,6 +114,22 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
               onChange={(e) => setOrder({ ...order, currency: e.target.value })}
             />
           </div>
+
+          {mode === "edit" && (
+            <div>
+              <label className="block text-sm font-medium">Status</label>
+              <select
+                className="w-full border p-2 rounded"
+                value={order.status}
+                onChange={(e) => setOrder({ ...order, status: e.target.value })}
+              >
+                <option value="pending">Pending</option>
+                <option value="completed">Completed</option>
+                <option value="failed">Failed</option>
+                <option value="refunded">Refunded</option>
+              </select>
+            </div>
+          )}
         </div>
       ),
     },
@@ -109,6 +140,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
           <p><strong>Client:</strong> {order.client_id || "N/A"}</p>
           <p><strong>Provider:</strong> {order.provider}</p>
           <p><strong>Amount:</strong> {order.amount} {order.currency}</p>
+          {mode === "edit" && <p><strong>Status:</strong> {order.status}</p>}
           {!isAuthenticated && (
             <p className="text-red-500">⚠️ You must log in before confirming.</p>
           )}
@@ -122,8 +154,10 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated }) => {
           {loading && <p>Creating order...</p>}
           {confirmation ? (
             <>
-              <h2 className="text-xl font-semibold text-green-600">✅ Order Created!</h2>
-              <p>Order ID: {confirmation.id}</p>
+              <h2 className="text-xl font-semibold text-green-600">
+                ✅ {mode === "edit" ? "Payment Updated!" : "Order Created!"}
+              </h2>
+              <p>{mode === "edit" ? "Payment" : "Order"} ID: {confirmation.id}</p>
               <p>Status: {confirmation.status}</p>
             </>
           ) : (
