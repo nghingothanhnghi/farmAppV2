@@ -230,7 +230,7 @@ const HeroSection: React.FC = () => {
                 <div className="pointer-events-none absolute inset-0 z-10 bg-gradient-to-b from-white/70 via-transparent to-white/90 dark:from-zinc-900/70 dark:via-transparent dark:to-zinc-950/90" />
             </div>
 
-            <div className="relative z-20 mx-auto max-w-7xl px-6 py-24 lg:py-32 pointer-events-none">
+            <div className="relative z-20 mx-auto max-w-6xl px-6 py-24 lg:py-32 pointer-events-none">
                 <div className="max-w-2xl">
                     <h1 className="text-4xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-6xl">
                         Smart Hydroponic Farming

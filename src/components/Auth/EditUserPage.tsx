@@ -134,13 +134,13 @@ const EditUserPage: React.FC = () => {
                 rounded="full"
                 className="mb-2"
               />
-                <input
+              <input
                 id="file-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className='hidden'
-                />
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className='hidden'
+              />
               <label
                 htmlFor="file-upload"
                 className="absolute bottom-2 right-2 bg-white dark:bg-zinc-800 rounded-full p-2 shadow-md cursor-pointer hover:bg-gray-100 z-10"

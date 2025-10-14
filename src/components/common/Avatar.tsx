@@ -18,8 +18,18 @@ const Avatar: React.FC<AvatarProps> = ({
   rounded = "full",
   className = "",
 }) => {
-    // If imageUrl is missing, fall back to DEFAULT_AVATAR immediately
-  const url = imageUrl ? getUserImageUrl(imageUrl) : DEFAULT_AVATAR;
+
+  // ✅ Detect if it's a blob or data URL
+  const isBlobOrDataUrl =
+    typeof imageUrl === "string" &&
+    (imageUrl.startsWith("blob:") || imageUrl.startsWith("data:"));
+
+  // ✅ Only transform backend URLs
+  const url = imageUrl
+    ? isBlobOrDataUrl
+      ? imageUrl
+      : getUserImageUrl(imageUrl)
+    : DEFAULT_AVATAR;
 
   const roundedClass =
     rounded === "full"

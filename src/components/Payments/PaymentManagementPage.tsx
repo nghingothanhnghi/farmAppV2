@@ -26,11 +26,7 @@ const PaymentManagementPage: React.FC = () => {
     const [selectedPayment, setSelectedPayment] = useState<PaymentOut | null>(null);
 
     const sideContent = useSideContent();
-
-    const openPaymentTabs = (initialPayment?: PaymentOut) => {
-        sideContent.openSide(<PaymentTabs onPaymentCreated={handlePaymentCreated} initialPayment={initialPayment} />);
-    };
-
+    const [initialPayment, setInitialPayment] = useState<PaymentOut | undefined>(undefined);
     const fetchPayments = useCallback(async () => {
         try {
             let res: PaymentOut[] = [];
@@ -107,6 +103,11 @@ const PaymentManagementPage: React.FC = () => {
         setAlert({ message: `Payment #${payment.reference_id ?? payment.id} created!`, type: "success" });
     };
 
+    // ✅ openPaymentTabs updated to set local state
+    const openPaymentTabs = (payment?: PaymentOut) => {
+        setInitialPayment(payment); // ✅ store selected payment in state
+        sideContent.openSide(); // ✅ just open panel (PaymentTabs rendered below)
+    };
 
 
 
@@ -202,7 +203,7 @@ const PaymentManagementPage: React.FC = () => {
             />
 
             <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
-                <PaymentTabs onPaymentCreated={handlePaymentCreated} />
+                <PaymentTabs onPaymentCreated={handlePaymentCreated} initialPayment={initialPayment} onAllTabsClosed={() => sideContent.closeSide()} />
             </SideContentPanel>
 
             <DataGrid

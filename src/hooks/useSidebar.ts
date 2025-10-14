@@ -1,11 +1,13 @@
 // src/hooks/useSidebar.ts
 import { useEffect, useState, useRef } from 'react';
 
-export function useSidebar(defaultOpenDesktop = true) {
+export function useSidebar(defaultOpenDesktop = true, persist = true) {
   const [menuOpen, setMenuOpen] = useState(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('sidebarOpen');
-      if (saved !== null) return JSON.parse(saved);
+            if (persist) {
+        const saved = localStorage.getItem('sidebarOpen');
+        if (saved !== null) return JSON.parse(saved);
+      }
       return window.innerWidth >= 1024 ? defaultOpenDesktop : false;
     }
     return false;
@@ -14,17 +16,17 @@ export function useSidebar(defaultOpenDesktop = true) {
   const isUserToggled = useRef(false);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
+    if (persist && typeof window !== 'undefined') {
       localStorage.setItem('sidebarOpen', JSON.stringify(menuOpen));
     }
-  }, [menuOpen]);
+  }, [menuOpen, persist]);
 
   useEffect(() => {
     const handleResize = () => {
       const isDesktop = window.innerWidth >= 1024;
       if (isDesktop) {
         if (!isUserToggled.current) {
-          setMenuOpen(true); // Only auto-open if user hasn't manually toggled
+          setMenuOpen(defaultOpenDesktop); // ✅ use the prop value, not always true
         }
       } else {
         setMenuOpen(false); // Always close on mobile
@@ -33,7 +35,7 @@ export function useSidebar(defaultOpenDesktop = true) {
     };
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [menuOpen]);
+  }, [defaultOpenDesktop]);
 
   const handleMenuClose = () => {
     if (typeof window !== 'undefined') {

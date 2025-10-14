@@ -10,6 +10,7 @@ const ListLink: React.FC<ListLinkProps> = ({
   active,
   onClick,
   iconOnlyMode = false,
+  ...rest // 👈 capture extra props like data-id
 }) => {
   const location = useLocation();
   const isActive = active ?? location.pathname === to;
@@ -19,6 +20,7 @@ const ListLink: React.FC<ListLinkProps> = ({
     <Link
       to={to}
       onClick={onClick}
+      {...rest} // 👈 spread them into the Link
       className={`
         flex items-center
         ${isIconOnly ? 'justify-center w-10 h-10 p-2' : 'space-x-3 px-4 py-2'}

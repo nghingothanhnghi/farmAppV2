@@ -118,7 +118,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                     <div className="text-right">
                         <Link
                             to="/reset-password"
-                            className="text-sm text-blue-600 hover:underline"
+                            className="text-sm text-gray-500 dark:text-gray-300 underline"
                             onClick={onClose}
                         >
                             Forgot Password?
@@ -137,11 +137,11 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                         fullWidth
                         rounded='lg'
                     />
-                    <p className="text-center text-sm text-gray-600 mb-5">
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-5">
                         Don’t have an account?{' '}
                         <Link
                             to="/sign-up"
-                            className="text-blue-600 hover:underline"
+                            className="text-gray-500 dark:text-gray-300 underline"
                             onClick={onClose}
                         >
                             Sign up

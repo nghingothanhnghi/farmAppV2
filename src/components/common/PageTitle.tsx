@@ -3,10 +3,33 @@ import React from 'react';
 import type { PageTitleProps } from '../../models/interfaces/PageTitle';
 
 
-const PageTitle: React.FC<PageTitleProps> = ({ title, subtitle, actions }) => {
+const PageTitle: React.FC<PageTitleProps> = ({
+  title,
+  subtitle,
+  actions,
+  align = 'left',        // new prop
+  justify = 'between',
+  width = '500px',
+}) => {
+  // Alignment classes
+  const alignClasses = {
+    left: 'items-start text-left',
+    center: 'items-center text-center',
+    right: 'items-end text-right',
+  }[align];
+
+  // justify (horizontal)
+  const justifyClasses = {
+    start: 'justify-start',
+    center: 'justify-center',
+    end: 'justify-end',
+    between: 'justify-between',
+    around: 'justify-around',
+    evenly: 'justify-evenly',
+  }[justify];
   return (
-    <div className="hidden lg:flex flex-col sm:flex-row items-start justify-between gap-4 mb-5">
-      <div className='lg:w-[500px]'>
+    <div className={`hidden lg:flex flex-col sm:flex-row justify-between gap-4 mb-5 ${alignClasses} ${justifyClasses}`}>
+      <div className={`lg:w-[${width}]`}>
         <h1 className="text-xl font-semibold text-zinc-950 sm:text-xl/8 dark:text-white">
           {title}
         </h1>

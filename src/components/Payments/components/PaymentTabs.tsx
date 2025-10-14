@@ -14,13 +14,26 @@ interface PaymentTab {
 interface PaymentTabsProps {
   onPaymentCreated?: (payment: any) => void; // <-- add this
   initialPayment?: any; // 👈 payment to open initially
+  onAllTabsClosed?: () => void; 
 }
 
-const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment }) => {
-  const [tabs, setTabs] = useState<PaymentTab[]>([
-    { id: "new", label: "#Draft", type: "create" },
-  ]);
-  const [activeTab, setActiveTab] = useState<string>("new");
+const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment, onAllTabsClosed }) => {
+  // ✅ Initialize based on initialPayment
+  const [tabs, setTabs] = useState<PaymentTab[]>(() =>
+    initialPayment
+      ? [
+          {
+            id: `view-${initialPayment.id}`,
+            label: `#${initialPayment.reference_id ?? initialPayment.id}`,
+            type: "view",
+            data: initialPayment,
+          },
+        ]
+      : [{ id: "new", label: "#Draft", type: "create" }]
+  );
+    const [activeTab, setActiveTab] = useState<string>(() =>
+    initialPayment ? `view-${initialPayment.id}` : "new"
+  );
 
    React.useEffect(() => {
     if (initialPayment) {
@@ -107,15 +120,24 @@ const openEditTab = (payment: any) => {
   });
 };
 
-
   const closeTab = (id: string) => {
-    setTabs((prev) => prev.filter((t) => t.id !== id));
-    if (activeTab === id) {
-      setActiveTab((prev) =>
-        prev === id ? (tabs[0]?.id ?? "") : prev
-      );
+  setTabs((prev) => {
+    const updated = prev.filter((t) => t.id !== id);
+
+    // ✅ If no tabs left, trigger parent close
+    if (updated.length === 0) {
+      onAllTabsClosed?.();
     }
-  };
+
+    return updated;
+  });
+
+  if (activeTab === id) {
+    setActiveTab((prev) =>
+      prev === id ? (tabs[0]?.id ?? "") : prev
+    );
+  }
+};
 
   const openNewTab = () => {
     const id = `new-${Date.now()}`;

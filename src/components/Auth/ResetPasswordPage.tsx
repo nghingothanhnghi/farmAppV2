@@ -6,6 +6,8 @@ import PageTitle from '../common/PageTitle';
 import { useAlert } from '../../contexts/alertContext';
 import { requestResetCode, verifyResetCode, resetPassword } from '../../services/resetPwService';
 import { formatTimeCountDown } from '../../utils/formatters';
+import { parseApiErrors } from '../../utils/errorUtils';
+import { resetPasswordEmailSchema, resetPasswordCodeSchema, resetPasswordNewPasswordSchema } from '../../validation/authValidation';
 
 const ResetPasswordPage: React.FC = () => {
     const navigate = useNavigate();
@@ -14,6 +16,7 @@ const ResetPasswordPage: React.FC = () => {
     const [step, setStep] = useState<'email' | 'verify' | 'reset'>('email');
     const [email, setEmail] = useState('');
     const [code, setCode] = useState('');
+    const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [expirationTime, setExpirationTime] = useState<number>(600); // 10 minutes in seconds
     const [newPassword, setNewPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -40,11 +43,14 @@ const ResetPasswordPage: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            await resetPasswordEmailSchema.validate({ email });
             await requestResetCode(email);
             setAlert({ type: 'success', message: 'Reset code sent to email' });
             setStep('verify');
         } catch (err: any) {
-            setAlert({ type: 'error', message: err?.response?.data?.detail || 'Failed to send reset code' });
+            const { fieldErrors, message } = parseApiErrors(err);
+            setFieldErrors(fieldErrors);
+            setAlert({ type: 'error', message });
         } finally {
             setLoading(false);
         }
@@ -57,7 +63,9 @@ const ResetPasswordPage: React.FC = () => {
             await requestResetCode(email);
             setAlert({ type: 'success', message: 'Code resent successfully' });
         } catch (err: any) {
-            setAlert({ type: 'error', message: err?.response?.data?.detail || 'Failed to resend code' });
+            const { fieldErrors, message } = parseApiErrors(err);
+            setFieldErrors(fieldErrors);
+            setAlert({ type: 'error', message });
         } finally {
             setLoading(false);
         }
@@ -68,11 +76,14 @@ const ResetPasswordPage: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            await resetPasswordCodeSchema.validate({ code });
             await verifyResetCode(email, code);
             setAlert({ type: 'success', message: 'Code verified successfully' });
             setStep('reset');
         } catch (err: any) {
-            setAlert({ type: 'error', message: err?.response?.data?.detail || 'Invalid or expired code' });
+            const { fieldErrors, message } = parseApiErrors(err);
+            setFieldErrors(fieldErrors);
+            setAlert({ type: 'error', message });
         } finally {
             setLoading(false);
         }
@@ -82,11 +93,14 @@ const ResetPasswordPage: React.FC = () => {
         e.preventDefault();
         setLoading(true);
         try {
+            await resetPasswordNewPasswordSchema.validate({ newPassword });
             await resetPassword(email, newPassword);
             setAlert({ type: 'success', message: 'Password reset successfully' });
             navigate('/login');
         } catch (err: any) {
-            setAlert({ type: 'error', message: err?.response?.data?.detail || 'Failed to reset password' });
+            const { fieldErrors, message } = parseApiErrors(err);
+            setFieldErrors(fieldErrors);
+            setAlert({ type: 'error', message });
         } finally {
             setLoading(false);
         }
@@ -97,26 +111,35 @@ const ResetPasswordPage: React.FC = () => {
             <div className="w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
                 <PageTitle
                     title="Reset Password"
+                    align="center"
+                    justify='center'
+                    width="full"
                 />
                 {step === 'email' && (
                     <Form onSubmit={handleEmailSubmit} className="space-y-10 max-w-xl mx-auto">
                         <FormGroup className='flex flex-col gap-y-6'>
                             <div className='space-y-1 text-center'>
-                                <FormLabel htmlFor="email">📩 Enter your email address to receive a 6-digit reset code.</FormLabel>
+                                <FormLabel htmlFor="email">Enter your email address to receive a 6-digit reset code.</FormLabel>
                                 <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Make sure it's the same email you used to register.</p>
                             </div>
-                            <div className='flex justify-center'>
+                            <div className='flex flex-col items-center w-full space-y-2'>
                                 <FormInput
                                     type="email"
                                     name="email"
                                     id="email"
                                     value={email}
-                                    onChange={e => setEmail(e.target.value)}
+                                    onChange={e => {
+                                        setEmail(e.target.value);
+                                        setFieldErrors(prev => ({ ...prev, email: '' })); // clear on input
+                                    }}
                                     required
                                 />
+                                {fieldErrors.email && (
+                                    <p className="text-red-500 text-xs text-center">{fieldErrors.email}</p>
+                                )}
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
                                 label={loading ? 'Sending...' : 'Send Code'}
@@ -155,12 +178,13 @@ const ResetPasswordPage: React.FC = () => {
                                             onClick={() => handleResendCode()}
                                             disabled={loading || expirationTime <= 0}
                                             rounded='lg'
+                                            className='text-gray-500 dark:text-gray-300 underline'
                                         />
                                     </div>
                                 </div>
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
                                 label={loading ? 'Verifying...' : 'Verify Code'}
@@ -189,7 +213,7 @@ const ResetPasswordPage: React.FC = () => {
                                 />
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'>
+                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
                                 label={loading ? 'Resetting...' : 'Ok'}
