@@ -1,5 +1,5 @@
 // src/hooks/useJackpot.ts
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { jackpotService } from '../services/jackpotService';
 import type { Draw, DrawCreateInput, Ticket, PrizeResult, TicketCreateInput, JackpotRules, PrizeHistorySummary, TicketCountStat, NumberFrequencyStat, SalesSummaryResponse, NextSuggestionResponse } from '../models/interfaces/Jackpot';
 export const useJackpot = () => {

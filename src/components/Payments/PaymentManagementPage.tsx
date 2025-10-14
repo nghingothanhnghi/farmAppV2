@@ -12,12 +12,14 @@ import DropdownButton from "../common/DropdownButton";
 import Modal from "../common/Modal";
 import LinearProgress from "../common/LinearProgress";
 import { IconAlertCircle } from "@tabler/icons-react";
+import { useAuth } from '../../contexts/authContext';
 import PaymentTabs from "./components/PaymentTabs";
 import useHasAnyRole from "../../hooks/useHasAnyRole";
 import SideContentPanel from "../common/SideContentPanel";
 import { useSideContent } from "../../hooks/useSideContent";
 
 const PaymentManagementPage: React.FC = () => {
+    const { user } = useAuth();
     const { setAlert } = useAlert();
     const isSuperAdmin = useHasAnyRole(["super_admin"]);
     const [payments, setPayments] = useState<PaymentOut[]>([]);
@@ -27,40 +29,37 @@ const PaymentManagementPage: React.FC = () => {
 
     const sideContent = useSideContent();
     const [initialPayment, setInitialPayment] = useState<PaymentOut | undefined>(undefined);
-    const fetchPayments = useCallback(async () => {
-        try {
-            let res: PaymentOut[] = [];
+   const fetchPayments = useCallback(async () => {
+    if (!user) return; // 🟢 wait for user to be loaded
 
-            if (isSuperAdmin) {
-                // 🔄 Super admin: fetch all payments (paginated)
-                const allPayments = await paymentService.getAllPayments();
-                res = allPayments.results;
-            } else {
-                // 🔄 Regular user: fetch only their payments
-                // Replace 'myUserId' / 'myClientId' with your auth context values
-                const myUserId = 1; // get from auth context
-                const myClientId = "client-123"; // get from auth context
+    try {
+      let res: PaymentOut[] = [];
 
-                // Fetch by user first
-                res = await paymentService.getPaymentsByUser(myUserId);
+      if (isSuperAdmin) {
+        // 🔄 Super admin: fetch all payments
+        const allPayments = await paymentService.getAllPayments();
+        res = allPayments.results;
+      } else {
+        // 🔄 Regular user: fetch only their payments
+        const myUserId = user.id; // ✅ number
+        res = await paymentService.getPaymentsByUser(myUserId);
+      }
 
-                // Optionally, fetch by client if needed
-                // const clientPayments = await paymentService.getPaymentsByClient(myClientId);
-                // res = [...res, ...clientPayments];
-            }
+      setPayments(res);
+    } catch (err) {
+      console.error("Failed to fetch payments:", err);
+      setAlert({ message: "Failed to fetch payments", type: "error" });
+    } finally {
+      setLoading(false);
+    }
+  }, [user, isSuperAdmin, setAlert]);
 
-            setPayments(res);
-        } catch (err) {
-            console.error("Failed to fetch payments:", err);
-            setAlert({ message: "Failed to fetch payments", type: "error" });
-        } finally {
-            setLoading(false);
-        }
-    }, [setAlert, isSuperAdmin]);
 
-    useEffect(() => {
-        fetchPayments();
-    }, [fetchPayments]);
+  useEffect(() => {
+    if (user) {
+      fetchPayments();
+    }
+  }, [user, fetchPayments]);
 
     const handleStatusChange = async (paymentId: number, newStatus: PaymentStatus) => {
         try {

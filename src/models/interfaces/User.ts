@@ -11,6 +11,7 @@ export interface User {
     lastName: string;
     roles: Role[];
     image_url?: string;
+    client_id?: string; 
     // Add any other fields returned by your backend for the user
 }
 
