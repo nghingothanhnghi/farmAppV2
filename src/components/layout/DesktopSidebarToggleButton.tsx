@@ -77,11 +77,13 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                 ) : (
                     <Button
                         type="button"
-                        label="Sign Up"
-                        onClick={() => navigate('/sign-up')}
                         variant="secondary"
-                        fullWidth
-                        rounded='lg'
+                        icon={<IconUserEdit size={18} />}
+                        iconOnly
+                        label="Sign Up"
+                        className='bg-transparent'
+                        onClick={() => navigate('/sign-up')}
+                        rounded='full'
                     />
                 )}
             </div>

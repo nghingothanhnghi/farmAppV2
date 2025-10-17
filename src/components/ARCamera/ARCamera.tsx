@@ -19,7 +19,7 @@ const ARCamera: React.FC<ARCameraProps> = ({ modelName = 'default', captureInter
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const { isStreaming } = useCamera({ videoRef });
+  const { isStreaming } = useCamera({ videoRef, facingMode: 'user', autoStart: true });
   const [detections, setDetections] = useState<Detection[]>([]);
   const [annotatedImageSrc, setAnnotatedImageSrc] = useState<string | null>(null);
   const [availableModels, setAvailableModels] = useState<string[]>([]);
@@ -28,17 +28,17 @@ const ARCamera: React.FC<ARCameraProps> = ({ modelName = 'default', captureInter
   const [modelToDelete, setModelToDelete] = useState<string | null>(null);
 
   useEffect(() => {
-  const fetchModels = async () => {
-    try {
-      const models = await objectDetectionService.listAvailableModels();
-      setAvailableModels(models);
-    } catch (err) {
-      setAlert({ message: 'Could not fetch available models.', type: 'error' });
-    }
-  };
+    const fetchModels = async () => {
+      try {
+        const models = await objectDetectionService.listAvailableModels();
+        setAvailableModels(models);
+      } catch (err) {
+        setAlert({ message: 'Could not fetch available models.', type: 'error' });
+      }
+    };
 
-  fetchModels();
-}, []);
+    fetchModels();
+  }, []);
 
 
   const captureFrame = useCallback((): string | null => {
@@ -86,19 +86,22 @@ const ARCamera: React.FC<ARCameraProps> = ({ modelName = 'default', captureInter
   console.log("Available models:", availableModels);
 
   return (
-    <div className="ar-camera-container">
-      <ModelSelector
-        availableModels={availableModels}
-        selectedModel={selectedModel}
-        onSelect={setSelectedModel}
-        onDeleteRequest={confirmDeleteModel}
-      />
-      <div className="camera-view">
+    <div className='flex flex-col lg:flex-row gap-6'>
+      <div className="camera-view flex-1">
         <video ref={videoRef} autoPlay playsInline muted />
         <canvas ref={canvasRef} style={{ display: 'none' }} />
         <DetectionOverlay detections={detections} />
+        {showAnnotatedImage && annotatedImageSrc && <AnnotatedImage src={annotatedImageSrc} />}
       </div>
-      {showAnnotatedImage && annotatedImageSrc && <AnnotatedImage src={annotatedImageSrc} />}
+
+      <div className='lg:w-[350px] space-y-2 flex flex-col max-h-full'>
+        <ModelSelector
+          availableModels={availableModels}
+          selectedModel={selectedModel}
+          onSelect={setSelectedModel}
+          onDeleteRequest={confirmDeleteModel}
+        />
+      </div>
       <Modal
         showCloseButton={false}
         size="xsmall"
@@ -135,7 +138,7 @@ const ARCamera: React.FC<ARCameraProps> = ({ modelName = 'default', captureInter
             />
           </div>
         }
-      /> 
+      />
     </div>
   );
 };

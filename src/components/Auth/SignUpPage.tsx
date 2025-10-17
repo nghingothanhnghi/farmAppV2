@@ -80,7 +80,7 @@ const SignUpPage: React.FC = () => {
                 />
                 <Form onSubmit={handleSubmit} className="max-w-xl mx-auto">
                     {fields.map(([name, label, type, required]) => (
-                        <FormGroup key={name} className='grid gap-x-8 gap-y-1 sm:gap-y-6 sm:grid-cols-2'>
+                        <FormGroup key={name} className='grid gap-x-8 gap-y-6 sm:gap-y-6 sm:grid-cols-2'>
                             <div className='space-y-1'>
                                 <FormLabel htmlFor={name} className="text-gray-700 dark:text-gray-300">{label}</FormLabel>
                             </div>

@@ -2,13 +2,14 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import ARCamera from '../ARCamera';
+import type { DetectionResult, Detection } from '../../models/interfaces/Camera';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import './ARDetectionPage.css';
 
 const ARDetectionPage: React.FC = () => {
   const navigate = useNavigate();
-  const [detectionResults, setDetectionResults] = useState<any>(null);
+  const [detectionResults, setDetectionResults] = useState<DetectionResult | null>(null);
   const [streamMode, setStreamMode] = useState<'websocket' | 'http'>('http');
   const [captureInterval, setCaptureInterval] = useState<number>(500);
   const [modelName, setModelName] = useState<string>('default');
@@ -126,17 +127,22 @@ const ARDetectionPage: React.FC = () => {
         />
       </div>
 
-      {detectionResults && (
-        <div className="detection-results">
-          <h2>Detection Results</h2>
-          <div className="results-container">
-            {detectionResults.detections.map((detection: any, index: number) => (
-              <div key={index} className="detection-item">
-                <div className="detection-class">{detection.class}</div>
-                <div className="detection-confidence">
+      {detectionResults?.detections && (
+        <div className=" bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
+          <h3 className='text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1'>Detection Results</h3>
+          <div className="mt-0.5 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {detectionResults.detections.map((detection: Detection, index: number) => (
+              <div key={index} className="
+              flex flex-col items-start rounded-xl p-3 
+            bg-gradient-to-tr from-indigo-50 to-white 
+          dark:from-indigo-900/20 dark:to-gray-900 
+            border border-gray-200 dark:border-gray-700 
+            inset-shadow-sm hover:shadow-md transition">
+                <div className="detection-class text-sm font-medium">{detection.class_name}</div>
+                <div className="detection-confidence text-xs">
                   Confidence: {(detection.confidence * 100).toFixed(2)}%
                 </div>
-                <div className="detection-bbox">
+                <div className="text-[0.625rem] text-gray-500 dark:text-gray-400 mt-1">
                   Bounding Box: [{detection.bbox.map((val: number) => val.toFixed(1)).join(', ')}]
                 </div>
               </div>

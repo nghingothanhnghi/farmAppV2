@@ -1,6 +1,6 @@
 // src/models/interfaces/Camera.ts
 export interface Detection {
-  class: string;
+  class_name: string;
   confidence: number;
   bbox: [number, number, number, number];
 }
