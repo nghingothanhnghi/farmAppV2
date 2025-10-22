@@ -105,7 +105,7 @@ const DeviceForm: React.FC<Props> = ({
                 </div>
             </div>
             <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pe-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pe-0 bg-white dark:bg-gray-900 gap-4">
                 <Button
                     type="button"
                     label="Back"

@@ -37,6 +37,31 @@ export const resetPasswordSchema = Yup.object().shape({
     ),
 });
 
+// ✅ Helper for live password validation checks (used in forms)
+export const getPasswordChecks = (password: string) => [
+  {
+    label: 'At least 8 characters',
+    valid: password.length >= 8,
+  },
+  {
+    label: 'At least one lowercase letter',
+    valid: /[a-z]/.test(password),
+  },
+  {
+    label: 'At least one uppercase letter',
+    valid: /[A-Z]/.test(password),
+  },
+  {
+    label: 'At least one number',
+    valid: /\d/.test(password),
+  },
+  {
+    label: 'At least one special character (@$!%*?&#^(){}[]<>~)',
+    valid: /[@$!%*?&#^(){}\[\]<>~]/.test(password),
+  },
+];
+
+
 export const resetPasswordEmailSchema = resetPasswordSchema.pick(['email']);
 export const resetPasswordCodeSchema = resetPasswordSchema.pick(['code']);
 export const resetPasswordNewPasswordSchema = resetPasswordSchema.pick(['newPassword']);

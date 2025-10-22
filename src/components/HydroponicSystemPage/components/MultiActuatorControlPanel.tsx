@@ -121,8 +121,6 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
           ))}
         </>
       )}
-
-
     </div>
   );
 };

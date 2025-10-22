@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../common/Form';
+import { IconCheck, IconX, IconEye, IconEyeOff } from '@tabler/icons-react';
 import * as Yup from 'yup';
-import { registerSchema } from '../../validation/authValidation';
+import { registerSchema, getPasswordChecks } from '../../validation/authValidation';
 import { createUser } from '../../services/userService';
 import { useAlert } from '../../contexts/alertContext';
+import useToggle from '../../hooks/useToggle';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
 
@@ -20,6 +22,11 @@ const SignUpPage: React.FC = () => {
         first_name: '',
         last_name: '',
     });
+
+    const [password, setPassword] = useState('');
+    const { value: showPassword, toggle: togglePassword } = useToggle();
+    const passwordChecks = getPasswordChecks(password);
+
 
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [loading, setLoading] = useState(false);
@@ -38,6 +45,22 @@ const SignUpPage: React.FC = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+        if (name === 'password') setPassword(value);
+    };
+
+    // ✅ clear all form fields
+    const clearForm = () => {
+        setFormData({
+            username: '',
+            password: '',
+            email: '',
+            client_id: '',
+            phone_number: '',
+            first_name: '',
+            last_name: '',
+        });
+        setPassword('');
+        setFieldErrors({});
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -79,26 +102,79 @@ const SignUpPage: React.FC = () => {
                     title="Create New User"
                 />
                 <Form onSubmit={handleSubmit} className="max-w-xl mx-auto">
-                    {fields.map(([name, label, type, required]) => (
-                        <FormGroup key={name} className='grid gap-x-8 gap-y-6 sm:gap-y-6 sm:grid-cols-2'>
-                            <div className='space-y-1'>
-                                <FormLabel htmlFor={name} className="text-gray-700 dark:text-gray-300">{label}</FormLabel>
-                            </div>
-                            <div>
-                                <FormInput
-                                    id={name}
-                                    name={name}
-                                    type={type}
-                                    value={formData[name as keyof typeof formData]}
-                                    onChange={handleChange}
-                                    required={required}
-                                />
-                                {fieldErrors[name] && (
-                                    <p className="text-red-500 text-xs mt-1">{fieldErrors[name]}</p>
-                                )}
-                            </div>
-                        </FormGroup>
-                    ))}
+                    <div className="space-y-2">
+                        {fields.map(([name, label, type, required]) => (
+                            <FormGroup key={name} className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                                <div className="space-y-1">
+                                    <FormLabel htmlFor={name} className="text-gray-700 dark:text-gray-300">
+                                        {label}
+                                    </FormLabel>
+                                </div>
+                                <div>
+                                    {/* 👇 Password field with show/hide toggle */}
+                                    {name === 'password' ? (
+                                        <div className="relative">
+                                            <FormInput
+                                                id={name}
+                                                name={name}
+                                                type={showPassword ? 'text' : 'password'}
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                required={required}
+                                                className="pr-10"
+                                            />
+
+                                            <Button
+                                                onClick={togglePassword}
+                                                variant="link"
+                                                icon={showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                                                iconOnly
+                                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"
+                                                size='sm'
+                                                rounded='full'
+                                            />
+                                        </div>
+                                    ) : (
+                                        <FormInput
+                                            id={name}
+                                            name={name}
+                                            type={type}
+                                            value={formData[name as keyof typeof formData]}
+                                            onChange={handleChange}
+                                            required={required}
+                                        />
+                                    )}
+
+                                    {fieldErrors[name] && (
+                                        <p className="text-red-500 text-xs mt-1">{fieldErrors[name]}</p>
+                                    )}
+
+                                    {/* ✅ Password strength checklist */}
+                                    {name === 'password' && password && (
+                                        <ul className="my-3 space-y-1 text-sm">
+                                            {passwordChecks.map((check, index) => (
+                                                <li key={index} className="flex items-center gap-2">
+                                                    {check.valid ? (
+                                                        <IconCheck className="text-green-500 w-4 h-4" />
+                                                    ) : (
+                                                        <IconX className="text-gray-400 w-4 h-4" />
+                                                    )}
+                                                    <span
+                                                        className={`${check.valid
+                                                            ? 'text-green-600 dark:text-green-400'
+                                                            : 'text-gray-600 dark:text-gray-400'
+                                                            }`}
+                                                    >
+                                                        {check.label}
+                                                    </span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            </FormGroup>
+                        ))}
+                    </div>
                     <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
                     <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'>
                         <Button
@@ -107,6 +183,16 @@ const SignUpPage: React.FC = () => {
                             disabled={loading}
                             variant="primary"
                             className="md:w-auto"
+                            fullWidth={true}
+                            rounded='lg'
+                        />
+                        <Button
+                            type="button"
+                            label="Clear Form"
+                            onClick={clearForm}
+                            disabled={loading}
+                            variant="secondary"
+                            className="clear-button md:w-auto"
                             fullWidth={true}
                             rounded='lg'
                         />
