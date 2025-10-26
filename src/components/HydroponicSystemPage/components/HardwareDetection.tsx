@@ -110,8 +110,8 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
 
   return (
     <div className="space-y-10 mx-auto max-w-4xl">
-      <div className='flex justify-between mt-10 mb-6'>
-        <div className='space-y-0.5'>
+      <div className='lg:flex lg:justify-between space-y-4 mt-10 mb-6'>
+        <div className='flex lg:flex-col space-y-0.5'>
           <h3 className="text-base font-medium text-gray-700 dark:text-gray-200">{location}</h3>
           {/* Connection Status */}
           <Badge
@@ -121,7 +121,7 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
             {isWebSocketConnected ? '🟢 WebSocket Connected' : '🔴 WebSocket Disconnected'}
           </Badge>
         </div>
-        <div className='flex-1 flex items-center justify-end space-x-2'>
+        <div className='lg:flex-1 lg:flex lg:items-center lg:justify-end space-x-2'>
           {/* Action Buttons */}
           <div className="flex space-x-2 mb-6">
             <Button

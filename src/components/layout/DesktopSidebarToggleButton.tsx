@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconDeviceMobileCheck, IconCamera, IconBrain, IconPlant, IconUserShield, IconCalendarCheck, IconAnalyze, IconLogout, IconUserEdit } from '@tabler/icons-react';
+import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconDeviceMobileCheck, IconCamera, IconBrain, IconPlant, IconUserShield, IconSportBillard, IconCalendarCheck, IconAnalyze, IconCashRegister, IconLogout, IconUserEdit } from '@tabler/icons-react';
 import Button from '../common/Button';
 import DropdownButton from '../common/DropdownButton';
 import ListLink from '../common/ListLink';
@@ -45,8 +45,10 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                 <ListLink to="/ar-detection" icon={<IconCamera size={16} />} label="AR Detection" iconOnlyMode={true} />
                 <ListLink to="/model-training" icon={<IconBrain size={16} />} label="Model Training" iconOnlyMode={true} />
                 <ListLink to="/hydroponic-system" icon={<IconPlant size={16} />} label="Hydroponics" iconOnlyMode={true} />
+                <ListLink to="/jackpot" icon={<IconSportBillard size={16} />} label="Jackpot" iconOnlyMode={true} />
                 <ListLink to="/users" icon={<IconUserShield size={16} />} label="User Management" iconOnlyMode={true} />
-                <ListLink to="/migrate" icon={<IconAnalyze size={16} />} label="Data Migration" iconOnlyMode />
+                <ListLink to="/migrate" icon={<IconAnalyze size={16} />} label="Data Migration" iconOnlyMode={true} />
+                <ListLink to="/payments" icon={<IconCashRegister size={16} />} label="Payments" iconOnlyMode={true} />
             </div>
             <div className='flex justify-between items-center space-x-2 pb-4'>
                 {user ? (

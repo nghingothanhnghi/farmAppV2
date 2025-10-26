@@ -146,7 +146,7 @@ const PaymentManagementPage: React.FC = () => {
                 pinned: "right",
                 width: 250,
                 cellRenderer: ({ data }: any) => (
-                    <div className="flex gap-2 justify-center">
+                    <div className="flex items-center gap-2 justify-center h-full">
                         <Button
                             label="View"
                             variant="primary"
