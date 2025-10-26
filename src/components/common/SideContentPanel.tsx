@@ -1,6 +1,8 @@
 // src/components/layout/SideContentPanel.tsx
 import React from "react";
+import { IconArrowLeft } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
+import Button from "./Button";
 
 interface SideContentPanelProps {
   open: boolean;
@@ -19,13 +21,18 @@ const SideContentPanel: React.FC<SideContentPanelProps> = ({ open, onClose, chil
           transition={{ type: "spring", stiffness: 200, damping: 30 }}
           className="fixed top-0 right-0 h-full w-full max-w-xl bg-mesh border-l border-gray-200 dark:border-white/5 shadow-2xl z-50 flex flex-col"
         >
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-800"
-          >
-            ✕
-          </button>
-          <div className="flex-1 overflow-y-auto p-4">{children}</div>
+          <div className="p-4">
+            <Button
+              variant="secondary"
+              icon={<IconArrowLeft size={18} stroke={1.5} />}
+              iconOnly
+              label="Close"
+              className='bg-transparent'
+              onClick={onClose}
+              rounded='full'
+            />
+          </div>
+          <div className="flex-1 overflow-y-auto">{children}</div>
         </motion.div>
       )}
     </AnimatePresence>

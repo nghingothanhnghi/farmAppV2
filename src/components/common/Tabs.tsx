@@ -52,7 +52,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
     }
   }, [activeTab, tabs]);
   return (
-    <div>
+    <React.Fragment>
       {/* Tab navigation */}
       <div className="border-b border-gray-200 dark:border-white/5">
         <nav ref={containerRef} className="relative -mb-px flex space-x-8">
@@ -62,8 +62,8 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
               data-id={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`relative py-2 px-1 font-medium text-sm cursor-pointer focus:outline-none flex flex-col sm:flex-row items-center sm:gap-2 gap-1 transition-colors ${activeTab === tab.id
-                  ? "text-orange-600 dark:text-gray-100"
-                  : "text-gray-500 hover:text-gray-700"
+                ? "text-orange-600 dark:text-gray-100"
+                : "text-gray-500 hover:text-gray-700"
                 }`}
             >
               {tab.icon && <span className="mr-2">{tab.icon}</span>}
@@ -86,12 +86,11 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
           />
         </nav>
       </div>
-
       {/* Tab content */}
       <div className="mt-4">
         {tabs.find((tab) => tab.id === activeTab)?.content}
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

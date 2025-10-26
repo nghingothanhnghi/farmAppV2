@@ -51,3 +51,22 @@ export const formatDateVN = (dateString: string | Date): string => {
   });
 };
 
+
+// Format number into locale string (e.g. "1,234,567.89")
+export function formatCurrency(value: number, locale = navigator.language): string {
+  if (!value || isNaN(value)) return "";
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+// Parse a localized numeric string back into a number
+export function parseLocaleNumber(value: string, locale = navigator.language): number {
+  const example = Intl.NumberFormat(locale).format(1.1);
+  const decimalSeparator = example.charAt(1);
+  const normalized = value
+    .replace(new RegExp(`[^0-9${decimalSeparator}]`, "g"), "")
+    .replace(decimalSeparator, ".");
+  return parseFloat(normalized) || 0;
+}

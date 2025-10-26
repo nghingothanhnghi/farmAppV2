@@ -65,6 +65,7 @@ interface FormInputProps {
   accept?: string;
   multiple?: boolean;
   ref?: React.RefObject<HTMLInputElement>;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -82,7 +83,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   className = 'w-full max-w-sm min-w-[200px] ',
   accept,
   multiple = false,
-  ref
+  ref,
+  inputMode
 }) => {
   return (
     <div className={`${className}`}>
@@ -98,6 +100,7 @@ export const FormInput: React.FC<FormInputProps> = ({
         max={max}
         step={step}
         disabled={disabled}
+        inputMode={inputMode}
         className={`w-full bg-transparent dark:bg-gray-800 dark:text-gray-100 placeholder:text-slate-400 dark:placeholder:text-gray-500 text-slate-700 border border-slate-200 dark:border-gray-700 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none focus:border-slate-400 dark:focus:border-gray-500 hover:border-slate-300 dark:hover:border-gray-600 shadow-sm focus:shadow [-moz-appearance:_textfield] sm:text-sm [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none`}
         accept={accept}
         multiple={multiple}

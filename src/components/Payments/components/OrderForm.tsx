@@ -1,11 +1,11 @@
 // src/components/payment/OrderForm.tsx
 import React, { useState } from "react";
+import { formatCurrency, parseLocaleNumber } from "../../../utils/formatters";
 import WizardLayout from "../../common/WizardLayout";
 import { useAuth } from "../../../contexts/authContext";
 import { paymentService } from "../../../services/paymentService";
 import type { PaymentCreate } from "../../../models/interfaces/Payment";
-import { FormSelect } from "../../common/Form";
-import Button from "../../common/Button";
+import { FormGroup, FormLabel, FormInput, FormSelect } from "../../common/Form";
 
 interface OrderFormProps {
   onCreated?: (payment: any) => void;
@@ -73,64 +73,80 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
     {
       title: "Order Details",
       component: (
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium">Client ID</label>
-            <input
+        <div className="space-y-4 p-4">
+          <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+            <div className='space-y-1'>
+              <FormLabel htmlFor="client_id">Client ID</FormLabel>
+            </div>
+
+            <FormInput
+              id="client_id"
               type="text"
-              className="w-full border p-2 rounded"
-              value={order.client_id}
+              value={order.client_id ?? ""}
               onChange={(e) => setOrder({ ...order, client_id: e.target.value })}
             />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Provider</label>
-            <select
-              className="w-full border p-2 rounded"
-              value={order.provider}
+          </FormGroup>
+          <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+            <div className='space-y-1'>
+              <FormLabel htmlFor="provider">Provider</FormLabel>
+            </div>
+            <FormSelect
+              id="provider"
+              value={order.provider ?? "manual"}
               onChange={(e) => setOrder({ ...order, provider: e.target.value })}
             >
               <option value="manual">Manual</option>
               <option value="stripe">Stripe</option>
               <option value="paypal">PayPal</option>
-            </select>
-          </div>
+            </FormSelect>
+          </FormGroup>
+          <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+            <div className='space-y-1'>
+              <FormLabel htmlFor="amount">Amount</FormLabel>
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Amount Input */}
+              <FormInput
+                id="amount"
+                type="text"
+                inputMode="decimal"
+                value={order.amount ? formatCurrency(order.amount) : ""}
+                onChange={(e) => {
+                  const inputValue = e.target.value;
+                  const parsedValue = parseLocaleNumber(inputValue);
+                  setOrder({ ...order, amount: parsedValue });
+                }}
+                className="flex-1"
+                placeholder="Enter amount"
+              />
 
-          <div>
-            <label className="block text-sm font-medium">Amount</label>
-            <input
-              type="number"
-              className="w-full border p-2 rounded"
-              value={order.amount}
-              onChange={(e) => setOrder({ ...order, amount: parseFloat(e.target.value) })}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium">Currency</label>
-            <input
-              type="text"
-              className="w-full border p-2 rounded"
-              value={order.currency}
-              onChange={(e) => setOrder({ ...order, currency: e.target.value })}
-            />
-          </div>
-
+              {/* Currency Input (short width) */}
+              <FormInput
+                id="currency"
+                type="text"
+                value={order.currency ?? "VND"}
+                onChange={(e) => setOrder({ ...order, currency: e.target.value })}
+                className="w-24 text-center"
+                placeholder="VND"
+              />
+            </div>
+          </FormGroup>
           {mode === "edit" && (
-            <div>
-              <label className="block text-sm font-medium">Status</label>
-              <select
-                className="w-full border p-2 rounded"
-                value={order.status}
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+              <div className='space-y-1'>
+                <FormLabel htmlFor="status">Status</FormLabel>
+              </div>
+              <FormSelect
+                id="status"
+                value={order.status ?? "pending"}
                 onChange={(e) => setOrder({ ...order, status: e.target.value })}
               >
                 <option value="pending">Pending</option>
                 <option value="completed">Completed</option>
                 <option value="failed">Failed</option>
                 <option value="refunded">Refunded</option>
-              </select>
-            </div>
+              </FormSelect>
+            </FormGroup>
           )}
         </div>
       ),
@@ -138,10 +154,12 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
     {
       title: "Review",
       component: (
-        <div className="space-y-3">
+        <div className="space-y-4 p-4">
           <p><strong>Client:</strong> {order.client_id || "N/A"}</p>
           <p><strong>Provider:</strong> {order.provider}</p>
-          <p><strong>Amount:</strong> {order.amount} {order.currency}</p>
+          <p><strong>Amount:</strong>   {order.amount
+            ? `${formatCurrency(order.amount)} ${order.currency ?? ""}`
+            : "N/A"} </p>
           {mode === "edit" && <p><strong>Status:</strong> {order.status}</p>}
           {!isAuthenticated && (
             <p className="text-red-500">⚠️ You must log in before confirming.</p>

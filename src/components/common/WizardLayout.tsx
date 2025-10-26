@@ -1,5 +1,6 @@
 // src/components/common/WizardLayout.tsx
 import React from "react";
+import Button from "./Button";
 
 interface WizardStep {
   title: string;
@@ -20,9 +21,9 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
   const step = steps[currentStep];
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden">
       {/* Step Header */}
-      <div>
+      <div className="sticky top-0 z-10">
         <div className="flex items-center justify-between">
           {steps.map((s, i) => (
             <div
@@ -37,27 +38,30 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
         </div>
       </div>
       {/* Step Content */}
+      <div className="flex-1 overflow-y-auto px-6 py-4">
         {step.component}
+      </div>
+
       {/* Navigation Buttons */}
       {!step.hideNav && (
-        <div className="flex justify-between pt-4">
+        <div className="sticky bottom-0 z-10 py-3 px-6 flex justify-between">
           {!step.hideBack && (
-            <button
+            <Button
+              label="Back"
               onClick={goBack}
               disabled={currentStep === 0}
-              className="px-4 py-2 text-sm bg-gray-200 rounded disabled:opacity-50"
-            >
-              Back
-            </button>
+              variant="secondary"
+              className="min-w-[100px]"
+            />
           )}
           {!step.hideNext && (
-            <button
+            <Button
+              label="Next"
               onClick={goNext}
               disabled={currentStep >= steps.length - 1}
-              className="px-4 py-2 text-sm bg-blue-600 text-white rounded disabled:opacity-50"
-            >
-              Next
-            </button>
+              variant="primary"
+              className="min-w-[100px]"
+            />
           )}
         </div>
       )}

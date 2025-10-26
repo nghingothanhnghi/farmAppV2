@@ -1,8 +1,9 @@
 // src/components/payment/PaymentTabs.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Tabs from "../../common/Tabs";
+import Button from "../../common/Button";
 import OrderForm from "./OrderForm";
-import { IconPencil, IconPlus, IconTrash } from "@tabler/icons-react";
+import { IconPencil, IconPlus, IconTrash, IconX } from "@tabler/icons-react";
 
 interface PaymentTab {
   id: string;
@@ -14,7 +15,7 @@ interface PaymentTab {
 interface PaymentTabsProps {
   onPaymentCreated?: (payment: any) => void; // <-- add this
   initialPayment?: any; // 👈 payment to open initially
-  onAllTabsClosed?: () => void; 
+  onAllTabsClosed?: () => void;
 }
 
 const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment, onAllTabsClosed }) => {
@@ -22,20 +23,20 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
   const [tabs, setTabs] = useState<PaymentTab[]>(() =>
     initialPayment
       ? [
-          {
-            id: `view-${initialPayment.id}`,
-            label: `#${initialPayment.reference_id ?? initialPayment.id}`,
-            type: "view",
-            data: initialPayment,
-          },
-        ]
+        {
+          id: `view-${initialPayment.id}`,
+          label: `#${initialPayment.reference_id ?? initialPayment.id}`,
+          type: "view",
+          data: initialPayment,
+        },
+      ]
       : [{ id: "new", label: "#Draft", type: "create" }]
   );
-    const [activeTab, setActiveTab] = useState<string>(() =>
+  const [activeTab, setActiveTab] = useState<string>(() =>
     initialPayment ? `view-${initialPayment.id}` : "new"
   );
 
-   React.useEffect(() => {
+  useEffect(() => {
     if (initialPayment) {
       openViewTab(initialPayment);
     }
@@ -51,93 +52,93 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
   };
 
   const openViewTab = (payment: any) => {
-  const viewId = `view-${payment.id}`;
-  const editId = `edit-${payment.id}`;
+    const viewId = `view-${payment.id}`;
+    const editId = `edit-${payment.id}`;
 
-  setTabs((prev) => {
-    // If already have a view tab, just activate
-    if (prev.some((t) => t.id === viewId)) {
-      setActiveTab(viewId);
-      return prev;
-    }
+    setTabs((prev) => {
+      // If already have a view tab, just activate
+      if (prev.some((t) => t.id === viewId)) {
+        setActiveTab(viewId);
+        return prev;
+      }
 
-    // If currently an edit tab, convert it back to view
-    if (prev.some((t) => t.id === editId)) {
-      return prev.map((t) =>
-        t.id === editId
-          ? {
+      // If currently an edit tab, convert it back to view
+      if (prev.some((t) => t.id === editId)) {
+        return prev.map((t) =>
+          t.id === editId
+            ? {
               ...t,
               id: viewId,
               label: `#${payment.reference_id ?? payment.id}`,
               type: "view",
               data: payment,
             }
-          : t
-      );
-    }
+            : t
+        );
+      }
 
-    // Otherwise create a fresh view tab
-    return [
-      ...prev,
-      {
-        id: viewId,
-        label: `#${payment.reference_id ?? payment.id}`,
-        type: "view",
-        data: payment,
-      },
-    ];
-  });
-
-  setActiveTab(viewId);
-};
-
-const openEditTab = (payment: any) => {
-  const viewId = `view-${payment.id}`;
-  const editId = `edit-${payment.id}`;
-
-  setTabs((prev) => {
-    let updatedTabs = [...prev];
-
-    // 🔹 Remove current view tab if open
-    updatedTabs = updatedTabs.filter((t) => t.id !== viewId);
-
-    // 🔹 If we already have an edit tab, just activate it
-    if (updatedTabs.some((t) => t.id === editId)) {
-      setActiveTab(editId);
-      return updatedTabs;
-    }
-
-    // 🔹 Add a new edit tab
-    updatedTabs.push({
-      id: editId,
-      label: `#${payment.reference_id ?? payment.id} (edit)`,
-      type: "edit",
-      data: payment,
+      // Otherwise create a fresh view tab
+      return [
+        ...prev,
+        {
+          id: viewId,
+          label: `#${payment.reference_id ?? payment.id}`,
+          type: "view",
+          data: payment,
+        },
+      ];
     });
 
-    setActiveTab(editId);
-    return updatedTabs;
-  });
-};
+    setActiveTab(viewId);
+  };
+
+  const openEditTab = (payment: any) => {
+    const viewId = `view-${payment.id}`;
+    const editId = `edit-${payment.id}`;
+
+    setTabs((prev) => {
+      let updatedTabs = [...prev];
+
+      // 🔹 Remove current view tab if open
+      updatedTabs = updatedTabs.filter((t) => t.id !== viewId);
+
+      // 🔹 If we already have an edit tab, just activate it
+      if (updatedTabs.some((t) => t.id === editId)) {
+        setActiveTab(editId);
+        return updatedTabs;
+      }
+
+      // 🔹 Add a new edit tab
+      updatedTabs.push({
+        id: editId,
+        label: `#${payment.reference_id ?? payment.id} (edit)`,
+        type: "edit",
+        data: payment,
+      });
+
+      setActiveTab(editId);
+      return updatedTabs;
+    });
+  };
 
   const closeTab = (id: string) => {
-  setTabs((prev) => {
-    const updated = prev.filter((t) => t.id !== id);
+    setTabs((prev) => {
+      const updated = prev.filter((t) => t.id !== id);
 
-    // ✅ If no tabs left, trigger parent close
-    if (updated.length === 0) {
-      onAllTabsClosed?.();
+      // ✅ If no tabs left, trigger parent close
+      if (updated.length === 0) {
+        onAllTabsClosed?.();
+      }
+
+      return updated;
+    });
+
+    if (activeTab === id) {
+      setActiveTab((prev) =>
+        prev === id ? (tabs[0]?.id ?? "") : prev
+      );
     }
-
-    return updated;
-  });
-
-  if (activeTab === id) {
-    setActiveTab((prev) =>
-      prev === id ? (tabs[0]?.id ?? "") : prev
-    );
-  }
-};
+  };
 
   const openNewTab = () => {
     const id = `new-${Date.now()}`;
@@ -157,7 +158,7 @@ const openEditTab = (payment: any) => {
           }}
           className="ml-2 text-gray-400 hover:text-red-500"
         >
-          <IconTrash size={14} />
+          <IconX size={14} />
         </span>
       </div>
     ),
@@ -199,17 +200,18 @@ const openEditTab = (payment: any) => {
   }));
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-2">
-        <h1 className="text-lg font-bold">Payments</h1>
-        <button
+    <div className="flex flex-col h-screen">
+      <div className="flex justify-between items-center p-4">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Payments</h3>
+        <Button
+          label="New"
+          icon={<IconPlus size={16} />}
+          variant="primary"
+          size="sm"
+          rounded="md"
           onClick={openNewTab}
-          className="flex items-center px-3 py-1 bg-orange-600 text-white rounded-lg"
-        >
-          <IconPlus size={16} className="mr-1" /> New
-        </button>
+        />
       </div>
-
       <Tabs tabs={tabItems} activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
   );
