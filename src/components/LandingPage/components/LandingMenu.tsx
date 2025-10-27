@@ -101,6 +101,7 @@ const LandingMenu: React.FC = () => {
                             <div ref={containerRef} className="hidden relative lg:flex items-center space-x-2">
                                 {sections.map((sec) => (
                                     <ListLink
+                                        backgroundMode="off"
                                         key={sec.id}
                                         to="#"
                                         label={sec.label}

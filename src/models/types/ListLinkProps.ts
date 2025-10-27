@@ -7,4 +7,5 @@ export type ListLinkProps = {
   active?: boolean;
   iconOnlyMode?: boolean;
   onClick?: () => void;
+  backgroundMode?: 'on' | 'off';
 };
