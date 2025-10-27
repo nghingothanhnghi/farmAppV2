@@ -69,9 +69,6 @@ const LandingMenu: React.FC = () => {
         }
     }, [activeSection]);
 
-
-
-
     return (
         <>
             {/* --- Top Nav --- */}
