@@ -62,7 +62,6 @@ const Modal: React.FC<ModalProps> = ({
         ${fullWidth ? 'w-full max-w-4/5' : modalSizeClasses[size] || modalSizeClasses.medium} 
         ${fullHeight ? 'h-screen' : 'max-h-[90vh]'} 
         overflow-y-auto`}
-      // className={`bg-white rounded-lg p-8 ${modalSizeClasses[size] || modalSizeClasses.medium} flex flex-col`}
       >
 
 

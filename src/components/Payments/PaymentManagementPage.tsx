@@ -11,12 +11,13 @@ import Badge from "../common/Badge";
 import DropdownButton from "../common/DropdownButton";
 import Modal from "../common/Modal";
 import LinearProgress from "../common/LinearProgress";
-import { IconAlertCircle } from "@tabler/icons-react";
+import { IconAlertCircle, IconEye, IconReceiptRefund, IconPlus } from "@tabler/icons-react";
 import { useAuth } from '../../contexts/authContext';
 import PaymentTabs from "./components/PaymentTabs";
 import useHasAnyRole from "../../hooks/useHasAnyRole";
 import SideContentPanel from "../common/SideContentPanel";
 import { useSideContent } from "../../hooks/useSideContent";
+import { formatCurrency } from "../../utils/formatters";
 
 const PaymentManagementPage: React.FC = () => {
     const { user } = useAuth();
@@ -29,37 +30,37 @@ const PaymentManagementPage: React.FC = () => {
 
     const sideContent = useSideContent();
     const [initialPayment, setInitialPayment] = useState<PaymentOut | undefined>(undefined);
-   const fetchPayments = useCallback(async () => {
-    if (!user) return; // 🟢 wait for user to be loaded
+    const fetchPayments = useCallback(async () => {
+        if (!user) return; // 🟢 wait for user to be loaded
 
-    try {
-      let res: PaymentOut[] = [];
+        try {
+            let res: PaymentOut[] = [];
 
-      if (isSuperAdmin) {
-        // 🔄 Super admin: fetch all payments
-        const allPayments = await paymentService.getAllPayments();
-        res = allPayments.results;
-      } else {
-        // 🔄 Regular user: fetch only their payments
-        const myUserId = user.id; // ✅ number
-        res = await paymentService.getPaymentsByUser(myUserId);
-      }
+            if (isSuperAdmin) {
+                // 🔄 Super admin: fetch all payments
+                const allPayments = await paymentService.getAllPayments();
+                res = allPayments.results;
+            } else {
+                // 🔄 Regular user: fetch only their payments
+                const myUserId = user.id; // ✅ number
+                res = await paymentService.getPaymentsByUser(myUserId);
+            }
 
-      setPayments(res);
-    } catch (err) {
-      console.error("Failed to fetch payments:", err);
-      setAlert({ message: "Failed to fetch payments", type: "error" });
-    } finally {
-      setLoading(false);
-    }
-  }, [user, isSuperAdmin, setAlert]);
+            setPayments(res);
+        } catch (err) {
+            console.error("Failed to fetch payments:", err);
+            setAlert({ message: "Failed to fetch payments", type: "error" });
+        } finally {
+            setLoading(false);
+        }
+    }, [user, isSuperAdmin, setAlert]);
 
 
-  useEffect(() => {
-    if (user) {
-      fetchPayments();
-    }
-  }, [user, fetchPayments]);
+    useEffect(() => {
+        if (user) {
+            fetchPayments();
+        }
+    }, [user, fetchPayments]);
 
     const handleStatusChange = async (paymentId: number, newStatus: PaymentStatus) => {
         try {
@@ -112,15 +113,18 @@ const PaymentManagementPage: React.FC = () => {
 
     const columnDefs = useMemo(
         () => [
-            { headerName: "ID", field: "id", width: 80 },
-            { headerName: "Reference", field: "reference_id", flex: 1 },
-            { headerName: "Provider", field: "provider", width: 120 },
+            { headerName: "ID", field: "id", width: 80, filter: false, sortable: false, resizable: false, },
+            { headerName: "Reference", field: "reference_id", width: 150, },
+            { headerName: "Provider", field: "provider", width: 150, },
             {
                 headerName: "Amount",
                 field: "amount",
-                width: 120,
-                valueFormatter: (params: any) =>
-                    `${params.value} ${params.data.currency}`,
+                flex: 1,
+                valueFormatter: (params: any) => {
+                    const amount = Number(params.value);
+                    const currency = params.data?.currency || "";
+                    return `${formatCurrency(amount)} ${currency}`;
+                },
             },
             {
                 headerName: "Status",
@@ -138,20 +142,29 @@ const PaymentManagementPage: React.FC = () => {
                     return <Badge label={value} variant={variant} />;
                 },
             },
-            { headerName: "Client", field: "client_id", width: 120 },
-            { headerName: "User", field: "user_id", width: 120 },
+            { headerName: "Client", field: "client_id", flex: 1, filter: false, sortable: false, resizable: false, },
+            { headerName: "User", field: "user_id", flex: 1, filter: false, sortable: false, resizable: false, },
             {
-                headerName: "Actions",
+                headerName: "",
                 field: "actions",
                 pinned: "right",
+                filter: false,
+                sortable: false,
+                resizable: false,
                 width: 250,
                 cellRenderer: ({ data }: any) => (
                     <div className="flex items-center gap-2 justify-center h-full">
                         <Button
-                            label="View"
-                            variant="primary"
-                            size="xs"
+                            icon={
+                                <IconEye size={16} stroke={1.5} />
+                            }
+                            iconOnly
+                            variant="secondary"
                             onClick={() => openPaymentTabs(data)}
+                            label="View"
+                            size='xs'
+                            rounded="full"
+                            className='bg-transparent'
                         />
                         <DropdownButton
                             label="Set Status"
@@ -167,14 +180,19 @@ const PaymentManagementPage: React.FC = () => {
 
                         />
                         <Button
+                            icon={
+                                <IconReceiptRefund size={16} stroke={1.5} />
+                            }
+                            iconOnly
                             label="Refund"
-                            variant="danger"
+                            variant="secondary"
                             size="xs"
                             disabled={data.status !== "paid"}
                             onClick={() => {
                                 setSelectedPayment(data);
                                 setConfirmModalOpen(true);
                             }}
+                            rounded="full"
                         />
                     </div>
                 ),
@@ -188,15 +206,18 @@ const PaymentManagementPage: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className="flex flex-col h-screen">
             <PageTitle
                 title="Payment Management"
                 actions={(
                     <Button
+                        type="button"
                         label="New Payment"
-                        variant="primary"
-                        size="sm"
                         onClick={() => openPaymentTabs()}
+                        variant="secondary"
+                        icon={<IconPlus size={16} className="text-gray-500" />}
+                        iconPosition='left'
+                        rounded='lg'
                     />
                 )}
             />
@@ -204,15 +225,15 @@ const PaymentManagementPage: React.FC = () => {
             <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
                 <PaymentTabs onPaymentCreated={handlePaymentCreated} initialPayment={initialPayment} onAllTabsClosed={() => sideContent.closeSide()} />
             </SideContentPanel>
-
-            <DataGrid
-                rowData={payments}
-                columnDefs={columnDefs}
-                pagination
-                paginationPageSize={10}
-                height="500px"
-            />
-
+            <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                <DataGrid
+                    rowData={payments}
+                    columnDefs={columnDefs}
+                    pagination
+                    paginationPageSize={10}
+                    height="100%"
+                />
+            </div>
             <Modal
                 showCloseButton={false}
                 size="xsmall"
