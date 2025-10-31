@@ -50,7 +50,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return ReactDOM.createPortal(
     <div className={`fixed inset-0 z-40 flex justify-center 
-    ${positionClasses[position] || positionClasses.center} bg-white/30 dark:bg-gray-900/30 backdrop-blur-sm
+    ${positionClasses[position] || positionClasses.center} bg-white/30 dark:bg-gray-900/30 backdrop-blur-xs
     transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
       }
     `}
