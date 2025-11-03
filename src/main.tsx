@@ -6,6 +6,7 @@ import App from './App.tsx'
 import { AlertProvider } from './contexts/alertContext.tsx'
 import { AuthProvider } from './contexts/authContext.tsx'
 import { JackpotProvider } from './contexts/jackpotContext.tsx'
+import { CartProvider } from './contexts/cartContext.tsx'
 import Alert from './components/alert/alert.tsx'
 
 createRoot(document.getElementById('root')!).render(
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')!).render(
       <AlertProvider>
         <Alert />
         <AuthProvider>
-          <JackpotProvider>
-            <App />
-          </JackpotProvider>
+          <CartProvider>
+            <JackpotProvider>
+              <App />
+            </JackpotProvider>
+          </CartProvider>
         </AuthProvider>
       </AlertProvider>
     </BrowserRouter>

@@ -4,7 +4,7 @@ import { IconTrash } from '@tabler/icons-react';
 import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
-
+import { useCart } from "../../../contexts/cartContext";
 interface ProductCardProps {
     product: Product;
     onDelete?: (id: number) => void;
@@ -17,14 +17,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onSelect,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
+    const { addToCart } = useCart();
     return (
         <div
             className="
         relative
         flex flex-col
-        bg-white 
-        rounded-lg 
-        shadow-sm 
         overflow-hidden 
         transition-all 
         duration-300 
@@ -38,7 +36,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 className="cursor-pointer flex flex-col items-center"
                 onClick={() => onSelect?.(product.id)}
             >
-                <div className="aspect-square w-full bg-gray-100 flex items-center justify-center overflow-hidden">
+                <div className="aspect-square w-full bg-gray-100 flex items-center justify-center overflow-hidden rounded-lg">
                     {product.image_url ? (
                         <img
                             src={product.image_url}
@@ -63,15 +61,24 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 from="top"
                 className="absolute top-4 right-4"
             >
-                <Button
-                    variant="secondary"
-                    icon={<IconTrash size={18} />}
-                    iconOnly
-                    label="Delete"
-                    className='bg-transparent'
-                    onClick={() => onDelete?.(product.id)}
-                    rounded='full'
-                />
+                <div className="bg-white p-0.5 rounded-full shadow-md">
+                    <Button
+                        label="Add to Cart"
+                        onClick={() => addToCart(product)}
+                        variant="primary"
+                        rounded="md"
+                    />
+                    <Button
+                        variant="secondary"
+                        icon={<IconTrash size={18} />}
+                        iconOnly
+                        label="Delete"
+                        className='bg-transparent'
+                        onClick={() => onDelete?.(product.id)}
+                        rounded='full'
+                    />
+                </div>
+
             </HoverSlideIn>
         </div>
     );

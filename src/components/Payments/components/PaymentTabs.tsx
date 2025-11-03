@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Tabs from "../../common/Tabs";
 import Button from "../../common/Button";
 import OrderForm from "./OrderForm";
-import { IconPencil, IconPlus, IconTrash, IconX } from "@tabler/icons-react";
+import { IconPencil, IconPlus, IconX } from "@tabler/icons-react";
 
 interface PaymentTab {
   id: string;
@@ -35,6 +35,7 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
   const [activeTab, setActiveTab] = useState<string>(() =>
     initialPayment ? `view-${initialPayment.id}` : "new"
   );
+
 
   useEffect(() => {
     if (initialPayment) {
