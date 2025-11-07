@@ -1,5 +1,6 @@
 import React from "react";
 import useToggle from "../../../hooks/useToggle";
+import { FormInput } from "../../common/Form";
 import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
 interface ProductFilterProps {
   filters: {
@@ -23,8 +24,8 @@ interface ProductFilterProps {
 }
 
 export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilters }) => {
-    const { value: expanded, toggle, setOff } = useToggle(false);
-      const clearFilters = () => {
+  const { value: expanded, toggle, setOff } = useToggle(false);
+  const clearFilters = () => {
     setFilters({
       name: "",
       description: "",
@@ -38,17 +39,17 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
   return (
     <div className="flex flex-col items-center justify-center">
       {/* 🔍 Search by Name */}
-      <div 
-        className={`flex items-center gap-2 transition-all duration-300 ${
-          expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
-        }`}
+      <div
+        className={`flex items-center gap-2 transition-all duration-300 ${expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
+          }`}
       >
-        <input
+        <FormInput
           type="text"
+          id="productName"
           placeholder="Search by product name..."
           value={filters.name ?? ""}
           onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
-          className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
+          className="w-full"
         />
         {filters.name && (
           <button
