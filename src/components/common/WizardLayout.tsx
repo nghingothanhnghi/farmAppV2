@@ -45,7 +45,7 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
       {/* Navigation Buttons */}
       {!step.hideNav && (
         <div className="sticky bottom-0 z-10 py-3 px-6 flex justify-between">
-          {!step.hideBack && (
+          {currentStep > 0 && !step.hideBack && (
             <Button
               label="Back"
               onClick={goBack}
@@ -54,7 +54,7 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
               className="min-w-[100px]"
             />
           )}
-          {!step.hideNext && (
+          {currentStep < steps.length - 1 && !step.hideNext && (
             <Button
               label="Next"
               onClick={goNext}

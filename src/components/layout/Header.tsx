@@ -1,14 +1,12 @@
 // src/components/layout/Header.tsx
 import React, { useState } from 'react';
-import { IconDeviceGamepad3, IconSettings, IconUserCog, IconLayoutSidebarLeftCollapse, IconShoppingCart } from '@tabler/icons-react';
+import { IconDeviceGamepad3, IconSettings, IconUserCog, IconLayoutSidebarLeftCollapse } from '@tabler/icons-react';
 import DropdownButton from '../common/DropdownButton';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
 import AlertDropdown from '../global/AlertDropdown';
 import { GeneralTab, AccountTab } from '../Settings';
 import { useHydroSystem } from '../../hooks/useHydroSystem';
-import { useCart } from '../../contexts/cartContext';
-import { useNavigate } from 'react-router';
 
 type HeaderProps = {
   appName?: string;
@@ -25,17 +23,12 @@ const Header: React.FC<HeaderProps> = ({ brandUrl, appName, onClose }) => {
     controlActions,
     actions
   } = useHydroSystem();
-  const { items } = useCart();
-  const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false); // ✅ Modal state
   const [activeTab, setActiveTab] = useState('general'); // ✅ Add this
 
   const handleOpenModal = () => setIsModalOpen(true);
   const handleCloseModal = () => setIsModalOpen(false);
 
-  const handleCartClick = () => {
-    navigate('/payments');
-  };
   return (
     <React.Fragment>
       <header className="w-full border-b border-zinc-950/5 p-4 dark:border-white/5 flex items-center justify-between space-x-2">
@@ -62,25 +55,6 @@ const Header: React.FC<HeaderProps> = ({ brandUrl, appName, onClose }) => {
         {/* Right: Settings */}
         <div className="flex items-center space-x-2">
           <div className='flex items-center space-x-0.5'>
-            {/* Cart Button */}
-            <Button
-              variant="secondary"
-              icon={
-                <div className="relative">
-                  <IconShoppingCart size={18} />
-                  {items.length > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {items.length}
-                    </span>
-                  )}
-                </div>
-              }
-              iconOnly
-              label="Cart"
-              className='bg-transparent'
-              onClick={handleCartClick}
-              rounded='full'
-            />
             <AlertDropdown
               alerts={alerts}
               controlActions={controlActions}

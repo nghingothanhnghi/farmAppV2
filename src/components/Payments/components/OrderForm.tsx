@@ -1,12 +1,12 @@
 // src/components/payment/OrderForm.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatCurrency, parseLocaleNumber } from "../../../utils/formatters";
 import WizardLayout from "../../common/WizardLayout";
 import { useAuth } from "../../../contexts/authContext";
 import { paymentService } from "../../../services/paymentService";
 import type { PaymentCreate } from "../../../models/interfaces/Payment";
 import { FormGroup, FormLabel, FormInput, FormSelect } from "../../common/Form";
-
+import { useCart } from "../../../contexts/cartContext"; 
 interface OrderFormProps {
   onCreated?: (payment: any) => void;
   mode?: "create" | "edit";
@@ -16,6 +16,7 @@ interface OrderFormProps {
 
 const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initialData, onUpdated }) => {
   const { user, isAuthenticated, setShowLoginModal } = useAuth();
+  const { items, totalAmount, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [order, setOrder] = useState<Partial<PaymentCreate & { status?: string; extra_metadata?: any }>>({
@@ -26,6 +27,27 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
     status: initialData?.status || "pending",
     extra_metadata: initialData?.extra_metadata || {},
   });
+
+  // 🧠 Pre-fill order amount from cart when creating new payment
+  useEffect(() => {
+    if (mode === "create" && items.length > 0) {
+      setOrder((prev) => ({
+        ...prev,
+        amount: totalAmount,
+        extra_metadata: {
+          ...prev.extra_metadata,
+          cart_items: items.map((i) => ({
+            id: i.id,
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            total: i.total,
+          })),
+        },
+      }));
+    }
+  }, [items, totalAmount, mode]);
+
   const [confirmation, setConfirmation] = useState<any>(null);
 
   const goNext = async () => {
@@ -58,6 +80,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
           setConfirmation(created);
           // ✅ Notify parent so tab label updates
           onCreated?.(created);
+          clearCart(); // 🧠 Clear cart after successful payment
         }
       } finally {
         setLoading(false);
@@ -74,6 +97,26 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
       title: "Order Details",
       component: (
         <div className="space-y-4 p-4">
+                    {/* 🧠 Display cart summary if cart has items */}
+          {mode === "create" && items.length > 0 && (
+            <div className="border rounded-md p-3 bg-gray-50">
+              <h4 className="font-medium text-gray-700 mb-2">Cart Items</h4>
+              {items.map((item) => (
+                <div
+                  key={item.id}
+                  className="flex justify-between text-sm border-b py-1"
+                >
+                  <span>
+                    {item.name} x {item.quantity}
+                  </span>
+                  <span>{formatCurrency(item.total)} VND</span>
+                </div>
+              ))}
+              <div className="mt-2 font-semibold text-right">
+                Total: {formatCurrency(totalAmount)} VND
+              </div>
+            </div>
+          )}
           <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
             <div className='space-y-1'>
               <FormLabel htmlFor="client_id">Client ID</FormLabel>

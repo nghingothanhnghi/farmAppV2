@@ -18,8 +18,11 @@ import useHasAnyRole from "../../hooks/useHasAnyRole";
 import SideContentPanel from "../common/SideContentPanel";
 import { useSideContent } from "../../hooks/useSideContent";
 import { formatCurrency } from "../../utils/formatters";
+import { useLocation } from "react-router";
+
 
 const PaymentManagementPage: React.FC = () => {
+    const location = useLocation();
     const { user } = useAuth();
     const { setAlert } = useAlert();
     const isSuperAdmin = useHasAnyRole(["super_admin"]);
@@ -30,6 +33,14 @@ const PaymentManagementPage: React.FC = () => {
 
     const sideContent = useSideContent();
     const [initialPayment, setInitialPayment] = useState<PaymentOut | undefined>(undefined);
+
+    useEffect(() => {
+        // 🧠 When user navigates from Cart click
+        if (location.state?.fromCart) {
+            openPaymentTabs(); // open side panel immediately
+        }
+    }, [location.state]);
+
     const fetchPayments = useCallback(async () => {
         if (!user) return; // 🟢 wait for user to be loaded
 
