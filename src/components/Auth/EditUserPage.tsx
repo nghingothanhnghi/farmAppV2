@@ -8,7 +8,7 @@ import { useAlert } from '../../contexts/alertContext';
 import { useAuth } from '../../contexts/authContext';
 import * as Yup from 'yup';
 import { updateUser, uploadUserImage } from '../../services/userService';
-import { getUserImageUrl } from '../../utils/getUserImageUrl';
+import { getImageUrl } from '../../utils/getImageUrl';
 import Avatar from '../common/Avatar';
 
 const EditUserPage: React.FC = () => {
@@ -53,7 +53,7 @@ const EditUserPage: React.FC = () => {
       last_name: user.lastName || '',
     });
     if (user.image_url) {
-      setPreviewUrl(getUserImageUrl(user.image_url)); // ✅ normalize here
+      setPreviewUrl(getImageUrl(user.image_url)); // ✅ normalize here
     }
   }, [user, id]);
 
@@ -94,7 +94,7 @@ const EditUserPage: React.FC = () => {
 
         // if backend returns image filename/url, update preview immediately
         if (uploadResp?.image_url) {
-          setPreviewUrl(getUserImageUrl(uploadResp.image_url));
+          setPreviewUrl(getImageUrl(uploadResp.image_url));
         }
       }
 

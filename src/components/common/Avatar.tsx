@@ -1,6 +1,6 @@
 // components/common/Avatar.tsx
 import React from "react";
-import { getUserImageUrl } from "../../utils/getUserImageUrl";
+import { getImageUrl } from "../../utils/getImageUrl";
 import { DEFAULT_AVATAR, ERROR_AVATAR } from "../../constants/constants";
 
 interface AvatarProps {
@@ -28,7 +28,7 @@ const Avatar: React.FC<AvatarProps> = ({
   const url = imageUrl
     ? isBlobOrDataUrl
       ? imageUrl
-      : getUserImageUrl(imageUrl)
+      : getImageUrl(imageUrl)
     : DEFAULT_AVATAR;
 
   const roundedClass =

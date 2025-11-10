@@ -1,10 +1,12 @@
 // src/components/Product/components/ProductCard.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { IconTrash } from '@tabler/icons-react';
 import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 import { useCart } from "../../../contexts/cartContext";
+import ProductImage from "../../common/ProductImage";
+
 interface ProductCardProps {
     product: Product;
     onDelete?: (id: number) => void;
@@ -18,6 +20,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { addToCart } = useCart();
+
+  // ✅ Log product image URL when component renders
+  useEffect(() => {
+    console.log("🖼️ Product:", product.name);
+    console.log("→ image_url from API:", product.image_url);
+  }, [product]);
+
     return (
         <div
             className="
@@ -38,18 +47,20 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             >
                 <div className="aspect-square w-full bg-gray-100 flex items-center justify-center overflow-hidden rounded-lg">
                     {product.image_url ? (
-                        <img
-                            src={product.image_url}
+                        <ProductImage
+                            imageUrl={product.image_url}
                             alt={product.name}
-                            className="object-cover w-full h-full transition-transform duration-300 hover:scale-105"
+                            size={200} // width/height of the card image
+                            rounded="lg"
+                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         />
                     ) : (
                         <span className="text-gray-400 text-sm">No Image</span>
                     )}
                 </div>
                 <div className="w-full p-4">
-                    <p className="text-gray-800 dark:text-gray-900 text-xs">{product.base_price} USD</p>
-                    <h3 className="font-semibold text-sm">{product.name}</h3>
+                    <p className="text-gray-800 dark:text-gray-400 text-xs">{product.base_price} USD</p>
+                    <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">{product.name}</h3>
                     <p className="text-gray-600 text-sm">
                         {product.description || "No description"}
                     </p>
@@ -66,7 +77,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         label="Add to Cart"
                         onClick={() => addToCart(product)}
                         variant="primary"
-                        rounded="md"
+                        rounded="full"
                     />
                     <Button
                         variant="secondary"
