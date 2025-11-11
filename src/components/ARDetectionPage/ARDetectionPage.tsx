@@ -138,7 +138,7 @@ const ARDetectionPage: React.FC = () => {
           dark:from-indigo-900/20 dark:to-gray-900 
             border border-gray-200 dark:border-gray-700 
             inset-shadow-sm hover:shadow-md transition">
-                <div className="detection-class text-sm font-medium">{detection.class_name}</div>
+                <div className="detection-class text-sm font-medium">{detection.class}</div>
                 <div className="detection-confidence text-xs">
                   Confidence: {(detection.confidence * 100).toFixed(2)}%
                 </div>

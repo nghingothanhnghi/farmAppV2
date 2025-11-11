@@ -13,7 +13,7 @@ const DetectionOverlay: React.FC<{ detections: Detection[] }> = ({ detections })
           style={{ left: x1, top: y1, width: x2 - x1, height: y2 - y1 }}
         >
           <div className="label">
-            {det.class_name} ({Math.round(det.confidence * 100)}%)
+            {det.class} ({Math.round(det.confidence * 100)}%)
           </div>
         </div>
       );

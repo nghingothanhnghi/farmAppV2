@@ -7,7 +7,6 @@ import Button from "../common/Button";
 import SideContentPanel from "../common/SideContentPanel";
 import { useSideContent } from "../../hooks/useSideContent";
 import ProductForm from "./components/ProductForm";
-import type { Product } from "../../models/interfaces/Product";
 
 const ProductManagementPage: React.FC = () => {
     const { sideOpen, content, openSide, closeSide } = useSideContent();
@@ -18,29 +17,6 @@ const ProductManagementPage: React.FC = () => {
                 mode="add"
                 onSuccess={closeSide}
                 onCancel={closeSide}
-            />
-        );
-    };
-
-    // 🆕 Edit Product
-    const handleEditProduct = (product: Product) => {
-        openSide(
-            <ProductForm
-                mode="edit"
-                productId={product.id}
-                onSuccess={closeSide} // refresh handled inside ProductForm
-                onCancel={closeSide}
-            />
-        );
-    };
-
-    // 🆕 View Product (read-only)
-    const handleViewProduct = (product: Product) => {
-        openSide(
-            <ProductForm
-                mode="view"
-                productId={product.id}
-                onCancel={closeSide} // just close
             />
         );
     };

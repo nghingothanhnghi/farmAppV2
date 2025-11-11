@@ -76,7 +76,7 @@ export const useHydroCameraDetection = (location?: string) => {
       } else if (d.bbox_x1 != null && d.bbox_y1 != null && d.bbox_x2 != null && d.bbox_y2 != null) {
         bbox = [Number(d.bbox_x1), Number(d.bbox_y1), Number(d.bbox_x2), Number(d.bbox_y2)];
       }
-      return { class: String(cls), confidence: Number(d.confidence ?? d.score ?? 0), bbox } as Detection;
+      return { class: String(cls), confidence: Number(d.confidence ?? d.score ?? 0), bbox };
     });
   };
 

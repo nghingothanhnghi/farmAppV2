@@ -11,10 +11,7 @@ import Button from '../common/Button';
 const Footer: React.FC = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const { items, totalAmount } = useCart();
-
-    // Calculate total quantity of all items in cart
-    const totalQuantity = items.reduce((sum, item) => sum + item.quantity, 0);
+    const { items } = useCart();
 
     const handleCartClick = () => {
         if (items.length === 0) {
