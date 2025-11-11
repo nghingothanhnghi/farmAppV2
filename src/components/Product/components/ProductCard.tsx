@@ -45,7 +45,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 className="cursor-pointer flex flex-col items-center"
                 onClick={() => onSelect?.(product.id)}
             >
-                <div className="aspect-square w-full bg-gray-100 flex items-center justify-center overflow-hidden rounded-lg">
+                <div className="aspect-square w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
                     {product.image_url ? (
                         <ProductImage
                             imageUrl={product.image_url}
@@ -64,7 +64,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     <p className="text-gray-600 text-sm">
                         {product.description || "No description"}
                     </p>
-
                 </div>
             </div>
             <HoverSlideIn
@@ -72,12 +71,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 from="top"
                 className="absolute top-4 right-4"
             >
-                <div className="bg-white p-0.5 rounded-full shadow-md">
+                <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
                     <Button
                         label="Add to Cart"
                         onClick={() => addToCart(product)}
                         variant="primary"
                         rounded="full"
+                        size="sm"
                     />
                     <Button
                         variant="secondary"
@@ -87,6 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         className='bg-transparent'
                         onClick={() => onDelete?.(product.id)}
                         rounded='full'
+                        size="sm"
                     />
                 </div>
 

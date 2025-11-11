@@ -20,6 +20,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
   border = true,
 }) => {
   const url = getImageUrl(imageUrl);
+  console.log("Final image URL used by ProductImage:", url);
 
   const roundedClass =
     rounded === "full"
