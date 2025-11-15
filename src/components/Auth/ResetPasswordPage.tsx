@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Form, { FormGroup, FormLabel, FormInput, FormCodeInput, FormActions } from '../common/Form';
+import { IconCheck, IconX, IconEye, IconEyeOff } from '@tabler/icons-react';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
 import { useAlert } from '../../contexts/alertContext';
+import useToggle from '../../hooks/useToggle';
 import { requestResetCode, verifyResetCode, resetPassword } from '../../services/resetPwService';
 import { formatTimeCountDown } from '../../utils/formatters';
 import { parseApiErrors } from '../../utils/errorUtils';
-import { resetPasswordEmailSchema, resetPasswordCodeSchema, resetPasswordNewPasswordSchema } from '../../validation/authValidation';
+import { resetPasswordEmailSchema, resetPasswordCodeSchema, resetPasswordNewPasswordSchema, getPasswordChecks } from '../../validation/authValidation';
 
 const ResetPasswordPage: React.FC = () => {
     const navigate = useNavigate();
@@ -19,6 +21,10 @@ const ResetPasswordPage: React.FC = () => {
     const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
     const [expirationTime, setExpirationTime] = useState<number>(600); // 10 minutes in seconds
     const [newPassword, setNewPassword] = useState('');
+    const [passwordChecks, setPasswordChecks] = useState(getPasswordChecks(''));
+    const { value: showPassword, toggle: togglePassword } = useToggle();
+
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -108,7 +114,7 @@ const ResetPasswordPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-mesh transition-colors duration-300">
-            <div className="w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
+            <div className="w-full max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
                 <PageTitle
                     title="Reset Password"
                     align="center"
@@ -202,16 +208,55 @@ const ResetPasswordPage: React.FC = () => {
                                 <FormLabel htmlFor="newPassword">Create a New Password</FormLabel>
                                 <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">To keep your account secure, please create a new password. Make sure it’s at least 8 characters long and includes a mix of letters, numbers, and symbols.</p>
                             </div>
-                            <div className='flex justify-center'>
-                                <FormInput
-                                    type="password"
-                                    name="newPassword"
-                                    id="newPassword"
-                                    value={newPassword}
-                                    onChange={e => setNewPassword(e.target.value)}
-                                    required
-                                />
+                            <div>
+                                <div className='relative mx-auto max-w-[300px]'>
+                                    <FormInput
+                                        type={showPassword ? "text" : "password"}
+                                        name="newPassword"
+                                        id="newPassword"
+                                        value={newPassword}
+                                        // onChange={e => setNewPassword(e.target.value)}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setNewPassword(value);
+                                            setPasswordChecks(getPasswordChecks(value));
+                                        }}
+                                        required
+                                    />
+                                    <Button
+                                        onClick={togglePassword}
+                                        variant="link"
+                                        icon={showPassword ? <IconEyeOff size={18} /> : <IconEye size={18} />}
+                                        iconOnly
+                                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-800"
+                                        size='sm'
+                                        rounded='full'
+                                    />
+                                </div>
+                                {newPassword && (
+                                    <ul className="my-3 space-y-1 text-sm">
+                                        {passwordChecks.map((check, index) => (
+                                            <li key={index} className="flex items-center gap-2">
+                                                {check.valid ? (
+                                                    <IconCheck className="text-green-500 w-4 h-4" />
+                                                ) : (
+                                                    <IconX className="text-gray-400 w-4 h-4" />
+                                                )}
+                                                <span
+                                                    className={check.valid
+                                                        ? 'text-green-600 dark:text-green-400'
+                                                        : 'text-gray-600 dark:text-gray-400'
+                                                    }
+                                                >
+                                                    {check.label}
+                                                </span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )}
                             </div>
+
+
                         </FormGroup>
                         <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
                             <Button

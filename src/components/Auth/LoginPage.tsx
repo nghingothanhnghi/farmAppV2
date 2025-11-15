@@ -1,9 +1,9 @@
 // Example: LoginPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import * as Yup from 'yup';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../common/Form';
-import { IconCircleDashedCheck, IconEye, IconEyeOff } from '@tabler/icons-react';
+import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import LinearProgress from '../common/LinearProgress';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
@@ -15,10 +15,18 @@ import useToggle from '../../hooks/useToggle';
 const LoginPage: React.FC = () => {
   const { setAlert } = useAlert();
   const { login, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [fieldErrors, setFieldErrors] = useState<{ username?: string; password?: string }>({});
   const { value: showPassword, toggle: togglePassword } = useToggle();
+
+    // 🚀 Redirect when logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard/products");
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,23 +63,13 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  if (isAuthenticated) {
-    return (
-      <div className="text-center mt-20 text-gray-500">
-        <IconCircleDashedCheck stroke={1.5} size={64} className='mx-auto mb-3 text-green-800' />
-        <span className='text-green-800'>You're already logged in!</span>
-      </div>
-    );
-  }
-
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-mesh transition-colors duration-300">
       <div className="w-full max-w-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
         <PageTitle
           title="Login"
         />
-        <Form onSubmit={handleSubmit} className="sm:w-1/4 w-full mx-auto">
+        <Form onSubmit={handleSubmit} className="sm:w-1/2 w-full mx-auto space-y-6">
           {loading &&
             <LinearProgress
               position='absolute'
@@ -83,7 +81,7 @@ const LoginPage: React.FC = () => {
               <FormLabel htmlFor="code">Good to See You Again!</FormLabel>
               <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">We won’t judge 😬</p>
             </div>
-            <div>
+            <div className='space-y-4'>
               <FormGroup className='flex flex-col space-y-2'>
                 <FormInput
                   id="username"
@@ -125,7 +123,7 @@ const LoginPage: React.FC = () => {
               <div className="text-right">
                 <Link
                   to="/reset-password"
-                  className="text-sm text-blue-600 hover:underline"
+                  className="text-sm text-gray-500 dark:text-gray-300 underline"
                 >
                   Forgot Password?
                 </Link>
@@ -142,11 +140,11 @@ const LoginPage: React.FC = () => {
               fullWidth
               rounded='lg'
             />
-            <p className="text-center text-sm text-gray-600 mb-5">
+            <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-5">
               Don’t have an account?{' '}
               <Link
                 to="/sign-up"
-                className="text-blue-600 hover:underline"
+                className="text-gray-500 dark:text-gray-300 underline"
 
               >
                 Sign up
