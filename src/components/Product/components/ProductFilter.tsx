@@ -1,6 +1,7 @@
 import React from "react";
 import useToggle from "../../../hooks/useToggle";
 import { FormInput } from "../../common/Form";
+import Button from "../../common/Button";
 import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
 interface ProductFilterProps {
   filters: {
@@ -40,7 +41,7 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
     <div className="flex flex-col items-center justify-center">
       {/* 🔍 Search by Name */}
       <div
-        className={`flex items-center gap-2 transition-all duration-300 ${expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
+        className={`flex items-center gap-2 relative transition-all duration-300 ${expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
           }`}
       >
         <FormInput
@@ -60,24 +61,16 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
             <IconX size={18} />
           </button>
         )}
-      </div>
-
-      {/* 🧩 Toggle Advanced Filters */}
-      <div>
-        <button
+        {/* 🧩 Toggle Advanced Filters */}
+        <Button
+          type="button"
           onClick={toggle}
-          className="text-sm text-blue-600 hover:underline flex items-center gap-1"
-        >
-          {expanded ? (
-            <>
-              <IconAdjustmentsHorizontal size={16} /> Hide advanced filters
-            </>
-          ) : (
-            <>
-              <IconAdjustmentsHorizontal size={16} /> More filters
-            </>
-          )}
-        </button>
+          variant="link"
+          icon={<IconAdjustmentsHorizontal size={16} />}
+          iconPosition="left"
+          label={expanded ? "Hide advanced filters" : "More filters"}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 dark:text-gray-300"
+        />
       </div>
 
       {/* 🧱 Advanced Filters Section */}
