@@ -1,5 +1,4 @@
 // src/components/Payments/PaymentManagementPage.tsx
-
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useAlert } from "../../contexts/alertContext";
 import { paymentService } from "../../services/paymentService";
@@ -234,7 +233,12 @@ const PaymentManagementPage: React.FC = () => {
             />
 
             <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
-                <PaymentTabs onPaymentCreated={handlePaymentCreated} initialPayment={initialPayment} onAllTabsClosed={() => sideContent.closeSide()} />
+                <PaymentTabs
+                    onPaymentCreated={handlePaymentCreated}
+                    initialPayment={initialPayment}
+                    onAllTabsClosed={() => sideContent.closeSide()}
+                    onCartEmpty={() => sideContent.closeSide()}
+                />
             </SideContentPanel>
             <div style={{ flex: '1 1 auto', minHeight: 0 }}>
                 <DataGrid

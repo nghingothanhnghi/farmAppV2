@@ -18,6 +18,8 @@ interface CartContextType {
   removeFromCart: (productId: number) => void;
   clearCart: () => void;
   setClientId: (id: string) => void;
+  increaseQuantity: (productId: number) => void;
+  decreaseQuantity: (productId: number) => void;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -25,6 +27,38 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [clientId, setClientId] = useState<string>();
+
+const increaseQuantity = (productId: number) => {
+  setItems((prev) =>
+    prev.map((item) =>
+      item.id === productId
+        ? {
+            ...item,
+            quantity: item.quantity + 1,
+            total: (item.quantity + 1) * item.price,
+          }
+        : item
+    )
+  );
+};
+
+const decreaseQuantity = (productId: number) => {
+  setItems((prev) =>
+    prev.flatMap((item) => {
+      if (item.id !== productId) return item;
+
+      // If quantity becomes 0, remove item completely
+      if (item.quantity === 1) return [];
+
+      return {
+        ...item,
+        quantity: item.quantity - 1,
+        total: (item.quantity - 1) * item.price,
+      };
+    })
+  );
+};
+
 
   const addToCart = (product: Product) => {
     setItems((prev) => {
@@ -50,7 +84,17 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const totalAmount = useMemo(() => items.reduce((sum, i) => sum + i.total, 0), [items]);
 
-  const value = { items, totalAmount, clientId, addToCart, removeFromCart, clearCart, setClientId };
+  const value = { 
+    items, 
+    totalAmount, 
+    clientId, 
+    addToCart, 
+    removeFromCart, 
+    clearCart, 
+    setClientId, 
+    increaseQuantity,
+    decreaseQuantity, 
+  };
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

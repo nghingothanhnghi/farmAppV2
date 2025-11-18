@@ -16,9 +16,10 @@ interface PaymentTabsProps {
   onPaymentCreated?: (payment: any) => void; // <-- add this
   initialPayment?: any; // 👈 payment to open initially
   onAllTabsClosed?: () => void;
+  onCartEmpty?: () => void;
 }
 
-const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment, onAllTabsClosed }) => {
+const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPayment, onAllTabsClosed, onCartEmpty }) => {
   // ✅ Initialize based on initialPayment
   const [tabs, setTabs] = useState<PaymentTab[]>(() =>
     initialPayment
@@ -176,6 +177,7 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
             // 🔥 Notify parent (PaymentManagementPage)
             onPaymentCreated?.(payment);
           }}
+          onCartEmpty={onCartEmpty}
         />
       ) : tab.type === "view" ? (
         <div>
@@ -192,11 +194,27 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
           </button>
         </div>
       ) : (
-        <OrderForm mode="edit" initialData={tab.data} onUpdated={(updated) => {
-          // Update the tab data and convert back to view
-          setTabs(prev => prev.map(t => t.id === tab.id ? { ...t, type: "view", data: updated, label: `#${updated.reference_id ?? updated.id}` } : t));
-          setActiveTab(tab.id); // Keep same tab active
-        }} />
+        <OrderForm
+          mode="edit"
+          initialData={tab.data}
+          onUpdated={(updated) => {
+            // Update the tab data and convert back to view
+            setTabs(prev =>
+              prev.map(t =>
+                t.id === tab.id
+                  ? {
+                    ...t,
+                    type: "view",
+                    data: updated,
+                    label: `#${updated.reference_id ?? updated.id}`
+                  }
+                  : t
+              )
+            );
+            setActiveTab(tab.id); // Keep same tab active
+          }}
+          onCartEmpty={onCartEmpty}
+        />
       ),
   }));
 

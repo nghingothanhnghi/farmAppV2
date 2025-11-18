@@ -6,15 +6,18 @@ import { useAuth } from "../../../contexts/authContext";
 import { paymentService } from "../../../services/paymentService";
 import type { PaymentCreate } from "../../../models/interfaces/Payment";
 import { FormGroup, FormLabel, FormInput, FormSelect } from "../../common/Form";
-import { useCart } from "../../../contexts/cartContext"; 
+import { useCart } from "../../../contexts/cartContext";
+import CartItemList from "../../common/cart/CartItemList";
+import CartSummary from "../../common/cart/CartSummary";
 interface OrderFormProps {
   onCreated?: (payment: any) => void;
   mode?: "create" | "edit";
   initialData?: any;
   onUpdated?: (payment: any) => void;
+  onCartEmpty?: () => void;
 }
 
-const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initialData, onUpdated }) => {
+const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initialData, onUpdated, onCartEmpty }) => {
   const { user, isAuthenticated, setShowLoginModal } = useAuth();
   const { items, totalAmount, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(0);
@@ -30,23 +33,36 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
 
   // 🧠 Pre-fill order amount from cart when creating new payment
   useEffect(() => {
-    if (mode === "create" && items.length > 0) {
-      setOrder((prev) => ({
-        ...prev,
-        amount: totalAmount,
-        extra_metadata: {
-          ...prev.extra_metadata,
-          cart_items: items.map((i) => ({
-            id: i.id,
-            name: i.name,
-            price: i.price,
-            quantity: i.quantity,
-            total: i.total,
-          })),
-        },
-      }));
-    }
-  }, [items, totalAmount, mode]);
+  if (mode !== "create") return;
+
+  // 1️⃣ Cart becomes empty → clear amount + metadata
+  if (items.length === 0) {
+    setOrder(prev => ({
+      ...prev,
+      amount: 0,
+      extra_metadata: {},
+    }));
+    onCartEmpty?.();   // 👈 CLOSE SIDE PANEL
+    return;
+  }
+
+  // 2️⃣ Cart has items → sync amount + cart items
+  setOrder(prev => ({
+    ...prev,
+    amount: totalAmount,
+    extra_metadata: {
+      ...prev.extra_metadata,
+      cart_items: items.map(i => ({
+        id: i.id,
+        name: i.name,
+        price: i.price,
+        quantity: i.quantity,
+        total: i.total,
+      })),
+    },
+  }));
+}, [items, totalAmount, mode]);
+
 
   const [confirmation, setConfirmation] = useState<any>(null);
 
@@ -97,25 +113,11 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
       title: "Order Details",
       component: (
         <div className="space-y-4 p-4">
-                    {/* 🧠 Display cart summary if cart has items */}
-          {mode === "create" && items.length > 0 && (
-            <div className="border rounded-md p-3 bg-gray-50">
-              <h4 className="font-medium text-gray-700 mb-2">Cart Items</h4>
-              {items.map((item) => (
-                <div
-                  key={item.id}
-                  className="flex justify-between text-sm border-b py-1"
-                >
-                  <span>
-                    {item.name} x {item.quantity}
-                  </span>
-                  <span>{formatCurrency(item.total)} VND</span>
-                </div>
-              ))}
-              <div className="mt-2 font-semibold text-right">
-                Total: {formatCurrency(totalAmount)} VND
-              </div>
-            </div>
+          {mode === "create" && (
+            <>
+              <CartItemList showControls={true} />
+              <CartSummary />
+            </>
           )}
           <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
             <div className='space-y-1'>
