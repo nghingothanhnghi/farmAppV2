@@ -41,36 +41,41 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
     <div className="flex flex-col items-center justify-center">
       {/* 🔍 Search by Name */}
       <div
-        className={`flex items-center gap-2 relative transition-all duration-300 ${expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
+        className={`flex items-center gap-2 transition-all duration-300 ${expanded ? "w-full max-w-5xl" : "w-full sm:w-1/2 lg:w-1/3"
           }`}
       >
-        <FormInput
-          type="text"
-          id="productName"
-          placeholder="Search by product name..."
-          value={filters.name ?? ""}
-          onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
-          className="w-full"
-        />
-        {filters.name && (
-          <button
-            onClick={() => setFilters((f) => ({ ...f, name: "" }))}
-            className="text-gray-500 hover:text-gray-700 p-2"
-            title="Clear name filter"
-          >
-            <IconX size={18} />
-          </button>
-        )}
-        {/* 🧩 Toggle Advanced Filters */}
-        <Button
-          type="button"
-          onClick={toggle}
-          variant="link"
-          icon={<IconAdjustmentsHorizontal size={16} />}
-          iconPosition="left"
-          label={expanded ? "Hide advanced filters" : "More filters"}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-700 dark:text-gray-300"
-        />
+        <div className="relative flex-1">
+          <FormInput
+            type="text"
+            id="productName"
+            placeholder="Search by product name..."
+            value={filters.name ?? ""}
+            onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
+            className="w-full"
+          />
+          {filters.name && (
+            <Button
+              variant="secondary"
+              icon={<IconX size={18} />}
+              iconOnly
+              label="Clear name filter"
+              className='bg-transparent absolute right-3 top-1/2 -translate-y-1/2'
+              onClick={() => setFilters((f) => ({ ...f, name: "" }))}
+              rounded='full'
+              size="xxs"
+            />
+          )}
+        </div>
+          {/* 🧩 Toggle Advanced Filters */}
+          <Button
+            type="button"
+            onClick={toggle}
+            variant="link"
+            icon={<IconAdjustmentsHorizontal size={16} />}
+            iconPosition="left"
+            label={expanded ? "Hide advanced filters" : "More filters"}
+            className="shrink-0 text-gray-700 dark:text-gray-300"
+          />
       </div>
 
       {/* 🧱 Advanced Filters Section */}
