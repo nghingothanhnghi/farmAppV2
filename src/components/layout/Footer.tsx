@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { IconLogout, IconUserEdit, IconShoppingBag } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/authContext';
@@ -6,9 +6,10 @@ import { useCart } from '../../contexts/cartContext';
 import Avatar from '../common/Avatar';
 import DropdownButton from '../common/DropdownButton';
 import Button from '../common/Button';
-
+import CheckoutDialog from '../common/cart/CheckoutDialog';
 
 const Footer: React.FC = () => {
+    const [showDialog, setShowDialog] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const { items } = useCart();
@@ -76,8 +77,13 @@ const Footer: React.FC = () => {
                         iconOnly
                         label="Cart"
                         className='bg-transparent'
-                        onClick={handleCartClick}
+                        // onClick={handleCartClick}
+                        onClick={() => setShowDialog(true)}
                         rounded='full'
+                    />
+                    <CheckoutDialog
+                        isOpen={showDialog}
+                        onClose={() => setShowDialog(false)}
                     />
                 </div>
             ) : (

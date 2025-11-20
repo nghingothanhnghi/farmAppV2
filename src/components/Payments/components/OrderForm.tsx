@@ -123,7 +123,6 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
             <div className='space-y-1'>
               <FormLabel htmlFor="client_id">Client ID</FormLabel>
             </div>
-
             <FormInput
               id="client_id"
               type="text"

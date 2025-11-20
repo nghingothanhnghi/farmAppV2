@@ -1,4 +1,4 @@
-
+// src/components/common/cart/CartSummary.tsx
 import { useCart } from "../../../contexts/cartContext";
 import { formatCurrency } from "../../../utils/formatters";
 

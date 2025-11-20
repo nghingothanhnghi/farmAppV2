@@ -8,6 +8,7 @@ export interface CartItem {
   price: number;
   quantity: number;
   total: number;
+  image_url?: string;
 }
 
 interface CartContextType {
@@ -72,7 +73,14 @@ const decreaseQuantity = (productId: number) => {
       }
       return [
         ...prev,
-        { id: product.id, name: product.name, price: product.base_price, quantity: 1, total: product.base_price },
+        { 
+          id: product.id, 
+          name: product.name, 
+          price: product.base_price, 
+          quantity: 1, 
+          total: product.base_price,
+          image_url: product.image_url, 
+        },
       ];
     });
   };
