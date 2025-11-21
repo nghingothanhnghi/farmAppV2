@@ -1,6 +1,7 @@
 // src/components/Product/components/ProductCard.tsx
 import React, { useState, useEffect } from "react";
 import { IconTrash } from '@tabler/icons-react';
+import { formatMoney } from "../../../utils/currency";
 import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
@@ -59,7 +60,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     )}
                 </div>
                 <div className="w-full p-4">
-                    <p className="text-gray-800 dark:text-gray-400 text-xs">{product.base_price} USD</p>
+                    <p className="text-gray-800 dark:text-gray-400 text-xs">{formatMoney(product.base_price)}</p>
                     <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">{product.name}</h3>
                     <p className="text-gray-600 text-sm">
                         {product.description || "No description"}

@@ -1,7 +1,7 @@
 // src/components/common/cart/CartItemList.tsx
 import React from "react";
 import { useCart } from "../../../contexts/cartContext";
-import { formatCurrency } from "../../../utils/formatters";
+import { formatMoney } from "../../../utils/currency";
 import ProductImage from "../ProductImage";
 import NumberInput from "../../common/NumberInput";
 
@@ -19,18 +19,16 @@ const CartItemList: React.FC<CartItemListProps> = ({ showControls = false }) => 
     return (
         <div className="space-y-1">
             {items.map((item) => (
-                <div key={item.id} className="flex justify-between items-center py-1 border-b text-sm">
-                    <ProductImage
-                        imageUrl={item.image_url}
-                        alt={item.name}
-                        size={40}
-                        rounded="md"
-                    />
-                    <div className="flex-1">
-                        {item.name} x {item.quantity}
+                <div key={item.id} className="py-4 border-b border-gray-200 dark:border-gray-700 text-sm space-y-4 md:flex md:items-center md:justify-between md:gap-6 md:space-y-0">
+                    <div className="shrink-0 md:order-1">
+                        <ProductImage
+                            imageUrl={item.image_url}
+                            alt={item.name}
+                            size={40}
+                            rounded="md"
+                        />
                     </div>
-
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between md:order-3 md:justify-end">
                         {showControls && (
                             <NumberInput
                                 id={`qty-${item.id}`}
@@ -46,8 +44,12 @@ const CartItemList: React.FC<CartItemListProps> = ({ showControls = false }) => 
                                 className="w-28"
                             />
                         )}
-
-                        <span>{formatCurrency(item.total)} VND</span>
+                        <div className="text-end md:order-4 md:w-32">
+                            <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(item.total)}</span>
+                        </div>
+                    </div>
+                    <div className="w-full min-w-0 flex-1 space-y-4 md:order-2 md:max-w-md">
+                        {item.name} x {item.quantity}
                     </div>
                 </div>
             ))}
