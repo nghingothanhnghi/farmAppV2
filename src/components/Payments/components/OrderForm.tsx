@@ -42,7 +42,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
       amount: 0,
       extra_metadata: {},
     }));
-    onCartEmpty?.();   // 👈 CLOSE SIDE PANEL
+    // onCartEmpty?.();   // 👈 CLOSE SIDE PANEL
     return;
   }
 

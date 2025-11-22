@@ -62,7 +62,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="w-full p-4">
                     <p className="text-gray-800 dark:text-gray-400 text-xs">{formatMoney(product.base_price)}</p>
                     <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">{product.name}</h3>
-                    <p className="text-gray-600 text-sm">
+                    <p className="text-gray-600 dark:text-gray-500 text-xs">
                         {product.description || "No description"}
                     </p>
                 </div>
@@ -91,7 +91,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                         size="sm"
                     />
                 </div>
-
             </HoverSlideIn>
         </div>
     );

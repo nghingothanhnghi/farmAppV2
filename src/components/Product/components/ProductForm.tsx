@@ -87,10 +87,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
     };
 
     return (
-        <Form onSubmit={handleSubmit} className="space-y-5 max-w-2xl mx-auto">
+        <Form onSubmit={handleSubmit} className="space-y-5 max-w-2xl mx-auto pb-20 px-4">
             {/* --- Name --- */}
-            <FormGroup>
-                <FormLabel htmlFor="name">Product Name</FormLabel>
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+                <div className='space-y-1'>
+                    <FormLabel htmlFor="name">Product Name</FormLabel>
+                </div>
+
                 <FormInput
                     id="name"
                     type="text"
@@ -102,8 +105,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             </FormGroup>
 
             {/* --- Description --- */}
-            <FormGroup>
-                <FormLabel htmlFor="description">Description</FormLabel>
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+                <div className='space-y-1'>
+                    <FormLabel htmlFor="description">Description</FormLabel>
+                </div>
                 <FormInput
                     id="description"
                     type="text"
@@ -115,8 +120,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             </FormGroup>
 
             {/* --- Base Price --- */}
-            <FormGroup>
-                <FormLabel htmlFor="base_price">Base Price</FormLabel>
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+                <div className='space-y-1'>
+                    <FormLabel htmlFor="base_price">Base Price</FormLabel>
+                </div>
                 <FormInput
                     id="base_price"
                     type="number"
@@ -129,8 +136,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             </FormGroup>
 
             {/* --- SKU --- */}
-            <FormGroup>
-                <FormLabel htmlFor="sku">SKU</FormLabel>
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+                <div className='space-y-1'>
+                    <FormLabel htmlFor="sku">SKU</FormLabel>
+                </div>
                 <FormInput
                     id="sku"
                     type="text"
@@ -143,7 +152,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             </FormGroup>
 
             {/* --- Active Toggle --- */}
-            <FormGroup>
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <label className="flex items-center gap-3">
                     <input
                         type="checkbox"
@@ -179,7 +188,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             </FormGroup>
 
             {/* --- Actions --- */}
-            <FormActions className="flex justify-end gap-3">
+            <FormActions className="flex justify-end gap-3 absolute bottom-0 right-0 w-full bg-white dark:bg-gray-900 p-4 border-t border-gray-200 dark:border-gray-700">
                 {onCancel && (
                     <Button
                         type="button"
