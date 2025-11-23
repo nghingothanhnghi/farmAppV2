@@ -239,6 +239,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
       currentStep={currentStep}
       goNext={goNext}
       goBack={goBack}
+      navPosition="absolute"
     />
   );
 }

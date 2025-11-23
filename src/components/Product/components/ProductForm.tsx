@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
-import Form, { FormGroup, FormLabel, FormInput, FormActions } from "../../common/Form";
+import { generateSKU } from "../../../utils/product";
+import Form, { FormGroup, FormLabel, FormInput, FormCheckbox, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
 import type { Product, ProductCreate } from "../../../models/interfaces/Product";
 import { useProduct } from "../../../hooks/useProduct";
@@ -50,6 +51,16 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         }
     }, [selectedProduct, mode]);
 
+    // Auto-generate SKU when name changes (add mode only)
+    useEffect(() => {
+        if (mode === "add" && formData.name && !formData.sku) {
+            setFormData(prev => ({
+                ...prev,
+                sku: generateSKU(prev.name)
+            }));
+        }
+    }, [formData.name, formData.sku, mode]);
+
     const handleChange = (field: string, value: any) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
@@ -93,12 +104,36 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                 <div className='space-y-1'>
                     <FormLabel htmlFor="name">Product Name</FormLabel>
                 </div>
+                <div className="space-y-3">
+                    <FormInput
+                        id="name"
+                        type="text"
+                        value={formData.name}
+                        onChange={(e) => handleChange("name", e.target.value)}
+                        required
+                        disabled={isViewMode}
+                    />
+                    {/* --- Active Toggle --- */}
+                    <FormCheckbox
+                        id="is_active"
+                        checked={formData.is_active ?? false}
+                        onChange={(e) => handleChange("is_active", e.target.checked)}
+                        label="Active"
+                        disabled={isViewMode}
+                    />
+                </div>
+            </FormGroup>
 
+            {/* --- SKU --- */}
+            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
+                <div className='space-y-1'>
+                    <FormLabel htmlFor="sku">SKU</FormLabel>
+                </div>
                 <FormInput
-                    id="name"
+                    id="sku"
                     type="text"
-                    value={formData.name}
-                    onChange={(e) => handleChange("name", e.target.value)}
+                    value={formData.sku ?? ""}
+                    onChange={(e) => handleChange("sku", e.target.value)}
                     required
                     disabled={isViewMode}
                 />
@@ -135,39 +170,11 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                 />
             </FormGroup>
 
-            {/* --- SKU --- */}
+            {/* --- Image Upload --- */}
             <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-1'>
-                    <FormLabel htmlFor="sku">SKU</FormLabel>
+                    <FormLabel htmlFor="image">Product Image</FormLabel>
                 </div>
-                <FormInput
-                    id="sku"
-                    type="text"
-                    value={formData.sku ?? ""}
-                    onChange={(e) => handleChange("sku", e.target.value)}
-                    required
-                    disabled={isViewMode}
-                />
-
-            </FormGroup>
-
-            {/* --- Active Toggle --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <label className="flex items-center gap-3">
-                    <input
-                        type="checkbox"
-                        checked={formData.is_active}
-                        onChange={(e) => handleChange("is_active", e.target.checked)}
-                        disabled={isViewMode}
-                    />
-                    <span className="text-sm text-gray-700 dark:text-gray-300">Active</span>
-                </label>
-            </FormGroup>
-
-            {/* --- Image Upload --- */}
-            <FormGroup>
-                <FormLabel htmlFor="image">Product Image</FormLabel>
-
                 {formData.image_url && (
                     <img
                         src={formData.image_url}
@@ -175,7 +182,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         className="w-32 h-32 object-cover rounded border mb-2"
                     />
                 )}
-
                 {!isViewMode && (
                     <FileInput
                         id="image"

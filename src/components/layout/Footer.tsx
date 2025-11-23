@@ -1,27 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router';
-import { IconLogout, IconUserEdit, IconShoppingBag } from '@tabler/icons-react';
+import { IconLogout, IconUserEdit } from '@tabler/icons-react';
 import { useAuth } from '../../contexts/authContext';
-import { useCart } from '../../contexts/cartContext';
 import Avatar from '../common/Avatar';
 import DropdownButton from '../common/DropdownButton';
 import Button from '../common/Button';
-import CheckoutDialog from '../common/cart/CheckoutDialog';
+import CartButton from '../common/cart/CartButton';
 
 const Footer: React.FC = () => {
-    const [showDialog, setShowDialog] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    const { items } = useCart();
-
-    const handleCartClick = () => {
-        if (items.length === 0) {
-            // Optional: show a toast or alert
-            // e.g. toast.info("Your cart is empty!");
-            return;
-        }
-        navigate("/payments", { state: { fromCart: true } });
-    };
     return (
         <footer className="flex justify-between items-center space-x-2 border-t border-zinc-950/5 p-4 dark:border-white/5">
             {user ? (
@@ -61,30 +49,7 @@ const Footer: React.FC = () => {
                             }}
                         />
                     </div>
-                    {/* Cart Button */}
-                    <Button
-                        variant="secondary"
-                        icon={
-                            <div className="relative">
-                                <IconShoppingBag size={18} />
-                                {items.length > 0 && (
-                                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                                        {items.length}
-                                    </span>
-                                )}
-                            </div>
-                        }
-                        iconOnly
-                        label="Cart"
-                        className='bg-transparent'
-                        // onClick={handleCartClick}
-                        onClick={() => setShowDialog(true)}
-                        rounded='full'
-                    />
-                    <CheckoutDialog
-                        isOpen={showDialog}
-                        onClose={() => setShowDialog(false)}
-                    />
+                    <CartButton className="bg-transparent" />
                 </div>
             ) : (
                 <Button

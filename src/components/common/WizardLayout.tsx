@@ -15,10 +15,18 @@ interface WizardLayoutProps {
   currentStep: number;
   goNext: () => void;
   goBack: () => void;
+  navPosition?: "sticky" | "absolute" | "static";
 }
 
-export default function WizardLayout({ steps, currentStep, goNext, goBack }: WizardLayoutProps) {
+export default function WizardLayout({ steps, currentStep, goNext, goBack, navPosition = "sticky" }: WizardLayoutProps) {
   const step = steps[currentStep];
+
+    // Compute nav wrapper class
+  const navClass = {
+    sticky: "sticky bottom-0 z-10",
+    absolute: "absolute bottom-0 left-0 right-0 z-10 border-t border-gray-200 dark:border-gray-700",
+    static: "static",
+  }[navPosition];
 
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden">
@@ -44,7 +52,7 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
 
       {/* Navigation Buttons */}
       {!step.hideNav && (
-        <div className="sticky bottom-0 z-10 py-3 px-6 flex justify-between">
+        <div className={`${navClass} py-3 px-6 flex justify-between bg-white dark:bg-gray-900`}>
           {currentStep > 0 && !step.hideBack && (
             <Button
               label="Back"
@@ -52,6 +60,7 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
               disabled={currentStep === 0}
               variant="secondary"
               className="min-w-[100px]"
+              rounded="lg"
             />
           )}
           {currentStep < steps.length - 1 && !step.hideNext && (
@@ -61,6 +70,7 @@ export default function WizardLayout({ steps, currentStep, goNext, goBack }: Wiz
               disabled={currentStep >= steps.length - 1}
               variant="primary"
               className="min-w-[100px]"
+              rounded="lg"
             />
           )}
         </div>

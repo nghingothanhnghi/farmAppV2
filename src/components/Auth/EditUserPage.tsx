@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router';
-import { IconCamera } from '@tabler/icons-react';
+import { useParams, useNavigate } from 'react-router';
+import { IconCamera, IconAlertCircle } from '@tabler/icons-react';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../common/Form';
+import Modal from '../common/Modal';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
 import { useAlert } from '../../contexts/alertContext';
@@ -15,6 +16,7 @@ const EditUserPage: React.FC = () => {
   const { user, getUser, setShowLoginModal } = useAuth();
   const { setAlert } = useAlert();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     username: '',
@@ -23,6 +25,11 @@ const EditUserPage: React.FC = () => {
     first_name: '',
     last_name: '',
   });
+
+  const [initialData, setInitialData] = useState(formData);
+  const isDirty = JSON.stringify(formData) !== JSON.stringify(initialData);
+  const [confirmLeaveOpen, setConfirmLeaveOpen] = useState(false);
+
 
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
   const [loading, setLoading] = useState(false);
@@ -45,17 +52,39 @@ const EditUserPage: React.FC = () => {
       return;
     }
 
-    setFormData({
+    const data = {
       username: user.username || '',
       email: user.email || '',
       phone_number: user.phoneNumber || '',
       first_name: user.firstName || '',
       last_name: user.lastName || '',
-    });
+    };
+
+    setFormData(data);
+    setInitialData(data);
+
     if (user.image_url) {
       setPreviewUrl(getImageUrl(user.image_url)); // ✅ normalize here
     }
   }, [user, id]);
+
+  const handleCancel = () => {
+    if (isDirty || selectedImage) {
+      setConfirmLeaveOpen(true);  // open modal
+      return;
+    }
+    navigate(-1); // go back
+  };
+
+  const confirmLeave = () => {
+    setConfirmLeaveOpen(false);
+    navigate(-1);
+  };
+
+  const cancelLeave = () => {
+    setConfirmLeaveOpen(false);
+  };
+
 
   const validationSchema = Yup.object().shape({
     username: Yup.string().required('Username is required'),
@@ -174,7 +203,7 @@ const EditUserPage: React.FC = () => {
             ))}
           </div>
           <hr className="my-10 border-t border-zinc-950/5 dark:border-white/5" />
-          <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4">
+          <FormActions className="sm:flex sm:justify-end sm:static sm:pl-0 sm:pr-0 sm:pt-0 sm:pb-8 fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 grid grid-cols-2 gap-4">
             <Button
               type="submit"
               label={loading ? 'Saving...' : 'Save Changes'}
@@ -182,9 +211,47 @@ const EditUserPage: React.FC = () => {
               variant="primary"
               rounded='lg'
             />
+            <Button
+              type="button"
+              label="Cancel"
+              variant="secondary"
+              rounded="lg"
+              onClick={handleCancel}
+            />
           </FormActions>
         </div>
       </Form>
+      <Modal
+        showCloseButton={false}
+        size='xsmall'
+        isOpen={confirmLeaveOpen}
+        onClose={cancelLeave}
+        content={
+          <div className="text-sm px-10 pt-6 pb-10 text-center">
+            <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+            You have unsaved changes. Are you sure you want to leave this page?
+          </div>
+        }
+        actions={
+          <div className="flex gap-4">
+            <Button
+              label="Stay"
+              variant="secondary"
+              rounded="lg"
+              onClick={cancelLeave}
+              className='min-w-[150px]'
+            />
+            <Button
+              label="Leave"
+              variant="danger"
+              rounded="lg"
+              onClick={confirmLeave}
+              className='min-w-[150px]'
+            />
+          </div>
+        }
+      />
+
     </div>
   );
 };
