@@ -14,7 +14,7 @@ const Spinner: React.FC<SpinnerProps> = ({
   className = '',
 }) => {
   return (
-    <div className={`flex justify-center py-4 ${className}`}>
+    <div className={`flex justify-center ${className}`}>
       <div
         className={`animate-spin rounded-full ${borderClass} ${colorClass}`}
         style={{ width: size, height: size }}

@@ -125,7 +125,7 @@ const Modal: React.FC<ModalProps> = ({
               </div>
             )}
 
-            <div className="flex-grow overflow-y-auto mt-4">
+            <div className="flex-grow overflow-y-auto mt-4 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
               {content}
             </div>
             <div className="py-4 px-10 flex justify-center">

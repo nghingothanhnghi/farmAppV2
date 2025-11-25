@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import Modal from "../../common/Modal";
 import CartItemList from "./CartItemList";
 import CartSummary from "./CartSummary";
 import Button from "../../common/Button";
+import Spinner from "../Spinner";
 
 interface CheckoutDialogProps {
     isOpen: boolean;
@@ -14,6 +15,8 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
     isOpen,
     onClose
 }) => {
+    const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
     return (
         <Modal
@@ -30,15 +33,18 @@ const CheckoutDialog: React.FC<CheckoutDialogProps> = ({
             actions={
                 <div className="flex flex-col gap-4 w-full">
                     <Button
-                        label="Continue to Payment"
+                        label={isLoading ? "Processing..." : "Continue to Payment"}
+                        icon={isLoading ? <Spinner size={18} colorClass="border-white" /> : null}
+                        iconPosition="left"
                         variant="primary"
                         className="w-full"
                         rounded="lg"
-                        onClick={() => {
+                        disabled={isLoading}
+                        onClick={async () => {
+                            setIsLoading(true);
+                            await new Promise(res => setTimeout(res, 600)); // smooth transition
                             onClose();
-                            navigate("/payments", {
-                                state: { fromCart: true }, // 🔥 triggers sidepanel
-                            });
+                            navigate("/payments", { state: { fromCart: true } });
                         }}
                     />
                     <Button

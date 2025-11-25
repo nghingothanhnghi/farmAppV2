@@ -41,7 +41,7 @@ const Header: React.FC<HeaderProps> = ({ brandUrl, appName, onClose }) => {
                 {brandUrl ? (
                   <img src={brandUrl} alt="Logo" className="h-6 w-6" />
                 ) : (
-                  <IconDeviceGamepad3 size={24} className="text-orange-600 icon-pulse" />
+                  <IconDeviceGamepad3 size={18} className="text-orange-600 icon-pulse" />
                 )}
                 <span className="text-sm font-bold text-gray-800 hidden">{appName}</span>
               </>

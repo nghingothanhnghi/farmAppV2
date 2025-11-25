@@ -48,15 +48,22 @@ const JackpotPage: React.FC = () => {
         }
     }, [error]);
 
-
     const handleCheckResult = async (ticketId: number) => {
         setPrizes(prev => ({ ...prev, [ticketId]: 'Checking...' }));
+
         const result = await actions.checkTicket(ticketId);
+
+        // ⬅️ THIS IS WHAT YOU WERE MISSING
+        if (user) {
+            await actions.fetchUserTickets(user.id);
+        }
+
         setPrizes(prev => ({
             ...prev,
             [ticketId]: result ?? 'No prize',
         }));
     };
+
 
     const tabs = [
         {
