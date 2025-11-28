@@ -44,7 +44,7 @@ const Alert: React.FC = () => {
     };
 
     return (
-        <div className={`fixed top-4 right-4 max-w-sm w-full border-l-4 p-4 rounded shadow-lg ${alertStyles[alert.type]} z-50`}>
+        <div className={`fixed top-4 right-4 max-w-sm w-full border-l-4 p-4 rounded shadow-lg ${alertStyles[alert.type]} z-51`}>
             <div className="flex justify-between items-center">
                 <div className="flex items-center">
                     <div className="flex-shrink-0">

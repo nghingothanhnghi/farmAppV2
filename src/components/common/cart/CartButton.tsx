@@ -1,9 +1,9 @@
 // src/components/common/cart/CartButton.tsx
-import React, { useState } from "react";
+import React from "react";
 import { IconShoppingBag } from "@tabler/icons-react";
 import Button from "../Button";
 import { useCart } from "../../../contexts/cartContext";
-import CheckoutDialog from "./CheckoutDialog";
+import { useCheckoutDialog } from "../../../contexts/CheckoutDialogContext";
 
 interface CartButtonProps {
     disabledIfEmpty?: boolean;  // default: true
@@ -17,12 +17,12 @@ const CartButton: React.FC<CartButtonProps> = ({
     rounded = "full",
 }) => {
     const { items } = useCart();
-    const [showDialog, setShowDialog] = useState(false);
+
+    const { openCheckout } = useCheckoutDialog(); // 👈 use global dialog
 
     const handleClick = () => {
         if (disabledIfEmpty && items.length === 0) return;
-        // Open dialog
-        setShowDialog(true);
+        openCheckout();
     };
 
     return (
@@ -44,10 +44,6 @@ const CartButton: React.FC<CartButtonProps> = ({
                 className={className}
                 rounded={rounded}
                 onClick={handleClick}
-            />
-            <CheckoutDialog
-                isOpen={showDialog}
-                onClose={() => setShowDialog(false)}
             />
         </>
     );
