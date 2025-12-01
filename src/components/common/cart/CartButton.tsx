@@ -3,7 +3,7 @@ import React from "react";
 import { IconShoppingBag } from "@tabler/icons-react";
 import Button from "../Button";
 import { useCart } from "../../../contexts/cartContext";
-import { useCheckoutDialog } from "../../../contexts/CheckoutDialogContext";
+import { useCheckoutDialog } from "../../../contexts/checkoutDialogContext";
 
 interface CartButtonProps {
     disabledIfEmpty?: boolean;  // default: true

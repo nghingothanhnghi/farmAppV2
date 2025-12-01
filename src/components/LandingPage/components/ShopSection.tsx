@@ -1,9 +1,14 @@
 import { Link } from "react-router";
 import { useProduct } from "../../../hooks/useProduct";
+import Carousel from "../../common/carousel/Carousel";
 import ShopItemCard from "./ShopItemCard";
 
-const ShopSection = () => {
+interface ShopSectionProps {
+  itemsToShow?: number; // number of products to show
+}
+const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 4 }) => {
   const { products, loading, error } = useProduct();
+
   return (
 
     <section className="bg-zinc-50 py-20 lg:h-screen dark:bg-zinc-900/30 flex items-center">
@@ -27,12 +32,34 @@ const ShopSection = () => {
           </p>
         )}
         {/* Products Grid */}
-        {!loading && !error && (
+        {/* {!loading && !error && (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {products.slice(0, 4).map((product) => (
               <ShopItemCard key={product.id} item={product} />
             ))}
           </div>
+
+        )} */}
+                {/* Carousel */}
+        {!loading && !error && (
+          <Carousel
+            options={{ loop: true }}
+            className="embla"
+          >
+            {products.slice(0, itemsToShow).map((product) => (
+              <div
+                key={product.id}
+                className="
+                  flex-[0_0_80%] 
+                  sm:flex-[0_0_50%] 
+                  lg:flex-[0_0_25%] 
+                  px-3
+                "
+              >
+                <ShopItemCard item={product} />
+              </div>
+            ))}
+          </Carousel>
         )}
       </div>
     </section>
