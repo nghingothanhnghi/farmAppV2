@@ -6,6 +6,7 @@ import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 import { useCart } from "../../../contexts/cartContext";
+import { useAlert } from "../../../contexts/alertContext";
 import ProductImage from "../../common/ProductImage";
 
 interface ProductCardProps {
@@ -21,12 +22,23 @@ export const ProductCard: React.FC<ProductCardProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     const { addToCart } = useCart();
+    const { setAlert } = useAlert();
 
   // ✅ Log product image URL when component renders
   useEffect(() => {
     console.log("🖼️ Product:", product.name);
     console.log("→ image_url from API:", product.image_url);
   }, [product]);
+
+      const handleAddToCart = () => {
+        addToCart(product);
+
+        // ✅ Show alert
+        setAlert({
+            message: `${product.name} added to cart!`,
+            type: "success",
+        });
+    };
 
     return (
         <div
@@ -75,7 +87,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
                     <Button
                         label="Add to Cart"
-                        onClick={() => addToCart(product)}
+                        onClick={handleAddToCart}
                         variant="primary"
                         rounded="full"
                         size="sm"

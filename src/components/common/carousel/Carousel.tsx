@@ -1,8 +1,9 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 import useEmblaCarousel from "embla-carousel-react"
 import type { EmblaOptionsType } from "embla-carousel"
 import { PrevButton, NextButton, usePrevNextButtons } from "./CarouselArrowButtons"
 import { DotButton, useDotButton } from "./CarouselDotButtons"
+import "./Carousel.css"
 
 type CarouselProps = {
   children: React.ReactNode
@@ -18,12 +19,34 @@ export default function Carousel({ children, options, className }: CarouselProps
 
   const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(emblaApi)
 
+  const [showLeftShadow, setShowLeftShadow] = useState(false);
+  const [showRightShadow, setShowRightShadow] = useState(false);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+
+    const updateShadows = () => {
+      const canScrollPrev = emblaApi.canScrollPrev();
+      const canScrollNext = emblaApi.canScrollNext();
+
+      setShowLeftShadow(canScrollPrev);
+      setShowRightShadow(canScrollNext);
+    };
+
+    updateShadows();
+    emblaApi.on("select", updateShadows);
+    emblaApi.on("scroll", updateShadows);
+    emblaApi.on("reInit", updateShadows);
+  }, [emblaApi]);
+
   return (
     <section className={className ?? "embla"}>
+      {showLeftShadow && <div className="embla__shadow embla__shadow--left" />}
+      {showRightShadow && <div className="embla__shadow embla__shadow--right" />}
       <div className="embla__viewport" ref={emblaRef}>
         <div className="embla__container">
           {React.Children.map(children, (child, idx) => (
-            <div className="embla__slide flex-[0_0_100%]" key={idx}>
+            <div className="embla__slide" key={idx}>
               {child}
             </div>
           ))}

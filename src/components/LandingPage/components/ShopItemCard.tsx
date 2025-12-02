@@ -3,6 +3,7 @@ import { IconShoppingCart } from '@tabler/icons-react';
 import type { Product } from '../../../models/interfaces/Product';
 import ProductImage from '../../common/ProductImage';
 import { useCart } from '../../../contexts/cartContext';
+import { useAlert } from '../../../contexts/alertContext';
 
 interface ShopItemCardProps {
   item: Product; // <-- from your model
@@ -10,9 +11,15 @@ interface ShopItemCardProps {
 
 const ShopItemCard = ({ item }: ShopItemCardProps) => {
   const { addToCart } = useCart();
+  const { setAlert } = useAlert();
 
   const handleAddToCart = () => {
     addToCart(item);
+    // ✅ Show alert
+    setAlert({
+      message: `${item.name} added to cart!`,
+      type: "success",
+    });
   };
   return (
     <div className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md dark:border-white/10 dark:bg-zinc-900">

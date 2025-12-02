@@ -16,6 +16,7 @@ const CartButton: React.FC<CartButtonProps> = ({
     className,
     rounded = "full",
 }) => {
+    
     const { items } = useCart();
 
     const { openCheckout } = useCheckoutDialog(); // 👈 use global dialog
