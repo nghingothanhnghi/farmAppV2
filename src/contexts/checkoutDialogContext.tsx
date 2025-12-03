@@ -1,3 +1,4 @@
+// src/contexts/CheckoutDialogContext.tsx
 import React, { createContext, useContext, useState } from "react";
 import CheckoutDialog from "../components/common/cart/CheckoutDialog";
 

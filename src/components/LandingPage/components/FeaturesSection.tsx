@@ -9,7 +9,7 @@ const FEATURES = [
 ];
 
 const FeaturesSection = () => (
-  <section id="features" className="bg-zinc-50 py-20 lg:h-screen dark:bg-zinc-900/30 flex items-center">
+  <section className="py-20 lg:h-screen flex items-center">
     <div className="mx-auto max-w-6xl px-6 space-y-6">
       <h2 className="text-2xl sm:text-4xl font-semibold text-zinc-900 dark:text-white">Featured Automation</h2>
       <div className="space-y-4">

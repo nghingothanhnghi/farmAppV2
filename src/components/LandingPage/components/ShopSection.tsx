@@ -6,17 +6,16 @@ import ShopItemCard from "./ShopItemCard";
 interface ShopSectionProps {
   itemsToShow?: number; // number of products to show
 }
-const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 4 }) => {
+const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 8 }) => {
   const { products, loading, error } = useProduct();
 
   return (
-
-    <section className="bg-zinc-50 py-20 lg:h-screen dark:bg-zinc-900/30 flex items-center">
+    <section className="py-20 lg:h-screen flex items-center">
       <div className="mx-auto max-w-6xl px-6 space-y-6">
-        <div className="flex items-end justify-between">
-          <div className="space-y-6">
-            <h2 className="text-2x sm:text-4xl font-semibold text-zinc-900 dark:text-white">Equipment Shop</h2>
-            <p className="mt-2 text-zinc-600 dark:text-zinc-300">Essential parts to build or expand your system.</p>
+        <div className="flex items-end justify-between w-full">
+          <div className="space-y-4">
+            <h2 className="text-2xl sm:text-4xl font-semibold text-zinc-900 dark:text-white">Equipment Shop</h2>
+            <p className=" text-zinc-600 dark:text-zinc-300">Essential parts to build or expand your system.</p>
           </div>
           <Link to="#" className="hidden text-sm font-medium text-emerald-700 hover:underline md:block">
             View all
@@ -31,16 +30,8 @@ const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 4 }) => {
             {error}
           </p>
         )}
-        {/* Products Grid */}
-        {/* {!loading && !error && (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {products.slice(0, 4).map((product) => (
-              <ShopItemCard key={product.id} item={product} />
-            ))}
-          </div>
 
-        )} */}
-                {/* Carousel */}
+        {/* Carousel */}
         {!loading && !error && (
           <Carousel
             options={{ loop: true }}

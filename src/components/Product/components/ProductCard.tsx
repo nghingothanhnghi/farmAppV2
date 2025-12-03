@@ -6,6 +6,7 @@ import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 import { useCart } from "../../../contexts/cartContext";
+import { useCheckoutDialog } from "../../../contexts/checkoutDialogContext";
 import { useAlert } from "../../../contexts/alertContext";
 import ProductImage from "../../common/ProductImage";
 
@@ -21,16 +22,21 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onSelect,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const { addToCart } = useCart();
+    const { items, addToCart } = useCart();
+    const { openCheckout } = useCheckoutDialog();
+
     const { setAlert } = useAlert();
 
-  // ✅ Log product image URL when component renders
-  useEffect(() => {
-    console.log("🖼️ Product:", product.name);
-    console.log("→ image_url from API:", product.image_url);
-  }, [product]);
+    const cartItem = items.find((item) => item.id === product.id);
+    const quantityInCart = cartItem?.quantity ?? 0;
 
-      const handleAddToCart = () => {
+    // ✅ Log product image URL when component renders
+    useEffect(() => {
+        console.log("🖼️ Product:", product.name);
+        console.log("→ image_url from API:", product.image_url);
+    }, [product]);
+
+    const handleAddToCart = () => {
         addToCart(product);
 
         // ✅ Show alert
@@ -43,14 +49,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     return (
         <div
             className="
-        relative
-        flex flex-col
-        overflow-hidden 
-        transition-all 
-        duration-300 
-        hover:shadow-lg 
-        hover:-translate-y-1
-        "
+                relative
+                flex flex-col
+                overflow-hidden 
+                transition-all 
+                duration-300 
+                hover:shadow-lg 
+                hover:-translate-y-1
+            "
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
         >
@@ -85,13 +91,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 className="absolute top-4 right-4"
             >
                 <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
-                    <Button
-                        label="Add to Cart"
-                        onClick={handleAddToCart}
-                        variant="primary"
-                        rounded="full"
-                        size="sm"
-                    />
+                    {quantityInCart > 0 ? (
+                        // ✔ SHOW CHECKOUT BUTTON
+                        <Button
+                            label="Checkout"
+                            onClick={openCheckout}
+                            variant="primary"
+                            rounded="full"
+                            size="sm"
+                        />
+                    ) : (
+                        // ✔ SHOW ADD TO CART BUTTON
+                        <Button
+                            label="Add to Cart"
+                            onClick={handleAddToCart}
+                            variant="primary"
+                            rounded="full"
+                            size="sm"
+                        />
+                    )}
+
                     <Button
                         variant="secondary"
                         icon={<IconTrash size={18} />}
