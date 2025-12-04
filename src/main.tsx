@@ -8,23 +8,26 @@ import { AuthProvider } from './contexts/authContext.tsx'
 import { JackpotProvider } from './contexts/jackpotContext.tsx'
 import { CartProvider } from './contexts/cartContext.tsx'
 import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
+import { ThemeProvider } from './contexts/themeContext.tsx'
 import Alert from './components/alert/alert.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <AlertProvider>
-        <Alert />
-        <AuthProvider>
-          <CartProvider>
-            <JackpotProvider>
-              <CheckoutDialogProvider>
-                <App />
-              </CheckoutDialogProvider>
-            </JackpotProvider>
-          </CartProvider>
-        </AuthProvider>
-      </AlertProvider>
+      <ThemeProvider>
+        <AlertProvider>
+          <Alert />
+          <AuthProvider>
+            <CartProvider>
+              <JackpotProvider>
+                <CheckoutDialogProvider>
+                  <App />
+                </CheckoutDialogProvider>
+              </JackpotProvider>
+            </CartProvider>
+          </AuthProvider>
+        </AlertProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
 )

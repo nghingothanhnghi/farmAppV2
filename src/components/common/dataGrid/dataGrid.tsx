@@ -4,6 +4,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AG_GRID_LOCALE_VN } from './locale/vi-VN';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '../../../hooks/useTheme';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -24,15 +25,20 @@ const DataGrid: React.FC<DataGridProps> = ({
 }) => {
 
   const gridApiRef = useRef<any>(null); // Store Grid API reference
-  const {t, i18n} = useTranslation();
+  const { t, i18n } = useTranslation();
 
-  // 🔥 Get theme from localStorage (same as GeneralTab)
-  const userTheme = localStorage.getItem('theme') || 'system';
+  // ✅ Use global theme instead of localStorage
+  const { theme: userTheme } = useTheme();
+
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const isDarkMode = userTheme === 'dark' || (userTheme === 'system' && prefersDark);
 
+  const isDarkMode =
+    userTheme === 'dark' ||
+    (userTheme === 'system' && prefersDark);
+
+  // 🔥 Auto-switch between AG Grid themes
   const appliedTheme = isDarkMode ? 'ag-theme-alpine-dark' : theme;
-  
+
   const defaultColDef = useMemo(() => ({
     sortable: true,
     filter: true,
@@ -50,19 +56,19 @@ const DataGrid: React.FC<DataGridProps> = ({
     if (gridApiRef.current) {
       gridApiRef.current.refreshHeader(); // ✅ Refresh column headers
       gridApiRef.current.refreshCells({ force: true }); // ✅ Refresh table content
+      gridApiRef.current.redrawRows();
     }
   }, [localeText, appliedTheme]);
 
 
-const noRowsOverlay = `
+  const noRowsOverlay = `
 <div className="text-center py-10">
-  ${
-    lottieSrc
+  ${lottieSrc
       ? `<iframe src="${lottieSrc}" class="mx-auto mb-4 w-24 h-24" title="Lottie Animation" frameborder="0" allowfullscreen></iframe>`
       : image
-      ? `<img src="${image}" alt="Empty State" class="mx-auto mb-4 w-40 h-40 object-contain" />`
-      : ""
-  }
+        ? `<img src="${image}" alt="Empty State" class="mx-auto mb-4 w-40 h-40 object-contain" />`
+        : ""
+    }
   <p className="text-gray-600 mb-8">${t("dataGrid.bodyName.no_matching_results")}</p>
 </div>
 `;
@@ -72,6 +78,7 @@ const noRowsOverlay = `
   return (
     <div className={`${appliedTheme} w-full`} style={{ height }}>
       <AgGridReact
+        key={appliedTheme}           // 🔥 FORCE remount grid when theme changes
         onGridReady={(params) => {
           gridApiRef.current = params.api; // Store the Grid API reference
           params.api.refreshHeader(); // Ensure headers update immediately
@@ -83,7 +90,7 @@ const noRowsOverlay = `
         paginationPageSize={paginationPageSize}
         onRowClicked={onRowClicked}
         overlayNoRowsTemplate={noRowsOverlay}
-        localeText={localeText} 
+        localeText={localeText}
       />
     </div>
   );

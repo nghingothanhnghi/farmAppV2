@@ -1,6 +1,7 @@
 // src/contexts/cartContext.tsx
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useMemo, useEffect } from "react";
 import type { Product } from "../models/interfaces/Product";
+import { useAuth } from "./authContext";
 
 export interface CartItem {
   id: number;
@@ -26,8 +27,26 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { user, isAuthenticated } = useAuth();
+  const userId = user?.id ?? "guest";
+  
   const [items, setItems] = useState<CartItem[]>([]);
   const [clientId, setClientId] = useState<string>();
+
+  // ⭐ Load cart from storage when user changes
+  useEffect(() => {
+    const saved = localStorage.getItem(`cart_${userId}`);
+    if (saved) {
+      setItems(JSON.parse(saved));
+    } else {
+      setItems([]);
+    }
+  }, [userId]);
+
+  // ⭐ Save cart to storage whenever items change
+  useEffect(() => {
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(items));
+  }, [items, userId]);  
 
 const increaseQuantity = (productId: number) => {
   setItems((prev) =>
