@@ -4,6 +4,7 @@ import Button from '../common/Button';
 import DropdownButton from '../common/DropdownButton';
 import ListLink from '../common/ListLink';
 import Avatar from '../common/Avatar';
+import CartButton from '../common/cart/CartButton';
 import { useNavigate } from 'react-router';
 import { useAuth } from '../../contexts/authContext';
 interface DesktopSidebarToggleButtonProps {
@@ -51,32 +52,34 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                 <ListLink to="/migrate" icon={<IconAnalyze size={16} />} label="Data Migration" iconOnlyMode={true} />
                 <ListLink to="/payments" icon={<IconCashRegister size={16} />} label="Payments" iconOnlyMode={true} />
             </div>
-            <div className='flex justify-between items-center space-x-2 pb-4'>
+            <div className='flex flex-col justify-between items-center space-y-0.5 pb-4'>
                 {user ? (
-                    <DropdownButton
-                        className='w-full text-left bg-transparent'
-                        iconOnly={true}
-                        showArrow={false}
-                        label={
-                            <Avatar
-                                imageUrl={user.image_url}
-                                size={32}
-                                rounded="full"
-                            />
-                        }
-                        items={[
-                            { label: 'Edit Profile', value: 'edit-profile', icon: <IconUserEdit size={18} /> },
-                            { label: <> Logout</>, value: 'Logout', icon: <IconLogout size={18} /> },
-                        ]}
-                        onSelect={(item) => {
-                            if (item.value === 'Logout') {
-                                logout();
-                            } else if (item.value === 'edit-profile' && user?.id) {
-                                navigate(`/users/${user.id}/edit`);
+                    <>
+                        <CartButton />
+                        <DropdownButton
+                            className='w-full text-left bg-transparent'
+                            iconOnly={true}
+                            showArrow={false}
+                            label={
+                                <Avatar
+                                    imageUrl={user.image_url}
+                                    size={24}
+                                    rounded="full"
+                                />
                             }
-                        }}
-                    />
-
+                            items={[
+                                { label: 'Edit Profile', value: 'edit-profile', icon: <IconUserEdit size={18} /> },
+                                { label: <> Logout</>, value: 'Logout', icon: <IconLogout size={18} /> },
+                            ]}
+                            onSelect={(item) => {
+                                if (item.value === 'Logout') {
+                                    logout();
+                                } else if (item.value === 'edit-profile' && user?.id) {
+                                    navigate(`/users/${user.id}/edit`);
+                                }
+                            }}
+                        />
+                    </>
                 ) : (
                     <Button
                         type="button"

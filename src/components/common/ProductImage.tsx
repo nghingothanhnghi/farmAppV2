@@ -19,7 +19,7 @@ const ProductImage: React.FC<ProductImageProps> = ({
   className = "",
   border = true,
 }) => {
-  const url = getImageUrl(imageUrl);
+  const url = getImageUrl(imageUrl, true);
   console.log("Final image URL used by ProductImage:", url);
 
   const roundedClass =
