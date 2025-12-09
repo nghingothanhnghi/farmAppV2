@@ -1,5 +1,4 @@
 // src/services/hydroDeviceService.ts
-
 import apiClient from "../api/client";
 import type { HydroDevice } from "../models/interfaces/HydroSystem";
 
@@ -9,7 +8,7 @@ export const deviceService = {
     return res.data;
   },
 
-    async get(id: number): Promise<HydroDevice> {
+  async get(id: number): Promise<HydroDevice> {
     const res = await apiClient.get(`/hydro/devices/${id}`);
     return res.data;
   },
@@ -27,4 +26,15 @@ export const deviceService = {
   async delete(id: number): Promise<void> {
     await apiClient.delete(`/hydro/devices/${id}`);
   },
+
+  async activateDevice(device_id: number): Promise<HydroDevice> {
+    const res = await apiClient.post(`/hydro/device/${device_id}/activate`);
+    return res.data;
+  },
+
+  async deactivateDevice(device_id: number): Promise<HydroDevice> {
+    const res = await apiClient.post(`/hydro/devices/${device_id}/deactivate`);
+    return res.data;
+  }
+
 };

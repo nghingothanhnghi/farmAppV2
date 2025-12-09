@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { IconAlertCircle, IconMoodEmpty } from '@tabler/icons-react';
-import { deviceService } from "../../../services/hydroDeviceService";
+import { useHydroDevices } from "../../../hooks/useHydroDevices";
 import { useAlert } from "../../../contexts/alertContext";
 import type { HydroDevice } from "../../../models/interfaces/HydroSystem";
 import DataGrid from '../../common/dataGrid/dataGrid';
@@ -18,19 +18,22 @@ type Props = {
 
 const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
   const { setAlert } = useAlert();
+  // -----------------------------
+  // ⭐ Use hook instead of service
+  // -----------------------------
+  const {
+    devices,
+    loading,
+    fetchDevices,
+    deleteDevice,
+  } = useHydroDevices();
+
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<HydroDevice | null>(null);
-  const [devices, setDevices] = useState<HydroDevice[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    deviceService
-      .getAll()
-      .then(setDevices)
-      .catch((err) => console.error("Device fetch error:", err))
-      .finally(() => setLoading(false));
-  }, []);
-
+  // -----------------------------
+  // Delete Device (via hook)
+  // -----------------------------
   const handleRequestDelete = (device: HydroDevice) => {
     setSelectedDevice(device);
     setConfirmModalOpen(true);
@@ -38,18 +41,21 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
 
   const handleConfirmDelete = async () => {
     if (!selectedDevice) return;
+
     try {
-      await deviceService.delete(selectedDevice.id);
-      setDevices(prev => prev.filter(d => d.id !== selectedDevice.id));
+      await deleteDevice(selectedDevice.id);
+
+      await fetchDevices(); // 🔁 refresh after deletion
+
       setAlert({
         message: `Device "${selectedDevice?.name}" deleted successfully.`,
-        type: 'success',
+        type: "success",
       });
     } catch (err) {
       console.error("Delete error:", err);
       setAlert({
-        message: 'Failed to delete device. Please try again.',
-        type: 'error',
+        message: "Failed to delete device. Please try again.",
+        type: "error",
       });
     } finally {
       setConfirmModalOpen(false);

@@ -7,7 +7,7 @@ import Button from '../../components/common/Button';
 import PageTitle from '../../components/common/PageTitle';
 import * as Yup from 'yup';
 import { useAlert } from '../../contexts/alertContext';
-import { deviceService } from '../../services/hydroDeviceService';
+import { useHydroDevices } from '../../hooks/useHydroDevices';
 import type { HydroDevice } from '../../models/interfaces/HydroSystem';
 import DeviceList from './components/DeviceList';
 import DeviceForm from './components/DeviceForm';
@@ -30,6 +30,18 @@ const HydroponicDevicePage: React.FC = () => {
     const isCreate = location.pathname === '/hydro-devices/new-device';
     const isEdit = Boolean(id);
 
+    // -----------------------------
+    // Hook data
+    // -----------------------------
+    const {
+        devices,
+        createDevice,
+        updateDevice,
+        refreshDevice,
+        fetchDevices, // optional if you want to refresh list after create
+        loading: hookLoading,
+    } = useHydroDevices();
+
     const [formData, setFormData] = useState<Partial<HydroDevice>>({
         name: '',
         device_id: '',
@@ -37,16 +49,40 @@ const HydroponicDevicePage: React.FC = () => {
         type: '',
     });
 
-    const [loading, setLoading] = useState(false);
+    const [formLoading, setFormLoading] = useState(false); // avoid collision with hook loading
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+    // If editing, try to populate formData from hook cache first.
     useEffect(() => {
-        if (isEdit) {
-            deviceService
-                .get(Number(id))
-                .then(setFormData)
-                .catch(() => setAlert({ type: 'error', message: 'Failed to fetch device data' }));
-        } else if (isCreate) {
+        let mounted = true;
+
+        const loadForEdit = async () => {
+            if (!isEdit || !id) return;
+
+            // try to find device in hook cache
+            const cached = devices.find(d => d.id === Number(id));
+            if (cached && mounted) {
+                setFormData(cached);
+                return;
+            }
+
+            // not in cache — refresh from server via hook, then pick up from devices array
+            try {
+                await refreshDevice(Number(id)); // refreshDevice updates hook's devices
+                // after refresh, try to find the device in hook cache again
+                const refreshed = devices.find(d => d.id === Number(id));
+                if (refreshed && mounted) {
+                    setFormData(refreshed);
+                }
+            } catch (err) {
+                // fallback: show a user-friendly error
+                setAlert({ type: 'error', message: 'Failed to fetch device data' });
+            }
+        };
+
+        if (isEdit) loadForEdit();
+        else if (isCreate) {
+            // reset form for create
             setFormData({
                 name: '',
                 device_id: '',
@@ -55,7 +91,20 @@ const HydroponicDevicePage: React.FC = () => {
             });
             setFieldErrors({});
         }
-    }, [id, isCreate]);
+
+        return () => {
+            mounted = false;
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [id, isEdit, isCreate]); // we intentionally don't include `devices` to avoid re-running too often
+
+    // Keep form in sync if devices change (e.g., after refreshDevice finishes)
+    useEffect(() => {
+        if (isEdit && id) {
+            const cached = devices.find(d => d.id === Number(id));
+            if (cached) setFormData(cached);
+        }
+    }, [devices, id, isEdit]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -64,20 +113,26 @@ const HydroponicDevicePage: React.FC = () => {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
+        setFormLoading(true);
+
         try {
             await deviceSchema.validate(formData, { abortEarly: false });
             setFieldErrors({});
-            if (isEdit) {
-                await deviceService.update(Number(id), formData as HydroDevice);
+
+            if (isEdit && id) {
+                await updateDevice(Number(id), formData);
                 setAlert({ message: 'Device updated successfully!', type: 'success' });
             } else {
-                await deviceService.create(formData as HydroDevice);
+                await createDevice(formData);
                 setAlert({ message: 'Device created successfully!', type: 'success' });
             }
+
+            // Optionally refresh the full device list (if your hook doesn't auto-add)
+            if (fetchDevices) await fetchDevices();
+
             navigate('/hydro-devices');
         } catch (err: any) {
-            if (err.name === 'ValidationError') {
+            if (err && err.name === 'ValidationError') {
                 const errors: Record<string, string> = {};
                 err.inner.forEach((e: Yup.ValidationError) => {
                     if (e.path) errors[e.path] = e.message;
@@ -90,7 +145,7 @@ const HydroponicDevicePage: React.FC = () => {
                 });
             }
         } finally {
-            setLoading(false);
+            setFormLoading(false);
         }
     };
 
@@ -145,7 +200,7 @@ const HydroponicDevicePage: React.FC = () => {
                     formData={formData}
                     onChange={handleChange}
                     onSubmit={handleSubmit}
-                    loading={loading}
+                    loading={formLoading || hookLoading}
                     isEdit={isEdit}
                     fieldErrors={fieldErrors}
                 />
