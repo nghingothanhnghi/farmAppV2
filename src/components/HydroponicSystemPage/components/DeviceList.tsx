@@ -8,6 +8,7 @@ import ActionButtons from '../../common/dataGrid/actionButton';
 import Modal from '../../common/Modal';
 import Badge from '../../common/Badge';
 import Button from "../../common/Button";
+import ModeToggle from "../../common/ModeToggle";
 import LinearProgress from '../../common/LinearProgress';
 import EmptyState from '../../common/EmptyState';
 
@@ -26,6 +27,7 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
     loading,
     fetchDevices,
     deleteDevice,
+    toggleActive,
   } = useHydroDevices();
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -68,19 +70,44 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
       { headerName: 'ID', field: 'id', width: 80, filter: false, cellStyle: { textAlign: "center" } },
       { headerName: 'Name', field: 'name', flex: 1, filter: false },
       { headerName: 'Device ID', field: 'device_id', flex: 1, filter: false },
-      { headerName: 'Type', field: 'type',flex: 1, filter: false, resizable: false },
+      { headerName: 'Type', field: 'type', flex: 1, filter: false, resizable: false },
       showStatus && {
         headerName: 'Status',
         field: 'is_active',
         flex: 1,
         filter: false,
         resizable: false,
-        cellRenderer: ({ value }: any) => (
-          <Badge
-            label={value ? 'Active' : 'Inactive'}
-            variant={value ? 'success' : 'gray'}
-          />
+        // cellRenderer: ({ value }: any) => (
+        //   <div className="flex">
+        //     <Badge
+        //       label={value ? 'Active' : 'Inactive'}
+        //       variant={value ? 'success' : 'gray'}
+        //     />
+        //     <ModeToggle
+        //       isActive={data.is_active}
+        //       onToggle={() => toggleActive(data)}
+        //       size="small"
+        //       currentLabel="Inactive"
+        //       nextLabel="Active"
+        //     />
+        //   </div>
+        // ),
+        cellRenderer: ({ value, data }: any) => (
+          <div className="flex items-center gap-2">
+            <Badge
+              label={value ? 'Active' : 'Inactive'}
+              variant={value ? 'success' : 'gray'}
+            />
+            <ModeToggle
+              isActive={data.is_active}
+              onToggle={() => toggleActive(data)}
+              size="small"
+              currentLabel="Inactive"
+              nextLabel="Active"
+            />
+          </div>
         ),
+
       },
       onSelect && {
         headerName: '',
@@ -114,9 +141,9 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
 
   if (!devices.length) {
     return <EmptyState
-            icon={<IconMoodEmpty size={48} />}
-            message="No devices found."
-          />
+      icon={<IconMoodEmpty size={48} />}
+      message="No devices found."
+    />
   }
 
   return (
