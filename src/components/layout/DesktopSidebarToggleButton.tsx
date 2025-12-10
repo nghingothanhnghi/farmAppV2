@@ -55,7 +55,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
             <div className='flex flex-col justify-between items-center space-y-0.5 pb-4'>
                 {user ? (
                     <>
-                        <CartButton />
+                        <CartButton rounded='lg' />
                         <DropdownButton
                             className='w-full text-left bg-transparent'
                             iconOnly={true}
