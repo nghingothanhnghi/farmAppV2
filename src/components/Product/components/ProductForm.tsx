@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { generateSKU } from "../../../utils/product";
 import Form, { FormGroup, FormLabel, FormInput, FormCheckbox, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
-import type { Product, ProductCreate } from "../../../models/interfaces/Product";
+import type { Product, ProductCreate, ProductVariant } from "../../../models/interfaces/Product";
 import { useProduct } from "../../../hooks/useProduct";
 import FileInput from "../../common/FileInput";
+import ProductVariantForm from "./ProductVariantForm";
 interface ProductFormProps {
     mode: "add" | "edit" | "view";
     productId?: number;
@@ -76,9 +77,23 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             let product: Product;
 
             if (mode === "add") {
+                // Create main product first
                 product = await actions.createProduct(formData);
+                // Then create variants on backend
+                for (const v of formData.variants || []) {
+                    const created = await actions.createVariant(product.id, v);
+                    if ((v as any)._file) await actions.uploadVariantImage(created.variants[0].id!, (v as any)._file);
+                }
             } else if (mode === "edit" && productId) {
                 product = await actions.updateProduct(productId, formData);
+
+                // Sync local variants if any new
+                for (const v of formData.variants || []) {
+                    if (!v.id) {
+                        const created = await actions.createVariant(productId, v);
+                        if ((v as any)._file) await actions.uploadVariantImage(created.variants[0].id!, (v as any)._file);
+                    }
+                }
             } else {
                 return;
             }
@@ -189,6 +204,50 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         onChange={handleFileChange}
                         accept="image/*"
                         label="Upload Image"
+                    />
+                )}
+            </FormGroup>
+            {/* Variants */}
+            <FormGroup className="grid gap-4">
+                {(formData.variants || []).map((variant, idx) => (
+                    <ProductVariantForm
+                        key={variant.id || idx}
+                        variant={variant}
+                        onSave={(v, file) => {
+                            // Attach temporary file reference
+                            if (file) (v as any)._file = file;
+
+                            setFormData((prev) => {
+                                const variants = prev.variants || [];
+                                const index = variants.findIndex((x) => x.id === v.id);
+                                if (index > -1) {
+                                    variants[index] = v;
+                                } else {
+                                    variants.push(v);
+                                }
+                                return { ...prev, variants };
+                            });
+                        }}
+                        onDelete={() => {
+                            setFormData((prev) => ({
+                                ...prev,
+                                variants: (prev.variants || []).filter((x) => x !== variant),
+                            }));
+                        }}
+                        disabled={isViewMode}
+                    />
+                ))}
+
+                {!isViewMode && (
+                    <Button
+                        label="Add Variant"
+                        variant="secondary"
+                        onClick={() =>
+                            setFormData((prev) => ({
+                                ...prev,
+                                variants: [...(prev.variants || []), { name: "", price: 0 }],
+                            }))
+                        }
                     />
                 )}
             </FormGroup>

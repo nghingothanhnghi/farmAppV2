@@ -1,7 +1,7 @@
 // src/hooks/useProduct.ts
 import { useState, useEffect, useCallback } from "react";
 import { productService } from "../services/productService";
-import type { Product, ProductCreate, ProductUpdate } from "../models/interfaces/Product";
+import type { Product, ProductCreate, ProductUpdate, ProductVariant } from "../models/interfaces/Product";
 
 export const useProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -86,15 +86,63 @@ export const useProduct = () => {
     }
   }, []);
 
-  // ✅ Upload variant image
+  // --- Variants ---
+  const createVariant = useCallback(async (productId: number, variant: ProductVariant) => {
+    try {
+      const updatedProduct = await productService.createVariant(productId, variant);
+      setProducts((prev) => prev.map((p) => (p.id === productId ? updatedProduct : p)));
+      if (selectedProduct?.id === productId) setSelectedProduct(updatedProduct);
+      return updatedProduct;
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to create variant");
+      throw err;
+    }
+  }, [selectedProduct]);
+
+  const updateVariant = useCallback(async (variantId: number, data: Partial<ProductVariant>) => {
+    try {
+      const updatedProduct = await productService.updateVariant(variantId, data);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.variants.some((v) => v.id === variantId) ? updatedProduct : p
+        )
+      );
+      if (selectedProduct?.variants.some((v) => v.id === variantId)) setSelectedProduct(updatedProduct);
+      return updatedProduct;
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to update variant");
+      throw err;
+    }
+  }, [selectedProduct]);
+
+  const deleteVariant = useCallback(async (variantId: number) => {
+    try {
+      const updatedProduct = await productService.deleteVariant(variantId);
+      // After deletion, refetch product or remove variant from local state
+      await fetchProducts();
+      if (selectedProduct) await fetchProduct(selectedProduct.id);
+      return updatedProduct;
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to delete variant");
+      throw err;
+    }
+  }, [fetchProducts, fetchProduct, selectedProduct]);
+
   const uploadVariantImage = useCallback(async (variantId: number, file: File) => {
     try {
-      await productService.uploadVariantImage(variantId, file);
+      const updatedProduct = await productService.uploadVariantImage(variantId, file);
+      setProducts((prev) =>
+        prev.map((p) =>
+          p.variants.some((v) => v.id === variantId) ? updatedProduct : p
+        )
+      );
+      if (selectedProduct?.variants.some((v) => v.id === variantId)) setSelectedProduct(updatedProduct);
+      return updatedProduct;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to upload variant image");
       throw err;
     }
-  }, []);
+  }, [selectedProduct]);
 
   // Auto load products on mount
   useEffect(() => {
@@ -113,6 +161,9 @@ export const useProduct = () => {
       updateProduct,
       deleteProduct,
       uploadProductImage,
+      createVariant,
+      updateVariant,
+      deleteVariant,
       uploadVariantImage,
     },
   };
