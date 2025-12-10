@@ -28,7 +28,7 @@ export const deviceService = {
   },
 
   async activateDevice(device_id: number): Promise<HydroDevice> {
-    const res = await apiClient.post(`/hydro/device/${device_id}/activate`);
+    const res = await apiClient.post(`/hydro/devices/${device_id}/activate`);
     return res.data;
   },
 

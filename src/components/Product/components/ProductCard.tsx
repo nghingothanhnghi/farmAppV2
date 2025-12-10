@@ -5,10 +5,8 @@ import { formatMoney } from "../../../utils/currency";
 import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { HoverSlideIn } from "../../common/HoverSlideIn";
-import { useCart } from "../../../contexts/cartContext";
-import { useCheckoutDialog } from "../../../contexts/checkoutDialogContext";
-import { useAlert } from "../../../contexts/alertContext";
 import ProductImage from "../../common/ProductImage";
+import CartActionButton from "../../common/cart/CartActionButton";
 
 interface ProductCardProps {
     product: Product;
@@ -22,29 +20,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     onSelect,
 }) => {
     const [isHovered, setIsHovered] = useState(false);
-    const { items, addToCart } = useCart();
-    const { openCheckout } = useCheckoutDialog();
-
-    const { setAlert } = useAlert();
-
-    const cartItem = items.find((item) => item.id === product.id);
-    const quantityInCart = cartItem?.quantity ?? 0;
 
     // ✅ Log product image URL when component renders
     useEffect(() => {
         console.log("🖼️ Product:", product.name);
         console.log("→ image_url from API:", product.image_url);
     }, [product]);
-
-    const handleAddToCart = () => {
-        addToCart(product);
-
-        // ✅ Show alert
-        setAlert({
-            message: `${product.name} added to cart!`,
-            type: "success",
-        });
-    };
 
     return (
         <div
@@ -91,26 +72,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 className="absolute top-4 right-4"
             >
                 <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
-                    {quantityInCart > 0 ? (
-                        // ✔ SHOW CHECKOUT BUTTON
-                        <Button
-                            label="Checkout"
-                            onClick={openCheckout}
-                            variant="primary"
-                            rounded="full"
-                            size="sm"
-                        />
-                    ) : (
-                        // ✔ SHOW ADD TO CART BUTTON
-                        <Button
-                            label="Add to Cart"
-                            onClick={handleAddToCart}
-                            variant="primary"
-                            rounded="full"
-                            size="sm"
-                        />
-                    )}
-
+                    <CartActionButton product={product} size="sm" rounded="full" />
                     <Button
                         variant="secondary"
                         icon={<IconTrash size={18} />}

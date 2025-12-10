@@ -33,6 +33,7 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<HydroDevice | null>(null);
 
+
   // -----------------------------
   // Delete Device (via hook)
   // -----------------------------
@@ -77,21 +78,6 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
         flex: 1,
         filter: false,
         resizable: false,
-        // cellRenderer: ({ value }: any) => (
-        //   <div className="flex">
-        //     <Badge
-        //       label={value ? 'Active' : 'Inactive'}
-        //       variant={value ? 'success' : 'gray'}
-        //     />
-        //     <ModeToggle
-        //       isActive={data.is_active}
-        //       onToggle={() => toggleActive(data)}
-        //       size="small"
-        //       currentLabel="Inactive"
-        //       nextLabel="Active"
-        //     />
-        //   </div>
-        // ),
         cellRenderer: ({ value, data }: any) => (
           <div className="flex items-center gap-2">
             <Badge
