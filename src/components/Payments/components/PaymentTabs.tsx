@@ -231,7 +231,7 @@ const PaymentTabs: React.FC<PaymentTabsProps> = ({ onPaymentCreated, initialPaym
           onClick={openNewTab}
         />
       </div>
-      <Tabs tabs={tabItems} activeTab={activeTab} onTabChange={setActiveTab} />
+      <Tabs tabs={tabItems} activeTab={activeTab} onTabChange={setActiveTab} className="px-4" />
     </div>
   );
 };

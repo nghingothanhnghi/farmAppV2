@@ -115,7 +115,7 @@ const OrderForm: React.FC<OrderFormProps> = ({ onCreated, mode = "create", initi
         <div className="space-y-4 p-4">
           {mode === "create" && (
             <>
-              <CartItemList showControls={true} />
+              <CartItemList showControls={false} />
               <CartSummary />
             </>
           )}

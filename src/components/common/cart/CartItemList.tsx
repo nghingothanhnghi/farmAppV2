@@ -1,16 +1,18 @@
 // src/components/common/cart/CartItemList.tsx
 import React from "react";
+import { IconTrash } from "@tabler/icons-react";
 import { useCart } from "../../../contexts/cartContext";
 import { formatMoney } from "../../../utils/currency";
 import ProductImage from "../ProductImage";
 import NumberInput from "../../common/NumberInput";
+import Button from "../Button";
 
 interface CartItemListProps {
-    showControls?: boolean; // Show + and – buttons
+    showControls?: boolean; // Show + and – buttons, and Remove button
 }
 
 const CartItemList: React.FC<CartItemListProps> = ({ showControls = false }) => {
-    const { items, increaseQuantity, decreaseQuantity } = useCart();
+    const { items, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
     if (items.length === 0) {
         return <p className="text-gray-500 text-sm">Cart is empty</p>;
@@ -30,20 +32,33 @@ const CartItemList: React.FC<CartItemListProps> = ({ showControls = false }) => 
                     </div>
                     <div className="flex items-center justify-between md:order-3 md:justify-end">
                         {showControls && (
-                            <NumberInput
-                                id={`qty-${item.id}`}
-                                value={item.quantity}
-                                min={1}
-                                onChange={(newQty) => {
-                                    if (newQty > item.quantity) {
-                                        increaseQuantity(item.id);
-                                    } else if (newQty < item.quantity) {
-                                        decreaseQuantity(item.id);
+                            <>
+                                <NumberInput
+                                    id={`qty-${item.id}`}
+                                    value={item.quantity}
+                                    min={1}
+                                    onChange={(newQty) => {
+                                        if (newQty > item.quantity) {
+                                            increaseQuantity(item.id);
+                                        } else if (newQty < item.quantity) {
+                                            decreaseQuantity(item.id);
+                                        }
+                                    }}
+                                    className="w-28"
+                                />
+                                <Button
+                                    variant="secondary"
+                                    icon={<IconTrash size={18} />
                                     }
-                                }}
-                                className="w-28"
-                            />
+                                    iconOnly
+                                    label="Cart"
+                                    rounded="full"
+                                    onClick={() => removeFromCart(item.id)}
+                                />
+                            </>
                         )}
+
+
                         <div className="text-end md:order-4 md:w-32">
                             <span className="font-semibold text-gray-900 dark:text-white">{formatMoney(item.total)}</span>
                         </div>

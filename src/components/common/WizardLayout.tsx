@@ -21,28 +21,30 @@ interface WizardLayoutProps {
 export default function WizardLayout({ steps, currentStep, goNext, goBack, navPosition = "sticky" }: WizardLayoutProps) {
   const step = steps[currentStep];
 
-    // Compute nav wrapper class
+  // Compute nav wrapper class
   const navClass = {
     sticky: "sticky bottom-0 z-10",
     absolute: "absolute bottom-0 left-0 right-0 z-10 border-t border-gray-200 dark:border-gray-700",
     static: "static",
   }[navPosition];
 
+  // Calculate progress as a fraction
+  const progressPercent = ((currentStep + 1) / steps.length) * 100;
+
   return (
     <div className="flex flex-col h-screen max-w-4xl mx-auto overflow-hidden">
       {/* Step Header */}
       <div className="sticky top-0 z-10">
-        <div className="flex items-center justify-between">
-          {steps.map((s, i) => (
+        <div className="px-4">
+          <p className="text-xs font-medium text-gray-600 dark:text-gray-300">
+            {currentStep + 1}/{steps.length} - {step.title}
+          </p>
+          <div className="mt-2 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
             <div
-              key={i}
-              className={`flex-1 text-center py-2 px-1 text-sm font-medium transition ${i === currentStep ? 'text-blue-600' : 'text-gray-400'
-                }`}
-            >
-              {s.title}
-              <div className={`h-1 mt-1 transition-all ${i <= currentStep ? 'bg-blue-600' : 'bg-gray-200'}`}></div>
-            </div>
-          ))}
+              className="h-0.5 rounded-full bg-green-600 dark:bg-green-300 transition-all"
+              style={{ width: `${progressPercent}%` }}
+            ></div>
+          </div>
         </div>
       </div>
       {/* Step Content */}

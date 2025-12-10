@@ -13,9 +13,10 @@ interface TabsProps {
   tabs: Tab[];
   activeTab: string;
   onTabChange: (id: string) => void;
+  className?: string;
 }
 
-const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
+const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange, className = "" }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [indicatorProps, setIndicatorProps] = useState<{ left: number; width: number }>({ left: 0, width: 0 });
   const [searchParams, setSearchParams] = useSearchParams();
@@ -54,7 +55,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange }) => {
   return (
     <React.Fragment>
       {/* Tab navigation */}
-      <div className="border-b border-gray-200 dark:border-white/5">
+      <div className={`border-b border-gray-200 dark:border-white/5 ${className}`}>
         <nav ref={containerRef} className="relative -mb-px flex space-x-8">
           {tabs.map((tab) => (
             <button
