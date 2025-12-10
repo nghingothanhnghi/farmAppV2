@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
                             }}
                         />
                     </div>
-                    <CartButton className="bg-transparent" />
+                    <CartButton className="bg-transparent" rounded='lg' />
                 </div>
             ) : (
                 <Button

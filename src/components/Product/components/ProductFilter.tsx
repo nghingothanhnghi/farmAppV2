@@ -1,6 +1,6 @@
 import React from "react";
 import useToggle from "../../../hooks/useToggle";
-import { FormInput } from "../../common/Form";
+import { FormInput, FormSelect } from "../../common/Form";
 import Button from "../../common/Button";
 import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
 interface ProductFilterProps {
@@ -66,74 +66,91 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
             />
           )}
         </div>
-          {/* 🧩 Toggle Advanced Filters */}
-          <Button
-            type="button"
-            onClick={toggle}
-            variant="link"
-            icon={<IconAdjustmentsHorizontal size={16} />}
-            iconPosition="left"
-            label={expanded ? "Hide advanced filters" : "More filters"}
-            className="shrink-0 text-gray-700 dark:text-gray-300"
-          />
+        {/* 🧩 Toggle Advanced Filters */}
+        <Button
+          type="button"
+          onClick={toggle}
+          variant="link"
+          icon={<IconAdjustmentsHorizontal size={16} />}
+          iconPosition="left"
+          label={expanded ? "Hide advanced filters" : "More filters"}
+          className="shrink-0 text-gray-700 dark:text-gray-300"
+        />
       </div>
 
       {/* 🧱 Advanced Filters Section */}
       {expanded && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-3">
+        <div className="max-w-5xl grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 mt-3">
           {/* Description */}
-          <input
+          <FormInput
             type="text"
+            id="description"
             placeholder="Filter by description"
             value={filters.description ?? ""}
             onChange={(e) => setFilters((f) => ({ ...f, description: e.target.value }))}
-            className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
+            className="min-w-[150]"
           />
 
-          {/* Price Range */}
-          <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="Min price"
+            {/* Min Price */}
+            <FormSelect
+              id="priceMin"
               value={filters.priceMin ?? ""}
               onChange={(e) =>
                 setFilters((f) => ({
                   ...f,
-                  priceMin: e.target.value ? parseFloat(e.target.value) : undefined,
+                  priceMin: e.target.value ? Number(e.target.value) : undefined,
                 }))
               }
-              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-            />
-            <input
-              type="number"
-              placeholder="Max price"
+              className="min-w-[150]"
+            >
+              <option value="">Min price</option>
+              <option value="0">0</option>
+              <option value="1000000">1,000,000</option>
+              <option value="3000000">3,000,000</option>
+              <option value="5000000">5,000,000</option>
+              <option value="10000000">10,000,000</option>
+              <option value="20000000">20,000,000</option>
+            </FormSelect>
+
+            {/* Max Price */}
+            <FormSelect
+              id="priceMax"
               value={filters.priceMax ?? ""}
               onChange={(e) =>
                 setFilters((f) => ({
                   ...f,
-                  priceMax: e.target.value ? parseFloat(e.target.value) : undefined,
+                  priceMax: e.target.value ? Number(e.target.value) : undefined,
                 }))
               }
-              className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
+              className="min-w-[150]"
+            >
+              <option value="">Max price</option>
+              <option value="1000000">1,000,000</option>
+              <option value="3000000">3,000,000</option>
+              <option value="5000000">5,000,000</option>
+              <option value="10000000">10,000,000</option>
+              <option value="20000000">20,000,000</option>
+              <option value="50000000">50,000,000</option>
+            </FormSelect>
+      
           {/* Variant Name */}
-          <input
+          <FormInput
             type="text"
-            placeholder="Filter by variant name"
+            id="variantName"
+            placeholder="variant name"
             value={filters.variantName ?? ""}
             onChange={(e) => setFilters((f) => ({ ...f, variantName: e.target.value }))}
-            className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
+            className="min-w-[150]"
           />
 
           {/* Variant SKU */}
-          <input
+          <FormInput
             type="text"
-            placeholder="Filter by variant SKU"
+            id="variantSku"
+            placeholder="SKU"
             value={filters.variantSku ?? ""}
             onChange={(e) => setFilters((f) => ({ ...f, variantSku: e.target.value }))}
-            className="border border-gray-300 rounded-md px-3 py-2 w-full focus:ring-2 focus:ring-blue-500"
+            className="min-w-[150]"
           />
 
           {/* Clear All */}

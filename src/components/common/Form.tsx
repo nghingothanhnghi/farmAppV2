@@ -126,10 +126,10 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   onChange,
   children,
   disabled = false,
-  className = ''
+  className = 'w-full max-w-sm min-w-[200px]'
 }) => {
   return (
-    <div className="w-full max-w-sm min-w-[200px]">
+    <div className={`${className}`}>
       <div className="relative">
         <select
           id={id}

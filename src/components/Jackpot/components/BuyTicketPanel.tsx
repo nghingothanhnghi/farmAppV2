@@ -57,6 +57,7 @@ const BuyTicketPanel: React.FC<Props> = ({ numbers, setNumbers, playType, setPla
                     id="playType"
                     value={playType}
                     onChange={e => setPlayType(e.target.value as PlayType)}
+                    className='w-full'
                 >
                     <option value="basic">Basic</option>
                     <option value="bao5">Bao 5</option>
