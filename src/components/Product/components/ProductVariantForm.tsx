@@ -1,11 +1,16 @@
-import React, { useState, useRef } from "react";
-import type{ ProductVariant } from "../../../models/interfaces/Product";
+import React, { useState, useRef, useEffect } from "react";
+import type { ProductVariant } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
+import { generateVariantSKU } from "../../../utils/product";
+import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import FileInput from "../../common/FileInput";
 import { IconTrash } from "@tabler/icons-react";
 
 interface ProductVariantFormProps {
   variant?: ProductVariant; // optional for edit/add
+  productSKU: string;           // <-- added
+  existingSKUs: string[];
+  variantSKUs: string[];
   onSave: (variant: ProductVariant, file?: File) => void;
   onDelete?: () => void;
   disabled?: boolean;
@@ -13,6 +18,9 @@ interface ProductVariantFormProps {
 
 const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
   variant,
+  productSKU,
+  existingSKUs,
+  variantSKUs,
   onSave,
   onDelete,
   disabled = false,
@@ -30,6 +38,18 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  // Auto-generate SKU
+  useEffect(() => {
+    if (variant?.sku) return; // existing variant keeps SKU
+    if (!formData.name) return;
+
+    const allSKUs = [...existingSKUs, ...variantSKUs].filter(s => s !== formData.sku);
+    const sku = generateVariantSKU(productSKU, formData.name, allSKUs);
+
+    setFormData(prev => ({ ...prev, sku }));
+  }, [formData.name, productSKU, existingSKUs, variantSKUs, variant?.sku]);
+
+
   const handleChange = (field: string, value: any) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
@@ -39,9 +59,21 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     if (f) setFile(f);
   };
 
-  const handleSave = () => {
-    onSave(formData, file || undefined);
-  };
+const handleSave = () => {
+  if (!formData.name.trim()) {
+    alert("Variant name cannot be empty.");
+    return;
+  }
+
+  if (!formData.sku?.trim()) {
+    alert("Variant SKU cannot be empty. Please type a name to generate SKU.");
+    return;
+  }
+
+  onSave(formData, file || undefined); // only update local state
+};
+
+
 
   return (
     <div className="border p-4 rounded mb-3">
@@ -53,6 +85,14 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
           onChange={(e) => handleChange("name", e.target.value)}
           disabled={disabled}
           className="border rounded px-2 py-1 flex-1 mr-2"
+        />
+        <input
+          type="text"
+          placeholder="SKU"
+          value={formData.sku}
+          onChange={(e) => handleChange("sku", e.target.value)}
+          disabled={disabled}
+          className="border rounded px-2 py-1 w-32 mr-2"
         />
         <input
           type="number"
@@ -94,7 +134,10 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
       {!disabled && (
         <div className="flex justify-end mt-2">
-          <Button label="Save Variant" onClick={handleSave} />
+          <Button 
+          label="Save Variant" 
+          onClick={handleSave} 
+          />
         </div>
       )}
     </div>

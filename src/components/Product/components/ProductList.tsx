@@ -1,6 +1,6 @@
 // src/components/ProductList.tsx
 import React, { useState } from "react";
-import { useProduct } from "../../../hooks/useProduct";
+import { useProductContext } from "../../../contexts/productContext";
 import { ProductCard } from "./ProductCard";
 import Spinner from "../../common/Spinner";
 import EmptyState from "../../common/EmptyState";
@@ -13,7 +13,7 @@ import { useItemFilter } from "../../../hooks/useItemFilter";
 import { ProductFilter } from "./ProductFilter";
 
 export const ProductList: React.FC = () => {
-    const { products, loading, error, actions } = useProduct();
+    const { products, loading, error, actions } = useProductContext();
     const { filters, setFilters, filteredProducts } = useItemFilter(products);
     const { setAlert } = useAlert();
     // ✅ modal + selected state

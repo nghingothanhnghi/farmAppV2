@@ -43,6 +43,11 @@ export const productService = {
   },
 
   // --- Variants ---
+  async getAllVariantSKUs(): Promise<string[]> {
+    const res = await apiClient.get("/products/variants/skus");
+    return res.data;
+  },
+
   async createVariant(productId: number, variant: ProductVariant): Promise<Product> {
     const res = await apiClient.post(`/products/${productId}/variants`, variant);
     return res.data;

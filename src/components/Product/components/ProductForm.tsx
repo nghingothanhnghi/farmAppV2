@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { generateSKU } from "../../../utils/product";
+import { generateSKU, generateVariantSKU } from "../../../utils/product";
 import Form, { FormGroup, FormLabel, FormInput, FormCheckbox, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
-import type { Product, ProductCreate, ProductVariant } from "../../../models/interfaces/Product";
-import { useProduct } from "../../../hooks/useProduct";
+import type { Product, ProductCreate } from "../../../models/interfaces/Product";
+import { useProductContext } from "../../../contexts/productContext";
 import FileInput from "../../common/FileInput";
 import ProductVariantForm from "./ProductVariantForm";
 interface ProductFormProps {
@@ -14,7 +14,7 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, onCancel }) => {
-    const { selectedProduct, actions, loading } = useProduct();
+    const { selectedProduct, actions, loading, variantSKUs } = useProductContext();
 
     const [formData, setFormData] = useState<ProductCreate>({
         name: "",
@@ -71,42 +71,93 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         setImageFile(file);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+        const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             let product: Product;
 
             if (mode === "add") {
-                // Create main product first
                 product = await actions.createProduct(formData);
-                // Then create variants on backend
+
+                // Create NEW variants only
                 for (const v of formData.variants || []) {
-                    const created = await actions.createVariant(product.id, v);
-                    if ((v as any)._file) await actions.uploadVariantImage(created.variants[0].id!, (v as any)._file);
+                    if (!v.name?.trim()) continue;
+                    if (v.id) continue; // should not happen for add
+
+                    // Generate SKU
+                    if (!v.sku) {
+                        const latestSKUs = await actions.fetchAllVariantSKUs();
+                        const otherSKUs = [
+                            ...(formData.variants || []).filter(x => x !== v).map(x => x.sku || ""),
+                            ...latestSKUs
+                        ];
+                        v.sku = generateVariantSKU(product.sku!, v.name, otherSKUs);
+                    }
+
+                    const createdProduct = await actions.createVariant(product.id, v);
+                    const createdVariant = createdProduct.variants.find(x => x.name === v.name && x.sku === v.sku);
+
+                    // Upload image if present
+                    if ((v as any)._file && createdVariant?.id) {
+                        await actions.uploadVariantImage(createdVariant.id, (v as any)._file);
+                    }
                 }
+
             } else if (mode === "edit" && productId) {
                 product = await actions.updateProduct(productId, formData);
 
-                // Sync local variants if any new
                 for (const v of formData.variants || []) {
-                    if (!v.id) {
-                        const created = await actions.createVariant(productId, v);
-                        if ((v as any)._file) await actions.uploadVariantImage(created.variants[0].id!, (v as any)._file);
+                    if (v.id) {
+                        // Existing variant → check for changes
+                        const original = selectedProduct?.variants.find(x => x.id === v.id);
+                        const hasChanged =
+                            v.name !== original?.name ||
+                            v.price !== original?.price ||
+                            v.stock !== original?.stock ||
+                            JSON.stringify(v.attributes) !== JSON.stringify(original?.attributes) ||
+                            (v as any)._file;
+
+                        if (hasChanged) {
+                            await actions.updateVariant(v.id, v);
+
+                            // Upload image if changed
+                            if ((v as any)._file) {
+                                await actions.uploadVariantImage(v.id, (v as any)._file);
+                            }
+                        }
+
+                        continue;
+                    }
+
+                    // New variant → create
+                    if (!v.sku) {
+                        const otherSKUs = [
+                            ...(formData.variants || []).filter(x => x !== v).map(x => x.sku || ""),
+                            ...variantSKUs
+                        ];
+                        v.sku = generateVariantSKU(product.sku!, v.name, otherSKUs);
+                    }
+
+                    const created = await actions.createVariant(productId, v);
+                    if ((v as any)._file && created.variants[0].id) {
+                        await actions.uploadVariantImage(created.variants[0].id, (v as any)._file);
                     }
                 }
             } else {
                 return;
             }
 
-            // upload image if selected
+            // Upload product image
             if (imageFile && product.id) {
                 await actions.uploadProductImage(product.id, imageFile);
             }
 
-            // ✅ Refresh product list automatically
+            // Refresh
             await actions.fetchProducts();
+            await actions.fetchAllVariantSKUs();
 
             if (onSuccess) onSuccess(product);
+
         } catch (err) {
             console.error("Error saving product:", err);
         }
@@ -213,18 +264,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                     <ProductVariantForm
                         key={variant.id || idx}
                         variant={variant}
+                        productSKU={formData.sku || ""} // <-- pass parent SKU
+                        existingSKUs={(formData.variants || [])
+                            .filter((_, i) => i !== idx)
+                            .map(v => v.sku || "")
+                            .filter(Boolean)}
+                        variantSKUs={variantSKUs}
                         onSave={(v, file) => {
-                            // Attach temporary file reference
                             if (file) (v as any)._file = file;
-
-                            setFormData((prev) => {
-                                const variants = prev.variants || [];
-                                const index = variants.findIndex((x) => x.id === v.id);
-                                if (index > -1) {
-                                    variants[index] = v;
-                                } else {
-                                    variants.push(v);
-                                }
+                            setFormData(prev => {
+                                const variants = [...(prev.variants || [])];
+                                const index = variants.findIndex(x => x.id === v.id);
+                                if (index > -1) variants[index] = v;
+                                else variants.push(v);
                                 return { ...prev, variants };
                             });
                         }}
@@ -245,7 +297,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         onClick={() =>
                             setFormData((prev) => ({
                                 ...prev,
-                                variants: [...(prev.variants || []), { name: "", price: 0 }],
+                                variants: [...(prev.variants || []),
+                                {
+                                    name: "",
+                                    price: 0,
+                                    sku: "", // start empty → auto-generate when typing name
+                                },
+                                ],
                             }))
                         }
                     />

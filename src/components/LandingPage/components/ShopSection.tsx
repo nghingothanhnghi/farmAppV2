@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { useProduct } from "../../../hooks/useProduct";
+import { useProductContext } from "../../../contexts/productContext";
 import Carousel from "../../common/carousel/Carousel";
 import ShopItemCard from "./ShopItemCard";
 
@@ -7,7 +7,7 @@ interface ShopSectionProps {
   itemsToShow?: number; // number of products to show
 }
 const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 8 }) => {
-  const { products, loading, error } = useProduct();
+  const { products, loading, error } = useProductContext();
 
   return (
     <section className="py-20 lg:h-screen flex items-center">

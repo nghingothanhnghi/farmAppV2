@@ -8,6 +8,7 @@ import { AuthProvider } from './contexts/authContext.tsx'
 import { JackpotProvider } from './contexts/jackpotContext.tsx'
 import { CartProvider } from './contexts/cartContext.tsx'
 import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
+import { ProductProvider } from './contexts/productContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
 import Alert from './components/alert/alert.tsx'
 
@@ -21,7 +22,9 @@ createRoot(document.getElementById('root')!).render(
             <CartProvider>
               <JackpotProvider>
                 <CheckoutDialogProvider>
-                  <App />
+                  <ProductProvider>
+                    <App />
+                  </ProductProvider>
                 </CheckoutDialogProvider>
               </JackpotProvider>
             </CartProvider>

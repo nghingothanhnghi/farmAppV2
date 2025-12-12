@@ -5,6 +5,7 @@ import type { Product, ProductCreate, ProductUpdate, ProductVariant } from "../m
 
 export const useProduct = () => {
   const [products, setProducts] = useState<Product[]>([]);
+  const [variantSKUs, setVariantSKUs] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -87,6 +88,17 @@ export const useProduct = () => {
   }, []);
 
   // --- Variants ---
+  const fetchAllVariantSKUs = useCallback(async () => {
+    try {
+      const skus = await productService.getAllVariantSKUs();
+      setVariantSKUs(skus);
+      return skus;
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to load variant SKUs");
+      throw err;
+    }
+  }, []);
+
   const createVariant = useCallback(async (productId: number, variant: ProductVariant) => {
     try {
       const updatedProduct = await productService.createVariant(productId, variant);
@@ -144,16 +156,18 @@ export const useProduct = () => {
     }
   }, [selectedProduct]);
 
-  // Auto load products on mount
+  // Auto load products, variants on mount
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+    fetchAllVariantSKUs();   // 👈 NEW
+  }, [fetchProducts, fetchAllVariantSKUs]);
 
   return {
     products,
     selectedProduct,
     loading,
     error,
+    variantSKUs,
     actions: {
       fetchProducts,
       fetchProduct,
@@ -161,6 +175,7 @@ export const useProduct = () => {
       updateProduct,
       deleteProduct,
       uploadProductImage,
+      fetchAllVariantSKUs,
       createVariant,
       updateVariant,
       deleteVariant,
