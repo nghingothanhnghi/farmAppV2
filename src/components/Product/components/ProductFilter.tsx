@@ -91,48 +91,48 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
             className="min-w-[150]"
           />
 
-            {/* Min Price */}
-            <FormSelect
-              id="priceMin"
-              value={filters.priceMin ?? ""}
-              onChange={(e) =>
-                setFilters((f) => ({
-                  ...f,
-                  priceMin: e.target.value ? Number(e.target.value) : undefined,
-                }))
-              }
-              className="min-w-[150]"
-            >
-              <option value="">Min price</option>
-              <option value="0">0</option>
-              <option value="1000000">1,000,000</option>
-              <option value="3000000">3,000,000</option>
-              <option value="5000000">5,000,000</option>
-              <option value="10000000">10,000,000</option>
-              <option value="20000000">20,000,000</option>
-            </FormSelect>
+          {/* Min Price */}
+          <FormSelect
+            id="priceMin"
+            value={filters.priceMin ?? ""}
+            onChange={(e) =>
+              setFilters((f) => ({
+                ...f,
+                priceMin: e.target.value ? Number(e.target.value) : undefined,
+              }))
+            }
+            className="min-w-[150]"
+          >
+            <option value="">Min price</option>
+            <option value="0">0</option>
+            <option value="1000000">1,000,000</option>
+            <option value="3000000">3,000,000</option>
+            <option value="5000000">5,000,000</option>
+            <option value="10000000">10,000,000</option>
+            <option value="20000000">20,000,000</option>
+          </FormSelect>
 
-            {/* Max Price */}
-            <FormSelect
-              id="priceMax"
-              value={filters.priceMax ?? ""}
-              onChange={(e) =>
-                setFilters((f) => ({
-                  ...f,
-                  priceMax: e.target.value ? Number(e.target.value) : undefined,
-                }))
-              }
-              className="min-w-[150]"
-            >
-              <option value="">Max price</option>
-              <option value="1000000">1,000,000</option>
-              <option value="3000000">3,000,000</option>
-              <option value="5000000">5,000,000</option>
-              <option value="10000000">10,000,000</option>
-              <option value="20000000">20,000,000</option>
-              <option value="50000000">50,000,000</option>
-            </FormSelect>
-      
+          {/* Max Price */}
+          <FormSelect
+            id="priceMax"
+            value={filters.priceMax ?? ""}
+            onChange={(e) =>
+              setFilters((f) => ({
+                ...f,
+                priceMax: e.target.value ? Number(e.target.value) : undefined,
+              }))
+            }
+            className="min-w-[150]"
+          >
+            <option value="">Max price</option>
+            <option value="1000000">1,000,000</option>
+            <option value="3000000">3,000,000</option>
+            <option value="5000000">5,000,000</option>
+            <option value="10000000">10,000,000</option>
+            <option value="20000000">20,000,000</option>
+            <option value="50000000">50,000,000</option>
+          </FormSelect>
+
           {/* Variant Name */}
           <FormInput
             type="text"
@@ -154,13 +154,13 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
           />
 
           {/* Clear All */}
-          <button
+          <Button
             type="button"
+            label="Clear Filters"
+            variant="secondary"
             onClick={clearFilters}
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md px-3 py-2 font-medium transition"
-          >
-            Clear Filters
-          </button>
+            rounded="lg"
+          />
         </div>
       )}
     </div>

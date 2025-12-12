@@ -3,6 +3,7 @@ import { generateSKU, generateVariantSKU } from "../../../utils/product";
 import Form, { FormGroup, FormLabel, FormInput, FormCheckbox, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
 import type { Product, ProductCreate } from "../../../models/interfaces/Product";
+import { useAlert } from '../../../contexts/alertContext';
 import { useProductContext } from "../../../contexts/productContext";
 import FileInput from "../../common/FileInput";
 import ProductVariantForm from "./ProductVariantForm";
@@ -14,6 +15,7 @@ interface ProductFormProps {
 }
 
 const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, onCancel }) => {
+    const { setAlert } = useAlert();
     const { selectedProduct, actions, loading, variantSKUs } = useProductContext();
 
     const [formData, setFormData] = useState<ProductCreate>({
@@ -102,6 +104,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         await actions.uploadVariantImage(createdVariant.id, (v as any)._file);
                     }
                 }
+                
+                setAlert({ message: 'Product created successfully!', type: 'success' });
 
             } else if (mode === "edit" && productId) {
                 product = await actions.updateProduct(productId, formData);
@@ -143,6 +147,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         await actions.uploadVariantImage(created.variants[0].id, (v as any)._file);
                     }
                 }
+
+                setAlert({ message: 'Product updated successfully!', type: 'success' });
+
             } else {
                 return;
             }

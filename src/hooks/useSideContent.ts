@@ -21,5 +21,6 @@ export function useSideContent(defaultOpen = false) {
     content,
     openSide,
     closeSide,
+    setContent,
   };
 }
