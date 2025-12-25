@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { generateSKU, generateVariantSKU } from "../../../utils/product";
-import Form, { FormGroup, FormLabel, FormInput, FormCheckbox, FormActions } from "../../common/Form";
+import Form, { FormGroup, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
 import type { Product, ProductCreate } from "../../../models/interfaces/Product";
 import { useAlert } from '../../../contexts/alertContext';
 import { useProductContext } from "../../../contexts/productContext";
-import FileInput from "../../common/FileInput";
+import ProductInfoForm from "./ProductInfoForm";
 import ProductVariantForm from "./ProductVariantForm";
 interface ProductFormProps {
     mode: "add" | "edit" | "view";
@@ -73,7 +73,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         setImageFile(file);
     };
 
-        const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             let product: Product;
@@ -104,7 +104,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         await actions.uploadVariantImage(createdVariant.id, (v as any)._file);
                     }
                 }
-                
+
                 setAlert({ message: 'Product created successfully!', type: 'success' });
 
             } else if (mode === "edit" && productId) {
@@ -172,99 +172,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
 
     return (
         <Form onSubmit={handleSubmit} className="space-y-5 max-w-2xl mx-auto pb-20 px-4">
-            {/* --- Name --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <div className='space-y-1'>
-                    <FormLabel htmlFor="name">Product Name</FormLabel>
-                </div>
-                <div className="space-y-3">
-                    <FormInput
-                        id="name"
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => handleChange("name", e.target.value)}
-                        required
-                        disabled={isViewMode}
-                    />
-                    {/* --- Active Toggle --- */}
-                    <FormCheckbox
-                        id="is_active"
-                        checked={formData.is_active ?? false}
-                        onChange={(e) => handleChange("is_active", e.target.checked)}
-                        label="Active"
-                        disabled={isViewMode}
-                    />
-                </div>
-            </FormGroup>
+            <ProductInfoForm
+                data={formData}
+                isViewMode={isViewMode}
+                onChange={handleChange}
+                onImageChange={setImageFile}
+            />
 
-            {/* --- SKU --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <div className='space-y-1'>
-                    <FormLabel htmlFor="sku">SKU</FormLabel>
-                </div>
-                <FormInput
-                    id="sku"
-                    type="text"
-                    value={formData.sku ?? ""}
-                    onChange={(e) => handleChange("sku", e.target.value)}
-                    required
-                    disabled={isViewMode}
-                />
-            </FormGroup>
-
-            {/* --- Description --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <div className='space-y-1'>
-                    <FormLabel htmlFor="description">Description</FormLabel>
-                </div>
-                <FormInput
-                    id="description"
-                    type="text"
-                    value={formData.description ?? ""}
-                    onChange={(e) => handleChange("description", e.target.value)}
-                    disabled={isViewMode}
-                />
-
-            </FormGroup>
-
-            {/* --- Base Price --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <div className='space-y-1'>
-                    <FormLabel htmlFor="base_price">Base Price</FormLabel>
-                </div>
-                <FormInput
-                    id="base_price"
-                    type="number"
-                    step="0.01"
-                    value={formData.base_price}
-                    onChange={(e) => handleChange("base_price", parseFloat(e.target.value) || 0)}
-                    required
-                    disabled={isViewMode}
-                />
-            </FormGroup>
-
-            {/* --- Image Upload --- */}
-            <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
-                <div className='space-y-1'>
-                    <FormLabel htmlFor="image">Product Image</FormLabel>
-                </div>
-                {formData.image_url && (
-                    <img
-                        src={formData.image_url}
-                        alt="Preview"
-                        className="w-32 h-32 object-cover rounded border mb-2"
-                    />
-                )}
-                {!isViewMode && (
-                    <FileInput
-                        id="image"
-                        inputRef={fileInputRef}
-                        onChange={handleFileChange}
-                        accept="image/*"
-                        label="Upload Image"
-                    />
-                )}
-            </FormGroup>
             {/* Variants */}
             <FormGroup className="grid gap-4">
                 {(formData.variants || []).map((variant, idx) => (

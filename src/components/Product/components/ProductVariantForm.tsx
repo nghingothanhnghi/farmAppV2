@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import type { ProductVariant } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
 import { generateVariantSKU } from "../../../utils/product";
-import { FormGroup, FormLabel, FormInput } from "../../common/Form";
+import { FormInput } from "../../common/Form";
 import FileInput from "../../common/FileInput";
 import { IconTrash } from "@tabler/icons-react";
 
@@ -40,14 +40,14 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
   // Auto-generate SKU
   useEffect(() => {
-    if (variant?.sku) return; // existing variant keeps SKU
+    if (variant?.id) return; // existing variant keeps SKU
     if (!formData.name) return;
 
     const allSKUs = [...existingSKUs, ...variantSKUs].filter(s => s !== formData.sku);
     const sku = generateVariantSKU(productSKU, formData.name, allSKUs);
 
     setFormData(prev => ({ ...prev, sku }));
-  }, [formData.name, productSKU, existingSKUs, variantSKUs, variant?.sku]);
+  }, [formData.name, productSKU, existingSKUs, variantSKUs, variant?.id]);
 
 
   const handleChange = (field: string, value: any) => {
@@ -59,48 +59,54 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     if (f) setFile(f);
   };
 
-const handleSave = () => {
-  if (!formData.name.trim()) {
-    alert("Variant name cannot be empty.");
-    return;
-  }
+  const handleSave = () => {
+    if (!formData.name.trim()) {
+      alert("Variant name cannot be empty.");
+      return;
+    }
 
-  if (!formData.sku?.trim()) {
-    alert("Variant SKU cannot be empty. Please type a name to generate SKU.");
-    return;
-  }
+    if (!formData.sku?.trim()) {
+      alert("Variant SKU cannot be empty. Please type a name to generate SKU.");
+      return;
+    }
 
-  onSave(formData, file || undefined); // only update local state
-};
+    onSave(formData, file || undefined); // only update local state
+  };
 
 
 
   return (
     <div className="border p-4 rounded mb-3">
       <div className="flex items-center justify-between mb-2">
-        <input
+        <FormInput
+          id="variantName"
           type="text"
           placeholder="Variant Name"
-          value={formData.name}
+          value={formData.name ?? ""}
           onChange={(e) => handleChange("name", e.target.value)}
+          className="min-w-[100px]"
+          required
           disabled={disabled}
-          className="border rounded px-2 py-1 flex-1 mr-2"
         />
-        <input
+        <FormInput
+          id="variantSku"
           type="text"
           placeholder="SKU"
-          value={formData.sku}
+          value={formData.sku ?? ""}
           onChange={(e) => handleChange("sku", e.target.value)}
+          className="min-w-[100px]"
+          required
           disabled={disabled}
-          className="border rounded px-2 py-1 w-32 mr-2"
         />
-        <input
+        <FormInput
+          id="variantPrice"
           type="number"
           placeholder="Price"
-          value={formData.price}
+          value={formData.price ?? ""}
           onChange={(e) => handleChange("price", parseFloat(e.target.value) || 0)}
+          className="min-w-[100px]"
+          required
           disabled={disabled}
-          className="border rounded px-2 py-1 w-24 mr-2"
         />
         {onDelete && (
           <Button
@@ -134,9 +140,9 @@ const handleSave = () => {
 
       {!disabled && (
         <div className="flex justify-end mt-2">
-          <Button 
-          label="Save Variant" 
-          onClick={handleSave} 
+          <Button
+            label="Save Variant"
+            onClick={handleSave}
           />
         </div>
       )}
