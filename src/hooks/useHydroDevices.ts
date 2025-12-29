@@ -52,17 +52,15 @@ export function useHydroDevices() {
         }
     };
 
-const deleteDevice = async (id: number) => {
-  try {
-    setLoading(true);
-    await deviceService.delete(id);
-    setDevices(prev => prev.filter(d => d.id !== id));
-  } finally {
-    setLoading(false);
-  }
-};
-
-
+    const deleteDevice = async (id: number) => {
+        try {
+            setLoading(true);
+            await deviceService.delete(id);
+            setDevices(prev => prev.filter(d => d.id !== id));
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // -----------------------------
     // Activate Device

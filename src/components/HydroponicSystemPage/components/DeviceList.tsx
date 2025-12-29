@@ -6,7 +6,6 @@ import type { HydroDevice } from "../../../models/interfaces/HydroSystem";
 import DataGrid from '../../common/dataGrid/dataGrid';
 import ActionButtons from '../../common/dataGrid/actionButton';
 import Modal from '../../common/Modal';
-import Badge from '../../common/Badge';
 import Button from "../../common/Button";
 import ModeToggle from "../../common/ModeToggle";
 import LinearProgress from '../../common/LinearProgress';
@@ -78,12 +77,8 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
         flex: 1,
         filter: false,
         resizable: false,
-        cellRenderer: ({ value, data }: any) => (
-          <div className="flex items-center gap-2">
-            <Badge
-              label={value ? 'Active' : 'Inactive'}
-              variant={value ? 'success' : 'gray'}
-            />
+        cellStyle: { textAlign: "center", display: 'flex', alignItems: 'center', gap: '8px' },
+        cellRenderer: ({ data }: any) => (
             <ModeToggle
               isActive={data.is_active}
               onToggle={() => toggleActive(data)}
@@ -91,7 +86,6 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
               currentLabel="Inactive"
               nextLabel="Active"
             />
-          </div>
         ),
 
       },
