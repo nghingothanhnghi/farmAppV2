@@ -35,7 +35,7 @@ const ShopSection: React.FC<ShopSectionProps> = ({ itemsToShow = 8 }) => {
         {!loading && !error && (
           <Carousel
             options={{ loop: true }}
-            className="embla"
+            className="embla w-full"
           >
             {products.slice(0, itemsToShow).map((product) => (
               <div

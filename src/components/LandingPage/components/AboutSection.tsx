@@ -56,7 +56,7 @@ const AboutSection: React.FC = () => {
         </div>
 
         {/* Right card with features */}
-        <div className="rounded-xl border border-zinc-200 p-6 shadow-sm dark:border-white/10">
+        <div className="rounded-xl p-6 bg-white shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
           <ul className="space-y-4">
             {features.map((feature) => (
               <li key={feature.id} className="flex items-start gap-3">

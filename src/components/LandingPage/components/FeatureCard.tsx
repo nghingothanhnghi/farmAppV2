@@ -4,7 +4,7 @@ export const FeatureCard = ({
   title,
   desc,
 }: { icon: any; title: string; desc: string }) => (
-  <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900">
+  <div className="rounded-xl p-6 bg-white shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
     <div className="flex items-center gap-3 text-emerald-600">
       <Icon className="size-6" />
       <span className="font-medium text-zinc-900 dark:text-white">{title}</span>

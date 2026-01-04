@@ -1,5 +1,7 @@
 // src/components/LandingPage/components/ShopItemCard.tsx
+import { useState } from 'react';
 import type { Product } from '../../../models/interfaces/Product';
+import { HoverSlideIn } from "../../common/HoverSlideIn";
 import ProductImage from '../../common/ProductImage';
 import CartActionButton from '../../common/cart/CartActionButton';
 
@@ -8,9 +10,27 @@ interface ShopItemCardProps {
 }
 
 const ShopItemCard = ({ item }: ShopItemCardProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
-    <div className="group overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md dark:border-white/10 dark:bg-zinc-900">
-      <div className="h-36 w-full bg-zinc-100 flex items-center justify-center dark:bg-zinc-800">
+    <div
+      className="
+    group relative overflow-hidden 
+    rounded-xl bg-white shadow border border-gray-100
+  dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]
+    "
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <HoverSlideIn
+        isHovered={isHovered}
+        from="top"
+        className="absolute top-4 right-4"
+      >
+        <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
+          <CartActionButton product={item} size="sm" rounded="full" />
+        </div>
+      </HoverSlideIn>
+      <div className="h-80 w-full bg-zinc-100 flex items-center justify-center dark:bg-zinc-800">
         <ProductImage
           imageUrl={item.image_url}
           alt={item.name}
@@ -23,7 +43,6 @@ const ShopItemCard = ({ item }: ShopItemCardProps) => {
           <p className="font-medium text-zinc-900 dark:text-white">{item.name}</p>
           <span className="text-sm text-zinc-600 dark:text-zinc-300">{item.base_price}</span>
         </div>
-        <CartActionButton product={item} size="sm" rounded="md" />
       </div>
     </div>
   );
