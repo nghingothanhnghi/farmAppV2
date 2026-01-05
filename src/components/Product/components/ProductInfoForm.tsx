@@ -83,9 +83,9 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
 
       {/* Image */}
       <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-                 <div className='space-y-1'>
-                            <FormLabel htmlFor="image">Product Image</FormLabel>
-                        </div>
+        <div className='space-y-1'>
+          <FormLabel htmlFor="image">Product Image</FormLabel>
+        </div>
         <div>
           {data.image_url && (
             <img

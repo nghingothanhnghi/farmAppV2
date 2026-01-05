@@ -12,7 +12,7 @@ export default [
     index("components/pages/LandingPage.tsx"),
   ]),
 
-  // Main app layout
+  // Main app layout for Admin
   layout("components/layout/MainLayout.tsx", [
     index("devices-controller/pages/DeviceControllerPage.tsx"),
     route("ar-detection", "components/ARDetectionPage/ARDetectionPage.tsx"),

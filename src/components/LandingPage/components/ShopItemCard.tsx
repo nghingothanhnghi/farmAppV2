@@ -4,6 +4,7 @@ import type { Product } from '../../../models/interfaces/Product';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 import ProductImage from '../../common/ProductImage';
 import CartActionButton from '../../common/cart/CartActionButton';
+import WishlistActionButton from '../../common/wishList/WishlistActionButton';
 
 interface ShopItemCardProps {
   item: Product; // <-- from your model
@@ -28,6 +29,7 @@ const ShopItemCard = ({ item }: ShopItemCardProps) => {
       >
         <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
           <CartActionButton product={item} size="sm" rounded="full" />
+          <WishlistActionButton product={item} size="sm" rounded="full" />
         </div>
       </HoverSlideIn>
       <div className="h-80 w-full bg-zinc-100 flex items-center justify-center dark:bg-zinc-800">

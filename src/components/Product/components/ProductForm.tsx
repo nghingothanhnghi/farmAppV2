@@ -68,11 +68,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setImageFile(file);
-    };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {

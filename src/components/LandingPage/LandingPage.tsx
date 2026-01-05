@@ -10,12 +10,7 @@ import FooterSection from './components/FooterSection';
 const LandingPage: React.FC = () => (
   <main className="min-h-screen bg-mesh text-zinc-900 dark:text-white">
     <LandingMenu />
-    {/* <HeroSection />
-    <AboutSection />
-    <FeaturesSection />
-    <EasySetupSection />
-    <ShopSection /> */}
-        <section id="hero"><HeroSection /></section>
+    <section id="hero"><HeroSection /></section>
     <section id="about"><AboutSection /></section>
     <section id="features"><FeaturesSection /></section>
     <section id="setup"><EasySetupSection /></section>

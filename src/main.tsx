@@ -7,6 +7,7 @@ import { AlertProvider } from './contexts/alertContext.tsx'
 import { AuthProvider } from './contexts/authContext.tsx'
 import { JackpotProvider } from './contexts/jackpotContext.tsx'
 import { CartProvider } from './contexts/cartContext.tsx'
+import { WishlistProvider } from './contexts/wishlistContext.tsx'
 import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
 import { ProductProvider } from './contexts/productContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
@@ -20,13 +21,15 @@ createRoot(document.getElementById('root')!).render(
           <Alert />
           <AuthProvider>
             <CartProvider>
-              <JackpotProvider>
-                <CheckoutDialogProvider>
-                  <ProductProvider>
-                    <App />
-                  </ProductProvider>
-                </CheckoutDialogProvider>
-              </JackpotProvider>
+              <WishlistProvider>
+                <JackpotProvider>
+                  <CheckoutDialogProvider>
+                    <ProductProvider>
+                      <App />
+                    </ProductProvider>
+                  </CheckoutDialogProvider>
+                </JackpotProvider>
+              </WishlistProvider>
             </CartProvider>
           </AuthProvider>
         </AlertProvider>

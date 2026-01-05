@@ -1,6 +1,7 @@
 import { Suspense, lazy } from "react";
 import { Outlet, Route, Routes } from "react-router";
 import LandingLayout from "./components/layout/LandingLayout";
+import PageLayout from "./components/layout/PageLayout";
 import MainLayout from './components/layout/MainLayout';
 import './App.css';
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -8,6 +9,7 @@ import LinearProgress from "./components/common/LinearProgress";
 
 // Lazy-loaded pages
 const LandingPage = lazy(() => import("./components/LandingPage/LandingPage"));
+const WishlistPage = lazy(() => import("./components/layout/Pages/WishlistPage"));
 const LoginPage = lazy(() => import("./components/Auth/LoginPage"));
 const SignUpPage = lazy(() => import("./components/Auth/SignUpPage"));
 const EditUserPage = lazy(() => import("./components/Auth/EditUserPage"));
@@ -54,6 +56,12 @@ function App() {
           <Route path="/sign-up" element={<SignUpPage />} />
           <Route path="/reset-password" element={<ResetPasswordPage />} />
         </Route>
+
+
+        {/* Public pages (PageLayout) */}
+        <Route element={<PageLayout />}>
+          <Route path="/wishlist" element={<WishlistPage />} />
+        </Route>      
 
         {/* Dashboard / Admin routes (MainLayout) */}
         <Route element={<MainLayout />}>
