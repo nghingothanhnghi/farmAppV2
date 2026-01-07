@@ -7,7 +7,7 @@ import FileInput from "../../common/FileInput";
 import { IconTrash } from "@tabler/icons-react";
 
 interface ProductVariantFormProps {
-  variant?: ProductVariant; // optional for edit/add
+  variant?: ProductVariant & { _draftId?: string; saved?: boolean }; // optional for edit/add
   productSKU: string;           // <-- added
   existingSKUs: string[];
   variantSKUs: string[];
@@ -38,20 +38,28 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
   const [file, setFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  // Auto-generate SKU
+  // ✅ SAFE DERIVED VALUES
+  const draftId = (variant as any)?._draftId;
+  const isSaved = (variant as any)?.saved === true;
+  const variantId = variant?.id;
+
+  // 🔹 Auto-generate SKU for NEW (draft) variants
   useEffect(() => {
-    if (variant?.id) return; // existing variant keeps SKU
+    if (variantId) return;
     if (!formData.name) return;
 
-    const allSKUs = [...existingSKUs, ...variantSKUs].filter(s => s !== formData.sku);
+    const currentSku = formData.sku ?? "";
+
+    const allSKUs = [...existingSKUs, ...variantSKUs].filter(
+      s => s !== currentSku
+    );
+
     const sku = generateVariantSKU(productSKU, formData.name, allSKUs);
-
     setFormData(prev => ({ ...prev, sku }));
-  }, [formData.name, productSKU, existingSKUs, variantSKUs, variant?.id]);
-
+  }, [formData.name, productSKU, existingSKUs, variantSKUs, variantId]);
 
   const handleChange = (field: string, value: any) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData(prev => ({ ...prev, [field]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,19 +68,28 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
   };
 
   const handleSave = () => {
-    if (!formData.name.trim()) {
+    const name = formData.name?.trim() ?? "";
+    const sku = formData.sku?.trim() ?? "";
+
+    if (!name) {
       alert("Variant name cannot be empty.");
       return;
     }
 
-    if (!formData.sku?.trim()) {
-      alert("Variant SKU cannot be empty. Please type a name to generate SKU.");
+    if (!sku) {
+      alert("Variant SKU cannot be empty.");
       return;
     }
 
-    onSave(formData, file || undefined); // only update local state
+    onSave(
+      {
+        ...formData,
+        saved: true,
+        _draftId: draftId,
+      } as any,
+      file || undefined
+    );
   };
-
 
 
   return (
@@ -119,7 +136,12 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
           />
         )}
       </div>
-
+      {/* 🔶 Unsaved changes warning */}
+      {!isSaved && !disabled && (
+        <p className="text-xs text-orange-500">
+          ⚠ Unsaved changes
+        </p>
+      )}
       {formData.image_url && (
         <img
           src={formData.image_url}
@@ -130,7 +152,7 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
       {!disabled && (
         <FileInput
-          id={`variant-image-${formData.id || Math.random()}`}
+          id={`variant-image-${formData.id || (variant as any)?._draftId}`}
           inputRef={inputRef}
           onChange={handleFileChange}
           accept="image/*"
@@ -141,8 +163,9 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
       {!disabled && (
         <div className="flex justify-end mt-2">
           <Button
-            label="Save Variant"
+            label={isSaved ? "Saved" : "Save Variant"}
             onClick={handleSave}
+            variant={isSaved ? "secondary" : "primary"}
           />
         </div>
       )}

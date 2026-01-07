@@ -1,5 +1,6 @@
 import React from 'react';
 import { FormInput } from './Form'; // Adjust the path if needed
+import { IconPlus, IconMinus } from '@tabler/icons-react';
 import Button from './Button'; // Adjust the path if needed
 
 interface NumberInputProps {
@@ -47,7 +48,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
       <Button
         onClick={handleDecrement}
         disabled={disabled || value <= min}
-        icon={<span className="text-lg font-bold">−</span>}
+        icon={<IconMinus size={16} />}
         variant="secondary"
         iconOnly
         label="Decrease"
@@ -70,7 +71,7 @@ const NumberInput: React.FC<NumberInputProps> = ({
       <Button
         onClick={handleIncrement}
         disabled={disabled || value >= max}
-        icon={<span className="text-lg font-bold">+</span>}
+        icon={<IconPlus size={16} />}
         variant="secondary"
         iconOnly
         label="Increase"
