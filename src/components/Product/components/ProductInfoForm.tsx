@@ -1,6 +1,7 @@
 import React, { useRef } from "react";
 import { FormGroup, FormLabel, FormInput, FormCheckbox } from "../../common/Form";
 import FileInput from "../../common/FileInput";
+import RichTextEditor from "../../common/RichTextEditor";
 import type { ProductCreate } from "../../../models/interfaces/Product";
 
 interface ProductInfoFormProps {
@@ -58,12 +59,25 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       {/* Description */}
       <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="description">Description</FormLabel>
-        <FormInput
+        {/* <FormInput
           id="description"
           type="text"
           value={data.description ?? ""}
           onChange={(e) => onChange("description", e.target.value)}
           disabled={isViewMode}
+        /> */}
+
+        <RichTextEditor
+          value={data.description || ""}
+          onChange={(html) => onChange("description", html)}
+          toolbar={{
+            image: false,
+            heading: false,
+            bulletList: false,
+            orderedList: false,
+            strike: false,
+          }}
+          readOnly={isViewMode}
         />
       </FormGroup>
 

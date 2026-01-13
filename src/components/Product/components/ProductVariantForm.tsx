@@ -62,10 +62,21 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) setFile(f);
-  };
+const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+
+  setFile(f);
+
+  // 🔹 Create local preview URL
+  const previewUrl = URL.createObjectURL(f);
+
+  setFormData(prev => ({
+    ...prev,
+    image_url: previewUrl, // 👈 this is the missing link
+  }));
+};
+
 
   const handleSave = () => {
     const name = formData.name?.trim() ?? "";
