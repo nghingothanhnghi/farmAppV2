@@ -60,7 +60,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   return (
     <Form onSubmit={handleSave} className="space-y-10 mx-auto max-w-4xl">
       {/* Threshold Settings */}
-      <h3 className="text-base font-medium text-gray-700 mt-10 mb-6">Alert Thresholds</h3>
+      <h3 className="text-base font-medium text-gray-700 dark:text-gray-500 mt-10 mb-6">Alert Thresholds</h3>
       {/* Moisture Minimum */}
       <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
         <div className='space-y-1'>
@@ -179,7 +179,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
       <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
       {/* System Information */}
       <div>
-        <h3 className="text-base font-medium text-gray-700 mb-3">System Information</h3>
+        <h3 className="text-base font-medium text-gray-700 dark:text-gray-500 mb-3">System Information</h3>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className='text-xs'>
             <span className="text-gray-500">Last Updated:</span>
