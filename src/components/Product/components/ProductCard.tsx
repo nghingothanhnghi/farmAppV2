@@ -62,7 +62,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                     <p className="text-gray-800 dark:text-gray-400 text-xs">{formatMoney(product.base_price)}</p>
                     <h3 className="font-semibold text-sm text-gray-700 dark:text-gray-300">{product.name}</h3>
                     <p className="text-gray-600 dark:text-gray-500 text-xs">
-                        {product.description || "No description"}
+                        {product.description ? (
+                            <span
+                                dangerouslySetInnerHTML={{
+                                    __html: product.description,
+                                }}
+                            />
+                        ) : (
+                            "No description"
+                        )}
                     </p>
                 </div>
             </div>

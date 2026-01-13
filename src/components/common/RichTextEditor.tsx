@@ -59,12 +59,12 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
     if (!editor) return null;
 
     return (
-        <div className="border rounded-md bg-white dark:bg-gray-900">
+        <div className="w-full bg-transparent dark:bg-gray-800 dark:text-gray-100 placeholder:text-slate-400 dark:placeholder:text-gray-500 text-slate-700 border border-slate-200 dark:border-gray-700 rounded-md transition duration-300 ease focus:outline-none focus:border-slate-400 dark:focus:border-gray-500 hover:border-slate-300 dark:hover:border-gray-600 shadow-sm focus:shadow sm:text-sm">
             {/* ----------------------------------------
-         Toolbar
-      ---------------------------------------- */}
+                Toolbar
+            ---------------------------------------- */}
             {!readOnly && (
-                <div className="flex flex-wrap gap-1 border-b p-2">
+                <div className="flex flex-wrap gap-1 border-b border-slate-200 dark:border-gray-700 p-2">
                     {(bold || italic || underline || strike) && (
                         <ButtonGroup>
                             {bold && (
@@ -178,7 +178,13 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
             {/* Editor */}
             <EditorContent
                 editor={editor}
-                className="p-3 min-h-[150px] prose dark:prose-invert max-w-none"
+                className="
+                    p-3 min-h-[150px] 
+                    prose dark:prose-invert max-w-none
+                    [&_.ProseMirror]:outline-none
+                    [&_.ProseMirror]:min-h-[120px]
+                    [&_.ProseMirror:focus]:outline-none
+                "
             />
         </div>
     );
