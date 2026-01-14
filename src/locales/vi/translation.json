@@ -1,0 +1,440 @@
+{
+    "menu": {
+        "home": "Nông trại",
+        "store": "Cửa hàng",
+        "posts": "Bài viết",
+        "categoryPosts": "Xem theo danh mục",
+        "subcategory21": "Subcategory 2.1",
+        "subcategory22": "Subcategory 2.2",
+        "about": "Thủy sinh CNC",
+        "contact": "Liên hệ",
+        "features": "Điểm nổi bật",
+        "setup": "Cài đặt dễ dàng"
+      },
+    "btn":{
+        "add_to_cart": "Thêm vào giỏ",
+        "buy_now": "Mua ngay",
+        "clear_all": "Xóa tất cả",
+        "clear": "Xóa",
+        "remove": "Xóa",
+        "cancel": "Thoát",
+        "sign_up": "Đăng ký",
+        "login": "Đăng nhập",
+        "loggingIn": "Đang đăng nhập...",
+        "next": "Tiếp tục",
+        "previous": "Quay lại",
+        "proceed_to_checkout": "Thanh toán ngay",
+        "profile": "Tài khoản",
+        "logout": "Thoát",
+        "loading": "Đang xử lý...",
+        "call_for_price": "Gọi ngay",
+        "send": "Gửi",
+        "check_order": "Kiểm tra đơn hàng",
+        "send_review": "Gửi đánh giá",
+        "adding": "Đang thêm...",
+        "added_to_cart": "Trong giỏ",
+        "confirm_order": "Thanh toán",
+        "search": "Tìm",
+        "continue_shopping": "Đi đến cửa hàng",
+        "quick_view": "Xem nhanh",
+        "learn_more": "Xem thêm",
+        "go_to_cart": "Đi đến giỏ hàng?"
+    },
+    "badge_status":{
+        "inStock": "Còn hàng",
+        "outStock": "Liên hệ",
+        "lowStock": "Sắp hết"
+    },
+    "loading_state":{
+        "message_01": "Đang tải hình ảnh"
+    },
+    "select":{
+        "category":{
+            "label": "Danh mục",
+            "placeholder": "Chọn danh mục...",
+            "options": {
+                "all_category": "Tất cả",
+                "organic_food": "Thực phẩm hữu cơ"
+            }
+        },
+        "brand":{
+            "label": "Nhãn hiệu",
+            "placeholder": "Chọn nhãn hiệu..."
+        },
+        "priceRange":{
+            "label": "Mức giá",
+            "placeholder": "Chọn mức giá...",
+            "options": {
+                "all_price": "Tất cả",
+                "best_price": "Giá tốt nhất",
+                "lowest_price": "Giá thấp nhất"
+            }
+        },
+        "country":{
+            "label": "Quốc gia",
+            "placeholder": "Chọn quốc gia..."
+        },
+        "city":{
+            "label": "Thành phố/Tỉnh",
+            "placeholder": "Chọn Thành phố/Tỉnh..."
+        },
+        "dist":{
+            "label": "Quận/Huyện",
+            "placeholder": "Chọn quận/huyện..."
+        },
+        "ward":{
+            "label": "Phường/Xã",
+            "placeholder": "chọn phường/xã..."
+        }
+    },
+    "input":{
+        "search_purchase_order":{
+            "label": "Tìm bằng mã đơn hàng",
+            "placeholder": "Nhập mã đơn hàng..."
+        },
+        "fullName":{
+            "label": "Tên đầy đủ",
+            "placeholder": ""
+        },
+        "firstName":{
+            "label": "Tên",
+            "placeholder": ""
+        },
+        "lastName":{
+            "label": "Họ",
+            "placeholder": ""
+        },
+        "email":{
+            "label": "Email liên hệ",
+            "placeholder": ""
+        },
+        "phone":{
+            "label": "Số di động",
+            "placeholder": ""
+        },
+        "title":{
+            "label": "Tiêu đề",
+            "placeholder": ""
+        },
+        "message":{
+            "label": "Nội dung",
+            "placeholder": ""
+        },
+        "address":{
+            "label": "Địa chỉ",
+            "placeholder": ""
+        },
+        "postalCode":{
+            "label": "Mã bưu chính",
+            "placeholder": "XXX-XX"
+        },
+        "username":{
+            "label": "Tên đăng nhập",
+            "placeholder": ""  
+        },
+        "password":{
+            "label": "Mật khẩu",
+            "placeholder": ""  
+        },
+        "searchByName":{
+            "label": "Tìm theo tên",
+            "placeholder": "Nhập tên sản phẩm..."
+        },
+        "payment_method":{
+            "label": "Thanh toán bằng",
+            "placeholder": ""
+        },
+        "card_number":{
+            "label": "Số thẻ",
+            "placeholder": ""
+        },
+        "expired_date":{
+            "label": "Expiration Date",
+            "placeholder": ""
+        },
+        "cvv_length":{
+            "label": "CVV",
+            "placeholder": ""
+        }
+    },
+    "dataGrid": {
+        "headerName":{
+            "purchaseOrder": "Mã đơn",
+            "items": "Sản phẩm",
+            "subTotal": "Tổng tiền hàng",
+            "tax": "Thuế",
+            "discount": "Giảm giá",
+            "shippingFee": "Phí vận chuyển",
+            "totalAmount": "Tổng cộng",
+            "actions": "Thao tác",
+            "status": "Trạng thái"
+        },
+        "bodyName":{
+            "no_matching_results": "Không có kết quả phù hợp"
+        },
+        "pagination":{
+            "to": "đến",
+            "of": "của",
+            "page": "trang",
+            "next": "Tiếp theo",
+            "previous": "Trước",
+            "last": "Cuối cùng",
+            "first": "Đầu tiên",
+            "loading": "Đang tải...",
+            "pageSize": "Xem",
+            "rowPerPage": "Hiển thị {{count}} dòng trên mỗi trang"
+        }
+    },
+    "paging":{
+        "showing": "Xem",
+        "pageSize": "Xem",
+        "to": "đến",
+        "of": "của",
+        "page": "Trang",
+        "goTo": "Đi đến",
+        "results": "kết quả"
+    },
+    "language": {
+        "label": "Ngôn ngữ",
+        "english": "Tiếng Anh",
+        "vietnamese": "Tiếng Việt"
+    },
+    "location": {
+        "label": "Khu vực",
+        "tphcm": "TPHCM",
+        "hanoi": "Hà Nội"
+    },
+    "page_title":{
+        "home": "Tranh chủ",
+        "store": "Cửa hàng",
+        "product": "Sản phẩm",
+        "checkout": "Các bước thanh toán",
+        "cart": "Giỏ hàng",
+        "wishlist": "Danh sách yêu thích",
+        "post": "Bài viết",
+        "profile": "Tài khoản",
+        "order_check": "Kiểm tra đơn hàng",
+        "login": "Đăng nhập"
+    },
+    "section_title":{
+        "view_by_another_auth": "hoặc đăng nhập bằng",
+        "view_by_info": "Thông tin",
+        "view_by_go-to": "Đi đến?",
+        "view_by_categories": "Xem theo danh mục",
+        "view_by_benefits": {
+            "Benefit_01": {
+                "title": "Hàng nhập khẩu chính hãng",
+                "description": "Hoàn tiền 100% nếu không giống như miêu tả sản phẩm."
+            },
+            "Benefit_02": {
+                "title": "Giá cạnh tranh & Nhiều ưu đãi",
+                "description": "Có chiết khấu nếu mua số lượng trên 5 sản phẩm, có nhiều ưu đãi hoàn tiền hấp dẫn."
+            },
+            "Benefit_03": {
+                "title": "Đa dạng phụ tùng thay thế",
+                "description": "Trên 5000+ phụ tùng, bao gồm các thương hiệu ôtô hàng đầu cung cấp."
+            },
+            "Benefit_04": {
+                "title": "Mua sắm qua cửa hàng online",
+                "description": "Mua sắm trên ứng dụng của chúng tôi dành cho máy tính bảng, điện thoại di động. Theo dõi đơn hàng trực tuyến. Nhận các bản cập nhật giá khuyến mãi miễn phí."
+            },
+            "Benefit_05": {
+                "title": "Miễn phí vận chuyển nội thành TPHCM?",
+                "description": "Chúng tôi có đội ngủ vận chuyển và thợ chuyên nghiệp, kinh nghiệm lâu năm các dòng xe kiểm tra tại nhà."
+            },
+            "Benefit_06": {
+                "title": "Trả hàng/Hoàn tiền dễ dàng",
+                "description": "Không hài lòng với sản phẩm? Trả lại tại cửa và được hoàn lại tiền trong vòng vài giờ. Chính sách không cần hỏi lý do."
+            }
+        },
+        "view_by_featured_post": "Bài viết về xe hơi, đồ chơi xe",
+        "view_by_filter": "Xem theo?",
+        "view_by-review_summary":{
+            "customer_reviews": "Khách hàng đã đánh giá",
+            "outOf": "/",
+            "global_ratings": "Xếp hạng",
+            "average": "{{rating}} trên {{max}}",
+            "count": "{{count}} lượt đánh giá",
+            "count_plural": "{{count}} lượt đánh giá",
+            "noRating": "Hãy là người đầu tiên đánh giá"
+        },
+        "view_by-add_review":{
+            "user_review": "Đánh giá?",
+            "voted_star": "Bình chọn của bạn",
+            "global_ratings": "Xếp hạng",
+            "placeholder_message": "Viết đánh giá của bạn về sản phẩm..."
+        },
+        "view_by_reviews_list":{
+            "review_title": "Bình luận",
+            "reviewed_by": "Góp ý từ {{name}}",
+            "review_helpful": "Bạn thấy hữu ích chứ?",
+            "review_verified": "Đã xác minh"
+        },
+        "view_by_accept_payment":{
+            "accenpt_payment_title": "Chấp nhận thanh toán"
+        },
+        "view_by_user_shipping_info":{
+            "title": "Người nhận hàng"
+        },
+        "view_by_user_payment_info":{
+            "title": "Thông tin thanh toán"
+        },
+        "view_by_user_order_confirmation":{
+            "title": "Xác nhận đơn hàng"
+        }
+    },
+    "category": {
+        "uncategorized": "Chưa phân loại"
+    },
+    "placeholder_message":{
+        "search":{
+            "message_01": "Không tìm thấy sản phẩm phù hợp.",
+            "message_02": "Tìm theo tên xe.",
+            "message_03": "Tìm theo tên, địa chỉ hoặc quận/huyện..."
+        }
+    },
+    "paymentMethods": {
+        "cash": "Tiền mặt",
+        "creditCard": "Thẻ tín dụng"
+    },
+    "info": {
+        "order":{
+            "message_01": "🧐 Đơn hàng không tìm thấy. Vui lòng quay lại sau."
+        },
+        "banner":{
+            "message_01": "Không tìm thấy hình ảnh..."
+        },
+        "product":{
+            "message_01": "Không tìm thấy mặt hàng quý khách đã lựa chọn.",
+            "message_02": "Hiện chưa có sản phẩm nổi bật nào."
+        },
+        "post": {
+            "message_01": "Không tìm thấy nội dung. Vui lòng quay lại sau nhé...",
+            "message_02": "Không tìm thấy bài viết."
+        },
+        "review": {
+            "message_01": "Chưa có đánh giá nào.",
+            "message_02": "Đánh giá",
+            "message_03": "Hữu ích",
+            "message_04": "Tệ"
+        },
+        "cart": {
+            "message_01": "Giỏ hàng của bạn đang trống!",
+            "message_02": "Đã tăng số lượng {{name}} trong giỏ hàng.",
+            "message_03": "Đã cập nhật số lượng {{name}} thành {{quantity}}."
+        },
+        "wishlist": {
+            "message_01": "Yêu thích của bạn đang trống!"
+        },
+        "checkout":{
+            "message_01": "Bạn có thể tiếp tục thanh toán với tư cách khách mà không cần tạo tài khoản."
+        }
+    },
+    "warning": {
+        "cart":{
+            "message_01": "{{name}} đã bị xóa khỏi giỏ hàng."
+        }
+    },
+    "error": {
+        "cart": {
+            "message_01": "Không tìm thấy sản phẩm trong giỏ hàng.",
+            "message_02": "Số lượng phải ít nhất là 1.",
+            "message_03": "Giỏ hàng đã được làm trống."
+        },
+        "order":{
+            "message_01": "Đơn hàng không thể hoàn thành. Vui lòng liên hệ",
+            "message_02": "Lỗi: {{error}}",
+            "message_03": "⛔ Vui lòng chọn sản phẩm để thanh toán.",
+            "message_04": "🤔 Đơn hàng không thể hiển thị. Vui lòng quay lại sau."
+        },
+        "banner":{
+            "message_01": "Lỗi tải hình ảnh"
+        },
+        "product":{
+            "message_01": "🤔 Có lỗi khi tải sản phẩm. Vui lòng thử lại sau."
+        },
+        "contact":{
+            "message_01": "Tin nhắn của quý khách không thể gửi. Vui lòng gọi hotline để hỗ trợ. Xin cám ơn!"
+        },
+        "review": {
+            "message_01": " Bạn phải đăng nhập để có thể gửi đánh giá về sản phẩm. 😢",
+            "message_02": "🌟 Vui lòng đánh sao bình chọn.",
+            "message_03": "😢 Đánh giá không thể gửi. Vui lòng thử lại",
+            "message_04": "Bạn không thể gửi đánh giá thêm nữa. Chúng tôi đã nhận được đánh giá hữu ích cho sản phẩm này!"
+        },
+        "authorized": {
+            "unauthorizedError": "Unauthorized error: {{message}}",
+            "missingCredentials": "Missing or invalid credentials.",
+            "failedLoadReviews": "Failed product reviews: {{error}}"
+        }
+    },
+    "success": {
+        "auth":{
+            "message_01": "Bạn đã thoát đăng nhập",
+            "message_02": "Đăng nhập thành công!"
+        },
+        "order":{
+            "message_01": "Đơn hàng đã hoàn thành!",
+            "message_02": ""
+        },
+        "cart":{
+            "message_01": "{{itemName}} đã thêm vào giỏ!",
+            "message_02": "{{itemName}} đã xóa trong giỏ hàng!",
+            "message_03": "{{name}} đã được thêm vào giỏ hàng."
+        },
+        "wishlist":{
+            "message_01": "{{itemName}} đã thêm vào mục yêu thích!",
+            "message_02": "{{itemName}} đã xóa trong mục yêu thích!"
+        },   
+        "contact":{
+            "message_01": "Tin nhắn của quý khách đã được gửi thành công!. Nhân viên của chúng tôi sẽ liên hệ trong thời gian sớm nhất."
+        },
+        "review": {
+            "message_01": "Đánh giá của bạn đã được gửi!"
+        }
+    },
+    "confirm":{
+        "cart":{
+            "message_01": "{{itemName}} added to your cart!",
+            "message_02": "{{itemName}} has been removed from your cart!",
+            "message_03": "Bạn có chắc là xóa <b>{{itemName}}</b> khỏi giỏ hàng? Chúng tôi rất lấy làm tiếc! 😊"
+        }    
+    },
+    "validation": {
+        "firstNameRequired": "Tên là bắt buộc",
+        "lastNameRequired": "Họ là bắt buộc",
+        "usernameRequired": "Tên đăng nhập bắt buộc",
+        "emailRequired": "Email là bắt buộc",
+        "invalidEmail": "Địa chỉ email không hợp lệ",
+        "phoneRequired": "Số điện thoại là bắt buộc",
+        "addressRequired": "Địa chỉ là bắt buộc",
+        "countryRequired": "Quốc gia là bắt buộc",
+        "cityRequired": "Thành phố là bắt buộc",
+        "districtRequired": "Quận là bắt buộc",
+        "wardRequired": "Phường là bắt buộc",
+        "postalCodeRequired": "Mã bưu chính là bắt buộc",
+        "passwordRequired": "Mật khẩu bắt buộc",
+        "passwordUnMatchingRequired": "Mật khẩu không khớp?",
+        "passwordMinLength": "Mật khẩu phải có ít nhất 8 ký tự.",
+        "titleRequired": "Tiêu đề không được để trống",
+        "messageRequired": "Nội dung được yêu cầu",
+        "agreeRequired": "Tôi đồng ý cung cấp thông tin cho Phutungtoyota",
+        "paymentMethodRequired": "Phương thức thanh toán là bắt buộc",
+        "onlyNumbersAllowed": "Chỉ cho phép nhập số",
+        "cardNumberRequired": "Số thẻ là bắt buộc",
+        "cardNumberLength": "Số thẻ phải có 16 chữ số",
+        "expirationDateFormat": "Ngày hết hạn phải theo định dạng MM/YYYY",
+        "expirationDateRequired": "Ngày hết hạn là bắt buộc",
+        "cvvRequired": "CVV là bắt buộc",
+        "cvvLength": "CVV phải có 3 chữ số",
+        "reviewScoreMin": "Điểm đánh giá tối thiểu là 1.",
+        "reviewScoreMax": "Điểm đánh giá không được vượt quá 5.",
+        "reviewScoreRequired": "Điểm đánh giá là bắt buộc.",
+        "reviewTextRequired": "Nội dung đánh giá là bắt buộc."
+    },
+    "country": {
+        "VN": "Việt Nam",
+        "US": "Hoa Kỳ",
+        "FR": "Pháp"
+    }
+}

@@ -80,7 +80,7 @@ const LocationStatusOverview: React.FC<LocationStatusOverviewProps> = ({
     <div className={`grid ${gridCols} gap-4`}>
       {visibleCards.map((card) => (
         <div key={card.key} className={`${card.bg} p-4 rounded-lg transition-all duration-300`}>
-          <h3 className={`text-sm font-medium ${card.text.replace("600", "900")}`}>
+          <h3 className={`text-xs font-medium ${card.text.replace("600", "900")}`}>
             {card.label}
           </h3>
           <p className={`text-2xl font-bold ${card.text}`}>{card.value}</p>

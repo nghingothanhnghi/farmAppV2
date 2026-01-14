@@ -1,19 +1,20 @@
 // src/components/Settings/components/GeneralTab.tsx
 
-import React, { useState } from 'react';
-import { FormGroup, FormLabel} from '../../common/Form';
+import React from 'react';
+import { FormGroup, FormLabel } from '../../common/Form';
+import { useTranslation } from 'react-i18next';
 import DropdownButton from '../../common/DropdownButton';
 import { useTheme } from "../../../hooks/useTheme";
-
+import { useLanguage } from '../../../hooks/useLanguage';
 
 const GeneralTab: React.FC = () => {
-    const [language, setLanguage] = useState('en');
-    // const [theme, setTheme] = useState(localStorage.getItem('theme') || 'system');
+    const { t } = useTranslation();
+    const { language, changeLanguage } = useLanguage()
     const { theme, setTheme } = useTheme();
 
     const languageItems = [
-        { label: 'English', value: 'en' },
-        { label: 'Vietnamese', value: 'vi' },
+        { label: t('language.english'), value: 'en' },
+        { label: t('language.vietnamese'), value: 'vi' },
     ];
 
     const themeItems = [
@@ -26,14 +27,14 @@ const GeneralTab: React.FC = () => {
             <h3 className="text-lg font-semibold mb-7">General Settings</h3>
             <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-1'>
-                    <FormLabel htmlFor="language">Language</FormLabel>
+                    <FormLabel htmlFor="language">{t('language.label')}</FormLabel>
                     <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
                 </div>
                 <div>
                     <DropdownButton
-                        label={languageItems.find((item) => item.value === language)?.label || 'Select'}
+                        label={languageItems.find((item) => item.value === language)?.label || t('select')}
                         items={languageItems}
-                        onSelect={(item) => setLanguage(item.value)}
+                        onSelect={(item) => changeLanguage(item.value)}
                         size="sm"
                         className=" md:w-auto bg-transparent"
                     />

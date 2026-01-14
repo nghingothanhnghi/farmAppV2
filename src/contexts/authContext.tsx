@@ -29,15 +29,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [loading, setLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
 
-
-    // useEffect(() => {
-    //     if (token) {
-    //         getUser();
-    //     } else {
-    //         setLoading(false);
-    //     }
-    // }, [token]);
-
     useEffect(() => {
     if (token) {
         if (isJwtExpired(token)) {

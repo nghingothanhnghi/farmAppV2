@@ -19,3 +19,11 @@ export const DEFAULT_TAP_COORDINATES = {
   x: 500,
   y: 500,
 };
+
+export const LANDING_SECTIONS = [
+  { id: 'hero', key: 'menu.home' },
+  { id: 'about', key: 'menu.about' },
+  { id: 'features', key: 'menu.features' },
+  { id: 'setup', key: 'menu.setup' },
+  { id: 'store', key: 'menu.store' },
+];

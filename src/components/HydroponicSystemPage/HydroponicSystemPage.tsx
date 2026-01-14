@@ -203,8 +203,8 @@ if (!loading && deviceStatusList.length === 0) {
                 description={
                   currentDevice
                     ? `Device: ${currentDevice.device_name || `ID ${currentDevice.device_id}`} · 
-         Sensors: ${getSensorCount(currentDevice.sensors)} · 
-         Actuators: ${currentDevice.actuators?.length || 0}`
+                       Sensors: ${getSensorCount(currentDevice.sensors)} · 
+                       Actuators: ${currentDevice.actuators?.length || 0}`
                     : "No device data available."
                 }
               />

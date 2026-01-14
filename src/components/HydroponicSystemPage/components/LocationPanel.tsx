@@ -17,7 +17,6 @@ const LocationPanel: React.FC<LocationPanelProps> = ({ title, description, image
       />
       <div className='flex-1'>
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">{title}</h3>
-
         <p className="text-[0.625rem] mt-0.5 text-gray-700 dark:text-gray-400 line-clamp-3">
           {description}
         </p>

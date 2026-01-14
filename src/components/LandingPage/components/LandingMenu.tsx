@@ -1,23 +1,31 @@
 // src/pages/components/LandingMenu.tsx
 import React, { useRef, useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { BRAND_LOGO_IMAGE } from '../../../constants/constants';
 import { IconLayoutSidebarLeftExpand, IconX, IconHome } from '@tabler/icons-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import { useSidebar } from '../../../hooks/useSidebar';
 import { useScrollToSection } from '../../../hooks/useScrollToSection';
 import { useAutoHideNavbar } from '../../../hooks/useAutoHideNavbar';
-
 import ListLink from '../../common/ListLink';
+import Avatar from '../../common/Avatar';
+import Button from '../../common/Button';
+import DropdownButton from '../../common/DropdownButton';
+import { LANDING_SECTIONS, APP_NAME } from '../../../config/constants';
+import { useAuth } from '../../../contexts/authContext';
 
-const sections = [
-    { id: 'hero', label: 'Home' },
-    { id: 'about', label: 'About' },
-    { id: 'features', label: 'Features' },
-    { id: 'setup', label: 'Easy Setup' },
-    { id: 'shop', label: 'Shop' },
-];
 
 const LandingMenu: React.FC = () => {
+    const { t } = useTranslation();
+
+    const sections = LANDING_SECTIONS.map(sec => ({
+        ...sec,
+        label: t(sec.key),
+    }));
+
+    const { user, isAuthenticated, loading, logout, setShowLoginModal } = useAuth();
+
     const { menuOpen, setMenuOpen } = useSidebar(false, false);
     const navigate = useNavigate();
     const scrollToSection = useScrollToSection({
@@ -34,6 +42,9 @@ const LandingMenu: React.FC = () => {
     const [activeSection, setActiveSection] = useState('hero');
     const [indicator, setIndicator] = useState({ left: 0, width: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // ⛔ Wait until auth state is resolved
+    if (loading) return null;
 
     // Observe visible section on scroll
     useEffect(() => {
@@ -81,17 +92,25 @@ const LandingMenu: React.FC = () => {
                         exit={{ y: -80, opacity: 0 }}
                         transition={{ duration: 0.4, ease: 'easeInOut' }}
                         className="
-              fixed top-0 left-0 right-0 z-50
-              bg-gradient-to-l from-white/70 to-transparent 
-              dark:from-zinc-900/80 dark:to-transparent
-              backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700"
+                            fixed top-0 left-0 right-0 z-50
+                            bg-gradient-to-l from-white/70 to-transparent 
+                          dark:from-zinc-900/80 dark:to-transparent
+                            backdrop-blur-md border-b border-zinc-200 dark:border-zinc-700"
                     >
                         <div className='mx-auto max-w-6xl flex justify-between items-center px-6 py-3'>
                             <div
                                 className="text-xl font-bold cursor-pointer select-none"
                                 onClick={() => scrollToSection('hero')}
                             >
-                                MyBrand
+                                {BRAND_LOGO_IMAGE ? (
+                                    <img
+                                        src={BRAND_LOGO_IMAGE}
+                                        alt="Brand Logo"
+                                        className="h-16 w-auto"
+                                    />
+                                ) : (
+                                    <span className="text-xl font-bold">{APP_NAME}</span>
+                                )}
                             </div>
 
                             {/* Desktop Menu */}
@@ -126,7 +145,47 @@ const LandingMenu: React.FC = () => {
                                         damping: 25,
                                     }}
                                 />
+                                {isAuthenticated && user ? (
+                                    <DropdownButton
+                                        className="bg-transparent"
+                                        label={
+                                            <>
+                                                <Avatar
+                                                    imageUrl={user.image_url}
+                                                    size={32}
+                                                    rounded="full"
+                                                    className="mr-2"
+                                                />
+                                                <div className="w-24 overflow-hidden">
+                                                    <span className="font-medium block truncate text-sm">
+                                                        {user.username}
+                                                    </span>
+                                                    <span className="block truncate text-xs text-zinc-500">
+                                                        {user.email}
+                                                    </span>
+                                                </div>
+                                            </>
+                                        }
+                                        items={[
+                                            { label: t('profile.edit'), value: 'edit-profile' },
+                                            { label: t('auth.logout'), value: 'logout' },
+                                        ]}
+                                        onSelect={(item) => {
+                                            if (item.value === 'logout') logout();
+                                            if (item.value === 'edit-profile')
+                                                navigate(`/users/${user.id}/edit`);
+                                        }}
+                                    />
+                                ) : (
+                                    <Button
+                                        type="button"
+                                        label={t('auth.login')}
+                                        onClick={() => setShowLoginModal(true)}
+                                        variant="secondary"
+                                        rounded='lg'
+                                    />
 
+                                )}
                                 <ListLink
                                     to="/admin/dashboard"
                                     label="Dashboard"

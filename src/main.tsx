@@ -12,6 +12,7 @@ import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
 import { ProductProvider } from './contexts/productContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
 import Alert from './components/alert/alert.tsx'
+import "./i18n";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

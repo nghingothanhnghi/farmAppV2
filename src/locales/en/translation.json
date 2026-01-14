@@ -1,0 +1,435 @@
+{
+    "menu": {
+        "home": "Farm",
+        "store": "Store",
+        "posts": "Blogs",
+        "categoryPosts": "Categories",
+        "subcategory21": "Subcategory 2.1",
+        "subcategory22": "Subcategory 2.2",
+        "about": "About Us",
+        "contact": "Contact",
+        "features": "Features",
+        "setup": "Easy Setup"
+      },
+    "btn":{
+        "add_to_cart": "Add to cart",
+        "buy_now": "Buy now",
+        "clear_all": "Clear all",
+        "clear": "Clear",
+        "remove": "Remove",
+        "cancel": "Thoát",
+        "sign_up": "Sign Up",
+        "login": "Log In",
+        "loggingIn": "Logging in...",
+        "next": "Next",
+        "previous": "Previous",
+        "proceed_to_checkout": "Checkout",
+        "profile": "Profile",
+        "logout": "Logout",
+        "loading": "Processing...",
+        "call_for_price": "Call now",
+        "send": "Send",
+        "check_order": "Check Orders",
+        "send_review": "Send a Review",
+        "adding": "Adding...",
+        "added_to_cart": "Added to Cart",
+        "confirm_order": "Confirm Order",
+        "search": "Search",
+        "continue_shopping": "Continue Shopping",
+        "quick_view": "Quick View",
+        "learn_more": "Learn More",
+        "go_to_cart": "Go to cart"
+    },
+    "badge_status":{
+        "inStock": "In Stock",
+        "outStock": "Contact",
+        "lowStock": "Low Stock"
+    },
+    "loading_state":{
+        "message_01": "Loading banner..."
+    },
+    "select":{
+        "category":{
+            "label": "Danh mục",
+            "placeholder": "Chọn danh mục...",
+            "options": {
+                "all_category": "All",
+                "organic_food": "Organic"
+            }
+        },
+        "brand":{
+            "label": "Nhãn hiệu",
+            "placeholder": "Chọn nhãn hiệu..."
+        },
+        "priceRange":{
+            "label": "Mức giá",
+            "placeholder": "Chọn mức giá...",
+            "options": {
+                "all_price": "All",
+                "best_price": "Best price",
+                "lowest_price": "Lowest price"
+            }
+        },
+        "country":{
+            "label": "Country",
+            "placeholder": "Select your country"
+        },
+        "city":{
+            "label": "City/Province",
+            "placeholder": "Select your city/province..."
+        },
+        "dist":{
+            "label": "",
+            "placeholder": ""
+        },
+        "ward":{
+            "label": "",
+            "placeholder": ""
+        }
+    },
+    "input":{
+        "search_purchase_order":{
+            "label": "Search with purchase order code",
+            "placeholder": "Typing your Purchase Order Code..."
+        },
+        "fullName":{
+            "label": "Full Name",
+            "placeholder": ""
+        },
+        "firstName":{
+            "label": "First Name",
+            "placeholder": ""
+        },
+        "lastName":{
+            "label": "Last Name",
+            "placeholder": ""
+        },
+        "email":{
+            "label": "Email",
+            "placeholder": ""
+        },
+        "phone":{
+            "label": "Phone Number",
+            "placeholder": ""
+        },
+        "title":{
+            "label": "Title",
+            "placeholder": ""
+        },
+        "message":{
+            "label": "Message",
+            "placeholder": ""
+        },
+        "address":{
+            "label": "Address",
+            "placeholder": ""
+        },
+        "postalCode":{
+            "label": "Postal Code",
+            "placeholder": ""
+        },
+        "username":{
+            "label": "Username (email)",
+            "placeholder": ""  
+        },
+        "password":{
+            "label": "Password",
+            "placeholder": ""  
+        },
+        "searchByName":{
+            "label": "Search by Name",
+            "placeholder": ""
+        },
+        "payment_method":{
+            "label": "Pay by",
+            "placeholder": ""
+        },
+        "card_number":{
+            "label": "Card Number",
+            "placeholder": ""
+        },
+        "expired_date":{
+            "label": "Expiration Date",
+            "placeholder": ""
+        },
+        "cvv_length":{
+            "label": "CVV",
+            "placeholder": ""
+        }
+    },
+    "dataGrid": {
+        "headerName":{
+            "purchaseOrder": "Purchase Order",
+            "items": "Products",
+            "subTotal": "SubTotal",
+            "tax": "Tax",
+            "discount": "Discounted",
+            "shippingFee": "Shipping Fee",
+            "totalAmount": "Total",
+            "actions": "Actions",
+            "status": "Status"
+        },
+        "bodyName":{
+            "no_matching_results": "No matching results"
+        },
+        "pagination":{
+            "to": "to",
+            "of": "of",
+            "page": "page",
+            "next": "Next",
+            "previous": "Previous",
+            "last": "Last",
+            "first": "First",
+            "loading": "Loading...",
+            "pageSize": "Page Size:",
+            "rowPerPage": "Show {{count}} rows per page"
+        }
+    },
+    "paging":{
+        "showing": "Showing",
+        "pageSize": "Page size",
+        "to": "to",
+        "of": "of",
+        "page": "Page",
+        "goTo": "Go to",
+        "results": "results"
+    },
+    "language": {
+        "label": "Language",
+        "english": "English",
+        "vietnamese": "Vietnamese"
+    },
+    "location": {
+        "label": "Location",
+        "tphcm": "HoChiMinh City",
+        "hanoi": "HaNoi"
+    },
+    "page_title":{
+        "home": "Home",
+        "store": "Store",
+        "product": "Product",
+        "checkout": "Checkout",
+        "cart": "Cart",
+        "wishlist": "WishList",
+        "post": "Post",
+        "profile": "Account",
+        "order_check": "Order Checking",
+        "login": "Login"
+    },
+    "section_title":{
+        "view_by_another_auth": "Login with",
+        "view_by_info": "Infomation",
+        "view_by_go-to": "Go to?",
+        "view_by_categories": "View by Categories",
+        "view_by_benefits": {
+            "Benefit_01": {
+                "title": "Genuine imported goods",
+                "description": "100% refund if not as described."
+            },
+            "Benefit_02": {
+                "title": "Competitive prices and many incentives",
+                "description": "There are discounts if you buy more than 5 products, and many attractive cashback offers."
+            },
+            "Benefit_03": {
+                "title": "Variety of spare parts",
+                "description": "Over 5000+ spare parts, including top auto brands offered."
+            },
+            "Benefit_04": {
+                "title": "Shop online",
+                "description": "Shop on our app for tablets, mobile phones. Track orders online. Get free promotional price updates."
+            },
+            "Benefit_05": {
+                "title": "Free shipping within Ho Chi Minh City",
+                "description": "We have a team of professional transporters and mechanics with many years of experience in checking vehicles at home."
+            },
+            "Benefit_06": {
+                "title": "Easy Returns/Refund",
+                "description": "Not satisfied with a product? Return it at the doorstep & get a refund within hours. No questions askedpolicy"
+            }
+        },
+        "view_by_featured_post": "Articles about cars, car toys",
+        "view_by_filter": "View by?",
+        "view_by-review_summary":{
+            "customer_reviews": "Customer reviews",
+            "outOf": "out of",
+            "global_ratings": "Global ratings",
+            "average": "{{rating}} out of {{max}}",
+            "count": "{{count}} global rating",
+            "count_plural": "{{count}} global ratings",
+            "noRating": "No rating"
+        },
+        "view_by-add_review":{
+            "user_review": "Submit a review?",
+            "voted_star": "Your vote",
+            "global_ratings": "Global ratings",
+            "placeholder_message": "Write your review here..."
+        },
+        "view_by_reviews_list":{
+            "review_title": "Comments",
+            "reviewed_by": "Reviewed by {{name}}",
+            "review_helpful": "Was it helpful to you?",
+            "review_verified": "Verified"
+        },
+        "view_by_accept_payment":{
+            "accenpt_payment_title": "Payment Partners"
+        },
+        "view_by_user_shipping_info":{
+            "title": "Shipping Info"
+        },
+        "view_by_user_payment_info":{
+            "title": "Payment Info"
+        },
+        "view_by_user_order_confirmation":{
+            "title": "Order Confirmation"
+        }
+    },
+    "category": {
+        "uncategorized": "Uncategorized"
+    },
+    "placeholder_message":{
+        "search":{
+            "message_01": "No matching products found.",
+            "message_02": "Find by car name,..",
+            "message_03": "Search by name, address, or district..."
+        }
+    },
+    "paymentMethods": {
+        "cash": "Cash",
+        "creditCard": "Credit Card"
+    },
+    "info": {
+        "order":{
+            "message_01": "🧐 No orders found."
+        },
+        "banner":{
+            "message_01": "No banners available."
+        },
+        "product":{
+            "message_01": "No products found for the selected filters.",
+            "message_02": "No featured products available at the moment."
+        },
+        "post": {
+            "message_01": "No description available...",
+            "message_02": "Article not found."
+        },
+        "review": {
+            "message_01": "No reviews yet.",
+            "message_02": "Reviews(s)",
+            "message_03": "Good",
+            "message_04": "Bad"
+        },
+        "cart": {
+            "message_01": "Your cart is empty!",
+            "message_02": "Increased quantity of {{name}} in the cart.",
+            "message_03": "Updated quantity of {{name}} to {{quantity}}."
+        },
+        "wishlist": {
+            "message_01": "Your wishlist is empty!"
+        },
+        "checkout":{
+            "message_01": "You can proceed with guest checkout without creating an account."
+        }
+    },
+    "warning": {
+        "cart":{
+            "message_01": "{{name}} removed from the cart."
+        }
+    },
+    "error": {
+        "cart": {
+            "message_01": "Item not found in the cart.",
+            "message_02": "Quantity must be at least 1.",
+            "message_03": "Cart cleared."
+        },
+        "order":{
+            "message_01": "Failed to create order",
+            "message_02": "Error: {{error}}",
+            "message_03": "⛔ Please add items to your cart to proceed.",
+            "message_04": "🤔 Đơn hàng không thể hiển thị. Vui lòng quay lại sau."
+        },
+        "banner":{
+            "message_01": "Error. fetching banners..."
+        },
+        "product":{
+            "message_01": "🤔 Error fetching products. Please try again later."
+        },
+        "contact":{
+            "message_01": "Tin nhắn của quý khách không thể gửi. Vui lòng gọi hotline để hỗ trợ. Xin cám ơn!"
+        },
+        "review": {
+            "message_01": "You must be logged in to submit a review. 😢",
+            "message_02": "🌟 Please rate something.",
+            "message_03": "😢 Review could not be submitted. Please try again.",
+            "message_04": "You have already submitted a rating for this product."
+        }
+    },
+    "success": {
+        "auth":{
+            "message_01": "Logged out successfully",
+            "message_02": "Login successful!"
+        },       
+        "order":{
+            "message_01": "Order placed successfully!",
+            "message_02": ""
+        },
+        "cart":{
+            "message_01": "{{itemName}} added to your cart!",
+            "message_02": "{{itemName}} has been removed from your cart!",
+            "message_03": "{{name}} added to the cart."
+        },
+        "wishlist":{
+            "message_01": "{{itemName}} added to your wishlist!",
+            "message_02": "{{itemName}} has been removed from your wishlist!"
+        },    
+        "contact":{
+            "message_01": "Your message has been sent successfully!"
+        },
+        "review": {
+            "message_01": "Your review has been submitted!"
+        }
+    },
+    "confirm":{
+        "cart":{
+            "message_01": "{{itemName}} added to your cart!",
+            "message_02": "{{itemName}} has been removed from your cart!",
+            "message_03": "Are you sure want to remove <b>{{itemName}}</b>? We’ll miss it! 😊"
+        }    
+    },
+    "validation": {
+        "firstNameRequired": "First Name is required",
+        "lastNameRequired": "Last Name is required",
+        "usernameRequired": "Username is required",
+        "emailRequired": "Email is required",
+        "invalidEmail": "Invalid email address",
+        "phoneRequired": "Phone number is required",
+        "addressRequired": "Address is required",
+        "countryRequired": "Country is required",
+        "cityRequired": "City is required",
+        "districtRequired": "District is required",
+        "wardRequired": "Ward is required",
+        "postalCodeRequired": "Postal Code is required",
+        "passwordRequired": "Password is required",
+        "passwordUnMatchingRequired": "Password not matching?",
+        "passwordMinLength": "Password must be at least 8 characters long.",
+        "titleRequired": "Title is a required field",
+        "messageRequired": "Message is a required field",
+        "agreeRequired": "I agree",
+        "paymentMethodRequired": "Payment method is required",
+        "onlyNumbersAllowed": "Only numbers are allowed",
+        "cardNumberRequired": "Card number is required",
+        "cardNumberLength": "Card number must be 16 digits",
+        "expirationDateFormat": "Expiration date must be in MM/YYYY format",
+        "expirationDateRequired": "Expiration date is required",
+        "cvvRequired": "CVV is required",
+        "cvvLength": "CVV must be 3 digits",
+        "reviewScoreMin": "Score must be at least 1.",
+        "reviewScoreMax": "Score cannot exceed 5.",
+        "reviewScoreRequired": "Score is required.",
+        "reviewTextRequired": "Review message is required."
+    },
+    "country": {
+        "VN": "Việt Nam",
+        "US": "Hoa Kỳ",
+        "FR": "Pháp"
+    }
+}

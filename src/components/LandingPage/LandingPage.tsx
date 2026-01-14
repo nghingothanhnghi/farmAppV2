@@ -14,7 +14,7 @@ const LandingPage: React.FC = () => (
     <section id="about"><AboutSection /></section>
     <section id="features"><FeaturesSection /></section>
     <section id="setup"><EasySetupSection /></section>
-    <section id="shop"><ShopSection /></section>
+    <section id="store"><ShopSection /></section>
     <FooterSection />
   </main>
 );
