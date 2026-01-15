@@ -58,84 +58,84 @@ const HydroponicSystemPage: React.FC = () => {
   }, [deviceStatusList, activeDeviceId]);
 
   // Show loading state if still fetching and no devices yet
-if (loading && deviceStatusList.length === 0) {
-  return (
-    <div className="hydroponic-system-page min-h-screen">
-      <PageTitle title="Hydroponic System Dashboard" />
-      <LinearProgress
-        position="absolute"
-        thickness="h-1"
-        duration={3000}
-      />
-    </div>
-  );
-}
-
-// ✅ Handle "No devices found" gracefully (instead of error)
-if (error && error.includes("No devices found for this user")) {
-  return (
-    <div className="hydroponic-system-page min-h-screen">
-      <PageTitle title="Hydroponic System Dashboard" />
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-        <div className="text-gray-400 text-4xl mb-4">📦</div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
-        <p className="text-gray-600 mb-4">
-          You don’t have any devices connected yet.
-          Please add a hydroponic device to get started.
-        </p>
-        <Button
-          label="➕ Add Device"
-          onClick={() => navigate('/hydro-devices')}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
-          rounded="lg"
+  if (loading && deviceStatusList.length === 0) {
+    return (
+      <div className="hydroponic-system-page min-h-screen">
+        <PageTitle title="Hydroponic System Dashboard" />
+        <LinearProgress
+          position="absolute"
+          thickness="h-1"
+          duration={3000}
         />
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-// Generic connection/server error
-if (error) {
-  return (
-    <div className="hydroponic-system-page min-h-screen">
-      <PageTitle title="Hydroponic System Dashboard" />
-      <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-        <div className="text-red-500 text-4xl mb-4">⚠️</div>
-        <h3 className="text-lg font-semibold text-red-800 mb-2">Connection Error</h3>
-        <p className="text-red-600 mb-4">{error}</p>
-        <Button
-          label="Retry Connection"
-          onClick={actions.refreshData}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2"
-          rounded="lg"
-        />
+  // ✅ Handle "No devices found" gracefully (instead of error)
+  if (error && error.includes("No devices found for this user")) {
+    return (
+      <div className="hydroponic-system-page min-h-screen">
+        <PageTitle title="Hydroponic System Dashboard" />
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
+          <div className="text-gray-400 text-4xl mb-4">📦</div>
+          <h3 className="text-lg font-semibold text-gray-800 mb-2">No Devices Found</h3>
+          <p className="text-gray-600 mb-4">
+            You don’t have any devices connected yet.
+            Please add a hydroponic device to get started.
+          </p>
+          <Button
+            label="➕ Add Device"
+            onClick={() => navigate('/hydro-devices')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+            rounded="lg"
+          />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-// Fallback if no devices but no error (rare case)
-if (!loading && deviceStatusList.length === 0) {
-  return (
-    <div className="hydroponic-system-page min-h-screen">
-      <PageTitle title="Hydroponic System Dashboard" />
-      <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 py-44 text-center">
-        <div className="text-gray-400 text-4xl mb-4">📦</div>
-        <h3 className="text-lg font-medium text-gray-700 dark:text-gray-100">No Devices Found</h3>
-        <p className="text-gray-900 dark:text-gray-200 mb-4">
-          You don’t have any devices connected yet.
-          Please add a hydroponic device to get started.
-        </p>
-        <Button
-          label="➕ Add Device"
-          onClick={() => navigate('/hydro-devices/new-device')}
-          className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
-          rounded="lg"
-        />
+  // Generic connection/server error
+  if (error) {
+    return (
+      <div className="hydroponic-system-page min-h-screen">
+        <PageTitle title="Hydroponic System Dashboard" />
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+          <div className="text-red-500 text-4xl mb-4">⚠️</div>
+          <h3 className="text-lg font-semibold text-red-800 mb-2">Connection Error</h3>
+          <p className="text-red-600 mb-4">{error}</p>
+          <Button
+            label="Retry Connection"
+            onClick={actions.refreshData}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2"
+            rounded="lg"
+          />
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+
+  // Fallback if no devices but no error (rare case)
+  if (!loading && deviceStatusList.length === 0) {
+    return (
+      <div className="hydroponic-system-page min-h-screen">
+        <PageTitle title="Hydroponic System Dashboard" />
+        <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 py-44 text-center">
+          <div className="text-gray-400 text-4xl mb-4">📦</div>
+          <h3 className="text-lg font-medium text-gray-700 dark:text-gray-100">No Devices Found</h3>
+          <p className="text-gray-900 dark:text-gray-200 mb-4">
+            You don’t have any devices connected yet.
+            Please add a hydroponic device to get started.
+          </p>
+          <Button
+            label="➕ Add Device"
+            onClick={() => navigate('/hydro-devices/new-device')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2"
+            rounded="lg"
+          />
+        </div>
+      </div>
+    );
+  }
 
   const getSensorCount = (sensors: Record<string, any> | undefined): number => {
     if (!sensors) return 0;
@@ -184,6 +184,27 @@ if (!loading && deviceStatusList.length === 0) {
     if (waterLevel < deviceThresholds.water_level_min) return 'warning';
     return 'normal';
   };
+
+  const getEcStatus = () => {
+    if (!currentDevice) return 'normal';
+    const t = currentDevice.automation?.thresholds;
+    const ec = currentDevice.sensors?.ec;
+    if (ec == null || !t) return 'normal';
+    if (ec < t.ec_min || ec > t.ec_max) return 'error';
+    if (ec < t.ec_min * 1.1 || ec > t.ec_max * 0.9) return 'warning';
+    return 'normal';
+  };
+
+  const getPpmStatus = () => {
+    if (!currentDevice) return 'normal';
+    const t = currentDevice.automation?.thresholds;
+    const ppm = currentDevice.sensors?.ppm;
+    if (ppm == null || !t) return 'normal';
+    if (ppm < t.ppm_min || ppm > t.ppm_max) return 'error';
+    if (ppm < t.ppm_min * 1.1 || ppm > t.ppm_max * 0.9) return 'warning';
+    return 'normal';
+  };
+
 
   const tabs = [
     {
@@ -269,6 +290,31 @@ if (!loading && deviceStatusList.length === 0) {
               status={getLightStatus()}
               icon="☀️"
             />
+
+            <StatusCard
+              title="EC"
+              value={
+                currentDevice?.sensors?.ec != null
+                  ? currentDevice.sensors.ec.toFixed(2)
+                  : '--'
+              }
+              unit="mS/cm"
+              status={getEcStatus()}
+              icon="🧪"
+            />
+
+            <StatusCard
+              title="PPM"
+              value={
+                currentDevice?.sensors?.ppm != null
+                  ? currentDevice.sensors.ppm.toFixed(0)
+                  : '--'
+              }
+              unit="ppm"
+              status={getPpmStatus()}
+              icon="🧬"
+            />
+
 
           </div>
           {/* Alerts Panel */}

@@ -38,6 +38,8 @@ export interface SensorReading {
   humidity: number;
   light: number;
   moisture: number;
+  ec: number | null;
+  ppm: number | null;
   water_level: number;
   created_at: string;
 }
@@ -85,6 +87,10 @@ export interface SystemThresholds {
   temperature_max: number;
   water_level_min: number;
   water_level_critical: number;
+  ec_min: number;
+  ec_max: number;
+  ppm_min: number;
+  ppm_max: number;
 }
 
 export interface SystemAlert {

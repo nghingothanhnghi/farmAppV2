@@ -36,14 +36,18 @@ const SensorChart: React.FC<SensorChartProps> = ({
     );
   }
 
-  const chartData = data
-  .filter(d => d[type] !== null && d[type] !== undefined)
+const chartData = data
+  .filter(
+    (d): d is typeof d & Record<typeof type, number> =>
+      d[type] !== null && d[type] !== undefined
+  )
   .map(d => ({
-    value: d[type],
-    time: new Date(d.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    value: Number(d[type]), // ✅ chắc chắn là number
+    time: new Date(d.created_at).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
   }));
-
-
 
   const currentValue = chartData[chartData.length - 1].value;
   const previousValue = chartData[chartData.length - 2]?.value ?? currentValue;

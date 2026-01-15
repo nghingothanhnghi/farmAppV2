@@ -125,6 +125,100 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </span>
         </div>
       </FormGroup>
+
+      <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
+      {/* EC Thresholds */}
+      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <FormLabel htmlFor="ec_min">Minimum EC</FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Alert when nutrient concentration is too low
+          </p>
+        </div>
+        <div className="relative">
+          <NumberInput
+            id="ec_min"
+            value={localThresholds.ec_min}
+            onChange={(v) => handleThresholdChange('ec_min', v)}
+            min={0}
+            max={5}
+            step={0.1}
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            mS/cm
+          </span>
+        </div>
+      </FormGroup>
+
+      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <FormLabel htmlFor="ec_max">Maximum EC</FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Alert when EC is too high (risk of root burn)
+          </p>
+        </div>
+        <div className="relative">
+          <NumberInput
+            id="ec_max"
+            value={localThresholds.ec_max}
+            onChange={(v) => handleThresholdChange('ec_max', v)}
+            min={0}
+            max={5}
+            step={0.1}
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            mS/cm
+          </span>
+        </div>
+      </FormGroup>
+
+      <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
+      {/* PPM Thresholds */}
+      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <FormLabel htmlFor="ppm_min">Minimum PPM</FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Alert when nutrient level is too low
+          </p>
+        </div>
+        <div className="relative">
+          <NumberInput
+            id="ppm_min"
+            value={localThresholds.ppm_min}
+            onChange={(v) => handleThresholdChange('ppm_min', v)}
+            min={0}
+            max={3000}
+            step={10}
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            ppm
+          </span>
+        </div>
+      </FormGroup>
+
+      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <FormLabel htmlFor="ppm_max">Maximum PPM</FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Alert when nutrient concentration is too strong
+          </p>
+        </div>
+        <div className="relative">
+          <NumberInput
+            id="ppm_max"
+            value={localThresholds.ppm_max}
+            onChange={(v) => handleThresholdChange('ppm_max', v)}
+            min={0}
+            max={3000}
+            step={10}
+          />
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            ppm
+          </span>
+        </div>
+      </FormGroup>
+
+
       <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
       {/* Water Level Minimum */}
       <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
