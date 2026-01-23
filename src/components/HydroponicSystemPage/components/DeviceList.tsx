@@ -1,7 +1,8 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { IconAlertCircle, IconMoodEmpty } from '@tabler/icons-react';
 import { useHydroDevices } from "../../../hooks/useHydroDevices";
 import { useAlert } from "../../../contexts/alertContext";
+import { STUCK_TIMEOUT } from "../../../config/constants";
 import type { HydroDevice } from "../../../models/interfaces/HydroSystem";
 import DataGrid from '../../common/dataGrid/dataGrid';
 import ActionButtons from '../../common/dataGrid/actionButton';
@@ -31,6 +32,82 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<HydroDevice | null>(null);
+
+  
+  // 🆕 onboarding states
+  const [waitingForNewDevice, setWaitingForNewDevice] =
+    useState(false);
+  const [isStuck, setIsStuck] = useState(false);
+
+  const prevDeviceCount = useRef(0);
+  const stuckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+const hasEverHadDevices = useRef(false);
+
+  // --------------------------------
+  // Track device history
+  // --------------------------------
+  useEffect(() => {
+    if (devices.length > 0) {
+      hasEverHadDevices.current = true;
+    }
+  }, [devices.length]);
+  // --------------------------------
+  // 🧠 Detect device ready → toast
+  // --------------------------------
+  useEffect(() => {
+    if (
+      waitingForNewDevice &&
+      devices.length > prevDeviceCount.current
+    ) {
+      setAlert({
+        type: "success",
+        message: "🎉 Your device is ready and connected!",
+      });
+
+      setWaitingForNewDevice(false);
+      setIsStuck(false);
+
+      if (stuckTimer.current) {
+        clearTimeout(stuckTimer.current);
+        stuckTimer.current = null;
+      }
+    }
+
+    prevDeviceCount.current = devices.length;
+  }, [devices.length, waitingForNewDevice, setAlert]);
+
+  // --------------------------------
+  // ⏱ Detect stuck onboarding
+  // --------------------------------
+  useEffect(() => {
+    if (waitingForNewDevice) {
+      stuckTimer.current = setTimeout(() => {
+        setIsStuck(true);
+      }, STUCK_TIMEOUT);
+    }
+
+    return () => {
+      if (stuckTimer.current) {
+        clearTimeout(stuckTimer.current);
+        stuckTimer.current = null;
+      }
+    };
+  }, [waitingForNewDevice]);
+
+  // --------------------------------
+  // Trigger onboarding modal (FIXED)
+  // --------------------------------
+  useEffect(() => {
+    if (
+      loading &&
+      devices.length === 0 &&
+      hasEverHadDevices.current // ✅ KEY FIX
+    ) {
+      setWaitingForNewDevice(true);
+    }
+  }, [loading, devices.length]);
+
 
 
   // -----------------------------
@@ -79,13 +156,13 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
         resizable: false,
         cellStyle: { textAlign: "center", display: 'flex', alignItems: 'center', gap: '8px' },
         cellRenderer: ({ data }: any) => (
-            <ModeToggle
-              isActive={data.is_active}
-              onToggle={() => toggleActive(data)}
-              size="small"
-              currentLabel="Inactive"
-              nextLabel="Active"
-            />
+          <ModeToggle
+            isActive={data.is_active}
+            onToggle={() => toggleActive(data)}
+            size="small"
+            currentLabel="Inactive"
+            nextLabel="Active"
+          />
         ),
 
       },
@@ -109,21 +186,47 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
     ].filter(Boolean); // remove falsey values like 'undefined' if showStatus or onSelect is false
   }, [showStatus, onSelect]);
 
-  if (loading) {
-    return (
-      <LinearProgress
-        position="relative"
-        thickness="h-1"
-        duration={1000}
-      />
-    );
+  //   if (loading) {
+  //     return (
+  //       <LinearProgress
+  //         position="relative"
+  //         thickness="h-1"
+  //         duration={1000}
+  //       />
+  //     );
+  //   }
+
+  //   useEffect(() => {
+  //   if (loading && devices.length === 0) {
+  //     setWaitingForNewDevice(true);
+  //   } else {
+  //     setWaitingForNewDevice(false);
+  //   }
+  // }, [loading, devices.length]);
+
+
+  //   if (!devices.length) {
+  //     return <EmptyState
+  //       icon={<IconMoodEmpty size={48} />}
+  //       message="No devices found."
+  //     />
+  //   }
+
+
+  // --------------------------------
+  // UI states
+  // --------------------------------
+  if (loading && !waitingForNewDevice) {
+    return <LinearProgress />;
   }
 
-  if (!devices.length) {
-    return <EmptyState
-      icon={<IconMoodEmpty size={48} />}
-      message="No devices found."
-    />
+  if (!devices.length && !waitingForNewDevice) {
+    return (
+      <EmptyState
+        icon={<IconMoodEmpty size={48} />}
+        message="No devices found."
+      />
+    );
   }
 
   return (
@@ -134,6 +237,60 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
         pagination
         paginationPageSize={10}
         height="500px"
+      />
+      {/* 🧠 Device onboarding modal */}
+      <Modal
+        isOpen={waitingForNewDevice}
+        onClose={() => setWaitingForNewDevice(false)}
+        showCloseButton={false}
+        size="small"
+        content={
+          !isStuck ? (
+            <div className="flex flex-col items-center text-center px-6 py-8 space-y-4">
+              <LinearProgress />
+              <div className="text-lg font-semibold">
+                Setting up your device…
+              </div>
+              <p className="text-sm text-gray-500">
+                Please wait while we connect your device.
+              </p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center text-center px-6 py-8 space-y-4">
+              <IconAlertCircle
+                size={48}
+                className="text-yellow-500"
+              />
+              <div className="text-lg font-semibold">
+                Taking longer than expected
+              </div>
+              <p className="text-sm text-gray-500">
+                We couldn’t finish setting up your
+                device.
+              </p>
+              <div className="flex gap-3 mt-4">
+                <Button
+                  label="Retry"
+                  onClick={() => {
+                    setIsStuck(false);
+                    fetchDevices();
+                  }}
+                />
+                <Button
+                  label="Troubleshoot"
+                  variant="secondary"
+                  onClick={() =>
+                    setAlert({
+                      type: "info",
+                      message:
+                        "Check power, Wi-Fi, and try restarting the device.",
+                    })
+                  }
+                />
+              </div>
+            </div>
+          )
+        }
       />
       <Modal
         showCloseButton={false}

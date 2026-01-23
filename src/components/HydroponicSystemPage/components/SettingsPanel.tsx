@@ -135,7 +135,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             Alert when nutrient concentration is too low
           </p>
         </div>
-        <div className="relative">
+        <div className="relative w-50">
           <NumberInput
             id="ec_min"
             value={localThresholds.ec_min}
@@ -144,7 +144,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             max={5}
             step={0.1}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-gray-500">
             mS/cm
           </span>
         </div>
@@ -157,7 +157,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             Alert when EC is too high (risk of root burn)
           </p>
         </div>
-        <div className="relative">
+        <div className="relative w-50">
           <NumberInput
             id="ec_max"
             value={localThresholds.ec_max}
@@ -166,7 +166,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             max={5}
             step={0.1}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-gray-500">
             mS/cm
           </span>
         </div>
@@ -181,7 +181,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             Alert when nutrient level is too low
           </p>
         </div>
-        <div className="relative">
+        <div className="relative w-50">
           <NumberInput
             id="ppm_min"
             value={localThresholds.ppm_min}
@@ -190,7 +190,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             max={3000}
             step={10}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-gray-500">
             ppm
           </span>
         </div>
@@ -203,7 +203,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             Alert when nutrient concentration is too strong
           </p>
         </div>
-        <div className="relative">
+        <div className="relative w-50">
           <NumberInput
             id="ppm_max"
             value={localThresholds.ppm_max}
@@ -212,7 +212,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
             max={3000}
             step={10}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-gray-500">
             ppm
           </span>
         </div>

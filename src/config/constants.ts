@@ -14,6 +14,8 @@ export const FEATURES = {
   NOTIFICATIONS: true,
 };
 
+export const STUCK_TIMEOUT = 20000; // 20s
+
 // Default Values
 export const DEFAULT_TAP_COORDINATES = {
   x: 500,
@@ -27,3 +29,4 @@ export const LANDING_SECTIONS = [
   { id: 'setup', key: 'menu.setup' },
   { id: 'store', key: 'menu.store' },
 ];
+

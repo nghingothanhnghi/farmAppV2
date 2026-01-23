@@ -18,9 +18,9 @@ createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-        <AlertProvider>
-          <Alert />
-          <AuthProvider>
+        <AuthProvider>
+          <AlertProvider>
+            <Alert />
             <CartProvider>
               <WishlistProvider>
                 <JackpotProvider>
@@ -32,8 +32,8 @@ createRoot(document.getElementById('root')!).render(
                 </JackpotProvider>
               </WishlistProvider>
             </CartProvider>
-          </AuthProvider>
-        </AlertProvider>
+          </AlertProvider>
+        </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
   </StrictMode>,
