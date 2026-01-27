@@ -8,7 +8,7 @@ interface LinearProgressProps {
   message?: string; // Optional message to display
 }
 
-const LinearProgress: React.FC<LinearProgressProps> = ({ position = 'relative', thickness = 'h-2', duration = 5000, message }) => {
+const LinearProgress: React.FC<LinearProgressProps> = ({ position = 'relative', thickness = 'h-1', duration = 5000, message }) => {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -22,7 +22,7 @@ const LinearProgress: React.FC<LinearProgressProps> = ({ position = 'relative', 
   return (
     <div className={`w-full bg-gray-200 dark:bg-gray-900 ${position} start-0 top-0`}>
       <div
-        className={`bg-blue-500 ${thickness}`}
+        className={`bg-blue-500 dark:bg-blue-400 ${thickness}`}
         style={{ width: `${progress}%`, transition: `width ${duration / 100}ms linear` }}
       ></div>
         {message && <div className="progress-message">{message}</div>}

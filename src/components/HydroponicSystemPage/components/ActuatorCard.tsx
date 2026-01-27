@@ -35,9 +35,9 @@ const getActuatorIcon = (type: string): ReactNode => {
 const getActuatorColor = (type: string): { bg: string; hover: string } => {
     switch (type.toLowerCase()) {
         case 'pump':
-            return { bg: 'bg-blue-600', hover: 'hover:bg-blue-700' };
+            return { bg: 'bg-indigo-600', hover: 'hover:bg-indigo-700' };
         case 'water_pump':
-            return { bg: 'bg-blue-500', hover: 'hover:bg-blue-600' };
+            return { bg: 'bg-sky-500', hover: 'hover:bg-sky-600' };
         case 'light':
             return { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-600' };
         case 'fan':
@@ -107,6 +107,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 : `${colors.bg} ${colors.hover} text-white`
                                 }`}
                             size="xs"
+                            variant="secondary"
                         />
                         <Button
                             label="Off"
@@ -117,6 +118,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 : 'bg-red-500 hover:bg-red-600 text-white'
                                 }`}
                             size="xs"
+                            variant="secondary"
                         />
                     </ButtonGroup>
                 )}
