@@ -30,6 +30,8 @@ const HydroponicSystemPage = lazy(() =>
   }))
 );
 
+
+const ProductDetailPage = lazy(() => import("./components/layout/Pages/ProductDetailPage"));
 const RoleAssignmentForm = lazy(() => import("./components/RoleAssignment"));
 const SchedulerPage = lazy(() => import("./components/SchedulerPage"));
 const PaymentManagementPage = lazy(() => import("./components/Payments").then(m => ({ default: m.PaymentManagementPage })));
@@ -61,6 +63,7 @@ function App() {
         {/* Public pages (PageLayout) */}
         <Route element={<PageLayout />}>
           <Route path="/wishlist" element={<WishlistPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
         </Route>      
 
         {/* Dashboard / Admin routes (MainLayout) */}
