@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import type { Product } from '../../../models/interfaces/Product';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
+import { formatMoney } from "../../../utils/currency";
 import ProductImage from '../../common/ProductImage';
 import CartActionButton from '../../common/cart/CartActionButton';
 import WishlistActionButton from '../../common/wishList/WishlistActionButton';
@@ -46,7 +47,7 @@ const ShopItemCard = ({ item }: ShopItemCardProps) => {
         <div className="p-4">
           <div className="flex items-center justify-between">
             <p className="font-medium text-zinc-900 dark:text-white">{item.name}</p>
-            <span className="text-sm text-zinc-600 dark:text-zinc-300">{item.base_price}</span>
+            <span className="text-sm text-zinc-600 dark:text-zinc-300">{formatMoney(item.base_price)}</span>
           </div>
         </div>
       </div>

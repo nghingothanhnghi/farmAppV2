@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from "react-router";
 import { API_BASE_URL } from '../../../config/constants';
+import Spinner from '../../common/Spinner';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams();
@@ -12,7 +13,7 @@ const ProductDetailPage: React.FC = () => {
       .then(setProduct);
   }, [id]);
 
-  if (!product) return <div>Loading...</div>;
+  if (!product) return <Spinner size={48} colorClass="border-white" borderClass="border-4" />;
 
   return (
     <div>

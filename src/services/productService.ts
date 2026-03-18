@@ -33,6 +33,11 @@ export const productService = {
     await apiClient.delete(`/products/${id}`);
   },
 
+  async regenerateQrCode(productId: number): Promise<Product> {
+    const res = await apiClient.post(`/products/${productId}/qr-code`);
+    return res.data;
+  },
+
   async uploadProductImage(productId: number, file: File): Promise<Product> {
     const formData = new FormData();
     formData.append("file", file);
@@ -70,4 +75,7 @@ export const productService = {
     });
     return res.data;
   },
+
+
+
 };

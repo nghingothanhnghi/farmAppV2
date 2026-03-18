@@ -64,6 +64,27 @@ export const useProduct = () => {
     }
   }, [selectedProduct]);
 
+  const regenerateQrCode = useCallback(async (productId: number) => {
+    try {
+      const updated = await productService.regenerateQrCode(productId);
+
+      // ✅ update product list
+      setProducts((prev) =>
+        prev.map((p) => (p.id === productId ? updated : p))
+      );
+
+      // ✅ update selected product (important for edit form UI)
+      if (selectedProduct?.id === productId) {
+        setSelectedProduct(updated);
+      }
+
+      return updated;
+    } catch (err: any) {
+      setError(err.response?.data?.detail || "Failed to regenerate QR code");
+      throw err;
+    }
+  }, [selectedProduct]);
+
   // ✅ Delete product
   const deleteProduct = useCallback(async (id: number) => {
     try {
@@ -178,6 +199,7 @@ export const useProduct = () => {
       fetchAllVariantSKUs,
       createVariant,
       updateVariant,
+      regenerateQrCode,
       deleteVariant,
       uploadVariantImage,
     },
