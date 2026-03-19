@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import { FormGroup, FormLabel, FormInput, FormCheckbox } from "../../common/Form";
 import FileInput from "../../common/FileInput";
 import RichTextEditor from "../../common/RichTextEditor";
+import QRCodeImage from "../../common/QRCodeImage";
+import ProductImage from "../../common/ProductImage";
 import type { ProductCreate } from "../../../models/interfaces/Product";
 
 interface ProductInfoFormProps {
@@ -9,6 +11,10 @@ interface ProductInfoFormProps {
   isViewMode: boolean;
   onChange: (field: keyof ProductCreate, value: any) => void;
   onImageChange: (file: File | null) => void;
+
+  qrCodeUrl?: string;
+  onRegenerateQr?: () => void;
+  mode: "add" | "edit" | "view";
 }
 
 const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
@@ -16,13 +22,17 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
   isViewMode,
   onChange,
   onImageChange,
+
+  qrCodeUrl,
+  onRegenerateQr,
+  mode
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   return (
     <>
       {/* Name + Active */}
-      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="name">Product Name</FormLabel>
         <div className="space-y-3">
           <FormInput
@@ -44,7 +54,7 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       </FormGroup>
 
       {/* SKU */}
-      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="sku">SKU</FormLabel>
         <FormInput
           id="sku"
@@ -57,7 +67,7 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       </FormGroup>
 
       {/* Description */}
-      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="description">Description</FormLabel>
         {/* <FormInput
           id="description"
@@ -82,7 +92,7 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       </FormGroup>
 
       {/* Base Price */}
-      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="base_price">Base Price</FormLabel>
         <FormInput
           id="base_price"
@@ -96,17 +106,24 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       </FormGroup>
 
       {/* Image */}
-      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+      <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <div className='space-y-1'>
           <FormLabel htmlFor="image">Product Image</FormLabel>
         </div>
-        <div>
-          {data.image_url && (
-            <img
-              src={data.image_url}
-              className="w-32 h-32 object-cover rounded border mb-2"
-            />
-          )}
+        <div className="space-y-1">
+          <div className="aspect-square w-full lg:w-[255px] bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
+            {data.image_url ? (
+              <ProductImage
+                imageUrl={data.image_url}
+                alt={data.name}
+                size={200} // width/height of the card image
+                rounded="lg"
+                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+              />
+            ) : (
+              <span className="text-gray-400 text-sm">No Image</span>
+            )}
+          </div>
           {!isViewMode && (
             <FileInput
               id="image"
@@ -120,6 +137,32 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
           )}
         </div>
       </FormGroup>
+      {/* QR Code */}
+      {mode !== "add" && (
+        <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
+          <div className='space-y-1'>
+            <FormLabel htmlFor="">QR Code</FormLabel>
+          </div>
+          <div className="flex items-center gap-3">
+            <QRCodeImage
+              imageUrl={qrCodeUrl}
+              size={64}
+              rounded="md"
+              border
+            />
+
+            {!isViewMode && (
+              <button
+                type="button"
+                onClick={onRegenerateQr}
+                className="text-sm text-blue-600 hover:underline"
+              >
+                Regenerate QR Code
+              </button>
+            )}
+          </div>
+        </FormGroup>
+      )}
     </>
   );
 };

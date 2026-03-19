@@ -44,19 +44,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         if ((mode === "edit" || mode === "view") && productId) {
             actions.fetchProduct(productId);
         }
-    }, [mode, productId, actions]);
+    }, [mode, productId]);
 
     // Sync form data when selected product loads
     useEffect(() => {
         if (selectedProduct && (mode === "edit" || mode === "view")) {
-            setFormData({
-                name: selectedProduct.name || "",
-                description: selectedProduct.description || "",
-                base_price: selectedProduct.base_price || 0,
-                sku: selectedProduct.sku || "",
-                is_active: selectedProduct.is_active ?? true,
-                image_url: selectedProduct.image_url || "",
-                variants: selectedProduct.variants || [],
+            setFormData((prev) => {
+                // prevent useless re-render
+                if (prev.sku === selectedProduct.sku) return prev;
+
+                return {
+                    name: selectedProduct.name || "",
+                    description: selectedProduct.description || "",
+                    base_price: selectedProduct.base_price || 0,
+                    sku: selectedProduct.sku || "",
+                    is_active: selectedProduct.is_active ?? true,
+                    image_url: selectedProduct.image_url || "",
+                    variants: selectedProduct.variants || [],
+                };
             });
         }
     }, [selectedProduct, mode]);
@@ -114,6 +119,24 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             ...prev,
             variants: (prev.variants || []).filter(v => v !== variant),
         }));
+    };
+
+    const handleRegenerateQr = async () => {
+        if (!productId) return;
+
+        try {
+            await actions.regenerateQrCode(productId);
+
+            setAlert({
+                type: "success",
+                message: "QR code regenerated successfully!",
+            });
+        } catch {
+            setAlert({
+                type: "error",
+                message: "Failed to regenerate QR code.",
+            });
+        }
     };
 
     /* ---------------------------------- */
@@ -200,6 +223,10 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                 isViewMode={isViewMode}
                 onChange={handleChange}
                 onImageChange={setImageFile}
+
+                qrCodeUrl={selectedProduct?.qr_code_url}
+                onRegenerateQr={handleRegenerateQr}
+                mode={mode}
             />
 
             {/* Variants */}

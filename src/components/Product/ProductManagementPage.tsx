@@ -1,5 +1,5 @@
 // src/components/Product/ProductManagementPage.tsx
-import React from "react";
+import React, { useState } from "react";
 import { IconPlus } from "@tabler/icons-react";
 import { ProductList } from "./components/ProductList";
 import PageTitle from "../common/PageTitle";
@@ -8,18 +8,34 @@ import SideContentPanel from "../common/SideContentPanel";
 import { useSideContent } from "../../hooks/useSideContent";
 import ProductForm from "./components/ProductForm";
 
+type PanelState =
+    | { mode: "add" }
+    | { mode: "edit"; productId: number }
+    | null;
+
 const ProductManagementPage: React.FC = () => {
-    const { sideOpen, content, openSide, closeSide } = useSideContent();
+    const { sideOpen, openSide, closeSide } = useSideContent();
+
+    // ✅ NEW: store state instead of JSX
+    const [panel, setPanel] = useState<PanelState>(null);
+
 
     const handleAddProduct = () => {
-        openSide(
-            <ProductForm
-                mode="add"
-                onSuccess={closeSide}
-                onCancel={closeSide}
-            />
-        );
+        setPanel({ mode: "add" });
+        openSide(null); // just open panel
     };
+
+    const handleEditProduct = (productId: number) => {
+        setPanel({ mode: "edit", productId });
+        openSide(null); // just open panel
+    };
+
+    const handleClose = () => {
+        closeSide();
+        setPanel(null);
+    };
+
+
     return (
         <div className="">
             <PageTitle
@@ -37,13 +53,24 @@ const ProductManagementPage: React.FC = () => {
                 )}
             />
             <div className="mx-auto">
-                {/* ✅ Product list below */}
-                <ProductList />
+                <ProductList onEdit={handleEditProduct} />
             </div>
             {/* ✅ Slide-in side panel */}
-            <SideContentPanel open={sideOpen} onClose={closeSide}>
-                {content}
+            {/* ✅ Render ProductForm HERE (stable) */}
+            <SideContentPanel open={sideOpen} onClose={handleClose}>
+                {panel && (
+                    <ProductForm
+                        key={panel.mode + (panel as any).productId} // ✅ prevent stale data
+                        mode={panel.mode}
+                        productId={
+                            panel.mode === "edit" ? panel.productId : undefined
+                        }
+                        onSuccess={handleClose}
+                        onCancel={handleClose}
+                    />
+                )}
             </SideContentPanel>
+
         </div>
     );
 };

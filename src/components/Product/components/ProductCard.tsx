@@ -1,6 +1,6 @@
 // src/components/Product/components/ProductCard.tsx
 import React, { useState, useEffect } from "react";
-import { IconTrash } from '@tabler/icons-react';
+import { IconTrash, IconEdit } from '@tabler/icons-react';
 import { formatMoney } from "../../../utils/currency";
 import type { Product } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
@@ -11,13 +11,13 @@ import CartActionButton from "../../common/cart/CartActionButton";
 interface ProductCardProps {
     product: Product;
     onDelete?: (id: number) => void;
-    onSelect?: (id: number) => void;
+    onEdit?: (id: number) => void;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({
     product,
     onDelete,
-    onSelect,
+    onEdit
 }) => {
     const [isHovered, setIsHovered] = useState(false);
 
@@ -43,7 +43,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         >
             <div
                 className="cursor-pointer flex flex-col items-center"
-                onClick={() => onSelect?.(product.id)}
             >
                 <div className="aspect-square w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
                     {product.image_url ? (
@@ -81,6 +80,17 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             >
                 <div className="bg-white dark:bg-gray-900 space-x-1 rounded-full shadow-md flex items-center p-1">
                     <CartActionButton product={product} size="sm" rounded="full" />
+                    <Button
+                        variant="secondary"
+                        icon={<IconEdit size={18} />}
+                        iconOnly
+                        label="Edit"
+                        className="bg-transparent"
+                        onClick={() => onEdit?.(product.id)}
+                        rounded="full"
+                        size="sm"
+                    />
+
                     <Button
                         variant="secondary"
                         icon={<IconTrash size={18} />}

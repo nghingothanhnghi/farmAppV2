@@ -12,7 +12,11 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import { useItemFilter } from "../../../hooks/useItemFilter";
 import { ProductFilter } from "./ProductFilter";
 
-export const ProductList: React.FC = () => {
+interface ProductListProps {
+  onEdit?: (id: number) => void;
+}
+
+export const ProductList: React.FC<ProductListProps> = ({ onEdit }) => {
     const { products, loading, error, actions } = useProductContext();
     const { filters, setFilters, filteredProducts } = useItemFilter(products);
     const { setAlert } = useAlert();
@@ -76,10 +80,7 @@ export const ProductList: React.FC = () => {
                             key={p.id}
                             product={p}
                             onDelete={() => handleDeleteClick(p)} // ✅ open modal instead of deleting immediately
-                            onSelect={(id) => {
-                                console.log("Selected product:", id);
-                                // e.g. navigate(`/products/${id}`)
-                            }}
+                            onEdit={(id) => onEdit?.(id)}
                         />
                     ))}
                 </div>
