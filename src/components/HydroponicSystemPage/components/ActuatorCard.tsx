@@ -162,6 +162,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 isOpen={openSchedule}
                 onClose={() => setOpenSchedule(false)}
                 actuatorId={actuator.id}
+                actuatorName={actuator.name}
                 onSubmit={scheduleActions.createSchedule}
             />
         </div>

@@ -59,7 +59,7 @@ const Button: React.FC<ButtonProps> = ({
     danger: 'bg-red-600 text-white hover:bg-red-700',
     link: 'bg-transparent text-blue-600 hover:underline p-0 dark:text-blue-400',
     dark: 'bg-gray-800 text-white hover:bg-black dark:bg-gray-900 dark:hover:bg-black',
-    outline:`bg-transparent border border-slate-200 dark:border-gray-700 text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700`,
+    outline:`bg-transparent border border-slate-200 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800`,
   };
 
   const roundedStyles = {

@@ -33,7 +33,7 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [selectedDevice, setSelectedDevice] = useState<HydroDevice | null>(null);
 
-  
+
   // 🆕 onboarding states
   const [waitingForNewDevice, setWaitingForNewDevice] =
     useState(false);
@@ -42,7 +42,7 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
   const prevDeviceCount = useRef(0);
   const stuckTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-const hasEverHadDevices = useRef(false);
+  const hasEverHadDevices = useRef(false);
 
   // --------------------------------
   // Track device history
@@ -185,32 +185,6 @@ const hasEverHadDevices = useRef(false);
       },
     ].filter(Boolean); // remove falsey values like 'undefined' if showStatus or onSelect is false
   }, [showStatus, onSelect]);
-
-  //   if (loading) {
-  //     return (
-  //       <LinearProgress
-  //         position="relative"
-  //         thickness="h-1"
-  //         duration={1000}
-  //       />
-  //     );
-  //   }
-
-  //   useEffect(() => {
-  //   if (loading && devices.length === 0) {
-  //     setWaitingForNewDevice(true);
-  //   } else {
-  //     setWaitingForNewDevice(false);
-  //   }
-  // }, [loading, devices.length]);
-
-
-  //   if (!devices.length) {
-  //     return <EmptyState
-  //       icon={<IconMoodEmpty size={48} />}
-  //       message="No devices found."
-  //     />
-  //   }
 
 
   // --------------------------------
