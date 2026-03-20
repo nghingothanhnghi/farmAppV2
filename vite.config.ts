@@ -8,6 +8,15 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // server: {
+  //   host: true, // allow external access
+  //   port: 5173,
+  //   hmr: {
+  //     protocol: 'ws',
+  //     host: 'localhost',
+  //     port: 5173,
+  //   },
+  // },
   optimizeDeps: {
     include: [
       "@tiptap/react",
