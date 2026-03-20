@@ -5,7 +5,9 @@ import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconBulb, IconDroplet, IconWindmill, IconRipple, IconEngine } from '@tabler/icons-react';
+import { IconBulb, IconDroplet, IconWindmill, IconRipple, IconEngine, Icon24Hours, IconClock } from '@tabler/icons-react';
+import ScheduleForm from './ScheduleForm';
+import { useSchedule } from '../../../hooks/useSchedule';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
@@ -67,6 +69,9 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
         isActive
     });
 
+    const [openSchedule, setOpenSchedule] = React.useState(false);
+    const { actions: scheduleActions } = useSchedule();
+
     return (
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
             <div className='flex items-center justify-between mb-1'>
@@ -96,40 +101,52 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         </p>
                     </div>
                 </div>
-                {variant === "control" && onControl && (
-                    <ButtonGroup>
-                        <Button
-                            label="On"
-                            onClick={() => onControl(actuator.id, true)}
-                            disabled={loading || isActive || !actuator.is_active}
-                            className={`flex-1 ${isActive || !actuator.is_active
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : `${colors.bg} ${colors.hover} text-white`
-                                }`}
-                            size="xs"
-                            variant="secondary"
-                        />
-                        <Button
-                            label="Off"
-                            onClick={() => onControl(actuator.id, false)}
-                            disabled={loading || !isActive || !actuator.is_active}
-                            className={`flex-1 ${!isActive || !actuator.is_active
-                                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                : 'bg-red-500 hover:bg-red-600 text-white'
-                                }`}
-                            size="xs"
-                            variant="secondary"
-                        />
-                    </ButtonGroup>
-                )}
+                <div className='flex flex-1 justify-end items-center space-x-2'>
+                    {variant === "control" && onControl && (
+                        <ButtonGroup>
+                            <Button
+                                label="On"
+                                onClick={() => onControl(actuator.id, true)}
+                                disabled={loading || isActive || !actuator.is_active}
+                                className={`flex-1 ${isActive || !actuator.is_active
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : `${colors.bg} ${colors.hover} text-white`
+                                    }`}
+                                size="xs"
+                                variant="secondary"
+                            />
+                            <Button
+                                label="Off"
+                                onClick={() => onControl(actuator.id, false)}
+                                disabled={loading || !isActive || !actuator.is_active}
+                                className={`flex-1 ${!isActive || !actuator.is_active
+                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                    : 'bg-red-500 hover:bg-red-600 text-white'
+                                    }`}
+                                size="xs"
+                                variant="secondary"
+                            />
+                        </ButtonGroup>
+                    )}
 
-                {variant === "linked" && onToggle && (
-                    <FormToggle
-                        id={`toggle-${actuator.id}`}
-                        checked={actuator.is_active}
-                        onChange={(e) => onToggle(actuator.id, e.target.checked)}
+                    {variant === "linked" && onToggle && (
+                        <FormToggle
+                            id={`toggle-${actuator.id}`}
+                            checked={actuator.is_active}
+                            onChange={(e) => onToggle(actuator.id, e.target.checked)}
+                        />
+                    )}
+                    <Button
+                        variant="secondary"
+                        icon={<IconClock size={16} />}
+                        iconOnly
+                        className='bg-transparent'
+                        onClick={() => setOpenSchedule(true)}
+                        rounded='full'
+                        size='sm'
                     />
-                )}
+                </div>
+
             </div>
 
             {actuator.sensor_key && (
@@ -140,6 +157,13 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     )}
                 </p>
             )}
+
+            <ScheduleForm
+                isOpen={openSchedule}
+                onClose={() => setOpenSchedule(false)}
+                actuatorId={actuator.id}
+                onSubmit={scheduleActions.createSchedule}
+            />
         </div>
     );
 };
