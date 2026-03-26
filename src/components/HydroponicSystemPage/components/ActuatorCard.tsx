@@ -5,7 +5,7 @@ import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconBulb, IconDroplet, IconWindmill, IconRipple, IconEngine, Icon24Hours, IconClock } from '@tabler/icons-react';
+import { IconBulb, IconDroplet, IconWindmill, IconRipple, IconEngine, IconClock } from '@tabler/icons-react';
 import ScheduleForm from './ScheduleForm';
 import { useSchedule } from '../../../hooks/useSchedule';
 
@@ -70,7 +70,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     });
 
     const [openSchedule, setOpenSchedule] = React.useState(false);
-    const { actions: scheduleActions } = useSchedule();
+    const [mode, setMode] = React.useState<"create" | "edit">("create");
+    const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
+    const [openList, setOpenList] = React.useState(false);
+    const { schedules, actions: scheduleActions } = useSchedule();
 
     return (
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
@@ -141,7 +144,19 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         icon={<IconClock size={16} />}
                         iconOnly
                         className='bg-transparent'
-                        onClick={() => setOpenSchedule(true)}
+                        onClick={async () => {
+                            const data = await scheduleActions.fetchByActuator(actuator.id);
+
+                            if (data && data.length > 0) {
+                                setMode("edit");
+                                setSelectedSchedule(data[0]);
+                            } else {
+                                setMode("create");
+                                setSelectedSchedule(null);
+                            }
+
+                            setOpenSchedule(true);
+                        }}
                         rounded='full'
                         size='sm'
                     />
@@ -163,7 +178,11 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 onClose={() => setOpenSchedule(false)}
                 actuatorId={actuator.id}
                 actuatorName={actuator.name}
+                mode={mode}
+                initialData={selectedSchedule}
+                scheduleId={selectedSchedule?.id}
                 onSubmit={scheduleActions.createSchedule}
+                onUpdate={scheduleActions.updateSchedule}
             />
         </div>
     );

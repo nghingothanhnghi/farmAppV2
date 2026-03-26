@@ -5,7 +5,7 @@ import { FormToggle, FormInput, FormGroup, FormLabel } from '../../common/Form';
 import Button from '../../common/Button';
 import { motion } from 'framer-motion';
 import { useAlert } from "../../../contexts/alertContext";
-import type { HydroScheduleCreate } from '../../../models/interfaces/HydroSchedule';
+import type { HydroScheduleCreate, HydroScheduleUpdate, HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
@@ -13,7 +13,11 @@ interface Props {
     isOpen: boolean;
     actuatorId: number;
     actuatorName: string;
-    onSubmit: (data: HydroScheduleCreate) => Promise<void>; // ✅ async
+    mode?: "create" | "edit";
+    initialData?: HydroScheduleOut;
+    scheduleId?: number;
+    onUpdate?: (id: number, data: HydroScheduleUpdate) => Promise<HydroScheduleOut>;
+    onSubmit: (data: HydroScheduleCreate) => Promise<HydroScheduleOut>;
     onClose: () => void;
 }
 
@@ -21,6 +25,10 @@ const ScheduleForm: React.FC<Props> = ({
     isOpen,
     actuatorId,
     actuatorName,
+    mode = "create",
+    initialData,
+    scheduleId,
+    onUpdate,
     onSubmit,
     onClose
 }) => {
@@ -33,14 +41,29 @@ const ScheduleForm: React.FC<Props> = ({
     const [loading, setLoading] = useState(false);
 
     // ✅ Reset form when modal opens
+    // useEffect(() => {
+    //     if (isOpen) {
+    //         setStartTime("08:00");
+    //         setEndTime("20:00");
+    //         setSelectedDays(DAYS);
+    //         setIsActive(true);
+    //     }
+    // }, [isOpen]);
     useEffect(() => {
-        if (isOpen) {
+        if (!isOpen) return;
+
+        if (mode === "edit" && initialData) {
+            setStartTime(initialData.start_time.slice(0, 5));
+            setEndTime(initialData.end_time.slice(0, 5));
+            setSelectedDays(initialData.repeat_days.split(","));
+            setIsActive(initialData.is_active);
+        } else {
             setStartTime("08:00");
             setEndTime("20:00");
             setSelectedDays(DAYS);
             setIsActive(true);
         }
-    }, [isOpen]);
+    }, [isOpen, mode, initialData]);
 
     const toggleDay = (day: string) => {
         setSelectedDays(prev =>
@@ -50,7 +73,7 @@ const ScheduleForm: React.FC<Props> = ({
         );
     };
 
-        // ✅ Convert HH:mm → minutes
+    // ✅ Convert HH:mm → minutes
     const toMinutes = (time: string) => {
         const [h, m] = time.split(":").map(Number);
         return h * 60 + m;
@@ -99,12 +122,27 @@ const ScheduleForm: React.FC<Props> = ({
         try {
             setLoading(true);
 
-            await onSubmit(payload);
+            if (mode === "edit" && scheduleId && onUpdate) {
+                await onUpdate(scheduleId, {
+                    start_time: `${startTime}:00`,
+                    end_time: `${endTime}:00`,
+                    repeat_days: selectedDays.join(","),
+                    is_active: isActive,
+                });
 
-            setAlert({
-                message: `${actuatorName} scheduled: ${startTime} → ${endTime}`,
-                type: "success",
-            });
+                setAlert({
+                    message: `Updated ${actuatorName}: ${startTime} → ${endTime}`,
+                    type: "success",
+                });
+
+            } else {
+                await onSubmit(payload);
+
+                setAlert({
+                    message: `${actuatorName} scheduled: ${startTime} → ${endTime}`,
+                    type: "success",
+                });
+            }
 
             onClose();
         } catch (error: any) {
@@ -121,7 +159,7 @@ const ScheduleForm: React.FC<Props> = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="Add Schedule"
+            title={`${mode === "edit" ? "Edit" : "Add"} Schedule - ${actuatorName}`}
             size="small"
             content={
                 <div className="px-10 pb-4 space-y-5">
@@ -220,7 +258,11 @@ const ScheduleForm: React.FC<Props> = ({
             actions={
                 <div className="flex gap-4">
                     <Button
-                        label={loading ? 'Saving...' : 'Save Schedule'}
+                        label={
+                            loading
+                                ? (mode === "edit" ? "Updating..." : "Saving...")
+                                : (mode === "edit" ? "Update Schedule" : "Save Schedule")
+                        }
                         variant="danger"
                         onClick={handleSubmit}
                         className='min-w-[150px]'

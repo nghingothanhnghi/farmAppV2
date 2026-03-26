@@ -11,26 +11,31 @@ export const useSchedule = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchByActuator = useCallback(async (actuatorId: number) => {
-    setLoading(true);
-    try {
-      const data = await scheduleService.getByActuator(actuatorId);
-      setSchedules(data);
-    } catch {
-      setError('Failed to fetch schedules');
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+const fetchByActuator = useCallback(async (actuatorId: number) => {
+  setLoading(true);
+  try {
+    const data = await scheduleService.getByActuator(actuatorId);
+    setSchedules(data);
+    return data; // ✅ IMPORTANT
+  } catch {
+    setError('Failed to fetch schedules');
+    return [];
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
   const createSchedule = async (data: HydroScheduleCreate) => {
     try {
       const newItem = await scheduleService.create(data);
       setSchedules(prev => [...prev, newItem]);
-    } catch {
+      return newItem; // ✅ add
+    } catch (err) {
       setError('Failed to create schedule');
+      throw err; // ✅ add
     }
   };
+
 
   const updateSchedule = async (id: number, data: HydroScheduleUpdate) => {
     try {
@@ -38,8 +43,10 @@ export const useSchedule = () => {
       setSchedules(prev =>
         prev.map(s => (s.id === id ? updated : s))
       );
-    } catch {
+      return updated; // ✅ add
+    } catch (err) {
       setError('Failed to update schedule');
+      throw err; // ✅ add
     }
   };
 
