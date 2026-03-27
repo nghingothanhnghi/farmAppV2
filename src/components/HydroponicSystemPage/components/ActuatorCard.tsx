@@ -72,8 +72,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     const [openSchedule, setOpenSchedule] = React.useState(false);
     const [mode, setMode] = React.useState<"create" | "edit">("create");
     const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
-    const [openList, setOpenList] = React.useState(false);
-    const { schedules, actions: scheduleActions } = useSchedule();
+    const { actions: scheduleActions } = useSchedule();
 
     return (
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
