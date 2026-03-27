@@ -6,7 +6,7 @@ import LinearProgress from '../common/LinearProgress';
 import DropdownButton from '../common/DropdownButton';
 import Tabs from "../common/Tabs";
 import WaterLevelBucket from '../common/chartCustom/WaterLevelBucket';
-import { IconPlus, IconArtboard } from '@tabler/icons-react';
+import { IconPlus, IconArtboard, IconDashboard, IconTimeline, IconPhotoSensor, IconSettings } from '@tabler/icons-react';
 import { useHydroSystem } from '../../hooks/useHydroSystem';
 import type { SystemStatusPerDevice } from '../../models/interfaces/HydroSystem';
 
@@ -210,7 +210,7 @@ const HydroponicSystemPage: React.FC = () => {
     {
       id: "overview",
       label: "Overview",
-      icon: "📊",
+      icon: <IconDashboard stroke={2} size={18} />,
       content: activeTab === "overview" && (
         <div className="space-y-6">
           <div className='flex flex-col lg:flex-row gap-6'>
@@ -275,7 +275,7 @@ const HydroponicSystemPage: React.FC = () => {
               icon="💧"
             />
             {/* Activity Log, Right side, tall block */}
-            <ActivityLog className='row-span-2' actions={controlActions} />
+            <ActivityLog className='row-span-3' actions={controlActions} />
             <StatusCard
               title="Moisture"
               value={currentDevice?.sensors?.moisture?.toFixed(1) || '--'}
@@ -314,8 +314,6 @@ const HydroponicSystemPage: React.FC = () => {
               status={getPpmStatus()}
               icon="🧬"
             />
-
-
           </div>
           {/* Alerts Panel */}
           <AlertsPanel
@@ -328,7 +326,7 @@ const HydroponicSystemPage: React.FC = () => {
     {
       id: "charts",
       label: "Charts",
-      icon: "📈",
+      icon: <IconTimeline stroke={2} size={18} />,
       content: activeTab === "charts" && (
         <div className="space-y-6">
           <SensorChart
@@ -374,7 +372,7 @@ const HydroponicSystemPage: React.FC = () => {
     {
       id: "hardware",
       label: "Hardware Detection",
-      icon: "📷",
+      icon: <IconPhotoSensor stroke={2} size={18} />,
       content: activeTab === "hardware" && currentDevice?.location && (
         <HardwareDetection location={currentDevice.location} />
       ),
@@ -382,7 +380,7 @@ const HydroponicSystemPage: React.FC = () => {
     {
       id: "settings",
       label: "Settings",
-      icon: "⚙️",
+      icon: <IconSettings stroke={2} size={18} />,
       content: activeTab === "settings" && (
         <SettingsPanel
           thresholds={currentDevice?.automation?.thresholds || null}
