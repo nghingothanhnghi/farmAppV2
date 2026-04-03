@@ -80,7 +80,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   max,
   step,
   disabled = false,
-  className = 'w-full max-w-sm min-w-[200px] ',
+  className = 'w-full min-w-[200px] ',
   accept,
   multiple = false,
   ref,

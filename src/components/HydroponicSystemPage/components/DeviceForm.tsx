@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router'; // Add this at the top of your file
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
+import { useTranslation } from 'react-i18next';
 import type { HydroActuator } from '../../../models/interfaces/HydroSystem';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../../../components/common/Form';
 import Button from '../../../components/common/Button';
@@ -19,10 +20,10 @@ type Props = {
 };
 
 const fields: [keyof HydroDevice, string, string, boolean, string?][] = [
-    ['name', 'Device Name', 'text', true, 'Name used to identify this device.'],
-    ['device_id', 'Device ID', 'text', true, 'Unique ID from the physical device or firmware.'],
-    ['location', 'Location', 'text', false, 'Optional. E.g., "Grow Room A".'],
-    ['type', 'Type', 'text', false, 'Type of the device (e.g., sensor, controller).'],
+    ['name', 'Tên thiết bị', 'text', true, 'Tên gọi để bạn dễ nhớ. Ví dụ: "Andruno 1, Esp32 WROM Dev".'],
+    ['device_id', 'Mã thiết bị', 'text', true, 'Mã riêng của thiết bị (không trùng nhau). thường là serial number'],
+    ['location', 'Vị trí đặt', 'text', false, 'Có thể bỏ qua. Ví dụ: \"Khu trồng A\".'],
+    ['type', 'Loại thiết bị', 'text', false, 'Ví dụ: cảm biến, máy bơm, bộ điều khiển.'],
 ];
 
 const DeviceForm: React.FC<Props> = ({
@@ -33,6 +34,7 @@ const DeviceForm: React.FC<Props> = ({
     isEdit,
     fieldErrors,
 }) => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { actions } = useHydroSystem();
     const [actuators, setActuators] = useState<HydroActuator[]>([]);
@@ -105,7 +107,7 @@ const DeviceForm: React.FC<Props> = ({
                 </div>
             </div>
             <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pe-0 bg-white dark:bg-gray-900 gap-4">
+            <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4'>
                 <Button
                     type="button"
                     label="Back"

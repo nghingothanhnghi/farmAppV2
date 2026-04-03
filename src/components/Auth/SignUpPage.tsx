@@ -121,7 +121,6 @@ const SignUpPage: React.FC = () => {
                                                 value={formData.password}
                                                 onChange={handleChange}
                                                 required={required}
-                                                className="pr-10"
                                             />
 
                                             <Button
@@ -176,13 +175,13 @@ const SignUpPage: React.FC = () => {
                         ))}
                     </div>
                     <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
-                    <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 gap-4'>
+                    <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4'>
                         <Button
                             type="submit"
                             label={loading ? 'Creating...' : 'Create User'}
                             disabled={loading}
                             variant="primary"
-                            className="md:w-auto"
+                            className="w-full md:w-auto"
                             fullWidth={true}
                             rounded='lg'
                         />
@@ -192,7 +191,7 @@ const SignUpPage: React.FC = () => {
                             onClick={clearForm}
                             disabled={loading}
                             variant="secondary"
-                            className="clear-button md:w-auto"
+                            className="w-full md:w-auto"
                             fullWidth={true}
                             rounded='lg'
                         />
