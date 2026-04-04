@@ -23,15 +23,25 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
             onSelect && {
                 headerName: '',
                 field: 'actions',
-                cellRenderer: ({ data }: any) => (
+                cellRenderer: ({ data }: { data: PlantBatch }) => (
                     <ActionButtons
                         row={data}
-                        onEdit={() => onSelect(data)}
+                        onEdit={() => onSelect?.(data)}
                     />
                 ),
             },
         ].filter(Boolean);
     }, [onSelect]);
+
+    // ✅ Loading state
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    // ✅ Empty state
+    if (!batches.length) {
+        return <div>No batches found</div>;
+    }
 
     return (
         <DataGrid

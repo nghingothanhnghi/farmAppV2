@@ -13,122 +13,150 @@ import BatchList from './components/BatchList';
 import BatchForm from './components/BatchForm';
 
 const schema = Yup.object().shape({
-  plant_id: Yup.number().required('Plant is required'),
-  zone_id: Yup.number().required('Zone is required'),
+    plant_id: Yup.number().required('Plant is required'),
+    zone_id: Yup.number().required('Zone is required'),
+    start_date: Yup.string().required('Start date is required'),
 });
 
 const PlantBatchPage: React.FC = () => {
-  const { setAlert } = useAlert();
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const location = useLocation();
+    const { setAlert } = useAlert();
+    const navigate = useNavigate();
+    const { id } = useParams();
+    const location = useLocation();
 
-  const isRoot = location.pathname === '/batches';
-  const isCreate = location.pathname === '/batches/new';
-  const isEdit = Boolean(id);
+    const isRoot = location.pathname === '/batches';
+    const isCreate = location.pathname === '/batches/new';
+    const isEdit = Boolean(id);
 
-  const {
-    batches,
-    currentBatch,
-    fetchBatch,
-    createBatch,
-    loading: hookLoading,
-  } = usePlantBatchContext();
+    const {
+        currentBatch,
+        fetchBatch,
+        createBatch,
+        loading: hookLoading,
+    } = usePlantBatchContext();
 
-  const [formData, setFormData] = useState<any>({
-    plant_id: '',
-    zone_id: '',
-  });
+    const [formData, setFormData] = useState<Partial<PlantBatch>>({
+        plant_id: undefined,
+        zone_id: undefined,
+        start_date: '',
+    });
 
-  const [formLoading, setFormLoading] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [formLoading, setFormLoading] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
-  // -----------------------------
-  // Load edit data
-  // -----------------------------
-  useEffect(() => {
-    if (isEdit && id) {
-      fetchBatch(Number(id)).then((data) => {
-        if (data) setFormData(data);
-      });
-    }
-  }, [id, isEdit]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev: any) => ({
-      ...prev,
-      [e.target.name]: e.target.value,
-    }));
-  };
+    // -----------------------------
+    // Fetch batch when edit
+    // -----------------------------
+    useEffect(() => {
+        if (isEdit && id) {
+            fetchBatch(Number(id)); // ✅ no .then
+        }
+    }, [id, isEdit]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormLoading(true);
+    // -----------------------------
+    // Sync form with currentBatch
+    // -----------------------------
+    useEffect(() => {
+        if (isEdit && currentBatch) {
+            setFormData(currentBatch);
+        }
+    }, [currentBatch, isEdit]);
 
-    try {
-      await schema.validate(formData, { abortEarly: false });
-      setFieldErrors({});
+    // -----------------------------
+    // Reset form when creating
+    // -----------------------------
+    useEffect(() => {
+        if (isCreate) {
+            setFormData({
+                plant_id: undefined,
+                zone_id: undefined,
+                start_date: new Date().toISOString().split('T')[0],
+            });
+            setFieldErrors({});
+        }
+    }, [isCreate]);
 
-      await createBatch(formData);
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
 
-      setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
-      navigate('/batches');
-    } catch (err: any) {
-      if (err.name === 'ValidationError') {
-        const errors: Record<string, string> = {};
-        err.inner.forEach((e: any) => {
-          if (e.path) errors[e.path] = e.message;
-        });
-        setFieldErrors(errors);
-      } else {
-        setAlert({ type: 'error', message: 'Có lỗi xảy ra' });
-      }
-    } finally {
-      setFormLoading(false);
-    }
-  };
+        setFormData(prev => ({
+            ...prev,
+            [name]:
+                name === 'plant_id' || name === 'zone_id'
+                    ? Number(value)
+                    : value,
+        }));
+    };
 
-  return (
-    <div className="flex flex-col h-full">
-      {!isRoot && (
-        <PageTitle
-          title={isEdit ? 'Chi tiết vụ trồng' : 'Tạo vụ trồng'}
-          actions={
-            <Button
-              icon={<IconPlus size={18} />}
-              onClick={() => navigate('/batches/new')}
-            />
-          }
-        />
-      )}
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setFormLoading(true);
 
-      {isRoot && (
-        <>
-          <PageTitle
-            title="🌱 Quản lý vụ trồng"
-            actions={
-              <Button
-                icon={<IconPlus size={18} />}
-                onClick={() => navigate('/batches/new')}
-              />
+        try {
+            await schema.validate(formData, { abortEarly: false });
+            setFieldErrors({});
+
+            await createBatch(formData);
+
+            setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
+            navigate('/batches');
+        } catch (err: any) {
+            if (err.name === 'ValidationError') {
+                const errors: Record<string, string> = {};
+                err.inner.forEach((e: any) => {
+                    if (e.path) errors[e.path] = e.message;
+                });
+                setFieldErrors(errors);
+            } else {
+                setAlert({ type: 'error', message: 'Có lỗi xảy ra' });
             }
-          />
-          <BatchList onSelect={(b) => navigate(`/batches/${b.id}`)} />
-        </>
-      )}
+        } finally {
+            setFormLoading(false);
+        }
+    };
 
-      {(isCreate || isEdit) && (
-        <BatchForm
-          formData={formData}
-          onChange={handleChange}
-          onSubmit={handleSubmit}
-          loading={formLoading || hookLoading}
-          isEdit={isEdit}
-          fieldErrors={fieldErrors}
-        />
-      )}
-    </div>
-  );
+    return (
+        <div className="flex flex-col h-full">
+            {!isRoot && (
+                <PageTitle
+                    title={isEdit ? 'Chi tiết vụ trồng' : 'Tạo vụ trồng'}
+                    actions={
+                        <Button
+                            icon={<IconPlus size={18} />}
+                            onClick={() => navigate('/batches/new')}
+                        />
+                    }
+                />
+            )}
+
+            {isRoot && (
+                <>
+                    <PageTitle
+                        title="🌱 Quản lý vụ trồng"
+                        actions={
+                            <Button
+                                icon={<IconPlus size={18} />}
+                                onClick={() => navigate('/batches/new')}
+                            />
+                        }
+                    />
+                    <BatchList onSelect={(b) => navigate(`/batches/${b.id}`)} />
+                </>
+            )}
+
+            {(isCreate || isEdit) && (
+                <BatchForm
+                    formData={formData}
+                    onChange={handleChange}
+                    onSubmit={handleSubmit}
+                    loading={formLoading || hookLoading}
+                    isEdit={isEdit}
+                    fieldErrors={fieldErrors}
+                />
+            )}
+        </div>
+    );
 };
 
 export default PlantBatchPage;

@@ -30,6 +30,11 @@ const HydroponicSystemPage = lazy(() =>
   }))
 );
 
+const PlantBatchPage = lazy(() =>
+  import("./components/HydroponicSystemPage/HydroponicPlantPage")
+);
+
+
 
 const ProductDetailPage = lazy(() => import("./components/layout/Pages/ProductDetailPage"));
 const RoleAssignmentForm = lazy(() => import("./components/RoleAssignment"));
@@ -64,7 +69,7 @@ function App() {
         <Route element={<PageLayout />}>
           <Route path="/wishlist" element={<WishlistPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
-        </Route>      
+        </Route>
 
         {/* Dashboard / Admin routes (MainLayout) */}
         <Route element={<MainLayout />}>
@@ -108,7 +113,7 @@ function App() {
               </PrivateRoute>
             }
           />
-          
+
           <Route
             path="/payments"
             element={
@@ -150,6 +155,33 @@ function App() {
           <Route path="/hydro-devices" element={<HydroponicDevicePage />} />
           <Route path="/hydro-devices/new-device" element={<HydroponicDevicePage />} />
           <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
+
+          <Route
+            path="/batches"
+            element={
+              <PrivateRoute>
+                <PlantBatchPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/batches/new"
+            element={
+              <PrivateRoute>
+                <PlantBatchPage />
+              </PrivateRoute>
+            }
+          />
+
+          <Route
+            path="/batches/:id"
+            element={
+              <PrivateRoute>
+                <PlantBatchPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/scheduler-health" element={<SchedulerPage />} />
         </Route>
 

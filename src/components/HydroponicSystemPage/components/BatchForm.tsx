@@ -53,6 +53,18 @@ const BatchForm: React.FC<Props> = ({
                 {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
             </FormGroup>
 
+            <FormGroup>
+                <FormLabel htmlFor="start_date">Start Date</FormLabel>
+                <FormInput
+                    type="date"
+                    id="start_date"
+                    name="start_date"
+                    value={formData.start_date || ''}
+                    onChange={onChange}
+                />
+                {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
+            </FormGroup>
+
             <FormActions className="flex justify-end gap-4 mt-6">
                 <Button label="Huỷ" variant="secondary" />
                 <Button
