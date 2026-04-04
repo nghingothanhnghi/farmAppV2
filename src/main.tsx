@@ -11,6 +11,7 @@ import { WishlistProvider } from './contexts/wishlistContext.tsx'
 import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
 import { ProductProvider } from './contexts/productContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
+import { PlantBatchProvider } from './contexts/plantBatchContext.tsx'
 import Alert from './components/alert/alert.tsx'
 import "./i18n";
 
@@ -21,17 +22,19 @@ createRoot(document.getElementById('root')!).render(
         <AuthProvider>
           <AlertProvider>
             <Alert />
-            <CartProvider>
-              <WishlistProvider>
-                <JackpotProvider>
-                  <CheckoutDialogProvider>
-                    <ProductProvider>
-                      <App />
-                    </ProductProvider>
-                  </CheckoutDialogProvider>
-                </JackpotProvider>
-              </WishlistProvider>
-            </CartProvider>
+            <PlantBatchProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <JackpotProvider>
+                    <CheckoutDialogProvider>
+                      <ProductProvider>
+                        <App />
+                      </ProductProvider>
+                    </CheckoutDialogProvider>
+                  </JackpotProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </PlantBatchProvider>
           </AlertProvider>
         </AuthProvider>
       </ThemeProvider>
