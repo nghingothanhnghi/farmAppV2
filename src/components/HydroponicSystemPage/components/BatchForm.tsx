@@ -2,17 +2,21 @@
 
 import React from "react";
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
+import { usePlants } from "../../../hooks/usePlants";
 import Form, {
     FormGroup,
     FormLabel,
     FormInput,
+    FormSelect,
     FormActions
 } from "../../common/Form";
 import Button from "../../common/Button";
 
 type Props = {
     formData: Partial<PlantBatch>;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onChange: (
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+    ) => void;
     onSubmit: (e: React.FormEvent) => void;
     loading: boolean;
     isEdit?: boolean;
@@ -27,17 +31,28 @@ const BatchForm: React.FC<Props> = ({
     isEdit,
     fieldErrors
 }) => {
+    const { plants, loading: plantLoading } = usePlants();
     return (
         <Form onSubmit={onSubmit} className="max-w-xl mx-auto">
             <FormGroup>
                 <FormLabel htmlFor="plant_id">Plant ID</FormLabel>
-                <FormInput
-                    type="text"
+                <FormSelect
                     id="plant_id"
                     name="plant_id"
-                    value={formData.plant_id || ''}
+                    value={formData.plant_id || ""}
                     onChange={onChange}
-                />
+                    disabled={plantLoading}
+                >
+                    <option value="">Select plant</option>
+
+                    {plants.map((plant) => (
+                        <option key={plant.id} value={plant.id}>
+                            {plant.name}
+                        </option>
+                    ))}
+                </FormSelect>
+
+                {plantLoading && <p>Loading plants...</p>}
                 {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
             </FormGroup>
 

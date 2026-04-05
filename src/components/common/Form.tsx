@@ -113,6 +113,7 @@ export const FormInput: React.FC<FormInputProps> = ({
 
 interface FormSelectProps {
   id: string;
+  name: string;
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: ReactNode;
@@ -122,6 +123,7 @@ interface FormSelectProps {
 
 export const FormSelect: React.FC<FormSelectProps> = ({
   id,
+  name,
   value,
   onChange,
   children,
@@ -133,6 +135,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
       <div className="relative">
         <select
           id={id}
+          name={name}
           value={value}
           onChange={onChange}
           disabled={disabled}
