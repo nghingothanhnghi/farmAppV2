@@ -1,8 +1,12 @@
 // src/components/PlantBatch/components/BatchForm.tsx
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { IconPlus } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlants } from "../../../hooks/usePlants";
+import { useHydroDevices } from "../../../hooks/useHydroDevices"
+import CreatePlantModal from "./CreatePlantModal";
+
 import Form, {
     FormGroup,
     FormLabel,
@@ -32,68 +36,117 @@ const BatchForm: React.FC<Props> = ({
     fieldErrors
 }) => {
     const { plants, loading: plantLoading } = usePlants();
+    const [localPlants, setLocalPlants] = useState(plants);
+
+    const { devices, loading: deviceLoading } = useHydroDevices();
+
+    const [openPlantModal, setOpenPlantModal] = useState(false);
+
+    useEffect(() => {
+        setLocalPlants(plants);
+    }, [plants]);
+
     return (
-        <Form onSubmit={onSubmit} className="max-w-xl mx-auto">
-            <FormGroup>
-                <FormLabel htmlFor="plant_id">Plant ID</FormLabel>
-                <FormSelect
-                    id="plant_id"
-                    name="plant_id"
-                    value={formData.plant_id || ""}
-                    onChange={onChange}
-                    disabled={plantLoading}
-                >
-                    <option value="">Select plant</option>
+        <>
 
-                    {plants.map((plant) => (
-                        <option key={plant.id} value={plant.id}>
-                            {plant.name}
-                        </option>
-                    ))}
-                </FormSelect>
+            <Form onSubmit={onSubmit} className="max-w-xl mx-auto">
+                <FormGroup>
+                    <FormLabel htmlFor="plant_id">Plant ID</FormLabel>
+                    <div className="flex items-center gap-4">
+                        <FormSelect
+                            id="plant_id"
+                            name="plant_id"
+                            value={formData.plant_id || ""}
+                            onChange={onChange}
+                            disabled={plantLoading}
+                        >
+                            <option value="">Select plant</option>
 
-                {plantLoading && <p>Loading plants...</p>}
-                {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
-            </FormGroup>
+                            {localPlants.map((plant) => (
+                                <option key={plant.id} value={plant.id}>
+                                    {plant.name}
+                                </option>
+                            ))}
+                        </FormSelect>
+                        <Button
+                            variant="secondary"
+                            icon={<IconPlus size={18} />}
+                            iconOnly
+                            rounded='full'
+                            label="Add plant"
+                            className='bg-transparent'
+                            onClick={() => setOpenPlantModal(true)}
+                        />
+                    </div>
 
-            <FormGroup>
-                <FormLabel htmlFor="zone_id">Zone ID</FormLabel>
-                <FormInput
-                    id="zone_id"
-                    type="text"
-                    name="zone_id"
-                    value={formData.zone_id || ''}
-                    onChange={onChange}
-                />
-                {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
-            </FormGroup>
+                    {plantLoading && <p>Loading plants...</p>}
+                    {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
+                </FormGroup>
 
-            <FormGroup>
-                <FormLabel htmlFor="start_date">Start Date</FormLabel>
-                <FormInput
-                    type="date"
-                    id="start_date"
-                    name="start_date"
-                    value={formData.start_date || ''}
-                    onChange={onChange}
-                />
-                {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
-            </FormGroup>
+                <FormGroup>
+                    <FormLabel htmlFor="zone_id">Zone ID</FormLabel>
+                    <FormSelect
+                        id="zone_id"
+                        name="zone_id"
+                        value={formData.zone_id || ""}
+                        onChange={onChange}
+                    >
+                        <option value="">Chọn thiết bị</option>
+                        {devices.map((device) => (
+                            <option key={device.id} value={device.id}>
+                                {device.device_id} - {device.location || "Không có vị trí"} {device.is_active ? "🟢 Online" : "🔴 Offline"}
+                            </option>
+                        ))}
+                    </FormSelect>
 
-            <FormActions className="flex justify-end gap-4 mt-6">
-                <Button label="Huỷ" variant="secondary" />
-                <Button
-                    type="submit"
-                    label={
-                        loading
-                            ? "Đang lưu..."
-                            : isEdit
-                                ? "Cập nhật"
-                                : "Tạo mới"
-                    }
-                />
-            </FormActions>
-        </Form>
+                    {deviceLoading && <p>Đang tải thiết bị...</p>}
+                    {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
+                </FormGroup>
+
+                <FormGroup>
+                    <FormLabel htmlFor="start_date">Start Date</FormLabel>
+                    <FormInput
+                        type="date"
+                        id="start_date"
+                        name="start_date"
+                        value={formData.start_date || ''}
+                        onChange={onChange}
+                    />
+                    {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
+                </FormGroup>
+
+                <FormActions className="flex justify-end gap-4 mt-6">
+                    <Button label="Huỷ" variant="secondary" />
+                    <Button
+                        type="submit"
+                        label={
+                            loading
+                                ? "Đang lưu..."
+                                : isEdit
+                                    ? "Cập nhật"
+                                    : "Tạo mới"
+                        }
+                    />
+                </FormActions>
+            </Form>
+
+            <CreatePlantModal
+                isOpen={openPlantModal}
+                onClose={() => setOpenPlantModal(false)}
+                onCreated={(plant) => {
+                    // ✅ add new plant into dropdown
+                    setLocalPlants(prev => [...prev, plant]);
+
+                    // ✅ auto select
+                    onChange({
+                        target: {
+                            name: "plant_id",
+                            value: plant.id,
+                        },
+                    } as any);
+                }}
+            />
+        </>
     );
 };
 

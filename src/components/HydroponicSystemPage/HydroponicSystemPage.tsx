@@ -36,8 +36,9 @@ const HydroponicSystemPage: React.FC = () => {
     error,
     actions
   } = useHydroSystem();
+  
   const navigate = useNavigate();
-  // const [activeTab, setActiveTab] = useState<'overview' | 'charts' | 'settings' | 'hardware'>('overview');
+ 
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
 

@@ -125,7 +125,12 @@ const PlantBatchPage: React.FC = () => {
                     title={isEdit ? 'Chi tiết vụ trồng' : 'Tạo vụ trồng'}
                     actions={
                         <Button
+                            variant="secondary"
                             icon={<IconPlus size={18} />}
+                            iconOnly
+                            rounded='full'
+                            label="Close"
+                            className='bg-transparent'
                             onClick={() => navigate('/batches/new')}
                         />
                     }
@@ -135,10 +140,20 @@ const PlantBatchPage: React.FC = () => {
             {isRoot && (
                 <>
                     <PageTitle
-                        title="🌱 Quản lý vụ trồng"
+                        title="Quản lý vụ trồng"
+                        subtitle={
+                            <>
+                                Quản lý các vụ trồng thủy canh 🌱, phân bổ vào từng khu vực và theo dõi toàn bộ quá trình sinh trưởng từ lúc gieo trồng đến khi thu hoạch.
+                            </>
+                        }
                         actions={
                             <Button
+                                variant="secondary"
                                 icon={<IconPlus size={18} />}
+                                iconOnly
+                                rounded='full'
+                                label="Close"
+                                className='bg-transparent'
                                 onClick={() => navigate('/batches/new')}
                             />
                         }

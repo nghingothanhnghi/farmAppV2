@@ -18,6 +18,27 @@ export function usePlants() {
     }
   };
 
+  // -----------------------------
+  // ✅ Create plant (NEW)
+  // -----------------------------
+  const createPlant = async (data: Partial<Plant>): Promise<Plant> => {
+    try {
+      setLoading(true);
+
+      const newPlant = await plantService.createPlant(data);
+
+      // update local state immediately (no need refetch)
+      setPlants(prev => [...prev, newPlant]);
+
+      return newPlant;
+    } catch (err) {
+      console.error("Failed to create plant", err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchPlants();
   }, []);
@@ -26,5 +47,6 @@ export function usePlants() {
     plants,
     loading,
     fetchPlants,
+    createPlant,
   };
 }

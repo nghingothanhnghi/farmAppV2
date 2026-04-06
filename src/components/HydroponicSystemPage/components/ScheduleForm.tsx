@@ -41,14 +41,6 @@ const ScheduleForm: React.FC<Props> = ({
     const [loading, setLoading] = useState(false);
 
     // ✅ Reset form when modal opens
-    // useEffect(() => {
-    //     if (isOpen) {
-    //         setStartTime("08:00");
-    //         setEndTime("20:00");
-    //         setSelectedDays(DAYS);
-    //         setIsActive(true);
-    //     }
-    // }, [isOpen]);
     useEffect(() => {
         if (!isOpen) return;
 

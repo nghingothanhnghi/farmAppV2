@@ -1,10 +1,13 @@
 // src/components/PlantBatch/components/BatchList.tsx
 
 import { useMemo } from "react";
+import { IconMoodEmpty } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlantBatchContext } from "../../../contexts/plantBatchContext";
 import DataGrid from "../../common/dataGrid/dataGrid";
 import ActionButtons from "../../common/dataGrid/actionButton";
+import LinearProgress from '../../common/LinearProgress';
+import EmptyState from '../../common/EmptyState';
 
 type Props = {
     onSelect?: (batch: PlantBatch) => void;
@@ -35,12 +38,15 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
 
     // ✅ Loading state
     if (loading) {
-        return <div>Loading...</div>;
+        return <LinearProgress />;
     }
 
     // ✅ Empty state
     if (!batches.length) {
-        return <div>No batches found</div>;
+        return <EmptyState
+            icon={<IconMoodEmpty size={48} />}
+            message="No Plant Batches found."
+        />;
     }
 
     return (
