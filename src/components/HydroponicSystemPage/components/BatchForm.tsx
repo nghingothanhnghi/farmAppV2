@@ -1,5 +1,4 @@
 // src/components/PlantBatch/components/BatchForm.tsx
-
 import React, { useState, useEffect } from "react";
 import { IconPlus } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
@@ -45,6 +44,17 @@ const BatchForm: React.FC<Props> = ({
     useEffect(() => {
         setLocalPlants(plants);
     }, [plants]);
+
+    useEffect(() => {
+  if (formData.plant_id && !formData.start_date) {
+    onChange({
+      target: {
+        name: "start_date",
+        value: new Date().toISOString().split("T")[0],
+      },
+    } as any);
+  }
+}, [formData.plant_id]);
 
     return (
         <>

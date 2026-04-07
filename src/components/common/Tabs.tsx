@@ -67,7 +67,7 @@ const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, onTabChange, className = "
                 : "text-gray-500 hover:text-gray-700"
                 }`}
             >
-              {tab.icon && <span className="mr-2">{tab.icon}</span>}
+              {tab.icon && <span>{tab.icon}</span>}
               {tab.label}
             </button>
           ))}
