@@ -385,6 +385,7 @@ const ModelTrainingPage: React.FC = () => {
           </div>
           <div>
             <FormSelect
+              name='imageSize'
               id="imageSize"
               value={imageSize}
               onChange={(e) => setImageSize(parseInt(e.target.value))}

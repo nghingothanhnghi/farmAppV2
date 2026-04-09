@@ -22,8 +22,10 @@ type Props = {
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => void;
     onSubmit: (e: React.FormEvent) => void;
+    onCancel: () => void;
     loading: boolean;
     isEdit?: boolean;
+    hasRecipeConfig?: boolean;
     fieldErrors: Record<string, string>;
 };
 
@@ -31,8 +33,10 @@ const BatchForm: React.FC<Props> = ({
     formData,
     onChange,
     onSubmit,
+    onCancel,
     loading,
     isEdit,
+    hasRecipeConfig,
     fieldErrors
 }) => {
     const { plants, loading: plantLoading } = usePlants();
@@ -42,6 +46,8 @@ const BatchForm: React.FC<Props> = ({
 
     const [openPlantModal, setOpenPlantModal] = useState(false);
     const [openWizard, setOpenWizard] = useState(false);
+
+    const isEditingRecipe = isEdit && hasRecipeConfig;
 
     useEffect(() => {
         setLocalPlants(plants);
@@ -61,8 +67,8 @@ const BatchForm: React.FC<Props> = ({
     return (
         <>
 
-            <Form onSubmit={onSubmit} className="max-w-xl mx-auto">
-                <FormGroup>
+            <Form onSubmit={onSubmit} className="max-w-xl mx-auto space-y-5">
+                <FormGroup className="space-y-1">
                     <FormLabel htmlFor="plant_id">Plant ID</FormLabel>
                     <div className="flex items-center gap-4">
                         <FormSelect
@@ -71,6 +77,7 @@ const BatchForm: React.FC<Props> = ({
                             value={formData.plant_id || ""}
                             onChange={onChange}
                             disabled={plantLoading}
+                            className="min-w-0 flex-1"
                         >
                             <option value="">Select plant</option>
 
@@ -95,7 +102,7 @@ const BatchForm: React.FC<Props> = ({
                     {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
                 </FormGroup>
 
-                <FormGroup>
+                <FormGroup className="space-y-1">
                     <FormLabel htmlFor="zone_id">Zone ID</FormLabel>
                     <FormSelect
                         id="zone_id"
@@ -115,7 +122,7 @@ const BatchForm: React.FC<Props> = ({
                     {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
                 </FormGroup>
 
-                <FormGroup>
+                <FormGroup className="space-y-1">
                     <FormLabel htmlFor="start_date">Start Date</FormLabel>
                     <FormInput
                         type="date"
@@ -127,15 +134,19 @@ const BatchForm: React.FC<Props> = ({
                     {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
                 </FormGroup>
                 <Button
-                    label="⚙️ Create Stage & Automation"
+                    label={
+                        isEditingRecipe
+                            ? "✏️ Edit Stage & Automation"
+                            : "⚙️ Create Stage & Automation"
+                    }
                     variant="secondary"
                     onClick={() => setOpenWizard(true)}
-                    disabled={!formData.plant_id}
+                    disabled={!formData.plant_id || !formData.zone_id}
                 />
                 <FormActions className="flex justify-end gap-4 mt-6">
-                    <Button label="Huỷ" variant="secondary" />
                     <Button
                         type="submit"
+                        rounded="lg"
                         label={
                             loading
                                 ? "Đang lưu..."
@@ -143,6 +154,14 @@ const BatchForm: React.FC<Props> = ({
                                     ? "Cập nhật"
                                     : "Tạo mới"
                         }
+                        className='min-w-[150px]'
+                    />
+                    <Button
+                        label="Thoát"
+                        variant="secondary"
+                        rounded="lg"
+                        className='min-w-[150px]'
+                        onClick={onCancel}
                     />
                 </FormActions>
             </Form>
@@ -150,6 +169,7 @@ const BatchForm: React.FC<Props> = ({
             <StageRecipeWizardModal
                 isOpen={openWizard}
                 plantId={formData.plant_id || null}
+                zoneId={formData.zone_id || null}
                 onClose={() => setOpenWizard(false)}
             />
 

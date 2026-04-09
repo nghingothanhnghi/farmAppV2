@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import WizardLayout from "../../common/WizardLayout";
 import { useGrowthStages } from "../../../hooks/useGrowthStages";
 import { useAlert } from "../../../contexts/alertContext";
+import { useHydroActuators } from "../../../hooks/useHydroActuators";
 import { stageSchema, recipeSchema } from "../../../validation/growthStageValidation";
+import { IconPlus, IconSettings, IconTrash } from '@tabler/icons-react';
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import Form, {
@@ -17,6 +19,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   plantId: number | null;
+  zoneId: number | null;
   onCreated?: () => void;
 };
 type StageWithRecipes = GrowthStageCreate & {
@@ -34,7 +37,10 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   isOpen,
   onClose,
   plantId,
+  zoneId
 }) => {
+
+  const { actuators } = useHydroActuators(zoneId);
   const { setAlert } = useAlert();
 
   const { createStage, createRecipe } = useGrowthStages();
@@ -116,15 +122,15 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       }
 
       if (step === 2) {
-  await Promise.all(
-    stages.map((s, index) =>
-      recipeSchema.validate(s.recipes).catch(err => {
-        if (!errors[index]) errors[index] = {};
-        errors[index].recipes = err.message;
-      })
-    )
-  );
-}
+        await Promise.all(
+          stages.map((s, index) =>
+            recipeSchema.validate(s.recipes).catch(err => {
+              if (!errors[index]) errors[index] = {};
+              errors[index].recipes = err.message;
+            })
+          )
+        );
+      }
 
       const hasError = errors.some(e => e && Object.keys(e).length > 0);
       if (hasError) {
@@ -217,9 +223,13 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       hideNav: true,
       component: (
         <Form onSubmit={(e) => e.preventDefault()} className="space-y-4 px-6">
-
           <Button
-            label="➕ Add Stage"
+            label="Add Stage"
+            variant="secondary"
+            size="xs"
+            rounded="full"
+            icon={<IconPlus size={16} className="text-gray-500" />}
+            iconPosition='left'
             onClick={() =>
               setStages(prev => [
                 ...prev,
@@ -229,28 +239,46 @@ const StageRecipeWizardModal: React.FC<Props> = ({
           />
 
           {stages.map((stage, index) => (
-            <div key={index} className="border p-4 rounded-lg space-y-3">
+            <div key={index} className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
 
               <div className="flex justify-between items-center">
-                <b>Stage {index + 1}</b>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-100">Stage {index + 1}</span>
 
-                {stages.length > 1 && (
+                <div className="flex items-center justify-between gap-2">
+                  {stages.length > 1 && (
+                    <Button
+                      label="Remove"
+                      size="xs"
+                      variant="secondary"
+                      rounded="full"
+                      iconOnly
+                      icon={<IconTrash size={16} />}
+                      onClick={() => {
+                        setStages(prev => {
+                          const newStages = prev.filter((_, i) => i !== index);
+                          setActiveStageIndex(Math.max(0, index - 1));
+                          return newStages;
+                        });
+                      }}
+                    />
+                  )}
+
                   <Button
-                    label="Remove"
+                    label="Configure Recipes"
                     size="xs"
-                    variant="danger"
+                    variant="secondary"
+                    rounded="full"
+                    icon={<IconSettings size={16} className="text-gray-500" />}
+                    iconPosition='left'
                     onClick={() => {
-                      setStages(prev => {
-                        const newStages = prev.filter((_, i) => i !== index);
-                        setActiveStageIndex(Math.max(0, index - 1));
-                        return newStages;
-                      });
+                      setActiveStageIndex(index);
+                      setStep(1);
                     }}
                   />
-                )}
+                </div>
               </div>
 
-              <FormGroup>
+              <FormGroup className="space-y-1">
                 <FormLabel htmlFor={`name_${index}`}>Name</FormLabel>
                 <FormInput
                   id={`name_${index}`}
@@ -267,12 +295,13 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                 )}
               </FormGroup>
 
-              <div className="grid grid-cols-2 gap-3">
-                <FormGroup>
+              <div className="flex gap-3 mb-4">
+                <FormGroup className="space-y-1">
                   <FormLabel htmlFor={`day_start_${index}`}>Day Start</FormLabel>
                   <FormInput
                     id={`day_start_${index}`}   // ✅ correct template string
                     type="number"
+                    className="max-w-[100px]"
                     value={stage.day_start}
                     onChange={(e) =>
                       updateStage(index, { day_start: Number(e.target.value) })
@@ -285,11 +314,12 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                   )}
                 </FormGroup>
 
-                <FormGroup>
+                <FormGroup className="space-y-1">
                   <FormLabel htmlFor={`day_end_${index}`}>Day End</FormLabel>
                   <FormInput
                     id={`day_end_${index}`}
                     type="number"
+                    className="max-w-[100px]"
                     value={stage.day_end}
                     onChange={(e) =>
                       updateStage(index, { day_end: Number(e.target.value) })
@@ -303,14 +333,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                 </FormGroup>
               </div>
 
-              <Button
-                label="⚙️ Configure Recipes"
-                size="xs"
-                onClick={() => {
-                  setActiveStageIndex(index);
-                  setStep(1);
-                }}
-              />
+
 
             </div>
           ))}
@@ -323,34 +346,46 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       hideNav: true,
       component: (
         <div className="space-y-4 px-6">
-
-          <div className="font-medium">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-100">
             Stage: {currentStage.name || `Stage ${activeStageIndex + 1}`}
-          </div>
+          </span>
 
-          <Button
-            label="💡 Add Light"
-            onClick={() =>
-              addRecipe({
-                actuator_type: "light",
-                action: "on",
-                start_time: "06:00:00",
-                end_time: "18:00:00",
-              })
-            }
-          />
+          {actuators.map((a) => (
+            <Button
+              key={a.id}
+              label={`➕ Add ${a.name}`}
+              onClick={() => {
+                if (a.type === "light") {
+                  addRecipe({
+                    actuator_type: a.type,
+                    action: "on",
+                    start_time: "06:00:00",
+                    end_time: "18:00:00",
+                  });
+                } else if (a.type === "pump" || a.type === "water_pump") {
+                  addRecipe({
+                    actuator_type: a.type,
+                    action: "interval",
+                    interval_on_min: 5,
+                    interval_off_min: 10,
+                  });
+                } else if (a.type === "fan") {
+                  addRecipe({
+                    actuator_type: a.type,
+                    action: "on",
+                    start_time: "08:00:00",
+                    end_time: "20:00:00",
+                  });
+                } else {
+                  addRecipe({
+                    actuator_type: a.type,
+                    action: "on",
+                  });
+                }
+              }}
+            />
+          ))}
 
-          <Button
-            label="💧 Add Pump"
-            onClick={() =>
-              addRecipe({
-                actuator_type: "pump",
-                action: "interval",
-                interval_on_min: 5,
-                interval_off_min: 10,
-              })
-            }
-          />
 
           {currentStage.recipes.map((r, i) => (
             <div key={i} className="border p-3 rounded">

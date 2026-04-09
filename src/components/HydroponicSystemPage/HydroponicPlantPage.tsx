@@ -8,9 +8,11 @@ import PageTitle from '../../components/common/PageTitle';
 import * as Yup from 'yup';
 import { useAlert } from '../../contexts/alertContext';
 import { usePlantBatchContext } from '../../contexts/plantBatchContext';
+import { useUnsavedChangesGuard } from "../../hooks/useUnsavedChangesGuard";
 import type { PlantBatch } from '../../models/interfaces/PlantBatch';
 import BatchList from './components/BatchList';
 import BatchForm from './components/BatchForm';
+import Modal from '../common/Modal';
 
 const schema = Yup.object().shape({
     plant_id: Yup.number().required('Plant is required'),
@@ -44,7 +46,22 @@ const PlantBatchPage: React.FC = () => {
     const [formLoading, setFormLoading] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+    const [initialData, setInitialData] = useState<Partial<PlantBatch>>({});
+    const [isDirty, setIsDirty] = useState(false);
 
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [pendingNavigation, setPendingNavigation] = useState<null | (() => void)>(null);
+
+    // ✅ Hook MUST be after state
+    const { confirmLeave } = useUnsavedChangesGuard({
+        isDirty,
+        onOpenModal: () => setConfirmModalOpen(true),
+    });
+
+const hasRecipeConfig = !!(currentBatch && currentBatch.current_stage_id > 0);
+
+console.log("current_stage_id:", currentBatch?.current_stage_id);
+// 👉 adjust field if different in your API
     // -----------------------------
     // Fetch batch when edit
     // -----------------------------
@@ -60,6 +77,7 @@ const PlantBatchPage: React.FC = () => {
     useEffect(() => {
         if (isEdit && currentBatch) {
             setFormData(currentBatch);
+            setInitialData(currentBatch); // 👈 snapshot
         }
     }, [currentBatch, isEdit]);
 
@@ -68,14 +86,33 @@ const PlantBatchPage: React.FC = () => {
     // -----------------------------
     useEffect(() => {
         if (isCreate) {
-            setFormData({
+            const init = {
                 plant_id: undefined,
                 zone_id: undefined,
                 start_date: new Date().toISOString().split('T')[0],
-            });
+            };
+            setFormData(init);
+            setInitialData(init); // ✅ IMPORTANT FIX
             setFieldErrors({});
         }
     }, [isCreate]);
+
+    useEffect(() => {
+        setIsDirty(JSON.stringify(formData) !== JSON.stringify(initialData));
+    }, [formData, initialData]);
+
+    // -----------------------------
+    // Cancel handler (USE HOOK)
+    // -----------------------------
+    const handleCancel = async () => {
+        const canLeave = await confirmLeave();
+
+        if (canLeave) {
+            navigate('/batches');
+        } else {
+            setPendingNavigation(() => () => navigate('/batches'));
+        }
+    };
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -131,7 +168,15 @@ const PlantBatchPage: React.FC = () => {
                             rounded='full'
                             label="Close"
                             className='bg-transparent'
-                            onClick={() => navigate('/batches/new')}
+                            onClick={async () => {
+                                const canLeave = await confirmLeave();
+
+                                if (canLeave) {
+                                    navigate('/batches/new');
+                                } else {
+                                    setPendingNavigation(() => () => navigate('/batches/new'));
+                                }
+                            }}
                         />
                     }
                 />
@@ -167,11 +212,58 @@ const PlantBatchPage: React.FC = () => {
                     formData={formData}
                     onChange={handleChange}
                     onSubmit={handleSubmit}
+                    onCancel={handleCancel}
                     loading={formLoading || hookLoading}
                     isEdit={isEdit}
+                    hasRecipeConfig={hasRecipeConfig}
                     fieldErrors={fieldErrors}
                 />
             )}
+
+            <Modal
+                showCloseButton={false}
+                size="xsmall"
+                isOpen={confirmModalOpen}
+                onClose={() => {
+                    setConfirmModalOpen(false);
+                    setPendingNavigation(null);
+                }}
+                content={
+                    <div className="text-sm px-10 pt-6 pb-10 text-center">
+                        Bạn có thay đổi chưa lưu. Bạn có chắc muốn thoát?
+                    </div>
+                }
+                actions={
+                    <div className="flex gap-4">
+                        <Button
+                            label="Rời đi"
+                            variant="danger"
+                onClick={() => {
+    setConfirmModalOpen(false);
+
+    if (pendingNavigation) {
+        const next = pendingNavigation;
+        setPendingNavigation(null); // ✅ clear BEFORE run
+        next();
+    }
+}}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                        <Button
+                            label="Ở lại"
+                            variant="secondary"
+                            onClick={() => {
+                                setConfirmModalOpen(false);
+                                setPendingNavigation(null);
+                            }}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                    </div>
+                }
+            />
+
         </div>
     );
 };
