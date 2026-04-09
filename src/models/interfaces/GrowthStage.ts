@@ -5,3 +5,5 @@ export interface GrowthStage {
   day_start: number;
   day_end: number;
 }
+
+export type GrowthStageCreate = Omit<GrowthStage, "id" | "plant_id">;

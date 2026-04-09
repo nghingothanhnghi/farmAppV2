@@ -8,3 +8,6 @@ export interface GrowthRecipe {
   interval_on_min?: number;
   interval_off_min?: number;
 }
+
+
+export type GrowthRecipeCreate = Omit<GrowthRecipe, "id" | "stage_id">;

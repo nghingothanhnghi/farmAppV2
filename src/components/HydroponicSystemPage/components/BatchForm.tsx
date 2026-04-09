@@ -5,6 +5,7 @@ import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlants } from "../../../hooks/usePlants";
 import { useHydroDevices } from "../../../hooks/useHydroDevices"
 import CreatePlantModal from "./CreatePlantModal";
+import StageRecipeWizardModal from "./StageRecipeWizardModal";
 
 import Form, {
     FormGroup,
@@ -40,21 +41,22 @@ const BatchForm: React.FC<Props> = ({
     const { devices, loading: deviceLoading } = useHydroDevices();
 
     const [openPlantModal, setOpenPlantModal] = useState(false);
+    const [openWizard, setOpenWizard] = useState(false);
 
     useEffect(() => {
         setLocalPlants(plants);
     }, [plants]);
 
     useEffect(() => {
-  if (formData.plant_id && !formData.start_date) {
-    onChange({
-      target: {
-        name: "start_date",
-        value: new Date().toISOString().split("T")[0],
-      },
-    } as any);
-  }
-}, [formData.plant_id]);
+        if (formData.plant_id && !formData.start_date) {
+            onChange({
+                target: {
+                    name: "start_date",
+                    value: new Date().toISOString().split("T")[0],
+                },
+            } as any);
+        }
+    }, [formData.plant_id]);
 
     return (
         <>
@@ -124,7 +126,12 @@ const BatchForm: React.FC<Props> = ({
                     />
                     {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
                 </FormGroup>
-
+                <Button
+                    label="⚙️ Create Stage & Automation"
+                    variant="secondary"
+                    onClick={() => setOpenWizard(true)}
+                    disabled={!formData.plant_id}
+                />
                 <FormActions className="flex justify-end gap-4 mt-6">
                     <Button label="Huỷ" variant="secondary" />
                     <Button
@@ -139,6 +146,12 @@ const BatchForm: React.FC<Props> = ({
                     />
                 </FormActions>
             </Form>
+
+            <StageRecipeWizardModal
+                isOpen={openWizard}
+                plantId={formData.plant_id || null}
+                onClose={() => setOpenWizard(false)}
+            />
 
             <CreatePlantModal
                 isOpen={openPlantModal}
