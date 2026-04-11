@@ -11,9 +11,11 @@ import Form, {
   FormGroup,
   FormLabel,
   FormInput,
+  FormToggle
 } from "../../common/Form";
 import type { GrowthStageCreate } from "../../../models/interfaces/GrowthStage";
 import type { GrowthRecipeCreate } from "../../../models/interfaces/GrowthRecipe";
+import RecipeForm from "./RecipeForm";
 
 type Props = {
   isOpen: boolean;
@@ -22,7 +24,7 @@ type Props = {
   zoneId: number | null;
   onCreated?: () => void;
 };
-type StageWithRecipes = GrowthStageCreate & {
+type StageWithRecipes = Omit<GrowthStageCreate, "recipes"> & {
   recipes: GrowthRecipeCreate[];
 };
 
@@ -43,7 +45,12 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   const { actuators } = useHydroActuators(zoneId);
   const { setAlert } = useAlert();
 
-  const { createStage, createRecipe } = useGrowthStages();
+  const {
+    createStage,
+    createRecipe,
+    fetchStages,
+    stages: fetchedStages
+  } = useGrowthStages();
 
   const [step, setStep] = useState(0);
 
@@ -64,29 +71,83 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   const currentStage = stages[activeStageIndex];
 
   // ------------------------
-  // VALIDATION
+  // RESET
   // ------------------------
-  // ✅ AUTO ADD DEFAULT RECIPE (OPTION 2)
+  useEffect(() => {
+    if (isOpen) {
+      setStep(0);
+      setActiveStageIndex(0);
+      setStages([{ name: "", day_start: 0, day_end: 7, recipes: [] }]);
+    }
+  }, [isOpen]);
+
+  // ------------------------
+  // FETCH
+  // ------------------------
+  useEffect(() => {
+    if (isOpen && plantId) {
+      fetchStages(plantId);
+    }
+  }, [isOpen, plantId]);
+
+  // ------------------------
+  // MAP API → UI (FIXED)
+  // ------------------------
+  useEffect(() => {
+    if (fetchedStages.length > 0) {
+
+      const mapped: StageWithRecipes[] = fetchedStages.map(s => ({
+        name: s.name,
+        day_start: s.day_start,
+        day_end: s.day_end,
+        recipes: (s.recipes ?? []).map((r): GrowthRecipeCreate => ({
+          actuator_type: r.actuator_type,
+          action: r.action,
+          start_time: r.start_time,
+          end_time: r.end_time,
+          interval_on_min: r.interval_on_min,
+          interval_off_min: r.interval_off_min,
+        })),
+      }));
+
+      setStages(mapped);
+    }
+  }, [fetchedStages]);
+
+  // ------------------------
+  // DEFAULT RECIPE
+  // ------------------------
   useEffect(() => {
     if (step === 1) {
       const stage = stages[activeStageIndex];
 
-      if (stage && stage.recipes.length === 0) {
+      if (
+        stage &&
+        stage.recipes.length === 0 &&
+        fetchedStages.length === 0
+      ) {
         setStages(prev => {
           const copy = [...prev];
-          copy[activeStageIndex].recipes = [
-            {
-              actuator_type: "light",
-              action: "on",
-              start_time: "06:00:00",
-              end_time: "18:00:00",
-            },
-          ];
+
+          copy[activeStageIndex] = {
+            ...copy[activeStageIndex],
+            recipes: [
+              {
+                actuator_type: "light",
+                action: "on",
+                start_time: "06:00:00",
+                end_time: "18:00:00",
+              } as GrowthRecipeCreate,
+            ],
+          };
+
           return copy;
         });
       }
     }
-  }, [step, activeStageIndex]);
+  }, [step, activeStageIndex, fetchedStages]);
+
+
 
   // ------------------------
   // VALIDATION
@@ -203,16 +264,44 @@ const StageRecipeWizardModal: React.FC<Props> = ({
     });
   };
 
+  // ✅ prevent duplicate actuator
   const addRecipe = (recipe: GrowthRecipeCreate) => {
     setStages(prev => {
       const copy = [...prev];
-      copy[activeStageIndex].recipes = [
-        ...copy[activeStageIndex].recipes,
-        recipe,
-      ];
+
+      const exists = copy[activeStageIndex].recipes.some(
+        r => r.actuator_type === recipe.actuator_type
+      );
+
+      if (!exists) {
+        copy[activeStageIndex].recipes.push(recipe);
+      }
+
       return copy;
     });
   };
+
+  const updateRecipe = (
+  stageIndex: number,
+  recipeIndex: number,
+  data: GrowthRecipeCreate
+) => {
+  setStages(prev => {
+    const copy = [...prev];
+    copy[stageIndex].recipes[recipeIndex] = data;
+    return copy;
+  });
+};
+
+const removeRecipe = (stageIndex: number, recipeIndex: number) => {
+  setStages(prev => {
+    const copy = [...prev];
+    copy[stageIndex].recipes = copy[stageIndex].recipes.filter(
+      (_, i) => i !== recipeIndex
+    );
+    return copy;
+  });
+};
 
   // ------------------------
   // STEPS
@@ -240,10 +329,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
           {stages.map((stage, index) => (
             <div key={index} className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
-
               <div className="flex justify-between items-center">
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-100">Stage {index + 1}</span>
-
                 <div className="flex items-center justify-between gap-2">
                   {stages.length > 1 && (
                     <Button
@@ -332,9 +419,6 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                   )}
                 </FormGroup>
               </div>
-
-
-
             </div>
           ))}
         </Form>
@@ -349,49 +433,64 @@ const StageRecipeWizardModal: React.FC<Props> = ({
           <span className="text-sm font-medium text-gray-700 dark:text-gray-100">
             Stage: {currentStage.name || `Stage ${activeStageIndex + 1}`}
           </span>
+          <div className="grid grid-cols-7 md:grid-cols-3 gap-2 mb-4 mt-3">
+            {actuators.map((a) => (
+              <Button
+                key={a.id}
+                label={`➕ Add ${a.name}`}
+                variant="secondary"
+                size="xs"
+                className='w-30 h-10'
+                onClick={() => {
+                  if (a.type === "light") {
+                    addRecipe({
+                      actuator_type: a.type,
+                      action: "on",
+                      start_time: "06:00:00",
+                      end_time: "18:00:00",
+                    });
+                  } else if (a.type === "pump" || a.type === "water_pump") {
+                    addRecipe({
+                      actuator_type: a.type,
+                      action: "interval",
+                      interval_on_min: 5,
+                      interval_off_min: 10,
+                    });
+                  } else if (a.type === "fan") {
+                    addRecipe({
+                      actuator_type: a.type,
+                      action: "on",
+                      start_time: "08:00:00",
+                      end_time: "20:00:00",
+                    });
+                  } else {
+                    addRecipe({
+                      actuator_type: a.type,
+                      action: "on",
+                    });
+                  }
+                }}
+              />
+            ))}
+          </div>
 
-          {actuators.map((a) => (
-            <Button
-              key={a.id}
-              label={`➕ Add ${a.name}`}
-              onClick={() => {
-                if (a.type === "light") {
-                  addRecipe({
-                    actuator_type: a.type,
-                    action: "on",
-                    start_time: "06:00:00",
-                    end_time: "18:00:00",
-                  });
-                } else if (a.type === "pump" || a.type === "water_pump") {
-                  addRecipe({
-                    actuator_type: a.type,
-                    action: "interval",
-                    interval_on_min: 5,
-                    interval_off_min: 10,
-                  });
-                } else if (a.type === "fan") {
-                  addRecipe({
-                    actuator_type: a.type,
-                    action: "on",
-                    start_time: "08:00:00",
-                    end_time: "20:00:00",
-                  });
-                } else {
-                  addRecipe({
-                    actuator_type: a.type,
-                    action: "on",
-                  });
-                }
-              }}
-            />
-          ))}
-
-
-          {currentStage.recipes.map((r, i) => (
+          {/* {currentStage.recipes.map((r, i) => (
             <div key={i} className="border p-3 rounded">
               {r.actuator_type} - {r.action}
             </div>
-          ))}
+          ))} */}
+          {currentStage.recipes.map((r, i) => (
+  <RecipeForm
+    key={i}
+    recipe={r}
+    onChange={(data) =>
+      updateRecipe(activeStageIndex, i, data)
+    }
+    onRemove={() =>
+      removeRecipe(activeStageIndex, i)
+    }
+  />
+))}
 
           {fieldErrors[activeStageIndex]?.recipes && (
             <p className="text-red-500 text-xs">
@@ -433,7 +532,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="🌱 Tạo giai đoạn phát triển cây mới"
+      title="Tạo giai đoạn phát triển cây mới"
       size="small"
       content={
         <WizardLayout
@@ -445,13 +544,29 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       actions={
         <div className="flex justify-between w-full">
           {step > 0 ? (
-            <Button label="Back" variant="secondary" onClick={() => setStep(s => s - 1)} />
+            <Button 
+              label="Back" 
+              variant="secondary" 
+              rounded="lg"
+              className="min-w-[150px]"
+              onClick={() => setStep(s => s - 1)}
+            />
           ) : <div />}
 
           {step < steps.length - 1 ? (
-            <Button label="Next" onClick={handleNext} />
+            <Button 
+              label="Next" 
+              rounded="lg"
+              onClick={handleNext} 
+              className="min-w-[150px]"
+            />
           ) : (
-            <Button label="✅ Create" onClick={handleCreateAll} />
+            <Button 
+              label="✅ Create" 
+              rounded="lg"
+              className="min-w-[150px]"
+              onClick={handleCreateAll} 
+            />
           )}
         </div>
       }
@@ -459,4 +574,4 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   );
 };
 
-export default StageRecipeWizardModal;  
+export default StageRecipeWizardModal;

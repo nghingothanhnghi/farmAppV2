@@ -2,6 +2,7 @@
 
 import { useMemo } from "react";
 import { IconMoodEmpty } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlantBatchContext } from "../../../contexts/plantBatchContext";
 import { getStageColor } from "../../../utils/stage";
@@ -15,12 +16,19 @@ type Props = {
 };
 
 const BatchList: React.FC<Props> = ({ onSelect }) => {
+    const { t } = useTranslation();
     const { batches, loading } = usePlantBatchContext();
 
     const columns = useMemo(() => {
         return [
             { headerName: 'ID', field: 'id', width: 80 },
-            { headerName: 'Plant', field: 'plant_name', valueGetter: (p: any) => p.data.plant_name || "🌱 Unknown", flex: 1 },
+            { 
+                headerName: 'Plant', 
+                field: 'plant_name', 
+                valueGetter: (p: any) => 
+                    p.data.plant_name || t('dataGrid.fallback.unknown_plant'), 
+                flex: 1 
+            },
             {
                 headerName: 'Zone',
                 field: 'zone_id',
@@ -28,10 +36,10 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
                     <div className="text-sm">
                         <div className="font-medium">
-                            {data.device_name || "Unknown device"}
+                            {data.device_name || t('dataGrid.fallback.unknown_device')}
                         </div>
                         <div className="text-xs text-gray-500">
-                            {data.device_location || "No location"}
+                             {data.device_location || t('dataGrid.fallback.no_location')}
                         </div>
                     </div>
                 )

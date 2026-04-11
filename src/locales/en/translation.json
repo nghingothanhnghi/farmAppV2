@@ -172,6 +172,15 @@
         "bodyName":{
             "no_matching_results": "No matching results"
         },
+        "fallback": {
+            "unknown_plant": "🌱 Unknown",
+            "unknown_device": "Unknown device",
+            "no_location": "No location",
+            "no_stage": "No stage"
+        },
+        "progress": {
+            "days": "{{count}} days"
+        },
         "pagination":{
             "to": "to",
             "of": "of",

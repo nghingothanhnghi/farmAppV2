@@ -1,3 +1,4 @@
+// src/models/interfaces/GrowthRecipe.ts
 export interface GrowthRecipe {
   id: number;
   stage_id: number;

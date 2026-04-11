@@ -172,6 +172,15 @@
         "bodyName":{
             "no_matching_results": "Không có kết quả phù hợp"
         },
+        "fallback": {
+            "unknown_plant": "🌱 Không xác định",
+            "unknown_device": "Thiết bị không xác định",
+            "no_location": "Không có vị trí",
+            "no_stage": "Chưa có giai đoạn"
+        },
+        "progress": {
+            "days": "{{count}} ngày"
+        },        
         "pagination":{
             "to": "đến",
             "of": "của",

@@ -2,7 +2,11 @@
 import { useState } from "react";
 import { plantBatchService } from "../services/plantBatchService";
 import type { GrowthStage } from "../models/interfaces/GrowthStage";
-import type { GrowthRecipe } from "../models/interfaces/GrowthRecipe";
+import type { GrowthStageCreate } from "../models/interfaces/GrowthStage";
+
+import type { GrowthRecipeCreate } from "../models/interfaces/GrowthRecipe";
+
+
 
 export function useGrowthStages() {
   const [stages, setStages] = useState<GrowthStage[]>([]);
@@ -18,15 +22,19 @@ export function useGrowthStages() {
     }
   };
 
-  const createStage = async (data: Partial<GrowthStage>) => {
-    const stage = await plantBatchService.createStage(data);
-    setStages(prev => [...prev, stage]);
-    return stage;
-  };
+const createStage = async (
+  data: GrowthStageCreate & { plant_id: number }
+) => {
+  const stage = await plantBatchService.createStage(data);
+  setStages(prev => [...prev, stage]);
+  return stage;
+};
 
-  const createRecipe = async (data: Partial<GrowthRecipe>) => {
-    return await plantBatchService.createRecipe(data);
-  };
+const createRecipe = async (
+  data: GrowthRecipeCreate & { stage_id: number }
+) => {
+  return await plantBatchService.createRecipe(data);
+};
 
   return {
     stages,
