@@ -21,7 +21,7 @@ type Props = {
   onClose: () => void;
   plantId: number | null;
   zoneId: number | null;
-  onCreated?: () => void;
+  onCreated?: (firstStageId?: number) => void;
 };
 
 type RecipeWithId = GrowthRecipeCreate & { id?: number };
@@ -223,15 +223,16 @@ const StageRecipeWizardModal: React.FC<Props> = ({
     }
 
     try {
+      let firstStageId: number | undefined;
+
       for (const s of stages) {
         await stageSchema.validate(s, { abortEarly: false });
         await recipeSchema.validate(s.recipes, { abortEarly: false });
-      }
 
-      // ✅ SINGLE SOURCE OF TRUTH
-      for (const s of stages) {
+        let stageId: number;
+
         if (s.id) {
-          // 🔥 UPDATE (replace all recipes)
+          // UPDATE
           await updateStageWithRecipes(s.id, {
             name: s.name,
             day_start: s.day_start,
@@ -245,8 +246,11 @@ const StageRecipeWizardModal: React.FC<Props> = ({
               interval_off_min: r.interval_off_min,
             })),
           });
+
+          stageId = s.id;
+
         } else {
-          // 🔥 CREATE stage first
+          // CREATE
           const newStage = await createStage({
             name: s.name,
             day_start: s.day_start,
@@ -254,7 +258,6 @@ const StageRecipeWizardModal: React.FC<Props> = ({
             plant_id: plantId,
           });
 
-          // 🔥 attach recipes in ONE call
           await updateStageWithRecipes(newStage.id, {
             name: newStage.name,
             day_start: newStage.day_start,
@@ -268,23 +271,27 @@ const StageRecipeWizardModal: React.FC<Props> = ({
               interval_off_min: r.interval_off_min,
             })),
           });
+
+          stageId = newStage.id;
+        }
+
+        if (!firstStageId) {
+          firstStageId = stageId;
         }
       }
 
-      setAlert({ message: "✅ Stages & Automation saved!", type: "success" });
+      setAlert({ message: "✅ Saved!", type: "success" });
 
-      setStages([{ name: "", day_start: 0, day_end: 7, recipes: [] }]);
-      setActiveStageIndex(0);
-      setStep(0);
+      if (onCreated) onCreated(firstStageId);
 
-      if (onCreated) onCreated();
       onClose();
 
     } catch (err) {
       console.error(err);
-      setAlert({ message: "❌ Failed to save", type: "error" });
+      setAlert({ message: "❌ Failed", type: "error" });
     }
   };
+
 
   // ------------------------
   // HELPERS

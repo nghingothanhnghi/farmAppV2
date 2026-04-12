@@ -58,27 +58,49 @@ export function usePlantBatches() {
     };
 
     const updateBatch = async (
-    id: number,
-    data: Partial<PlantBatch>
-): Promise<PlantBatch> => {
-    try {
-        setLoading(true);
+        id: number,
+        data: Partial<PlantBatch>
+    ): Promise<PlantBatch> => {
+        try {
+            setLoading(true);
 
-        const updated = await plantBatchService.updateBatch(id, data);
+            const updated = await plantBatchService.updateBatch(id, data);
 
-        // ✅ update list
-        setBatches(prev =>
-            prev.map(b => (b.id === id ? updated : b))
-        );
+            // ✅ update list
+            setBatches(prev =>
+                prev.map(b => (b.id === id ? updated : b))
+            );
 
-        // ✅ update current
-        setCurrentBatch(updated);
+            // ✅ update current
+            setCurrentBatch(updated);
 
-        return updated;
-    } finally {
-        setLoading(false);
-    }
-};
+            return updated;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteBatch = async (id: number): Promise<void> => {
+        try {
+            setLoading(true);
+
+            await plantBatchService.deleteBatch(id);
+
+            // 🔥 remove from list
+            setBatches(prev => prev.filter(b => b.id !== id));
+
+            // optional: clear current
+            if (currentBatch?.id === id) {
+                setCurrentBatch(null);
+            }
+
+        } catch (err: any) {
+            setError(err?.message || "Failed to delete batch");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     // -----------------------------
     // Set Stage (IMPORTANT)
@@ -113,6 +135,7 @@ export function usePlantBatches() {
         fetchBatch,
         createBatch,
         updateBatch,
+        deleteBatch,
         setStage,
     };
 }

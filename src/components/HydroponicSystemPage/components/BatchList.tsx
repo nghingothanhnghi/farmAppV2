@@ -17,7 +17,7 @@ type Props = {
 
 const BatchList: React.FC<Props> = ({ onSelect }) => {
     const { t } = useTranslation();
-    const { batches, loading } = usePlantBatchContext();
+    const { batches, loading, deleteBatch } = usePlantBatchContext();
 
     const columns = useMemo(() => {
         return [

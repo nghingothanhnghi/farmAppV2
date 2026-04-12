@@ -144,8 +144,6 @@ const PlantBatchPage: React.FC = () => {
                 await createBatch(formData); // ✅ POST
                 setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
             }
-
-            setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
             navigate('/batches');
         } catch (err: any) {
             if (err.name === 'ValidationError') {

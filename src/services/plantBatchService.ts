@@ -22,9 +22,14 @@ export const plantBatchService = {
   },
 
   async updateBatch(id: number, data: Partial<PlantBatch>) {
-  const res = await apiClient.put(`/batches/${id}`, data);
-  return res.data;
-},
+    const res = await apiClient.put(`/batches/${id}`, data);
+    return res.data;
+  },
+
+  async deleteBatch(id: number) {
+    const res = await apiClient.delete(`/batches/${id}`);
+    return res.data;
+  },
 
   async setStage(batchId: number, stageId: number) {
     const res = await apiClient.post(
@@ -49,7 +54,7 @@ export const plantBatchService = {
     return res.data;
   },
 
-    async updateStageWithRecipes(
+  async updateStageWithRecipes(
     id: number,
     data: {
       name: string;

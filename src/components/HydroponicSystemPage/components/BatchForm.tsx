@@ -4,6 +4,7 @@ import { IconPlus } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlants } from "../../../hooks/usePlants";
 import { useHydroDevices } from "../../../hooks/useHydroDevices"
+import { usePlantBatchContext } from "../../../contexts/plantBatchContext";
 import CreatePlantModal from "./CreatePlantModal";
 import StageRecipeWizardModal from "./StageRecipeWizardModal";
 
@@ -46,6 +47,8 @@ const BatchForm: React.FC<Props> = ({
 
     const [openPlantModal, setOpenPlantModal] = useState(false);
     const [openWizard, setOpenWizard] = useState(false);
+
+    const { currentBatch, setStage } = usePlantBatchContext();
 
     const isEditingRecipe = isEdit && hasRecipeConfig;
 
@@ -171,6 +174,15 @@ const BatchForm: React.FC<Props> = ({
                 plantId={formData.plant_id || null}
                 zoneId={formData.zone_id || null}
                 onClose={() => setOpenWizard(false)}
+                onCreated={(stageId) => {
+                    console.log("✅ Wizard created stage:", stageId);
+                    if (!stageId) return;
+
+                    // 🔥 ONLY works when batch exists (edit mode)
+                    if (isEdit && currentBatch && stageId) {
+                        setStage(currentBatch.id, stageId);
+                    }
+                }}
             />
 
             <CreatePlantModal
@@ -178,7 +190,9 @@ const BatchForm: React.FC<Props> = ({
                 onClose={() => setOpenPlantModal(false)}
                 onCreated={(plant) => {
                     // ✅ add new plant into dropdown
-                    setLocalPlants(prev => [...prev, plant]);
+                    setLocalPlants(prev =>
+                        prev.some(p => p.id === plant.id) ? prev : [...prev, plant]
+                    );
 
                     // ✅ auto select
                     onChange({
