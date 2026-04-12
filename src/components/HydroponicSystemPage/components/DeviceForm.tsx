@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router'; // Add this at the top of your file
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
-import { useTranslation } from 'react-i18next';
 import type { HydroActuator } from '../../../models/interfaces/HydroSystem';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../../../components/common/Form';
 import Button from '../../../components/common/Button';
@@ -34,7 +33,6 @@ const DeviceForm: React.FC<Props> = ({
     isEdit,
     fieldErrors,
 }) => {
-    const { t } = useTranslation();
     const navigate = useNavigate();
     const { actions } = useHydroSystem();
     const [actuators, setActuators] = useState<HydroActuator[]>([]);

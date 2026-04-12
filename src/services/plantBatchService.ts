@@ -39,9 +39,45 @@ export const plantBatchService = {
     return res.data;
   },
 
+  async updateStage(id: number, data: Partial<GrowthStage>) {
+    const res = await apiClient.put(`/batches/stages/${id}`, data);
+    return res.data;
+  },
+
+    async updateStageWithRecipes(
+    id: number,
+    data: {
+      name: string;
+      day_start: number;
+      day_end: number;
+      recipes: Omit<GrowthRecipe, "id" | "stage_id">[];
+    }
+  ) {
+    const res = await apiClient.put(
+      `/batches/stages/${id}/with-recipes`,
+      data
+    );
+    return res.data;
+  },
+
+  async deleteStage(id: number) {
+    const res = await apiClient.delete(`/batches/stages/${id}`);
+    return res.data;
+  },
+
   // ⚙️ RECIPES
   async createRecipe(data: Partial<GrowthRecipe>) {
     const res = await apiClient.post('/batches/recipes', data);
+    return res.data;
+  },
+
+  async updateRecipe(id: number, data: Partial<GrowthRecipe>) {
+    const res = await apiClient.put(`/batches/recipes/${id}`, data);
+    return res.data;
+  },
+
+  async deleteRecipe(id: number) {
+    const res = await apiClient.delete(`/batches/recipes/${id}`);
     return res.data;
   }
 };

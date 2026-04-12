@@ -11,7 +11,6 @@ import Form, {
   FormGroup,
   FormLabel,
   FormInput,
-  FormToggle
 } from "../../common/Form";
 import type { GrowthStageCreate } from "../../../models/interfaces/GrowthStage";
 import type { GrowthRecipeCreate } from "../../../models/interfaces/GrowthRecipe";
@@ -24,8 +23,12 @@ type Props = {
   zoneId: number | null;
   onCreated?: () => void;
 };
+
+type RecipeWithId = GrowthRecipeCreate & { id?: number };
+
 type StageWithRecipes = Omit<GrowthStageCreate, "recipes"> & {
-  recipes: GrowthRecipeCreate[];
+  id?: number;
+  recipes: RecipeWithId[];
 };
 
 type StageErrors = {
@@ -39,7 +42,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   isOpen,
   onClose,
   plantId,
-  zoneId
+  zoneId,
+  onCreated
 }) => {
 
   const { actuators } = useHydroActuators(zoneId);
@@ -47,7 +51,12 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
   const {
     createStage,
+    updateStage,
+    deleteStage,
     createRecipe,
+    updateRecipe,
+    deleteRecipe,
+    updateStageWithRecipes,
     fetchStages,
     stages: fetchedStages
   } = useGrowthStages();
@@ -97,10 +106,12 @@ const StageRecipeWizardModal: React.FC<Props> = ({
     if (fetchedStages.length > 0) {
 
       const mapped: StageWithRecipes[] = fetchedStages.map(s => ({
+        id: s.id,
         name: s.name,
         day_start: s.day_start,
         day_end: s.day_end,
-        recipes: (s.recipes ?? []).map((r): GrowthRecipeCreate => ({
+        recipes: (s.recipes ?? []).map((r): RecipeWithId => ({
+          id: r.id,
           actuator_type: r.actuator_type,
           action: r.action,
           start_time: r.start_time,
@@ -222,41 +233,68 @@ const StageRecipeWizardModal: React.FC<Props> = ({
         await recipeSchema.validate(s.recipes, { abortEarly: false });
       }
 
+      // ✅ SINGLE SOURCE OF TRUTH
       for (const s of stages) {
-        const stage = await createStage({
-          name: s.name,
-          day_start: s.day_start,
-          day_end: s.day_end,
-          plant_id: plantId,
-        });
+        if (s.id) {
+          // 🔥 UPDATE (replace all recipes)
+          await updateStageWithRecipes(s.id, {
+            name: s.name,
+            day_start: s.day_start,
+            day_end: s.day_end,
+            recipes: s.recipes.map(r => ({
+              actuator_type: r.actuator_type,
+              action: r.action,
+              start_time: r.start_time,
+              end_time: r.end_time,
+              interval_on_min: r.interval_on_min,
+              interval_off_min: r.interval_off_min,
+            })),
+          });
+        } else {
+          // 🔥 CREATE stage first
+          const newStage = await createStage({
+            name: s.name,
+            day_start: s.day_start,
+            day_end: s.day_end,
+            plant_id: plantId,
+          });
 
-        await Promise.all(
-          s.recipes.map(r =>
-            createRecipe({
-              ...r,
-              stage_id: stage.id,
-            })
-          )
-        );
+          // 🔥 attach recipes in ONE call
+          await updateStageWithRecipes(newStage.id, {
+            name: newStage.name,
+            day_start: newStage.day_start,
+            day_end: newStage.day_end,
+            recipes: s.recipes.map(r => ({
+              actuator_type: r.actuator_type,
+              action: r.action,
+              start_time: r.start_time,
+              end_time: r.end_time,
+              interval_on_min: r.interval_on_min,
+              interval_off_min: r.interval_off_min,
+            })),
+          });
+        }
       }
 
-      setAlert({ message: "✅ All stages created!", type: "success" });
+      setAlert({ message: "✅ Stages & Automation saved!", type: "success" });
 
       setStages([{ name: "", day_start: 0, day_end: 7, recipes: [] }]);
       setActiveStageIndex(0);
       setStep(0);
 
+      if (onCreated) onCreated();
       onClose();
 
     } catch (err) {
-      setAlert({ message: "❌ Failed", type: "error" });
+      console.error(err);
+      setAlert({ message: "❌ Failed to save", type: "error" });
     }
   };
 
   // ------------------------
   // HELPERS
   // ------------------------
-  const updateStage = (index: number, data: Partial<StageWithRecipes>) => {
+  const handleUpdateStage = (index: number, data: Partial<StageWithRecipes>) => {
     setStages(prev => {
       const copy = [...prev];
       copy[index] = { ...copy[index], ...data };
@@ -281,27 +319,29 @@ const StageRecipeWizardModal: React.FC<Props> = ({
     });
   };
 
-  const updateRecipe = (
-  stageIndex: number,
-  recipeIndex: number,
-  data: GrowthRecipeCreate
-) => {
-  setStages(prev => {
-    const copy = [...prev];
-    copy[stageIndex].recipes[recipeIndex] = data;
-    return copy;
-  });
-};
+  const handleUpdateRecipe = (
+    stageIndex: number,
+    recipeIndex: number,
+    data: RecipeWithId
+  ) => {
+    setStages(prev => {
+      const copy = [...prev];
+      copy[stageIndex].recipes[recipeIndex] = data;
+      return copy;
+    });
+  };
 
-const removeRecipe = (stageIndex: number, recipeIndex: number) => {
-  setStages(prev => {
-    const copy = [...prev];
-    copy[stageIndex].recipes = copy[stageIndex].recipes.filter(
-      (_, i) => i !== recipeIndex
-    );
-    return copy;
-  });
-};
+  const removeRecipe = (stageIndex: number, recipeIndex: number) => {
+    setStages(prev => {
+      const copy = [...prev];
+      const recipe = copy[stageIndex].recipes[recipeIndex];
+
+      copy[stageIndex].recipes = copy[stageIndex].recipes.filter(
+        (_, i) => i !== recipeIndex
+      );
+      return copy;
+    });
+  };
 
   // ------------------------
   // STEPS
@@ -372,7 +412,7 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
                   type="text"
                   value={stage.name}
                   onChange={(e) =>
-                    updateStage(index, { name: e.target.value })
+                    handleUpdateStage(index, { name: e.target.value })
                   }
                 />
                 {fieldErrors[index]?.name && (
@@ -391,7 +431,7 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
                     className="max-w-[100px]"
                     value={stage.day_start}
                     onChange={(e) =>
-                      updateStage(index, { day_start: Number(e.target.value) })
+                      handleUpdateStage(index, { day_start: Number(e.target.value) })
                     }
                   />
                   {fieldErrors[index]?.day_start && (
@@ -409,7 +449,7 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
                     className="max-w-[100px]"
                     value={stage.day_end}
                     onChange={(e) =>
-                      updateStage(index, { day_end: Number(e.target.value) })
+                      handleUpdateStage(index, { day_end: Number(e.target.value) })
                     }
                   />
                   {fieldErrors[index]?.day_end && (
@@ -480,17 +520,17 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
             </div>
           ))} */}
           {currentStage.recipes.map((r, i) => (
-  <RecipeForm
-    key={i}
-    recipe={r}
-    onChange={(data) =>
-      updateRecipe(activeStageIndex, i, data)
-    }
-    onRemove={() =>
-      removeRecipe(activeStageIndex, i)
-    }
-  />
-))}
+            <RecipeForm
+              key={i}
+              recipe={r}
+              onChange={(data) =>
+                handleUpdateRecipe(activeStageIndex, i, data)
+              }
+              onRemove={() =>
+                removeRecipe(activeStageIndex, i)
+              }
+            />
+          ))}
 
           {fieldErrors[activeStageIndex]?.recipes && (
             <p className="text-red-500 text-xs">
@@ -544,9 +584,9 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
       actions={
         <div className="flex justify-between w-full">
           {step > 0 ? (
-            <Button 
-              label="Back" 
-              variant="secondary" 
+            <Button
+              label="Back"
+              variant="secondary"
               rounded="lg"
               className="min-w-[150px]"
               onClick={() => setStep(s => s - 1)}
@@ -554,18 +594,18 @@ const removeRecipe = (stageIndex: number, recipeIndex: number) => {
           ) : <div />}
 
           {step < steps.length - 1 ? (
-            <Button 
-              label="Next" 
+            <Button
+              label="Next"
               rounded="lg"
-              onClick={handleNext} 
+              onClick={handleNext}
               className="min-w-[150px]"
             />
           ) : (
-            <Button 
-              label="✅ Create" 
+            <Button
+              label="✅ Create"
               rounded="lg"
               className="min-w-[150px]"
-              onClick={handleCreateAll} 
+              onClick={handleCreateAll}
             />
           )}
         </div>
