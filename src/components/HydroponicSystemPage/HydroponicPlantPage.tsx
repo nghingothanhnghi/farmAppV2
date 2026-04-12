@@ -34,6 +34,7 @@ const PlantBatchPage: React.FC = () => {
         currentBatch,
         fetchBatch,
         createBatch,
+        updateBatch,
         loading: hookLoading,
     } = usePlantBatchContext();
 
@@ -58,10 +59,10 @@ const PlantBatchPage: React.FC = () => {
         onOpenModal: () => setConfirmModalOpen(true),
     });
 
-const hasRecipeConfig = !!(currentBatch && currentBatch.current_stage_id > 0);
+    const hasRecipeConfig = !!(currentBatch && currentBatch.current_stage_id > 0);
 
-console.log("current_stage_id:", currentBatch?.current_stage_id);
-// 👉 adjust field if different in your API
+    console.log("current_stage_id:", currentBatch?.current_stage_id);
+    // 👉 adjust field if different in your API
     // -----------------------------
     // Fetch batch when edit
     // -----------------------------
@@ -136,7 +137,13 @@ console.log("current_stage_id:", currentBatch?.current_stage_id);
             await schema.validate(formData, { abortEarly: false });
             setFieldErrors({});
 
-            await createBatch(formData);
+            if (isEdit && id) {
+                await updateBatch(Number(id), formData); // ✅ PUT
+                setAlert({ type: 'success', message: 'Cập nhật thành công ✏️' });
+            } else {
+                await createBatch(formData); // ✅ POST
+                setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
+            }
 
             setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
             navigate('/batches');
@@ -238,15 +245,15 @@ console.log("current_stage_id:", currentBatch?.current_stage_id);
                         <Button
                             label="Rời đi"
                             variant="danger"
-                onClick={() => {
-    setConfirmModalOpen(false);
+                            onClick={() => {
+                                setConfirmModalOpen(false);
 
-    if (pendingNavigation) {
-        const next = pendingNavigation;
-        setPendingNavigation(null); // ✅ clear BEFORE run
-        next();
-    }
-}}
+                                if (pendingNavigation) {
+                                    const next = pendingNavigation;
+                                    setPendingNavigation(null); // ✅ clear BEFORE run
+                                    next();
+                                }
+                            }}
                             className="min-w-[150px]"
                             rounded="lg"
                         />

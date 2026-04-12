@@ -51,11 +51,6 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
   const {
     createStage,
-    updateStage,
-    deleteStage,
-    createRecipe,
-    updateRecipe,
-    deleteRecipe,
     updateStageWithRecipes,
     fetchStages,
     stages: fetchedStages

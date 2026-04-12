@@ -57,6 +57,29 @@ export function usePlantBatches() {
         }
     };
 
+    const updateBatch = async (
+    id: number,
+    data: Partial<PlantBatch>
+): Promise<PlantBatch> => {
+    try {
+        setLoading(true);
+
+        const updated = await plantBatchService.updateBatch(id, data);
+
+        // ✅ update list
+        setBatches(prev =>
+            prev.map(b => (b.id === id ? updated : b))
+        );
+
+        // ✅ update current
+        setCurrentBatch(updated);
+
+        return updated;
+    } finally {
+        setLoading(false);
+    }
+};
+
     // -----------------------------
     // Set Stage (IMPORTANT)
     // -----------------------------
@@ -89,6 +112,7 @@ export function usePlantBatches() {
         fetchBatches,
         fetchBatch,
         createBatch,
+        updateBatch,
         setStage,
     };
 }

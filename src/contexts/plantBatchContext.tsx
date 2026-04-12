@@ -12,6 +12,7 @@ type PlantBatchContextType = {
   fetchBatches: () => Promise<void>;
   fetchBatch: (id: number) => Promise<PlantBatch | null>;
   createBatch: (data: Partial<PlantBatch>) => Promise<PlantBatch>;
+  updateBatch: (id: number, data: Partial<PlantBatch>) => Promise<PlantBatch>;
   setStage: (batchId: number, stageId: number) => Promise<void>;
 };
 

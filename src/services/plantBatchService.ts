@@ -21,6 +21,11 @@ export const plantBatchService = {
     return res.data;
   },
 
+  async updateBatch(id: number, data: Partial<PlantBatch>) {
+  const res = await apiClient.put(`/batches/${id}`, data);
+  return res.data;
+},
+
   async setStage(batchId: number, stageId: number) {
     const res = await apiClient.post(
       `/batches/${batchId}/set-stage/${stageId}`
