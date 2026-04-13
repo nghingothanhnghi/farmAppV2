@@ -160,6 +160,8 @@ const PlantBatchPage: React.FC = () => {
         }
     };
 
+    
+
     return (
         <div className="flex flex-col h-full">
             {!isRoot && (

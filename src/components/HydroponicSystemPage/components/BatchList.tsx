@@ -1,6 +1,6 @@
 // src/components/PlantBatch/components/BatchList.tsx
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { IconMoodEmpty } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
@@ -10,6 +10,10 @@ import DataGrid from "../../common/dataGrid/dataGrid";
 import ActionButtons from "../../common/dataGrid/actionButton";
 import LinearProgress from '../../common/LinearProgress';
 import EmptyState from '../../common/EmptyState';
+import Modal from "../../common/Modal";
+import Button from "../../common/Button";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { useAlert } from "../../../contexts/alertContext";
 
 type Props = {
     onSelect?: (batch: PlantBatch) => void;
@@ -19,15 +23,45 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
     const { t } = useTranslation();
     const { batches, loading, deleteBatch } = usePlantBatchContext();
 
+    const { setAlert } = useAlert();
+
+    const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+    const [selectedBatch, setSelectedBatch] = useState<PlantBatch | null>(null);
+    const [deleting, setDeleting] = useState(false);
+
+    const handleConfirmDelete = async () => {
+        if (!selectedBatch) return;
+
+        try {
+            setDeleting(true);
+            await deleteBatch(selectedBatch.id);
+
+            setAlert({
+                type: "success",
+                message: `Batch #${selectedBatch.id} deleted successfully`,
+            });
+
+        } catch (err) {
+            console.error(err);
+            setAlert({
+                type: "error",
+                message: "Failed to delete batch",
+            });
+        }
+        setDeleting(false);
+        setConfirmModalOpen(false);
+        setSelectedBatch(null);
+    };
+
     const columns = useMemo(() => {
         return [
             { headerName: 'ID', field: 'id', width: 80 },
-            { 
-                headerName: 'Plant', 
-                field: 'plant_name', 
-                valueGetter: (p: any) => 
-                    p.data.plant_name || t('dataGrid.fallback.unknown_plant'), 
-                flex: 1 
+            {
+                headerName: 'Plant',
+                field: 'plant_name',
+                valueGetter: (p: any) =>
+                    p.data.plant_name || t('dataGrid.fallback.unknown_plant'),
+                flex: 1
             },
             {
                 headerName: 'Zone',
@@ -39,7 +73,7 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                             {data.device_name || t('dataGrid.fallback.unknown_device')}
                         </div>
                         <div className="text-xs text-gray-500">
-                             {data.device_location || t('dataGrid.fallback.no_location')}
+                            {data.device_location || t('dataGrid.fallback.no_location')}
                         </div>
                     </div>
                 )
@@ -95,6 +129,10 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                     <ActionButtons
                         row={data}
                         onEdit={() => onSelect?.(data)}
+                        onDelete={(row) => {
+                            setSelectedBatch(row);
+                            setConfirmModalOpen(true);
+                        }}
                     />
                 ),
             },
@@ -115,10 +153,49 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
     }
 
     return (
-        <DataGrid
-            rowData={batches}
-            columnDefs={columns}
-        />
+        <>
+            <DataGrid
+                rowData={batches}
+                columnDefs={columns}
+            />
+
+            <Modal
+                showCloseButton={false}
+                size="xsmall"
+                isOpen={confirmModalOpen}
+                onClose={() => {
+                    setConfirmModalOpen(false);
+                    setSelectedBatch(null);
+                }}
+                content={
+                    <div className="text-sm px-10 pt-6 pb-10 text-center">
+                        <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+                        Are you sure you want to delete batch{" "}
+                        <strong>#{selectedBatch?.id}</strong>?
+                    </div>
+                }
+                actions={
+                    <div className="flex gap-4">
+                        <Button
+                            label={deleting ? "Deleting..." : "Delete"}
+                            variant="danger"
+                            onClick={handleConfirmDelete}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                            disabled={deleting}
+                        />
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => setConfirmModalOpen(false)}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                    </div>
+                }
+            />
+        </>
+
     );
 };
 

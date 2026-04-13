@@ -1,5 +1,6 @@
 // src/components/PlantBatch/components/BatchForm.tsx
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import { IconPlus } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlants } from "../../../hooks/usePlants";
@@ -40,6 +41,7 @@ const BatchForm: React.FC<Props> = ({
     hasRecipeConfig,
     fieldErrors
 }) => {
+    const navigate = useNavigate();
     const { plants, loading: plantLoading } = usePlants();
     const [localPlants, setLocalPlants] = useState(plants);
 
@@ -47,8 +49,9 @@ const BatchForm: React.FC<Props> = ({
 
     const [openPlantModal, setOpenPlantModal] = useState(false);
     const [openWizard, setOpenWizard] = useState(false);
+    const [creatingBatch, setCreatingBatch] = useState(false);
 
-    const { currentBatch, setStage } = usePlantBatchContext();
+    const { currentBatch, setStage, createBatch } = usePlantBatchContext();
 
     const isEditingRecipe = isEdit && hasRecipeConfig;
 
@@ -143,8 +146,29 @@ const BatchForm: React.FC<Props> = ({
                             : "⚙️ Create Stage & Automation"
                     }
                     variant="secondary"
-                    onClick={() => setOpenWizard(true)}
-                    disabled={!formData.plant_id || !formData.zone_id}
+                                        onClick={async () => {
+                        if (!isEdit) {
+                            try {
+                                setCreatingBatch(true);
+
+                                const newBatch = await createBatch(formData);
+
+                                navigate(`/batches/${newBatch.id}`, {
+                                    state: { openWizard: true }
+                                });
+
+                            } catch (err) {
+                                console.error(err);
+                            } finally {
+                                setCreatingBatch(false);
+                            }
+                            return;
+                        }
+
+                        setOpenWizard(true);
+                    }}
+                    disabled={!formData.plant_id || !formData.zone_id ||
+                        creatingBatch}
                 />
                 <FormActions className="flex justify-end gap-4 mt-6">
                     <Button
