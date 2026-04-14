@@ -11,9 +11,11 @@ import LinearProgress from '../../common/LinearProgress';
 import EmptyState from '../../common/EmptyState';
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
+import Badge from "../../common/Badge";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useAlert } from "../../../contexts/alertContext";
 import BatchTimelineCell from "./BatchTimelineCell";
+import { getPlantBatchStatusVariant } from "../../../utils/plantBatch";
 
 type Props = {
     onSelect?: (batch: PlantBatch) => void;
@@ -67,10 +69,15 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                 headerName: 'Khu vực',
                 field: 'zone_id',
                 flex: 1,
-                align: "left",
+                align: "middle",
+                // ✅ THIS enables search/filter
+                valueGetter: (params: any) => {
+                    const data = params.data;
+                    return `${data.device_name || ''} ${data.device_location || ''}`;
+                },
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
-                    <div className="">
-                        <div className="text-sm text-gray-800 dark:text-gray-200">
+                    <div className="flex flex-col h-full justify-center align-middle">
+                        <div className="text-xs text-gray-800 dark:text-gray-200">
                             {data.device_name || t('dataGrid.fallback.unknown_device')}
                         </div>
                         <div className="text-xs text-[10px] text-gray-600 dark:text-gray-400">
@@ -86,11 +93,37 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                 filter: false,
                 sortable: false,
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
-                    <BatchTimelineCell batch={data} />
+                    <div className="flex flex-col h-full justify-center align-middle">
+                        <BatchTimelineCell batch={data} />
+                    </div>
+
                 )
             },
-            { headerName: 'Ngày bắt đầu', field: 'start_date', flex: 1 },
-            { headerName: 'Trạng thái', field: 'status', flex: 1 },
+            {
+                headerName: 'Ngày bắt đầu',
+                field: 'start_date',
+                flex: 1,
+                filter: false
+            },
+            {
+                headerName: 'Trạng thái',
+                field: 'status',
+                flex: 1,
+                filter: false,
+                sortable: false,
+                cellRenderer: ({ data }: { data: PlantBatch }) => {
+                    const status = data.status;
+                    return (
+                        <div className="flex items-center h-full">
+                            <Badge
+                                label={status || 'Unknown'}
+                                variant={getPlantBatchStatusVariant(status)}
+                            />
+                        </div>
+                    );
+                }
+
+            },
 
             onSelect && {
                 headerName: '',
