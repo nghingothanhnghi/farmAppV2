@@ -23,10 +23,11 @@ const BatchTimelineCell: React.FC<Props> = ({ batch }) => {
     }
 
     return (
-        <StageTimeline
-            stages={stages}
-            daysGrowing={batch.days_growing || 0}
-        />
+            <StageTimeline
+                stages={stages}
+                daysGrowing={batch.days_growing || 0}
+                currentStageId={batch.current_stage_id}
+            />
     );
 };
 

@@ -68,32 +68,18 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                 headerName: 'Khu vực',
                 field: 'zone_id',
                 flex: 1,
+                align: "left",
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
-                    <div className="text-sm">
-                        <div className="font-medium">
+                    <div className="">
+                        <div className="text-sm text-gray-800 dark:text-gray-200">
                             {data.device_name || t('dataGrid.fallback.unknown_device')}
                         </div>
-                        <div className="text-xs text-gray-500">
+                        <div className="text-xs text-[10px] text-gray-600 dark:text-gray-400">
                             {data.device_location || t('dataGrid.fallback.no_location')}
                         </div>
                     </div>
                 )
             },
-            // {
-            //     headerName: 'Stage',
-            //     field: 'current_stage_name',
-            //     flex: 1,
-            //     cellRenderer: ({ data }: { data: PlantBatch }) => (
-            //         <span
-            //             className={`px-2 py-1 rounded-full text-white text-xs font-medium ${getStageColor(
-            //                 data.current_stage_name
-            //             )}`}
-            //         >
-            //             {data.current_stage_name || "No stage"}
-            //         </span>
-            //     )
-            // },
-
             {
                 headerName: 'Gia đoạn sinh trưởng',
                 field: 'days_growing',
