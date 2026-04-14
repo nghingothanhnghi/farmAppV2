@@ -5,7 +5,6 @@ import { IconMoodEmpty } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
 import { usePlantBatchContext } from "../../../contexts/plantBatchContext";
-import { getStageColor } from "../../../utils/stage";
 import DataGrid from "../../common/dataGrid/dataGrid";
 import ActionButtons from "../../common/dataGrid/actionButton";
 import LinearProgress from '../../common/LinearProgress';

@@ -336,7 +336,6 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   const removeRecipe = (stageIndex: number, recipeIndex: number) => {
     setStages(prev => {
       const copy = [...prev];
-      const recipe = copy[stageIndex].recipes[recipeIndex];
 
       copy[stageIndex].recipes = copy[stageIndex].recipes.filter(
         (_, i) => i !== recipeIndex
