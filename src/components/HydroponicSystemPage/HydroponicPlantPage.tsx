@@ -140,11 +140,15 @@ const PlantBatchPage: React.FC = () => {
             if (isEdit && id) {
                 await updateBatch(Number(id), formData); // ✅ PUT
                 setAlert({ type: 'success', message: 'Cập nhật thành công ✏️' });
+                // ✅ stay on same page
+                navigate(`/batches`);
             } else {
-                await createBatch(formData); // ✅ POST
+                const newBatch = await createBatch(formData); // ✅ MUST return data
                 setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
+
+                // ✅ go to edit page instead of list
+                navigate(`/batches/${newBatch.id}`);
             }
-            navigate('/batches');
         } catch (err: any) {
             if (err.name === 'ValidationError') {
                 const errors: Record<string, string> = {};
@@ -160,7 +164,7 @@ const PlantBatchPage: React.FC = () => {
         }
     };
 
-    
+
 
     return (
         <div className="flex flex-col h-full">

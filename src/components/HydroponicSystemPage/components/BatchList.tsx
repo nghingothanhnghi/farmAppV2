@@ -14,6 +14,7 @@ import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import { IconAlertCircle } from "@tabler/icons-react";
 import { useAlert } from "../../../contexts/alertContext";
+import BatchTimelineCell from "./BatchTimelineCell";
 
 type Props = {
     onSelect?: (batch: PlantBatch) => void;
@@ -57,14 +58,14 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
         return [
             { headerName: 'ID', field: 'id', width: 80 },
             {
-                headerName: 'Plant',
+                headerName: 'Cây trồng',
                 field: 'plant_name',
                 valueGetter: (p: any) =>
                     p.data.plant_name || t('dataGrid.fallback.unknown_plant'),
                 flex: 1
             },
             {
-                headerName: 'Zone',
+                headerName: 'Khu vực',
                 field: 'zone_id',
                 flex: 1,
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
@@ -78,53 +79,43 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
                     </div>
                 )
             },
-            {
-                headerName: 'Stage',
-                field: 'current_stage_name',
-                flex: 1,
-                cellRenderer: ({ data }: { data: PlantBatch }) => (
-                    <span
-                        className={`px-2 py-1 rounded-full text-white text-xs font-medium ${getStageColor(
-                            data.current_stage_name
-                        )}`}
-                    >
-                        {data.current_stage_name || "No stage"}
-                    </span>
-                )
-            },
+            // {
+            //     headerName: 'Stage',
+            //     field: 'current_stage_name',
+            //     flex: 1,
+            //     cellRenderer: ({ data }: { data: PlantBatch }) => (
+            //         <span
+            //             className={`px-2 py-1 rounded-full text-white text-xs font-medium ${getStageColor(
+            //                 data.current_stage_name
+            //             )}`}
+            //         >
+            //             {data.current_stage_name || "No stage"}
+            //         </span>
+            //     )
+            // },
 
             {
-                headerName: 'Progress',
+                headerName: 'Gia đoạn sinh trưởng',
                 field: 'days_growing',
                 flex: 1.5,
-                cellRenderer: ({ data }: { data: PlantBatch }) => {
-                    const totalDays = 30; // 👉 you can make dynamic later
-                    const percent = Math.min(
-                        ((data.days_growing || 0) / totalDays) * 100,
-                        100
-                    );
-
-                    return (
-                        <div className="w-full">
-                            <div className="text-xs mb-1">
-                                {data.days_growing || 0} days
-                            </div>
-
-                            <LinearProgress
-                                value={percent}
-                                thickness="h-2"
-                                message={`${Math.round(percent)}%`}
-                            />
-                        </div>
-                    );
-                }
+                filter: false,
+                sortable: false,
+                cellRenderer: ({ data }: { data: PlantBatch }) => (
+                    <BatchTimelineCell batch={data} />
+                )
             },
-            { headerName: 'Start Date', field: 'start_date', flex: 1 },
-            { headerName: 'Status', field: 'status', flex: 1 },
+            { headerName: 'Ngày bắt đầu', field: 'start_date', flex: 1 },
+            { headerName: 'Trạng thái', field: 'status', flex: 1 },
 
             onSelect && {
                 headerName: '',
                 field: 'actions',
+                width: 100,
+                filter: false,
+                sortable: false,
+                resizable: false,
+                pinned: "right",
+                cellStyle: { textAlign: "center" },
                 cellRenderer: ({ data }: { data: PlantBatch }) => (
                     <ActionButtons
                         row={data}
