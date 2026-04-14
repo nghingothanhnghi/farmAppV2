@@ -113,7 +113,7 @@ export const FormInput: React.FC<FormInputProps> = ({
 
 interface FormSelectProps {
   id: string;
-  name: string;
+  name?: string;
   value: string | number;
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   children: ReactNode;
