@@ -11,6 +11,7 @@ import { useHydroSystem } from '../../hooks/useHydroSystem';
 import type { SystemStatusPerDevice } from '../../models/interfaces/HydroSystem';
 
 // Import dashboard components
+import StageTimeline from '../common/StageTimeline';
 import CameraByLocation from './components/CameraByLocation';
 import LocationPanel from './components/LocationPanel';
 import StatusCard from './components/StatusCard';
@@ -36,9 +37,9 @@ const HydroponicSystemPage: React.FC = () => {
     error,
     actions
   } = useHydroSystem();
-  
+
   const navigate = useNavigate();
- 
+
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
 
@@ -230,6 +231,15 @@ const HydroponicSystemPage: React.FC = () => {
                     : "No device data available."
                 }
               />
+              {currentDevice?.growing_batch && (
+                <StageTimeline
+                  stages={currentDevice.growing_batch.stages}
+                  daysGrowing={currentDevice.growing_batch.days_growing}
+                  currentStageId={currentDevice.growing_batch.current_stage_id}
+                  showCountdown={true}
+                  className='bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] px-4 py-2'
+                />
+              )}
               {/* Control Panel */}
               <MultiActuatorControlPanel
                 systemStatus={currentDevice}

@@ -1,13 +1,13 @@
 import React from 'react';
-import type { ReactNode } from 'react';
 import type { HydroActuator } from '../../../models/interfaces/HydroSystem';
 import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconBulb, IconDroplet, IconWindmill, IconRipple, IconEngine, IconClock } from '@tabler/icons-react';
+import { IconClock } from '@tabler/icons-react';
 import ScheduleForm from './ScheduleForm';
 import { useSchedule } from '../../../hooks/useSchedule';
+import { getActuatorIcon } from '../../../utils/actuator';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
@@ -16,40 +16,6 @@ interface ActuatorCardProps {
     onToggle?: (id: number, active: boolean) => void;
     onControl?: (id: number, turnOn: boolean) => void;
 }
-
-const getActuatorIcon = (type: string): ReactNode => {
-    switch (type.toLowerCase()) {
-        case 'pump':
-            return <IconRipple size={16} className="text-blue-600" />;
-        case 'water_pump':
-            return <IconDroplet size={16} className="text-blue-500" />;
-        case 'light':
-            return <IconBulb size={16} className="text-yellow-500" />;
-        case 'fan':
-            return <IconWindmill size={16} className="text-cyan-500" />;
-        case 'valve':
-            return <IconEngine size={16} className="text-green-500" />;
-        default:
-            return '⚙️';
-    }
-};
-
-const getActuatorColor = (type: string): { bg: string; hover: string } => {
-    switch (type.toLowerCase()) {
-        case 'pump':
-            return { bg: 'bg-indigo-600', hover: 'hover:bg-indigo-700' };
-        case 'water_pump':
-            return { bg: 'bg-sky-500', hover: 'hover:bg-sky-600' };
-        case 'light':
-            return { bg: 'bg-yellow-500', hover: 'hover:bg-yellow-600' };
-        case 'fan':
-            return { bg: 'bg-cyan-500', hover: 'hover:bg-cyan-600' };
-        case 'valve':
-            return { bg: 'bg-green-500', hover: 'hover:bg-green-600' };
-        default:
-            return { bg: 'bg-gray-500', hover: 'hover:bg-gray-600' };
-    }
-};
 
 const ActuatorCard: React.FC<ActuatorCardProps> = ({
     actuator,
@@ -60,7 +26,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 }) => {
 
     const isActive = actuator.current_state; // real-time ON/OFF state
-    const colors = getActuatorColor(actuator.type);
+
+    const { Icon, color, bg, hover } = getActuatorIcon(actuator.type);
+
+    // const colors = getActuatorColor(actuator.type);
 
     console.log('Rendering ActuatorCard State:', {
         variant,
@@ -78,7 +47,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
         <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
             <div className='flex items-center justify-between mb-1'>
                 <div className="flex items-center space-x-2">
-                    <span className="text-lg">{getActuatorIcon(actuator.type)}</span>
+                    <span className="text-lg"><Icon size={18} className={color} /></span>
                     <div className='flex-1'>
                         <div className="flex items-center space-x-2">
                             <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
@@ -112,7 +81,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 disabled={loading || isActive || !actuator.is_active}
                                 className={`flex-1 ${isActive || !actuator.is_active
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : `${colors.bg} ${colors.hover} text-white`
+                                    : `${bg} ${hover} text-white`
                                     }`}
                                 size="xs"
                                 variant="secondary"

@@ -69,83 +69,87 @@ const BatchForm: React.FC<Props> = ({
 
     return (
         <>
+            <Form onSubmit={onSubmit} className="space-y-10 mx-auto max-w-4xl">
+                <div className="space-y-5">
+                    <FormGroup className="space-y-1">
+                        <FormLabel htmlFor="plant_id">Cây trồng</FormLabel>
+                        <div className="flex items-center gap-4">
+                            <FormSelect
+                                id="plant_id"
+                                name="plant_id"
+                                value={formData.plant_id || ""}
+                                onChange={onChange}
+                                disabled={plantLoading}
+                                className="min-w-0 flex-1"
+                            >
+                                <option value="">Chọn cây trồng</option>
 
-            <Form onSubmit={onSubmit} className="max-w-xl mx-auto space-y-5">
-                <FormGroup className="space-y-1">
-                    <FormLabel htmlFor="plant_id">Plant ID</FormLabel>
-                    <div className="flex items-center gap-4">
+                                {localPlants.map((plant) => (
+                                    <option key={plant.id} value={plant.id}>
+                                        {plant.name}
+                                    </option>
+                                ))}
+                            </FormSelect>
+                            <Button
+                                variant="secondary"
+                                icon={<IconPlus size={18} />}
+                                iconOnly
+                                rounded='full'
+                                label="Add plant"
+                                className='bg-transparent'
+                                onClick={() => setOpenPlantModal(true)}
+                            />
+                        </div>
+
+                        {plantLoading && <p>Đang tải cây trồng...</p>}
+                        {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
+                    </FormGroup>
+
+                    <FormGroup className="space-y-1">
+                        <FormLabel htmlFor="zone_id">Thiết bị/Khu vực</FormLabel>
                         <FormSelect
-                            id="plant_id"
-                            name="plant_id"
-                            value={formData.plant_id || ""}
+                            id="zone_id"
+                            name="zone_id"
+                            value={formData.zone_id || ""}
                             onChange={onChange}
-                            disabled={plantLoading}
-                            className="min-w-0 flex-1"
                         >
-                            <option value="">Select plant</option>
-
-                            {localPlants.map((plant) => (
-                                <option key={plant.id} value={plant.id}>
-                                    {plant.name}
+                            <option value="">Chọn thiết bị</option>
+                            {devices.map((device) => (
+                                <option key={device.id} value={device.id}>
+                                    {device.device_id} - {device.location || "Không có vị trí"} {device.is_active ? "🟢 Online" : "🔴 Offline"}
                                 </option>
                             ))}
                         </FormSelect>
+
+                        {deviceLoading && <p>Đang tải thiết bị...</p>}
+                        {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
+                    </FormGroup>
+
+                    <FormGroup className="space-y-1">
+                        <FormLabel htmlFor="start_date">Ngày bắt đầu</FormLabel>
+                        <FormInput
+                            type="date"
+                            id="start_date"
+                            name="start_date"
+                            value={formData.start_date || ''}
+                            onChange={onChange}
+                        />
+                        {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
+                    </FormGroup>
+                    <div className="flex justify-end">
                         <Button
+                            label={
+                                isEditingRecipe
+                                    ? "✏️ Chỉnh sửa giai đoạn & tự động hóa"
+                                    : "⚙️ Create Stage & Automation"
+                            }
                             variant="secondary"
-                            icon={<IconPlus size={18} />}
-                            iconOnly
-                            rounded='full'
-                            label="Add plant"
-                            className='bg-transparent'
-                            onClick={() => setOpenPlantModal(true)}
+                            rounded="lg"
+                            onClick={() => setOpenWizard(true)}
+                            disabled={!isEdit} // 👉 only allow when batch is created (edit mode)
                         />
                     </div>
-
-                    {plantLoading && <p>Loading plants...</p>}
-                    {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
-                </FormGroup>
-
-                <FormGroup className="space-y-1">
-                    <FormLabel htmlFor="zone_id">Zone ID</FormLabel>
-                    <FormSelect
-                        id="zone_id"
-                        name="zone_id"
-                        value={formData.zone_id || ""}
-                        onChange={onChange}
-                    >
-                        <option value="">Chọn thiết bị</option>
-                        {devices.map((device) => (
-                            <option key={device.id} value={device.id}>
-                                {device.device_id} - {device.location || "Không có vị trí"} {device.is_active ? "🟢 Online" : "🔴 Offline"}
-                            </option>
-                        ))}
-                    </FormSelect>
-
-                    {deviceLoading && <p>Đang tải thiết bị...</p>}
-                    {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
-                </FormGroup>
-
-                <FormGroup className="space-y-1">
-                    <FormLabel htmlFor="start_date">Start Date</FormLabel>
-                    <FormInput
-                        type="date"
-                        id="start_date"
-                        name="start_date"
-                        value={formData.start_date || ''}
-                        onChange={onChange}
-                    />
-                    {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
-                </FormGroup>
-                <Button
-                    label={
-                        isEditingRecipe
-                            ? "✏️ Edit Stage & Automation"
-                            : "⚙️ Create Stage & Automation"
-                    }
-                    variant="secondary"
-                    onClick={() => setOpenWizard(true)}
-                    disabled={!isEdit} // 👉 only allow when batch is created (edit mode)
-                />
+                </div>
                 <FormActions className="flex justify-end gap-4 mt-6">
                     <Button
                         type="submit"

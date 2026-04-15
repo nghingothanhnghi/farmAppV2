@@ -114,6 +114,7 @@ const Modal: React.FC<ModalProps> = ({
                 )}
                 {showCloseButton && (
                   <Button
+                    variant="secondary"
                     icon={<IconX size={18} />}
                     iconOnly
                     label="Close"

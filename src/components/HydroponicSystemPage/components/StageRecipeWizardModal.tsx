@@ -5,6 +5,7 @@ import { useAlert } from "../../../contexts/alertContext";
 import { useHydroActuators } from "../../../hooks/useHydroActuators";
 import { stageSchema, recipeSchema } from "../../../validation/growthStageValidation";
 import { IconPlus, IconSettings, IconTrash } from '@tabler/icons-react';
+import { getActuatorIcon } from "../../../utils/actuator";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import Form, {
@@ -57,8 +58,6 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   } = useGrowthStages();
 
   const [step, setStep] = useState(0);
-
-
 
   const [stages, setStages] = useState<StageWithRecipes[]>([
     {
@@ -475,51 +474,54 @@ const StageRecipeWizardModal: React.FC<Props> = ({
             Stage: {currentStage.name || `Stage ${activeStageIndex + 1}`}
           </span>
           <div className="grid grid-cols-7 md:grid-cols-3 gap-2 mb-4 mt-3">
-            {actuators.map((a) => (
-              <Button
-                key={a.id}
-                label={`➕ Add ${a.name}`}
-                variant="secondary"
-                size="xs"
-                className='w-30 h-10'
-                onClick={() => {
-                  if (a.type === "light") {
-                    addRecipe({
-                      actuator_type: a.type,
-                      action: "on",
-                      start_time: "06:00:00",
-                      end_time: "18:00:00",
-                    });
-                  } else if (a.type === "pump" || a.type === "water_pump") {
-                    addRecipe({
-                      actuator_type: a.type,
-                      action: "interval",
-                      interval_on_min: 5,
-                      interval_off_min: 10,
-                    });
-                  } else if (a.type === "fan") {
-                    addRecipe({
-                      actuator_type: a.type,
-                      action: "on",
-                      start_time: "08:00:00",
-                      end_time: "20:00:00",
-                    });
-                  } else {
-                    addRecipe({
-                      actuator_type: a.type,
-                      action: "on",
-                    });
-                  }
-                }}
-              />
-            ))}
+            {actuators.map((a) => {
+              const { Icon, color } = getActuatorIcon(a.type);
+
+              return (
+                <Button
+                  key={a.id}
+                  label={`${a.name}`}
+                  iconPosition="left"
+                  icon={<Icon size={16} className={color} />}
+                  variant="secondary"
+                  size="xs"
+                  rounded="full"
+                  className="w-30 h-10"
+                  onClick={() => {
+                    if (a.type === "light") {
+                      addRecipe({
+                        actuator_type: a.type,
+                        action: "on",
+                        start_time: "06:00:00",
+                        end_time: "18:00:00",
+                      });
+                    } else if (a.type === "pump" || a.type === "water_pump") {
+                      addRecipe({
+                        actuator_type: a.type,
+                        action: "interval",
+                        interval_on_min: 5,
+                        interval_off_min: 10,
+                      });
+                    } else if (a.type === "fan") {
+                      addRecipe({
+                        actuator_type: a.type,
+                        action: "on",
+                        start_time: "08:00:00",
+                        end_time: "20:00:00",
+                      });
+                    } else {
+                      addRecipe({
+                        actuator_type: a.type,
+                        action: "on",
+                      });
+                    }
+                  }}
+                />
+              );
+            })}
+
           </div>
 
-          {/* {currentStage.recipes.map((r, i) => (
-            <div key={i} className="border p-3 rounded">
-              {r.actuator_type} - {r.action}
-            </div>
-          ))} */}
           {currentStage.recipes.map((r, i) => (
             <RecipeForm
               key={i}
@@ -549,7 +551,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       component: (
         <div className="space-y-3 px-6">
           {stages.map((s, i) => (
-            <div key={i} className="border p-3 rounded">
+            <div key={i} className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
               <b>{s.name}</b>
               <div>Day {s.day_start} → {s.day_end}</div>
 

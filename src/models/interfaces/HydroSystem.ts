@@ -1,5 +1,7 @@
 // src/models/interfaces/HydroSystem.ts
 
+import type { GrowthStage } from "./GrowthStage";
+
 // actuators as sensors: pump, light, fan, water_pump, valve
 export interface HydroActuator {
   id: number;
@@ -78,6 +80,16 @@ export interface SystemStatusPerDevice {
   location: string;
   sensors: Omit<SensorReading, 'id' | 'created_at'> & { device_id: number; device_name: string };
   actuators: HydroActuator[];
+  growing_batch?: {
+    id: number;
+    plant_name: string;
+    start_date: string;
+    days_growing: number;
+    current_stage: string;
+    current_stage_id?: number;
+    stages: GrowthStage[];
+    status: string;
+  };
   system: SchedulerState;
   automation: AutomationConfig;
 }
