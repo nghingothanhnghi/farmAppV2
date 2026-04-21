@@ -37,11 +37,18 @@ const DeviceForm: React.FC<Props> = ({
     const { actions } = useHydroSystem();
     const [actuators, setActuators] = useState<HydroActuator[]>([]);
 
+
+    const loadActuators = React.useCallback(async () => {
+        if (!formData.id) return;
+        const data = await actions.fetchActuatorsByDevice(formData.id);
+        setActuators(data);
+    }, [formData.id]);
+
     useEffect(() => {
         if (isEdit && formData.id) {
-            actions.fetchActuatorsByDevice(formData.id).then(setActuators);
+            loadActuators();
         }
-    }, [isEdit, formData.id]);
+    }, [isEdit, formData.id, loadActuators]);
     return (
         <Form onSubmit={onSubmit} className="mx-auto max-w-4xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -76,7 +83,6 @@ const DeviceForm: React.FC<Props> = ({
                     <div className='p-4'>
                         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Linked Actuators</h3>
                     </div>
-
                     {actuators.length > 0 ? (
                         <div className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
                             {actuators.map((actuator) => (
@@ -84,14 +90,9 @@ const DeviceForm: React.FC<Props> = ({
                                     key={actuator.id}
                                     actuator={actuator}
                                     variant="linked"
+                                    onUpdated={loadActuators}
                                     onToggle={(id, active) => {
-                                        actions.patchActuator(id, { is_active: active }).then(() => {
-                                            setActuators((prev) =>
-                                                prev.map((a) =>
-                                                    a.id === id ? { ...a, is_active: active } : a
-                                                )
-                                            );
-                                        });
+                                        actions.patchActuator(id, { is_active: active }).then(loadActuators);
                                     }}
                                 />
                             ))}

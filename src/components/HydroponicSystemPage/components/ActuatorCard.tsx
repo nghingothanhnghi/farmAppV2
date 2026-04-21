@@ -18,6 +18,7 @@ interface ActuatorCardProps {
     variant?: "control" | "linked"; // control = buttons, linked = toggle
     onToggle?: (id: number, active: boolean) => void;
     onControl?: (id: number, turnOn: boolean) => void;
+    onUpdated?: () => void; // callback to parent after actuator is updated
 }
 
 const ActuatorCard: React.FC<ActuatorCardProps> = ({
@@ -26,13 +27,12 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     variant = "control",
     onToggle,
     onControl,
+    onUpdated,
 }) => {
 
     const isActive = actuator.current_state; // real-time ON/OFF state
 
     const { Icon, color, bg, hover } = getActuatorIcon(actuator.type);
-
-    // const colors = getActuatorColor(actuator.type);
 
     console.log('Rendering ActuatorCard State:', {
         variant,
@@ -70,13 +70,13 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                     </span>
                                 </span>
                             </div>
-                            {!actuator.is_active && (
-                                <Badge label='Interrupted' variant='warning' size='xsmall' />
-                            )}
                         </div>
                         <p className="text-[0.625rem] text-gray-500">
                             {actuator.type} • Pin {actuator.pin} • Port {actuator.port}
                         </p>
+                        {!actuator.is_active && (
+                            <Badge label='Interrupted' variant='warning' size='xsmall' />
+                        )}
                     </div>
                 </div>
                 <div className='flex flex-1 justify-end items-center space-x-2'>
@@ -175,9 +175,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 actuator={actuator}
                 onSubmit={async (id, data) => {
                     await actions.patchActuator(id, data);
-
-                    // optional but recommended for instant refresh
-                    await actions.refreshData();
+                    await onUpdated?.(); // 👈 REFRESH LIST
                 }}
             />
         </div>

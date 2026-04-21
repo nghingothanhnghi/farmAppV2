@@ -117,28 +117,29 @@ const ActuatorModalConfig: React.FC<Props> = ({
                         </FormSelect>
                         {errors.type && <p className="text-red-500 text-xs">{errors.type}</p>}
                     </FormGroup>
-                    <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="pin">Pin</FormLabel>
-                        <FormInput
-                            id="pin"
-                            type="text"
-                            value={form.pin || ""}
-                            onChange={(e) => handleChange("pin", e.target.value)}
-                            placeholder="Pin (e.g. GPIO23)"
-                        />
-                    </FormGroup>
-
-                    <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="port">Port</FormLabel>
-                        <FormInput
-                            id="port"
-                            type="number"
-                            value={form.port || 0}
-                            onChange={(e) => handleChange("port", Number(e.target.value))}
-                            placeholder="Port"
-                        />
-                        {errors.port && <p className="text-red-500 text-xs">{errors.port}</p>}
-                    </FormGroup>
+                    <div className="flex gap-4">
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="pin">Pin</FormLabel>
+                            <FormInput
+                                id="pin"
+                                type="text"
+                                value={form.pin || ""}
+                                onChange={(e) => handleChange("pin", e.target.value)}
+                                placeholder="Pin (e.g. GPIO23)"
+                            />
+                        </FormGroup>
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="port">Port</FormLabel>
+                            <FormInput
+                                id="port"
+                                type="number"
+                                value={form.port || 0}
+                                onChange={(e) => handleChange("port", Number(e.target.value))}
+                                placeholder="Port"
+                            />
+                            {errors.port && <p className="text-red-500 text-xs">{errors.port}</p>}
+                        </FormGroup>
+                    </div>
                     <FormGroup className="space-y-1">
                         <FormLabel htmlFor="sensor_key">Sensor Key</FormLabel>
                         <FormInput
