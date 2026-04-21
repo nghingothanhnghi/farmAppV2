@@ -2,11 +2,10 @@
 import React, { useEffect } from 'react';
 import { useAuth } from '../../contexts/authContext';
 import { IconShieldCancel } from '@tabler/icons-react';
-import LoginModal from '../Auth/LoginModal';
 import LinearProgress from './LinearProgress';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, loading, showLoginModal, setShowLoginModal, roles } = useAuth();
+  const { isAuthenticated, loading, setShowLoginModal, roles } = useAuth();
 
   console.log("My role:", roles);
 
@@ -28,10 +27,6 @@ const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => 
   if (!isAuthenticated) {
     return (
       <>
-        <LoginModal
-          isOpen={showLoginModal}
-          onClose={() => setShowLoginModal(false)}
-        />
         <div className="text-center mt-20 text-gray-500">
           <IconShieldCancel stroke={1.5} size={64} className='mx-auto mb-3' />
           You must log in to access this page.

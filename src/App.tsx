@@ -6,6 +6,8 @@ import MainLayout from './components/layout/MainLayout';
 import './App.css';
 import PrivateRoute from "./components/common/PrivateRoute";
 import LinearProgress from "./components/common/LinearProgress";
+import { useAuth } from "./contexts/authContext";
+import LoginModal from "./components/Auth/LoginModal";
 
 // Lazy-loaded pages
 const LandingPage = lazy(() => import("./components/LandingPage/LandingPage"));
@@ -47,148 +49,157 @@ const MigrationWizardPage = lazy(() => import("./components/Migration").then(m =
 const ProductManagementPage = lazy(() => import("./components/Product").then(m => ({ default: m.ProductManagementPage })));
 
 function App() {
+  const { showLoginModal, setShowLoginModal } = useAuth();
   return (
-    <Suspense fallback={
-      <LinearProgress
-        position="absolute" // or 'fixed' if you want it on top of screen
-        thickness="h-1"
-        duration={3000} // adjust as needed
+    <>
+      <Suspense fallback={
+        <LinearProgress
+          position="absolute" // or 'fixed' if you want it on top of screen
+          thickness="h-1"
+          duration={3000} // adjust as needed
+        />
+      }>
+        <Routes>
+          {/* Public auth pages (LandingLayout) */}
+          <Route element={<LandingLayout />}>
+            <Route path="" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/sign-up" element={<SignUpPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
+          </Route>
+
+
+          {/* Public pages (PageLayout) */}
+          <Route element={<PageLayout />}>
+            <Route path="/wishlist" element={<WishlistPage />} />
+            <Route path="/products/:id" element={<ProductDetailPage />} />
+          </Route>
+
+          {/* Dashboard / Admin routes (MainLayout) */}
+          <Route element={<MainLayout />}>
+            <Route
+              path="/devices-controller"
+              element={
+                <PrivateRoute>
+                  <DevicePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/users"
+              element={
+                <PrivateRoute>
+                  <UserManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/users/:id/edit"
+              element={
+                <PrivateRoute>
+                  <EditUserPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/assignment-role"
+              element={
+                <PrivateRoute>
+                  <RoleAssignmentForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/products"
+              element={
+                <PrivateRoute>
+                  <ProductManagementPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/payments"
+              element={
+                <PrivateRoute>
+                  <PaymentManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/jackpot"
+              element={
+                <PrivateRoute>
+                  <JackpotPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/jackpot/create"
+              element={
+                <PrivateRoute>
+                  <CreateDrawPage />
+                </PrivateRoute>
+              }
+            />
+
+            {/* Other dashboard features */}
+            <Route path="/migrate" element={<MigrationPage />} />
+            <Route path="/add-transform-data" element={<MigrationWizardPage />} />
+            <Route path="/ar-detection" element={<ARDetectionPage />} />
+            <Route path="/model-training" element={<ModelTrainingPage />} />
+            <Route
+              path="/hydroponic-system"
+              element={
+                <PrivateRoute>
+                  <HydroponicSystemPage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/hydro-devices" element={<HydroponicDevicePage />} />
+            <Route path="/hydro-devices/new-device" element={<HydroponicDevicePage />} />
+            <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
+
+            <Route
+              path="/batches"
+              element={
+                <PrivateRoute>
+                  <PlantBatchPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/batches/new"
+              element={
+                <PrivateRoute>
+                  <PlantBatchPage />
+                </PrivateRoute>
+              }
+            />
+
+            <Route
+              path="/batches/:id"
+              element={
+                <PrivateRoute>
+                  <PlantBatchPage />
+                </PrivateRoute>
+              }
+            />
+            <Route path="/scheduler-health" element={<SchedulerPage />} />
+          </Route>
+
+          {/* Catch-all fallback */}
+          <Route path="*" element={<Outlet />} />
+        </Routes>
+      </Suspense>
+
+      {/* 🔥 GLOBAL LOGIN MODAL */}
+      <LoginModal
+        isOpen={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
       />
-    }>
-      <Routes>
-        {/* Public auth pages (LandingLayout) */}
-        <Route element={<LandingLayout />}>
-          <Route path="" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/reset-password" element={<ResetPasswordPage />} />
-        </Route>
-
-
-        {/* Public pages (PageLayout) */}
-        <Route element={<PageLayout />}>
-          <Route path="/wishlist" element={<WishlistPage />} />
-          <Route path="/products/:id" element={<ProductDetailPage />} />
-        </Route>
-
-        {/* Dashboard / Admin routes (MainLayout) */}
-        <Route element={<MainLayout />}>
-          <Route
-            path="/devices-controller"
-            element={
-              <PrivateRoute>
-                <DevicePage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/users"
-            element={
-              <PrivateRoute>
-                <UserManagementPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/users/:id/edit"
-            element={
-              <PrivateRoute>
-                <EditUserPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/assignment-role"
-            element={
-              <PrivateRoute>
-                <RoleAssignmentForm />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/dashboard/products"
-            element={
-              <PrivateRoute>
-                <ProductManagementPage />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/payments"
-            element={
-              <PrivateRoute>
-                <PaymentManagementPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/jackpot"
-            element={
-              <PrivateRoute>
-                <JackpotPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/jackpot/create"
-            element={
-              <PrivateRoute>
-                <CreateDrawPage />
-              </PrivateRoute>
-            }
-          />
-
-          {/* Other dashboard features */}
-          <Route path="/migrate" element={<MigrationPage />} />
-          <Route path="/add-transform-data" element={<MigrationWizardPage />} />
-          <Route path="/ar-detection" element={<ARDetectionPage />} />
-          <Route path="/model-training" element={<ModelTrainingPage />} />
-          <Route
-            path="/hydroponic-system"
-            element={
-              <PrivateRoute>
-                <HydroponicSystemPage />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/hydro-devices" element={<HydroponicDevicePage />} />
-          <Route path="/hydro-devices/new-device" element={<HydroponicDevicePage />} />
-          <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
-
-          <Route
-            path="/batches"
-            element={
-              <PrivateRoute>
-                <PlantBatchPage />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/batches/new"
-            element={
-              <PrivateRoute>
-                <PlantBatchPage />
-              </PrivateRoute>
-            }
-          />
-
-          <Route
-            path="/batches/:id"
-            element={
-              <PrivateRoute>
-                <PlantBatchPage />
-              </PrivateRoute>
-            }
-          />
-          <Route path="/scheduler-health" element={<SchedulerPage />} />
-        </Route>
-
-        {/* Catch-all fallback */}
-        <Route path="*" element={<Outlet />} />
-      </Routes>
-    </Suspense>
+    </>
   );
 }
 

@@ -38,7 +38,8 @@
         "continue_shopping": "Continue Shopping",
         "quick_view": "Quick View",
         "learn_more": "Learn More",
-        "go_to_cart": "Go to cart"
+        "go_to_cart": "Go to cart",
+        "edit_profile": "Edit Profile"
     },
     "badge_status":{
         "inStock": "In Stock",

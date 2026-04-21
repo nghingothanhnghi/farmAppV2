@@ -38,7 +38,8 @@
         "continue_shopping": "Đi đến cửa hàng",
         "quick_view": "Xem nhanh",
         "learn_more": "Xem thêm",
-        "go_to_cart": "Đi đến giỏ hàng?"
+        "go_to_cart": "Đi đến giỏ hàng?",
+        "edit_profile": "Chỉnh sửa tài khoản"
     },
     "badge_status":{
         "inStock": "Còn hàng",

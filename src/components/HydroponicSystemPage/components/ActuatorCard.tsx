@@ -4,10 +4,13 @@ import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconClock } from '@tabler/icons-react';
+import { IconClock, IconEdit } from '@tabler/icons-react';
 import ScheduleForm from './ScheduleForm';
 import { useSchedule } from '../../../hooks/useSchedule';
+import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { getActuatorIcon } from '../../../utils/actuator';
+
+import ActuatorModalConfig from './ActuatorModalConfig';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
@@ -37,6 +40,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
         is_active: actuator.is_active,
         isActive
     });
+
+    const { actions } = useHydroSystem();
+
+    const [openEdit, setOpenEdit] = React.useState(false);
 
     const [openSchedule, setOpenSchedule] = React.useState(false);
     const [mode, setMode] = React.useState<"create" | "edit">("create");
@@ -128,6 +135,15 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         rounded='full'
                         size='sm'
                     />
+                    <Button
+                        variant="secondary"
+                        icon={<IconEdit size={16} />}
+                        iconOnly
+                        className="bg-transparent"
+                        onClick={() => setOpenEdit(true)}
+                        rounded="full"
+                        size="sm"
+                    />
                 </div>
 
             </div>
@@ -151,6 +167,18 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 scheduleId={selectedSchedule?.id}
                 onSubmit={scheduleActions.createSchedule}
                 onUpdate={scheduleActions.updateSchedule}
+            />
+
+            <ActuatorModalConfig
+                isOpen={openEdit}
+                onClose={() => setOpenEdit(false)}
+                actuator={actuator}
+                onSubmit={async (id, data) => {
+                    await actions.patchActuator(id, data);
+
+                    // optional but recommended for instant refresh
+                    await actions.refreshData();
+                }}
             />
         </div>
     );

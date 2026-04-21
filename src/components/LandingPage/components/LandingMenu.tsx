@@ -148,48 +148,56 @@ const LandingMenu: React.FC = () => {
                                 {isAuthenticated && user ? (
                                     <DropdownButton
                                         className="bg-transparent"
+                                        iconOnly={true}
+                                        showArrow={false}
                                         label={
                                             <>
                                                 <Avatar
                                                     imageUrl={user.image_url}
-                                                    size={32}
+                                                    size={24}
                                                     rounded="full"
-                                                    className="mr-2"
                                                 />
-                                                <div className="w-24 overflow-hidden">
+                                                {/* <div className="w-24 overflow-hidden">
                                                     <span className="font-medium block truncate text-sm">
                                                         {user.username}
                                                     </span>
                                                     <span className="block truncate text-xs text-zinc-500">
                                                         {user.email}
                                                     </span>
-                                                </div>
+                                                </div> */}
                                             </>
                                         }
                                         items={[
-                                            { label: t('profile.edit'), value: 'edit-profile' },
-                                            { label: t('auth.logout'), value: 'logout' },
+                                            { label: t('btn.'), value: 'hydroponic-system' },
+                                            { label: t('btn.edit_profile'), value: 'edit-profile' },
+                                            { label: t('btn.logout'), value: 'logout' },
                                         ]}
                                         onSelect={(item) => {
-                                            if (item.value === 'logout') logout();
-                                            if (item.value === 'edit-profile')
-                                                navigate(`/users/${user.id}/edit`);
+                                            switch (item.value) {
+                                                case 'logout':
+                                                    logout();
+                                                    break;
+
+                                                case 'edit-profile':
+                                                    navigate(`/users/${user.id}/edit`);
+                                                    break;
+
+                                                case 'hydroponic-system':
+                                                    navigate('/hydroponic-system');
+                                                    break;
+                                            }
                                         }}
                                     />
                                 ) : (
                                     <Button
                                         type="button"
-                                        label={t('auth.login')}
+                                        label={t('btn.login')}
                                         onClick={() => setShowLoginModal(true)}
-                                        variant="secondary"
+                                        variant="outline"
                                         rounded='lg'
+                                        size="sm"
                                     />
-
                                 )}
-                                <ListLink
-                                    to="/admin/dashboard"
-                                    label="Dashboard"
-                                />
                             </div>
 
                             {/* Mobile Toggle */}
