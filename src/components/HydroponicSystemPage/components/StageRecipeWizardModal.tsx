@@ -116,6 +116,9 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       }));
 
       setStages(mapped);
+      if (activeStageIndex >= mapped.length) {
+        setActiveStageIndex(Math.max(0, mapped.length - 1));
+      }
     }
   }, [fetchedStages]);
 
@@ -176,6 +179,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
       if (step === 1) {
         const s = stages[activeStageIndex];
+        if (!s) return;
 
         await recipeSchema
           .validate(s.recipes, { abortEarly: false })
@@ -470,77 +474,84 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       hideNav: true,
       component: (
         <div className="space-y-4 px-6">
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-100">
-            Stage: {currentStage.name || `Stage ${activeStageIndex + 1}`}
-          </span>
-          <div className="grid grid-cols-7 md:grid-cols-3 gap-2 mb-4 mt-3">
-            {actuators.map((a) => {
-              const { Icon, color } = getActuatorIcon(a.type);
+          {!currentStage ? (
+            <div className="flex items-center justify-center p-8">
+              <span className="text-gray-500">Loading stage...</span>
+            </div>
+          ) : (
+            <>
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-100">
+                Stage: {currentStage.name || `Stage ${activeStageIndex + 1}`}
+              </span>
+              <div className="grid grid-cols-7 md:grid-cols-3 gap-2 mb-4 mt-3">
+                {actuators.map((a) => {
+                  const { Icon, color } = getActuatorIcon(a.type);
 
-              return (
-                <Button
-                  key={a.id}
-                  label={`${a.name}`}
-                  iconPosition="left"
-                  icon={<Icon size={16} className={color} />}
-                  variant="secondary"
-                  size="xs"
-                  rounded="full"
-                  className="w-30 h-10"
-                  onClick={() => {
-                    if (a.type === "light") {
-                      addRecipe({
-                        actuator_type: a.type,
-                        action: "on",
-                        start_time: "06:00:00",
-                        end_time: "18:00:00",
-                      });
-                    } else if (a.type === "pump" || a.type === "water_pump") {
-                      addRecipe({
-                        actuator_type: a.type,
-                        action: "interval",
-                        interval_on_min: 5,
-                        interval_off_min: 10,
-                      });
-                    } else if (a.type === "fan") {
-                      addRecipe({
-                        actuator_type: a.type,
-                        action: "on",
-                        start_time: "08:00:00",
-                        end_time: "20:00:00",
-                      });
-                    } else {
-                      addRecipe({
-                        actuator_type: a.type,
-                        action: "on",
-                      });
-                    }
-                  }}
+                  return (
+                    <Button
+                      key={a.id}
+                      label={`${a.name}`}
+                      iconPosition="left"
+                      icon={<Icon size={16} className={color} />}
+                      variant="secondary"
+                      size="xs"
+                      rounded="full"
+                      className="w-30 h-10"
+                      onClick={() => {
+                        if (a.type === "light") {
+                          addRecipe({
+                            actuator_type: a.type,
+                            action: "on",
+                            start_time: "06:00:00",
+                            end_time: "18:00:00",
+                          });
+                        } else if (a.type === "pump" || a.type === "water_pump") {
+                          addRecipe({
+                            actuator_type: a.type,
+                            action: "interval",
+                            interval_on_min: 5,
+                            interval_off_min: 10,
+                          });
+                        } else if (a.type === "fan") {
+                          addRecipe({
+                            actuator_type: a.type,
+                            action: "on",
+                            start_time: "08:00:00",
+                            end_time: "20:00:00",
+                          });
+                        } else {
+                          addRecipe({
+                            actuator_type: a.type,
+                            action: "on",
+                          });
+                        }
+                      }}
+                    />
+                  );
+                })}
+
+              </div>
+
+              {currentStage.recipes.map((r, i) => (
+                <RecipeForm
+                  key={i}
+                  recipe={r}
+                  onChange={(data) =>
+                    handleUpdateRecipe(activeStageIndex, i, data)
+                  }
+                  onRemove={() =>
+                    removeRecipe(activeStageIndex, i)
+                  }
                 />
-              );
-            })}
+              ))}
 
-          </div>
-
-          {currentStage.recipes.map((r, i) => (
-            <RecipeForm
-              key={i}
-              recipe={r}
-              onChange={(data) =>
-                handleUpdateRecipe(activeStageIndex, i, data)
-              }
-              onRemove={() =>
-                removeRecipe(activeStageIndex, i)
-              }
-            />
-          ))}
-
-          {fieldErrors[activeStageIndex]?.recipes && (
-            <p className="text-red-500 text-xs">
-              {fieldErrors[activeStageIndex].recipes}
-            </p>
+              {fieldErrors[activeStageIndex]?.recipes && (
+                <p className="text-red-500 text-xs">
+                  {fieldErrors[activeStageIndex].recipes}
+                </p>
+              )}
+            </>
           )}
-
         </div>
       )
     },
