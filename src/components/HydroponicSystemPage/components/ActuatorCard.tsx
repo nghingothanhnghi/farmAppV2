@@ -9,6 +9,7 @@ import ScheduleForm from './ScheduleForm';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { getActuatorIcon } from '../../../utils/actuator';
+import { HoverSlideIn } from "../../common/HoverSlideIn";
 
 import ActuatorModalConfig from './ActuatorModalConfig';
 
@@ -50,43 +51,27 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
     const { actions: scheduleActions } = useSchedule();
 
+    const [isHovered, setIsHovered] = React.useState(false);
+
     return (
-        <div className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2">
-            <div className='flex items-center justify-between mb-1'>
-                <div className="flex items-center space-x-2">
-                    <span className="text-lg"><Icon size={18} className={color} /></span>
-                    <div className='flex-1'>
-                        <div className="flex items-center space-x-2">
-                            <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
-                            <div className="flex items-center space-x-1">
-                                <div
-                                    className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-400'}`}
-                                />
-                                <span className="text-[0.625rem] text-gray-600">
-                                    <span
-                                        className={` ${isActive ? 'text-green-600' : 'text-gray-400'}`}
-                                    >
-                                        {isActive ? 'Opened' : 'Off'}
-                                    </span>
-                                </span>
-                            </div>
-                        </div>
-                        <p className="text-[0.625rem] text-gray-500">
-                            {actuator.type} • Pin {actuator.pin} • Port {actuator.port}
-                        </p>
-                        {!actuator.is_active && (
-                            <Badge label='Interrupted' variant='warning' size='xsmall' />
-                        )}
-                    </div>
-                </div>
-                <div className='flex flex-1 justify-end items-center space-x-2'>
+        <div
+            className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 relative overflow-hidden"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+        >
+            <HoverSlideIn
+                isHovered={isHovered}
+                from="right"
+                className="absolute right-2 top-2 z-10"
+            >
+                <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 p-0.5 rounded-full shadow-md">
                     {variant === "control" && onControl && (
                         <ButtonGroup>
                             <Button
                                 label="On"
                                 onClick={() => onControl(actuator.id, true)}
                                 disabled={loading || isActive || !actuator.is_active}
-                                className={`flex-1 ${isActive || !actuator.is_active
+                                className={`ml-1 flex-1 ${isActive || !actuator.is_active
                                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                                     : `${bg} ${hover} text-white`
                                     }`}
@@ -106,7 +91,6 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             />
                         </ButtonGroup>
                     )}
-
                     {variant === "linked" && onToggle && (
                         <FormToggle
                             id={`toggle-${actuator.id}`}
@@ -145,7 +129,34 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         size="sm"
                     />
                 </div>
-
+            </HoverSlideIn>
+            <div className='flex items-center justify-between mb-1'>
+                <div className="flex items-center space-x-2">
+                    <span className="text-lg"><Icon size={18} className={color} /></span>
+                    <div className='flex-1'>
+                        <div className="flex items-center space-x-2">
+                            <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
+                            <div className="flex items-center space-x-1">
+                                <div
+                                    className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-400'}`}
+                                />
+                                <span className="text-[0.625rem] text-gray-600">
+                                    <span
+                                        className={` ${isActive ? 'text-green-600' : 'text-gray-400'}`}
+                                    >
+                                        {isActive ? 'Opened' : 'Off'}
+                                    </span>
+                                </span>
+                            </div>
+                        </div>
+                        <p className="text-[0.625rem] text-gray-500">
+                            {actuator.type} • Pin {actuator.pin} • Port {actuator.port}
+                        </p>
+                        {!actuator.is_active && (
+                            <Badge label='Interrupted' variant='warning' size='xsmall' />
+                        )}
+                    </div>
+                </div>
             </div>
 
             {actuator.sensor_key && (

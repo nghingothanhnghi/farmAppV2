@@ -1,6 +1,10 @@
 // src/validations/actuatorSchema.ts
 import * as Yup from "yup";
 
+import { ESP32_GPIO_PINS } from "../constants/gpio";
+
+const validPinNumbers = ESP32_GPIO_PINS.map(p => p.number);
+
 export const actuatorSchema = Yup.object({
   name: Yup.string()
     .required("Name is required")
@@ -9,10 +13,10 @@ export const actuatorSchema = Yup.object({
   type: Yup.string()
     .required("Type is required"),
 
-  pin: Yup.string()
-    .nullable()
-    .matches(/^GPIO\d+$/, "Format must be GPIOxx (e.g. GPIO23)")
-    .notRequired(),
+  pin: Yup.number()
+    .typeError("Pin must be a number")
+    .required("Pin is required")
+    .oneOf(validPinNumbers, "Invalid GPIO pin"), // 🔥 BEST
 
   port: Yup.number()
     .typeError("Port must be a number")

@@ -6,6 +6,7 @@ import Button from "../../common/Button";
 import type { HydroActuator } from "../../../models/interfaces/HydroSystem";
 import { FormGroup, FormInput, FormLabel, FormSelect, FormToggle } from "../../common/Form";
 import { actuatorSchema } from "../../../validation/actuatorSchema";
+import { ESP32_GPIO_PINS } from "../../../constants/gpio";
 
 interface Props {
     isOpen: boolean;
@@ -66,6 +67,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
             await onSubmit(actuator.id, form);
             onClose();
         } catch (err: any) {
+            console.log("VALIDATION ERROR:", err);
             if (err.inner) {
                 const formatted: Record<string, string> = {};
                 err.inner.forEach((e: any) => {
@@ -120,13 +122,24 @@ const ActuatorModalConfig: React.FC<Props> = ({
                     <div className="flex gap-4">
                         <FormGroup className="space-y-1">
                             <FormLabel htmlFor="pin">Pin</FormLabel>
-                            <FormInput
+                            <FormSelect
                                 id="pin"
-                                type="text"
                                 value={form.pin || ""}
                                 onChange={(e) => handleChange("pin", e.target.value)}
-                                placeholder="Pin (e.g. GPIO23)"
-                            />
+                            >
+                                <option value="">Select GPIO</option>
+
+                                {ESP32_GPIO_PINS.map((pin) => (
+                                    <option key={pin.number} value={`${pin.number}`}>
+                                        {pin.label}
+                                        {pin.warning ? ` ⚠️ ${pin.warning}` : ""}
+                                        {pin.usage ? ` (${pin.usage})` : ""}
+                                    </option>
+                                ))}
+                            </FormSelect>
+                            {errors.pin && (
+                                <p className="text-red-500 text-xs">{errors.pin}</p>
+                            )}
                         </FormGroup>
                         <FormGroup className="space-y-1">
                             <FormLabel htmlFor="port">Port</FormLabel>
