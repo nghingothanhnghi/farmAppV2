@@ -18,7 +18,8 @@ interface ActuatorCardProps {
     loading?: boolean;
     variant?: "control" | "linked"; // control = buttons, linked = toggle
     onToggle?: (id: number, active: boolean) => void;
-    onControl?: (id: number, turnOn: boolean) => void;
+    // onControl?: (id: number, turnOn: boolean) => void;
+    onManualModeChange?: (id: number, state: boolean | null) => void;
     onUpdated?: () => void; // callback to parent after actuator is updated
 }
 
@@ -27,7 +28,8 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     loading = false,
     variant = "control",
     onToggle,
-    onControl,
+    // onControl,
+    onManualModeChange,
     onUpdated,
 }) => {
 
@@ -53,6 +55,15 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
     const [isHovered, setIsHovered] = React.useState(false);
 
+    const manualState = actuator.manual_state ?? null;
+
+    const modeManual =
+        manualState === null
+            ? "AUTO"
+            : manualState
+                ? "MANUAL_ON"
+                : "MANUAL_OFF";
+
     return (
         <div
             className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 relative overflow-hidden"
@@ -65,7 +76,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 className="absolute right-2 top-2 z-10"
             >
                 <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 p-0.5 rounded-full shadow-md">
-                    {variant === "control" && onControl && (
+                    {/* {variant === "control" && onControl && (
                         <ButtonGroup>
                             <Button
                                 label="On"
@@ -90,6 +101,49 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 variant="secondary"
                             />
                         </ButtonGroup>
+                    )} */}
+                    {variant === "control" && onManualModeChange && (
+                        <ButtonGroup>
+                            {/* AUTO */}
+                            <Button
+                                label="Auto"
+                                onClick={() => onManualModeChange?.(actuator.id, null)}
+                                disabled={loading || !actuator.is_active}
+                                className={
+                                    modeManual === "AUTO"
+                                        ? "bg-blue-500 text-white"
+                                        : "bg-gray-200 text-gray-600"
+                                }
+                                size="xs"
+                            />
+
+                            {/* MANUAL ON */}
+                            <Button
+                                label="On"
+                                onClick={() => onManualModeChange?.(actuator.id, true)}
+                                disabled={loading || !actuator.is_active}
+                                className={
+                                    modeManual === "MANUAL_ON"
+                                        ? "bg-green-500 text-white"
+                                        : "bg-gray-200 text-gray-600"
+                                }
+                                size="xs"
+                            />
+
+                            {/* MANUAL OFF */}
+                            <Button
+                                label="Off"
+                                onClick={() => onManualModeChange?.(actuator.id, false)}
+                                disabled={loading || !actuator.is_active}
+                                className={
+                                    modeManual === "MANUAL_OFF"
+                                        ? "bg-red-500 text-white"
+                                        : "bg-gray-200 text-gray-600"
+                                }
+                                size="xs"
+                            />
+                        </ButtonGroup>
+
                     )}
                     {variant === "linked" && onToggle && (
                         <FormToggle
@@ -137,7 +191,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         <div className="flex items-center space-x-2">
                             <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
                             <div className="flex items-center space-x-1">
-                                <div
+                                {/* <div
                                     className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-400'}`}
                                 />
                                 <span className="text-[0.625rem] text-gray-600">
@@ -146,6 +200,21 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                     >
                                         {isActive ? 'Opened' : 'Off'}
                                     </span>
+                                </span> */}
+                                <span
+                                    className={
+                                        modeManual === "AUTO"
+                                            ? "text-blue-500 text-[0.625rem]"
+                                            : modeManual === "MANUAL_ON"
+                                                ? "text-green-600 text-[0.625rem]"
+                                                : "text-red-500 text-[0.625rem]"
+                                    }
+                                >
+                                    {modeManual === "AUTO"
+                                        ? "Auto"
+                                        : modeManual === "MANUAL_ON"
+                                            ? "Manual On"
+                                            : "Manual Off"}
                                 </span>
                             </div>
                         </div>

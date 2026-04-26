@@ -13,6 +13,7 @@ export interface HydroActuator {
   is_active: boolean;
   default_state: boolean;
   current_state: boolean;
+  manual_state: boolean | null; // for manual override mode
   linked_sensor_value?: number | null;
   device_id?: number;
   created_at?: string;

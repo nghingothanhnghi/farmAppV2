@@ -267,14 +267,18 @@ export const useHydroSystem = () => {
     }
   };
 
-  const controlPump = createControlHandler('Pump ON', systemService.turnPumpOn);
-  const controlPumpOff = createControlHandler('Pump OFF', systemService.turnPumpOff);
-  const controlLight = createControlHandler('Light ON', systemService.turnLightOn);
-  const controlLightOff = createControlHandler('Light OFF', systemService.turnLightOff);
+  // NO USING
+  // const controlPump = createControlHandler('Pump ON', systemService.turnPumpOn);
+  // const controlPumpOff = createControlHandler('Pump OFF', systemService.turnPumpOff);
+  // const controlLight = createControlHandler('Light ON', systemService.turnLightOn);
+  // const controlLightOff = createControlHandler('Light OFF', systemService.turnLightOff);
+
+  // Scheduler control handlers
   const startSystemScheduler = createControlHandler('Start Scheduler', systemService.startScheduler);
   const stopSystemScheduler = createControlHandler('Stop Scheduler', systemService.stopScheduler);
   const restartSystemScheduler = createControlHandler('Restart Scheduler', systemService.restartScheduler);
 
+  // Actuator control handler initailly designed for pump/light but can be used for any actuator type
   const controlActuator = useCallback(async (actuatorId: number, turnOn: boolean) => {
     const label = `Actuator ${actuatorId} ${turnOn ? 'ON' : 'OFF'}`;
     try {
@@ -286,6 +290,25 @@ export const useHydroSystem = () => {
       setError('Failed to control actuator');
     }
   }, [fetchSystemStatusPerDevice]);
+
+  const setActuatorManualMode = useCallback(
+  async (actuatorId: number, state: boolean | null) => {
+    const label =
+      state === null
+        ? `Actuator ${actuatorId} AUTO`
+        : `Actuator ${actuatorId} ${state ? "MANUAL ON" : "MANUAL OFF"}`;
+
+    try {
+      await systemService.setActuatorManualMode(actuatorId, state);
+      appendAction(createControlAction(label, true, "Manual mode updated"));
+      await fetchSystemStatusPerDevice();
+    } catch {
+      appendAction(createControlAction(label, false, "Failed to set manual mode"));
+      setError("Failed to set actuator manual mode");
+    }
+  },
+  [fetchSystemStatusPerDevice]
+);
 
   const updateSystemThresholds = useCallback(async (device_id: number, newThresholds: Partial<Thresholds>) => {
     try {
@@ -653,14 +676,15 @@ export const useHydroSystem = () => {
 
     actions: {
       // Original hydro system actions
-      controlPump,
-      controlPumpOff,
-      controlLight,
-      controlLightOff,
+      // controlPump,
+      // controlPumpOff,
+      // controlLight,
+      // controlLightOff,
       startSystemScheduler,
       stopSystemScheduler,
       restartSystemScheduler,
       controlActuator,
+      setActuatorManualMode,
       updateSystemThresholds,
       resolveAlert,
       getDeviceThresholds,

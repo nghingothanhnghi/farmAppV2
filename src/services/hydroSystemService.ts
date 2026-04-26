@@ -107,6 +107,18 @@ export const systemService = {
     return response.data;
   },
 
+  // Manual Mode Control
+async setActuatorManualMode(
+  actuatorId: number,
+  state: boolean | null
+): Promise<{ success: boolean; data: any; message: string }> {
+  const response = await apiClient.post(
+    `/hydro/actuator/${actuatorId}/manual`,
+    { state } // IMPORTANT: must match Body(embed=True)
+  );
+  return response.data;
+},
+
   async getActuatorStatus(actuatorId: number): Promise<{ current_state: boolean }> {
     const response = await apiClient.get<{ current_state: boolean }>(
       `/hydro/actuator/${actuatorId}/status`

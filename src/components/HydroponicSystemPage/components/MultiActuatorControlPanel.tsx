@@ -10,22 +10,34 @@ import { getActuatorIcon } from '../../../utils/actuator';
 interface MultiActuatorControlPanelProps {
   systemStatus: SystemStatusPerDevice | null;
   onActuatorControl: (actuatorId: number, turnOn: boolean) => void;
+  onManualModeChange: (actuatorId: number, state: boolean | null) => void;
   loading?: boolean;
 }
 
 const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
   systemStatus,
-  onActuatorControl,
+  // onActuatorControl,
+  onManualModeChange,
   loading = false
 }) => {
 
   console.log('MultiActuatorControlPanel - systemStatus:', systemStatus);
 
   // 🔊 Play sound feedback + trigger control action
-  const handleActuatorControl = (actuatorId: number, turnOn: boolean) => {
-    playSound(turnOn ? 'on' : 'off');
-    onActuatorControl(actuatorId, turnOn);
-  };
+  // const handleActuatorControl = (actuatorId: number, turnOn: boolean) => {
+  //   playSound(turnOn ? 'on' : 'off');
+  //   onActuatorControl(actuatorId, turnOn);
+  // };
+
+  const handleManualModeChange = (
+  actuatorId: number,
+  state: boolean | null
+) => {
+  if (state === true) playSound('on');
+  else if (state === false) playSound('off');
+
+  onManualModeChange(actuatorId, state);
+};
 
   // 📦 Group actuators by type (pump, light, fan...)
   // This helps for filtering + dropdown display
@@ -145,7 +157,8 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             actuator={actuator}
             loading={loading}
             variant="control"
-            onControl={handleActuatorControl}
+            // onControl={handleActuatorControl}
+            onManualModeChange={handleManualModeChange}
           />
         ))
         : groupedActuators[selectedType]?.map((actuator) => (
@@ -154,7 +167,8 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             actuator={actuator}
             loading={loading}
             variant="control"
-            onControl={handleActuatorControl}
+            // onControl={handleActuatorControl}
+            onManualModeChange={handleManualModeChange}
           />
         ))
       }
