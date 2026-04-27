@@ -267,29 +267,10 @@ export const useHydroSystem = () => {
     }
   };
 
-  // NO USING
-  // const controlPump = createControlHandler('Pump ON', systemService.turnPumpOn);
-  // const controlPumpOff = createControlHandler('Pump OFF', systemService.turnPumpOff);
-  // const controlLight = createControlHandler('Light ON', systemService.turnLightOn);
-  // const controlLightOff = createControlHandler('Light OFF', systemService.turnLightOff);
-
   // Scheduler control handlers
   const startSystemScheduler = createControlHandler('Start Scheduler', systemService.startScheduler);
   const stopSystemScheduler = createControlHandler('Stop Scheduler', systemService.stopScheduler);
   const restartSystemScheduler = createControlHandler('Restart Scheduler', systemService.restartScheduler);
-
-  // Actuator control handler initailly designed for pump/light but can be used for any actuator type
-  const controlActuator = useCallback(async (actuatorId: number, turnOn: boolean) => {
-    const label = `Actuator ${actuatorId} ${turnOn ? 'ON' : 'OFF'}`;
-    try {
-      const result = await systemService.controlActuator(actuatorId, turnOn);
-      appendAction(createControlAction(label, true, result.status));
-      await fetchSystemStatusPerDevice();
-    } catch {
-      appendAction(createControlAction(label, false, 'Failed to control actuator'));
-      setError('Failed to control actuator');
-    }
-  }, [fetchSystemStatusPerDevice]);
 
   const setActuatorManualMode = useCallback(
   async (actuatorId: number, state: boolean | null) => {
@@ -676,14 +657,9 @@ export const useHydroSystem = () => {
 
     actions: {
       // Original hydro system actions
-      // controlPump,
-      // controlPumpOff,
-      // controlLight,
-      // controlLightOff,
       startSystemScheduler,
       stopSystemScheduler,
       restartSystemScheduler,
-      controlActuator,
       setActuatorManualMode,
       updateSystemThresholds,
       resolveAlert,

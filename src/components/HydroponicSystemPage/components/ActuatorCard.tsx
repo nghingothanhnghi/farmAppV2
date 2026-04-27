@@ -18,7 +18,6 @@ interface ActuatorCardProps {
     loading?: boolean;
     variant?: "control" | "linked"; // control = buttons, linked = toggle
     onToggle?: (id: number, active: boolean) => void;
-    // onControl?: (id: number, turnOn: boolean) => void;
     onManualModeChange?: (id: number, state: boolean | null) => void;
     onUpdated?: () => void; // callback to parent after actuator is updated
 }
@@ -28,14 +27,13 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     loading = false,
     variant = "control",
     onToggle,
-    // onControl,
     onManualModeChange,
     onUpdated,
 }) => {
 
     const isActive = actuator.current_state; // real-time ON/OFF state
 
-    const { Icon, color, bg, hover } = getActuatorIcon(actuator.type);
+    const { Icon, color } = getActuatorIcon(actuator.type);
 
     console.log('Rendering ActuatorCard State:', {
         variant,
@@ -76,32 +74,6 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 className="absolute right-2 top-2 z-10"
             >
                 <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 p-0.5 rounded-full shadow-md">
-                    {/* {variant === "control" && onControl && (
-                        <ButtonGroup>
-                            <Button
-                                label="On"
-                                onClick={() => onControl(actuator.id, true)}
-                                disabled={loading || isActive || !actuator.is_active}
-                                className={`ml-1 flex-1 ${isActive || !actuator.is_active
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : `${bg} ${hover} text-white`
-                                    }`}
-                                size="xs"
-                                variant="secondary"
-                            />
-                            <Button
-                                label="Off"
-                                onClick={() => onControl(actuator.id, false)}
-                                disabled={loading || !isActive || !actuator.is_active}
-                                className={`flex-1 ${!isActive || !actuator.is_active
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-red-500 hover:bg-red-600 text-white'
-                                    }`}
-                                size="xs"
-                                variant="secondary"
-                            />
-                        </ButtonGroup>
-                    )} */}
                     {variant === "control" && onManualModeChange && (
                         <ButtonGroup>
                             {/* AUTO */}

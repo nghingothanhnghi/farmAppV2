@@ -9,25 +9,17 @@ import { getActuatorIcon } from '../../../utils/actuator';
 
 interface MultiActuatorControlPanelProps {
   systemStatus: SystemStatusPerDevice | null;
-  onActuatorControl: (actuatorId: number, turnOn: boolean) => void;
   onManualModeChange: (actuatorId: number, state: boolean | null) => void;
   loading?: boolean;
 }
 
 const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
   systemStatus,
-  // onActuatorControl,
   onManualModeChange,
   loading = false
 }) => {
 
   console.log('MultiActuatorControlPanel - systemStatus:', systemStatus);
-
-  // 🔊 Play sound feedback + trigger control action
-  // const handleActuatorControl = (actuatorId: number, turnOn: boolean) => {
-  //   playSound(turnOn ? 'on' : 'off');
-  //   onActuatorControl(actuatorId, turnOn);
-  // };
 
   const handleManualModeChange = (
   actuatorId: number,
@@ -157,7 +149,6 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             actuator={actuator}
             loading={loading}
             variant="control"
-            // onControl={handleActuatorControl}
             onManualModeChange={handleManualModeChange}
           />
         ))
@@ -167,7 +158,6 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             actuator={actuator}
             loading={loading}
             variant="control"
-            // onControl={handleActuatorControl}
             onManualModeChange={handleManualModeChange}
           />
         ))
