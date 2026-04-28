@@ -5,6 +5,9 @@ import LinearProgress from "./LinearProgress";
 
 type Props = {
     stages: GrowthStage[];
+    // ✅ NEW
+    plantName?: string;
+    showPlantName?: boolean;
     daysGrowing: number;
     currentStageId?: number;
     showCountdown?: boolean;        // default false
@@ -14,6 +17,10 @@ type Props = {
 
 const StageTimeline: React.FC<Props> = ({
     stages,
+
+    // ✅ NEW
+    plantName,
+    showPlantName = false,
     daysGrowing,
     currentStageId,
     showCountdown = false,
@@ -75,18 +82,25 @@ const StageTimeline: React.FC<Props> = ({
                     thickness="h-1"
                 />
             </div>
-                                {/* ✅ OPTIONAL Countdown */}
-                    {showCountdown && (
-                        <div className="text-[10px] text-gray-500 dark:text-gray-400 flex justify-end">
-                            {isLastStage ? (
-                                <span>🌿 Final stage</span>
-                            ) : (
-                                <span>
-                                    ⏳ {remainingDays} ngày nữa → {nextStage?.name}
-                                </span>
-                            )}
-                        </div>
+            {/* ✅ OPTIONAL Countdown */}
+            {showCountdown && (
+                <div className="text-[10px] text-gray-500 dark:text-gray-400 flex justify-between">
+                    {/* ✅ Plant name (optional) */}
+                    {showPlantName && plantName && (
+                        <span className="font-medium">
+                            {plantName}
+                        </span>
                     )}
+
+                    {isLastStage ? (
+                        <span>🌿 Final stage</span>
+                    ) : (
+                        <span>
+                            ⏳ {remainingDays} ngày nữa → {nextStage?.name}
+                        </span>
+                    )}
+                </div>
+            )}
         </div>
     );
 };

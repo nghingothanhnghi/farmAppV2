@@ -14,6 +14,7 @@ export interface HydroActuator {
   default_state: boolean;
   current_state: boolean;
   manual_state: boolean | null; // for manual override mode
+  automation_reason?: string; // e.g., "Low moisture", "Scheduled ON", etc.
   linked_sensor_value?: number | null;
   device_id?: number;
   created_at?: string;

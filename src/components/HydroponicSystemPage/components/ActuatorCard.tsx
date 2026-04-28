@@ -8,7 +8,8 @@ import { IconClock, IconEdit } from '@tabler/icons-react';
 import ScheduleForm from './ScheduleForm';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
-import { getActuatorIcon } from '../../../utils/actuator';
+import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
+
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 
 import ActuatorModalConfig from './ActuatorModalConfig';
@@ -62,6 +63,8 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 ? "MANUAL_ON"
                 : "MANUAL_OFF";
 
+    const reasonMeta = getActuatorReason(actuator.automation_reason);
+
     return (
         <div
             className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 relative overflow-hidden"
@@ -73,45 +76,33 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 from="right"
                 className="absolute right-2 top-2 z-10"
             >
-                <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 p-0.5 rounded-full shadow-md">
+                <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 py-0.5 px-1 rounded-full shadow-md">
                     {variant === "control" && onManualModeChange && (
-                        <ButtonGroup>
+                        <ButtonGroup className='ms-1'>
                             {/* AUTO */}
                             <Button
                                 label="Auto"
+                                variant='secondary'
                                 onClick={() => onManualModeChange?.(actuator.id, null)}
-                                disabled={loading || !actuator.is_active}
-                                className={
-                                    modeManual === "AUTO"
-                                        ? "bg-blue-500 text-white"
-                                        : "bg-gray-200 text-gray-600"
-                                }
+                                disabled={loading || !actuator.is_active || modeManual === "AUTO"}
                                 size="xs"
                             />
 
                             {/* MANUAL ON */}
                             <Button
                                 label="On"
+                                variant='secondary'
                                 onClick={() => onManualModeChange?.(actuator.id, true)}
-                                disabled={loading || !actuator.is_active}
-                                className={
-                                    modeManual === "MANUAL_ON"
-                                        ? "bg-green-500 text-white"
-                                        : "bg-gray-200 text-gray-600"
-                                }
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_ON"}
                                 size="xs"
                             />
 
                             {/* MANUAL OFF */}
                             <Button
                                 label="Off"
+                                variant='secondary'
                                 onClick={() => onManualModeChange?.(actuator.id, false)}
-                                disabled={loading || !actuator.is_active}
-                                className={
-                                    modeManual === "MANUAL_OFF"
-                                        ? "bg-red-500 text-white"
-                                        : "bg-gray-200 text-gray-600"
-                                }
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_OFF"}
                                 size="xs"
                             />
                         </ButtonGroup>
@@ -163,16 +154,20 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         <div className="flex items-center space-x-2">
                             <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
                             <div className="flex items-center space-x-1">
-                                {/* <div
-                                    className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600' : 'bg-gray-400'}`}
+                                {/* STATUS DOT */}
+                                <div
+                                    className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'
+                                        }`}
                                 />
-                                <span className="text-[0.625rem] text-gray-600">
-                                    <span
-                                        className={` ${isActive ? 'text-green-600' : 'text-gray-400'}`}
-                                    >
-                                        {isActive ? 'Opened' : 'Off'}
-                                    </span>
-                                </span> */}
+
+                                {/* STATUS TEXT */}
+                                <span
+                                    className={`text-[0.625rem] ${isActive ? 'text-green-600' : 'text-gray-400'
+                                        }`}
+                                >
+                                    {isActive ? 'Running' : 'Stopped'}
+                                </span>
+                                {/* MODE */}
                                 <span
                                     className={
                                         modeManual === "AUTO"
@@ -188,10 +183,15 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                             ? "Manual On"
                                             : "Manual Off"}
                                 </span>
+                                {modeManual === "AUTO" && isActive && reasonMeta.label && (
+                                    <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
+                                        ({reasonMeta.label})
+                                    </span>
+                                )}
                             </div>
                         </div>
                         <p className="text-[0.625rem] text-gray-500">
-                            {actuator.type} • Pin {actuator.pin} • Port {actuator.port}
+                            Kênh: Pin {actuator.pin} • Port {actuator.port}
                         </p>
                         {!actuator.is_active && (
                             <Badge label='Interrupted' variant='warning' size='xsmall' />

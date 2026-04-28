@@ -68,3 +68,68 @@ export const getActuatorIcon = (type?: string) => {
         hover: config?.hover || "hover:bg-gray-600",
     };
 };
+
+// =========================
+// ACTUATOR REASON MAP
+// =========================
+const actuatorReasonMap: Record<string, { label: string; color?: string }> = {
+    off: {
+        label: "Idle",
+        color: "text-gray-400",
+    },
+
+    manual_on: {
+        label: "Manual ON",
+        color: "text-green-500",
+    },
+    manual_off: {
+        label: "Manual OFF",
+        color: "text-red-500",
+    },
+
+    safety_high_temp: {
+        label: "High temperature",
+        color: "text-red-500",
+    },
+    safety_low_water: {
+        label: "Low water level",
+        color: "text-red-500",
+    },
+
+    schedule: {
+        label: "Scheduled",
+        color: "text-blue-500",
+    },
+    interval: {
+        label: "Interval mode",
+        color: "text-purple-500",
+    },
+    oneshot: {
+        label: "One-time run",
+        color: "text-pink-500",
+    },
+
+    sensor: {
+        label: "Sensor triggered",
+        color: "text-orange-500",
+    },
+};
+
+export const getActuatorReason = (reason?: string) => {
+    if (!reason) {
+        return {
+            label: "",
+            color: "text-gray-400",
+        };
+    }
+
+    const mapped = actuatorReasonMap[reason];
+
+    if (mapped) return mapped;
+
+    // fallback (for unknown future reasons)
+    return {
+        label: reason.replace(/_/g, " "),
+        color: "text-gray-400",
+    };
+};

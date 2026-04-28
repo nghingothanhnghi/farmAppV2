@@ -234,6 +234,8 @@ const HydroponicSystemPage: React.FC = () => {
               {currentDevice?.growing_batch && (
                 <StageTimeline
                   stages={currentDevice.growing_batch.stages}
+                  plantName={currentDevice.growing_batch.plant_name}
+                  showPlantName={true}
                   daysGrowing={currentDevice.growing_batch.days_growing}
                   currentStageId={currentDevice.growing_batch.current_stage_id}
                   showCountdown={true}
@@ -243,9 +245,6 @@ const HydroponicSystemPage: React.FC = () => {
               {/* Control Panel */}
               <MultiActuatorControlPanel
                 systemStatus={currentDevice}
-                onActuatorControl={(actuatorId, turnOn) => {
-                  actions.controlActuator(actuatorId, turnOn);
-                }}
                 onManualModeChange={(id, state) => {
                   actions.setActuatorManualMode(id, state);
                 }}
