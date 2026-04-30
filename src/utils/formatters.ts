@@ -1,3 +1,4 @@
+// src/utils/formatters.ts
 /**
  * Formats a device serial number for display
  */

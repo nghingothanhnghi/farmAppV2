@@ -6,6 +6,8 @@ import Button from '../../common/Button';
 import { motion } from 'framer-motion';
 import { useAlert } from "../../../contexts/alertContext";
 import type { HydroScheduleCreate, HydroScheduleUpdate, HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
+import { timeToMinutes, toApiTime } from '../../../utils/time';
+
 
 const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
@@ -66,10 +68,12 @@ const ScheduleForm: React.FC<Props> = ({
     };
 
     // ✅ Convert HH:mm → minutes
-    const toMinutes = (time: string) => {
-        const [h, m] = time.split(":").map(Number);
-        return h * 60 + m;
-    };
+    // const toMinutes = (time: string) => {
+    //     const [h, m] = time.split(":").map(Number);
+    //     return h * 60 + m;
+    // };
+
+
 
 
     const handleSubmit = async () => {
@@ -91,8 +95,8 @@ const ScheduleForm: React.FC<Props> = ({
             return;
         }
 
-        const start = toMinutes(startTime);
-        const end = toMinutes(endTime);
+        const start = timeToMinutes(startTime);
+        const end = timeToMinutes(endTime);
 
         // ✅ Validate logical time
         if (start >= end) {
@@ -105,8 +109,8 @@ const ScheduleForm: React.FC<Props> = ({
 
         const payload: HydroScheduleCreate = {
             actuator_id: actuatorId,
-            start_time: `${startTime}:00`,
-            end_time: `${endTime}:00`,
+            start_time: toApiTime(startTime),
+  end_time: toApiTime(endTime),
             repeat_days: selectedDays.join(","),
             is_active: isActive,
         };
@@ -116,8 +120,8 @@ const ScheduleForm: React.FC<Props> = ({
 
             if (mode === "edit" && scheduleId && onUpdate) {
                 await onUpdate(scheduleId, {
-                    start_time: `${startTime}:00`,
-                    end_time: `${endTime}:00`,
+                    start_time: toApiTime(startTime),
+                    end_time: toApiTime(endTime),
                     repeat_days: selectedDays.join(","),
                     is_active: isActive,
                 });

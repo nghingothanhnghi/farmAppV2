@@ -66,6 +66,8 @@ interface FormInputProps {
   multiple?: boolean;
   ref?: React.RefObject<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+
+  lang?: string;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -84,7 +86,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   accept,
   multiple = false,
   ref,
-  inputMode
+  inputMode,
+  lang
 }) => {
   return (
     <div className={`${className}`}>
@@ -105,11 +108,13 @@ export const FormInput: React.FC<FormInputProps> = ({
         accept={accept}
         multiple={multiple}
         ref={ref}
+        lang={lang}
       />
     </div>
 
   );
 };
+
 
 interface FormSelectProps {
   id: string;
