@@ -13,6 +13,7 @@ import Form, {
   FormLabel,
   FormInput,
 } from "../../common/Form";
+import { toApiTime, fromApiTime } from '../../../utils/time';
 import type { GrowthStageCreate } from "../../../models/interfaces/GrowthStage";
 import type { GrowthRecipeCreate } from "../../../models/interfaces/GrowthRecipe";
 import RecipeForm from "./RecipeForm";
@@ -108,8 +109,13 @@ const StageRecipeWizardModal: React.FC<Props> = ({
           id: r.id,
           actuator_type: r.actuator_type,
           action: r.action,
-          start_time: r.start_time,
-          end_time: r.end_time,
+          // start_time: r.start_time,
+          // end_time: r.end_time,
+
+          // ✅ use util (NO slice anymore)
+          start_time: r.start_time ? fromApiTime(r.start_time) : undefined,
+          end_time: r.end_time ? fromApiTime(r.end_time) : undefined,
+
           interval_on_min: r.interval_on_min,
           interval_off_min: r.interval_off_min,
         })),
@@ -143,8 +149,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
               {
                 actuator_type: "light",
                 action: "on",
-                start_time: "06:00:00",
-                end_time: "18:00:00",
+                start_time: "06:00",
+                end_time: "18:00",
               } as GrowthRecipeCreate,
             ],
           };
@@ -243,8 +249,13 @@ const StageRecipeWizardModal: React.FC<Props> = ({
             recipes: s.recipes.map(r => ({
               actuator_type: r.actuator_type,
               action: r.action,
-              start_time: r.start_time,
-              end_time: r.end_time,
+              // start_time: r.start_time,
+              // end_time: r.end_time,
+
+              // ✅ normalize before sending
+              start_time: r.start_time ? toApiTime(r.start_time) : undefined,
+              end_time: r.end_time ? toApiTime(r.end_time) : undefined,
+
               interval_on_min: r.interval_on_min,
               interval_off_min: r.interval_off_min,
             })),
@@ -268,8 +279,13 @@ const StageRecipeWizardModal: React.FC<Props> = ({
             recipes: s.recipes.map(r => ({
               actuator_type: r.actuator_type,
               action: r.action,
-              start_time: r.start_time,
-              end_time: r.end_time,
+              // start_time: r.start_time,
+              // end_time: r.end_time,
+
+              // ✅ normalize before sending
+              start_time: r.start_time ? toApiTime(r.start_time) : undefined,
+              end_time: r.end_time ? toApiTime(r.end_time) : undefined,
+
               interval_on_min: r.interval_on_min,
               interval_off_min: r.interval_off_min,
             })),
@@ -502,8 +518,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                           addRecipe({
                             actuator_type: a.type,
                             action: "on",
-                            start_time: "06:00:00",
-                            end_time: "18:00:00",
+                            start_time: "06:00",
+                            end_time: "18:00",
                           });
                         } else if (a.type === "pump" || a.type === "water_pump") {
                           addRecipe({
@@ -516,8 +532,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                           addRecipe({
                             actuator_type: a.type,
                             action: "on",
-                            start_time: "08:00:00",
-                            end_time: "20:00:00",
+                            start_time: "08:00",
+                            end_time: "20:00",
                           });
                         } else {
                           addRecipe({

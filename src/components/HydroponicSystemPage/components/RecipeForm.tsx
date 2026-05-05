@@ -66,8 +66,8 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                         update({
                             action: e.target.checked ? "interval" : "on",
-                            start_time: e.target.checked ? undefined : "06:00:00",
-                            end_time: e.target.checked ? undefined : "18:00:00",
+                            start_time: e.target.checked ? undefined : "06:00",
+                            end_time: e.target.checked ? undefined : "12:00",
                             interval_on_min: e.target.checked ? 5 : undefined,
                             interval_off_min: e.target.checked ? 10 : undefined,
                         })
@@ -86,7 +86,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
                         <FormInput
                             type="time"
                             id="start_time"
-                            className="max-w-[100px]"
+                            className="max-w-[150px]"
                             value={recipe.start_time || ""}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 update({ start_time: e.target.value })
@@ -102,7 +102,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
                         <FormInput
                             id="end_time"
                             type="time"
-                            className="max-w-[100px]"
+                            className="max-w-[150px]"
                             value={recipe.end_time || ""}
                             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                                 update({ end_time: e.target.value })
