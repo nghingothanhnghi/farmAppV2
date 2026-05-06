@@ -93,7 +93,7 @@ const StageTimeline: React.FC<Props> = ({
                     )}
 
                     {isLastStage ? (
-                        <span>🌿 Final stage</span>
+                        <span>🌿 Giai đoạn cuối</span>
                     ) : (
                         <span>
                             ⏳ {remainingDays} ngày nữa → {nextStage?.name}
