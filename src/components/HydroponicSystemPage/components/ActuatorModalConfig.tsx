@@ -7,6 +7,7 @@ import type { HydroActuator } from "../../../models/interfaces/HydroSystem";
 import { FormGroup, FormInput, FormLabel, FormSelect, FormToggle } from "../../common/Form";
 import { actuatorSchema } from "../../../validation/actuatorSchema";
 import { ESP32_GPIO_PINS } from "../../../constants/gpio";
+import { ACTUATOR_TYPES } from "../../../constants/actuator";
 
 interface Props {
     isOpen: boolean;
@@ -14,14 +15,6 @@ interface Props {
     actuator: HydroActuator | null;
     onSubmit: (id: number, data: Partial<HydroActuator>) => Promise<void>;
 }
-
-const actuatorTypes = [
-    { label: "Pump", value: "pump" },
-    { label: "Fan", value: "fan" },
-    { label: "Light", value: "light" },
-    { label: "Water Pump", value: "water_pump" },
-    { label: "Valve", value: "valve" },
-];
 
 const ActuatorModalConfig: React.FC<Props> = ({
     isOpen,
@@ -34,20 +27,22 @@ const ActuatorModalConfig: React.FC<Props> = ({
 
     const [loading, setLoading] = useState(false);
 
+
     useEffect(() => {
-        if (actuator) {
-            setForm({
-                name: actuator.name,
-                type: actuator.type,
-                pin: actuator.pin,
-                port: actuator.port,
-                is_active: actuator.is_active,
-                default_state: actuator.default_state,
-                sensor_key: actuator.sensor_key,
-            });
-            setErrors({});
-        }
-    }, [actuator]);
+        if (!isOpen || !actuator) return;
+
+        setForm({
+            name: actuator.name,
+            type: actuator.type,
+            pin: actuator.pin,
+            port: actuator.port,
+            is_active: actuator.is_active,
+            default_state: actuator.default_state,
+            sensor_key: actuator.sensor_key,
+        });
+
+        setErrors({});
+    }, [isOpen, actuator?.id]);
 
     const handleChange = (key: keyof HydroActuator, value: any) => {
         setForm(prev => ({ ...prev, [key]: value }));
@@ -87,39 +82,41 @@ const ActuatorModalConfig: React.FC<Props> = ({
             title="Edit Actuator"
             size="small"
             content={
-                <div className="px-10 pb-4 space-y-5">
-                    <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="name">Tên thiết bị</FormLabel>
-                        <FormInput
-                            id="name"
-                            type="text"
-                            value={form.name || ""}
-                            onChange={(e) => handleChange("name", e.target.value)}
-                            placeholder="Nhập tên thiết bị"
-                        />
-                        {errors.name && (
-                            <p className="text-red-500 text-xs">{errors.name}</p>
-                        )}
-                    </FormGroup>
-                    {/* TYPE */}
-                    <FormGroup className="flex flex-col space-y-1">
-                        <FormLabel htmlFor="type">Type</FormLabel>
-                        <FormSelect
-                            id="type"
-                            name="type"
-                            value={form.type || ""}
-                            onChange={(e) => handleChange("type", e.target.value)}
-                        >
-                            <option value="">Select type</option>
-                            {actuatorTypes.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </option>
-                            ))}
-                        </FormSelect>
-                        {errors.type && <p className="text-red-500 text-xs">{errors.type}</p>}
-                    </FormGroup>
-                    <div className="flex gap-4">
+                <div className="px-10 pb-4 space-y-4">
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="name">Tên thiết bị</FormLabel>
+                            <FormInput
+                                id="name"
+                                type="text"
+                                value={form.name || ""}
+                                onChange={(e) => handleChange("name", e.target.value)}
+                                placeholder="Nhập tên thiết bị"
+                            />
+                            {errors.name && (
+                                <p className="text-red-500 text-xs">{errors.name}</p>
+                            )}
+                        </FormGroup>
+                        {/* TYPE */}
+                        <FormGroup className="flex flex-col space-y-1">
+                            <FormLabel htmlFor="type">Loại</FormLabel>
+                            <FormSelect
+                                id="type"
+                                name="type"
+                                value={form.type || ""}
+                                onChange={(e) => handleChange("type", e.target.value)}
+                            >
+                                <option value="">Select type</option>
+                                {ACTUATOR_TYPES.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                ))}
+                            </FormSelect>
+                            {errors.type && <p className="text-red-500 text-xs">{errors.type}</p>}
+                        </FormGroup>
+                    </div>
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         <FormGroup className="space-y-1">
                             <FormLabel htmlFor="pin">Pin</FormLabel>
                             <FormSelect
@@ -166,42 +163,62 @@ const ActuatorModalConfig: React.FC<Props> = ({
                             <p className="text-red-500 text-xs">{errors.sensor_key}</p>
                         )}
                     </FormGroup>
-                    <div className="flex justify-between pt-2">
-                        <label>
-                            <input
-                                type="checkbox"
+                    <div className="space-y-2">
+                        {/* ENABLED */}
+                        <FormGroup className="flex items-center justify-between rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-white/5 px-3 py-2">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    Enabled
+                                </p>
+                                <p className="text-[11px] text-gray-500">
+                                    Allow actuator automation & control
+                                </p>
+                            </div>
+                            <FormToggle
+                                id="is_active"
                                 checked={form.is_active || false}
-                                onChange={(e) => handleChange("is_active", e.target.checked)}
-                            />{" "}
-                            Active
-                        </label>
+                                onChange={(e) =>
+                                    handleChange("is_active", e.target.checked)
+                                }
+                            />
+                        </FormGroup>
+                        {/* DEFAULT STATE */}
+                        <FormGroup className="flex items-center justify-between rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-white/5 px-3 py-2">
+                            <div className="flex-1">
+                                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                    Default ON
+                                </p>
+                                <p className="text-[11px] text-gray-500">
+                                    Initial state when device boots
+                                </p>
+                            </div>
 
-                        <label>
-                            <input
-                                type="checkbox"
+                            <FormToggle
+                                id="default_state"
                                 checked={form.default_state || false}
-                                onChange={(e) => handleChange("default_state", e.target.checked)}
-                            />{" "}
-                            Default ON
-                        </label>
+                                onChange={(e) =>
+                                    handleChange("default_state", e.target.checked)
+                                }
+                            />
+                        </FormGroup>
                     </div>
                 </div>
             }
             actions={
-                <div className="flex gap-2">
-                    <Button
-                        label="Cancel"
-                        variant="secondary"
-                        rounded="lg"
-                        className="min-w-[150px]"
-                        onClick={onClose}
-                    />
+                <div className="flex gap-4">
                     <Button
                         label={loading ? "Saving..." : "Save"}
                         onClick={handleSubmit}
                         className="min-w-[150px]"
                         rounded="lg"
                         disabled={loading}
+                    />
+                    <Button
+                        label="Cancel"
+                        variant="secondary"
+                        rounded="lg"
+                        className="min-w-[150px]"
+                        onClick={onClose}
                     />
                 </div>
             }

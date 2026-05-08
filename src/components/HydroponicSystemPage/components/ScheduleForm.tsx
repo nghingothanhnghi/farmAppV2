@@ -67,15 +67,6 @@ const ScheduleForm: React.FC<Props> = ({
         );
     };
 
-    // ✅ Convert HH:mm → minutes
-    // const toMinutes = (time: string) => {
-    //     const [h, m] = time.split(":").map(Number);
-    //     return h * 60 + m;
-    // };
-
-
-
-
     const handleSubmit = async () => {
         // ✅ Validate days
         if (selectedDays.length === 0) {
@@ -155,7 +146,7 @@ const ScheduleForm: React.FC<Props> = ({
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title={`${mode === "edit" ? "Edit" : "Add"} Schedule - ${actuatorName}`}
+            title={`${mode === "edit" ? "Chỉnh sửa" : "Thêm"} Lịch trình - ${actuatorName}`}
             size="small"
             content={
                 <div className="px-10 pb-4 space-y-5">
