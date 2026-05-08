@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
+import { useAlert } from "../../../contexts/alertContext";
 import type { HydroActuator } from "../../../models/interfaces/HydroSystem";
 import { FormGroup, FormInput, FormLabel, FormSelect, FormToggle } from "../../common/Form";
 import { actuatorSchema } from "../../../validation/actuatorSchema";
@@ -26,7 +27,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const [loading, setLoading] = useState(false);
-
+    const { setAlert } = useAlert();
 
     useEffect(() => {
         if (!isOpen || !actuator) return;
@@ -60,15 +61,55 @@ const ActuatorModalConfig: React.FC<Props> = ({
             setErrors({});
 
             await onSubmit(actuator.id, form);
+
+            // ✅ SUCCESS ALERT
+            setAlert({
+                message: `${form.name || actuator.name} updated successfully.`,
+                type: "success",
+            });
+
             onClose();
         } catch (err: any) {
             console.log("VALIDATION ERROR:", err);
+
+            // ✅ Backend/FastAPI error
+            const apiMessage =
+                err?.response?.data?.detail;
+
+            if (apiMessage) {
+
+                // Optional: show under pin field
+                setErrors(prev => ({
+                    ...prev,
+                    pin: apiMessage,
+                }));
+
+                setAlert({
+                    message: apiMessage,
+                    type: "error",
+                });
+
+                return;
+            }
+
+            // ✅ Yup validation errors
             if (err.inner) {
                 const formatted: Record<string, string> = {};
                 err.inner.forEach((e: any) => {
                     formatted[e.path] = e.message;
                 });
                 setErrors(formatted);
+
+                setAlert({
+                    message: "Please fix validation errors.",
+                    type: "error",
+                });
+            } else {
+                // ✅ API/server errors
+                setAlert({
+                    message: err?.message || "Failed to update actuator.",
+                    type: "error",
+                });
             }
         } finally {
             setLoading(false);
@@ -118,14 +159,13 @@ const ActuatorModalConfig: React.FC<Props> = ({
                     </div>
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         <FormGroup className="space-y-1">
-                            <FormLabel htmlFor="pin">Pin</FormLabel>
+                            <FormLabel htmlFor="pin">Kênh</FormLabel>
                             <FormSelect
                                 id="pin"
                                 value={form.pin || ""}
                                 onChange={(e) => handleChange("pin", e.target.value)}
                             >
-                                <option value="">Select GPIO</option>
-
+                                <option value="">Chọn GPIO</option>
                                 {ESP32_GPIO_PINS.map((pin) => (
                                     <option key={pin.number} value={`${pin.number}`}>
                                         {pin.label}
