@@ -147,6 +147,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
           <ActuatorCard
             key={actuator.id}
             actuator={actuator}
+            allActuators={systemStatus?.actuators || []}
             loading={loading}
             variant="control"
             onManualModeChange={handleManualModeChange}
@@ -156,6 +157,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
           <ActuatorCard
             key={actuator.id}
             actuator={actuator}
+            allActuators={systemStatus?.actuators || []}
             loading={loading}
             variant="control"
             onManualModeChange={handleManualModeChange}

@@ -16,6 +16,7 @@ import ActuatorModalConfig from './ActuatorModalConfig';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
+    allActuators: HydroActuator[];
     loading?: boolean;
     variant?: "control" | "linked"; // control = buttons, linked = toggle
     onToggle?: (id: number, active: boolean) => void;
@@ -25,6 +26,7 @@ interface ActuatorCardProps {
 
 const ActuatorCard: React.FC<ActuatorCardProps> = ({
     actuator,
+    allActuators,
     loading = false,
     variant = "control",
     onToggle,
@@ -225,6 +227,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 isOpen={openEdit}
                 onClose={() => setOpenEdit(false)}
                 actuator={actuator}
+                usedPins={allActuators
+    .filter(a => a.id !== actuator.id)
+    .map(a => `${a.pin}`)
+    .filter(Boolean)}
                 onSubmit={async (id, data) => {
                     await actions.patchActuator(id, data);
                     await onUpdated?.(); // 👈 REFRESH LIST

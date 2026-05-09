@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import { useAlert } from "../../../contexts/alertContext";
+import { useFormDirty } from "../../../hooks/useFormDirty";
 import type { HydroActuator } from "../../../models/interfaces/HydroSystem";
 import { FormGroup, FormInput, FormLabel, FormSelect, FormToggle } from "../../common/Form";
 import { actuatorSchema } from "../../../validation/actuatorSchema";
@@ -15,6 +16,7 @@ interface Props {
     onClose: () => void;
     actuator: HydroActuator | null;
     onSubmit: (id: number, data: Partial<HydroActuator>) => Promise<void>;
+    usedPins?: string[];
 }
 
 const ActuatorModalConfig: React.FC<Props> = ({
@@ -22,9 +24,14 @@ const ActuatorModalConfig: React.FC<Props> = ({
     onClose,
     actuator,
     onSubmit,
+    usedPins = [],
 }) => {
+
+    
     const [form, setForm] = useState<Partial<HydroActuator>>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
+
+    const isDirty = useFormDirty(form, actuator);
 
     const [loading, setLoading] = useState(false);
     const { setAlert } = useAlert();
@@ -166,13 +173,47 @@ const ActuatorModalConfig: React.FC<Props> = ({
                                 onChange={(e) => handleChange("pin", e.target.value)}
                             >
                                 <option value="">Chọn GPIO</option>
-                                {ESP32_GPIO_PINS.map((pin) => (
+                                {/* {ESP32_GPIO_PINS.map((pin) => (
                                     <option key={pin.number} value={`${pin.number}`}>
                                         {pin.label}
                                         {pin.warning ? ` ⚠️ ${pin.warning}` : ""}
                                         {pin.usage ? ` (${pin.usage})` : ""}
                                     </option>
-                                ))}
+                                ))} */}
+                                {ESP32_GPIO_PINS.map((pin) => {
+
+                                    const pinValue = `${pin.number}`;
+
+                                    // allow current actuator pin
+                                    const isCurrentPin =
+                                        pinValue === `${actuator?.pin}`;
+
+                                    const isUsed =
+                                        usedPins.includes(pinValue) &&
+                                        !isCurrentPin;
+
+                                    return (
+                                        <option
+                                            key={pin.number}
+                                            value={pinValue}
+                                            disabled={isUsed}
+                                        >
+                                            {pin.label}
+
+                                            {pin.warning
+                                                ? ` ⚠️ ${pin.warning}`
+                                                : ""}
+
+                                            {pin.usage
+                                                ? ` (${pin.usage})`
+                                                : ""}
+
+                                            {isUsed
+                                                ? " — Already Used"
+                                                : ""}
+                                        </option>
+                                    );
+                                })}
                             </FormSelect>
                             {errors.pin && (
                                 <p className="text-red-500 text-xs">{errors.pin}</p>
@@ -251,7 +292,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
                         onClick={handleSubmit}
                         className="min-w-[150px]"
                         rounded="lg"
-                        disabled={loading}
+                        disabled={loading || !isDirty}
                     />
                     <Button
                         label="Cancel"
