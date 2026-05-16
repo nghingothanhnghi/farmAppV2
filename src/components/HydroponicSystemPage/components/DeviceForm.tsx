@@ -89,6 +89,7 @@ const DeviceForm: React.FC<Props> = ({
                                 <ActuatorCard
                                     key={actuator.id}
                                     actuator={actuator}
+                                    allActuators={actuators}
                                     variant="linked"
                                     onUpdated={loadActuators}
                                     onToggle={(id, active) => {
