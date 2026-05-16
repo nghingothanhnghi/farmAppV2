@@ -173,13 +173,6 @@ const ActuatorModalConfig: React.FC<Props> = ({
                                 onChange={(e) => handleChange("pin", e.target.value)}
                             >
                                 <option value="">Chọn GPIO</option>
-                                {/* {ESP32_GPIO_PINS.map((pin) => (
-                                    <option key={pin.number} value={`${pin.number}`}>
-                                        {pin.label}
-                                        {pin.warning ? ` ⚠️ ${pin.warning}` : ""}
-                                        {pin.usage ? ` (${pin.usage})` : ""}
-                                    </option>
-                                ))} */}
                                 {ESP32_GPIO_PINS.map((pin) => {
 
                                     const pinValue = `${pin.number}`;
