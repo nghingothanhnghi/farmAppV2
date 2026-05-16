@@ -228,9 +228,9 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 onClose={() => setOpenEdit(false)}
                 actuator={actuator}
                 usedPins={allActuators
-    .filter(a => a.id !== actuator.id)
-    .map(a => `${a.pin}`)
-    .filter(Boolean)}
+                    .filter(a => a.id !== actuator.id)
+                    .map(a => `${a.pin}`)
+                    .filter(Boolean)}
                 onSubmit={async (id, data) => {
                     await actions.patchActuator(id, data);
                     await onUpdated?.(); // 👈 REFRESH LIST
