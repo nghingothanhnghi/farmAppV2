@@ -2,12 +2,14 @@
 
 import type { GrowthStage } from "../../models/interfaces/GrowthStage";
 import LinearProgress from "./LinearProgress";
+import { getActuatorIcon } from '../../utils/actuator';
 
 type Props = {
     stages: GrowthStage[];
     // ✅ NEW
     plantName?: string;
     showPlantName?: boolean;
+    showRecipe?: boolean;
     daysGrowing: number;
     currentStageId?: number;
     showCountdown?: boolean;        // default false
@@ -21,6 +23,7 @@ const StageTimeline: React.FC<Props> = ({
     // ✅ NEW
     plantName,
     showPlantName = false,
+    showRecipe = false,
     daysGrowing,
     currentStageId,
     showCountdown = false,
@@ -49,6 +52,8 @@ const StageTimeline: React.FC<Props> = ({
     }
 
     const currentStage = stages[currentIndex];
+
+    const recipes = currentStage?.recipes || [];
 
     // ✅ remaining days in CURRENT stage
     const remainingDays = currentStage
@@ -82,6 +87,7 @@ const StageTimeline: React.FC<Props> = ({
                     thickness="h-1"
                 />
             </div>
+
             {/* ✅ OPTIONAL Countdown */}
             {showCountdown && (
                 <div className="text-[10px] text-gray-500 dark:text-gray-400 flex justify-between">
@@ -101,6 +107,53 @@ const StageTimeline: React.FC<Props> = ({
                     )}
                 </div>
             )}
+
+            {showRecipe && recipes.length > 0 && (
+                <div className="mt-2 border-t border-gray-200 dark:border-white/5 pt-2 space-y-1">
+                    <div className="text-[10px] font-medium text-gray-500 dark:text-gray-400">
+                        Recipe
+                    </div>
+
+                    {recipes.map(recipe => {
+                        const {
+                            Icon,
+                            color,
+                        } = getActuatorIcon(recipe.actuator_type);
+
+                        return (
+                            <div
+                                key={recipe.id}
+                                className="flex items-center justify-between text-[10px]"
+                            >
+                                <div className="flex items-center gap-1">
+                                    <Icon
+                                        size={12}
+                                        className={color}
+                                    />
+
+                                    <span className="capitalize text-gray-500 dark:text-gray-400">
+                                        {recipe.actuator_type.replace("_", " ")}
+                                    </span>
+                                </div>
+
+                                {recipe.action === "interval" ? (
+                                    <span className="text-gray-500 dark:text-gray-400">
+                                        {recipe.interval_on_min}m /
+                                        {recipe.interval_off_min}m
+                                    </span>
+                                ) : (
+                                    <span className="text-gray-500 dark:text-gray-400">
+                                        {recipe.start_time?.slice(0, 5)}
+                                        {" → "}
+                                        {recipe.end_time?.slice(0, 5)}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+
         </div>
     );
 };
