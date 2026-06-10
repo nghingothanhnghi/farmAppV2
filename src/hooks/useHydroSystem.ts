@@ -40,7 +40,6 @@ const createControlAction = (
 export const useHydroSystem = () => {
   const [deviceStatusList, setDeviceStatusList] = useState<SystemStatusPerDevice[]>([]);
   const [sensorData, setSensorData] = useState<SensorReading[]>([]);
-  const [thresholds, setThresholds] = useState<Thresholds | null>(null);
   const [alerts, setAlerts] = useState<SystemAlert[]>([]);
   const [controlActions, setControlActions] = useState<ControlAction[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,16 +68,6 @@ export const useHydroSystem = () => {
       setSensorData(data);
     } catch (err) {
       setError('Failed to fetch sensor data');
-      console.error(err);
-    }
-  }, []);
-
-  const fetchThresholds = useCallback(async () => {
-    try {
-      const data = await systemService.getThresholds();
-      setThresholds(data);
-    } catch (err) {
-      setError('Failed to fetch thresholds');
       console.error(err);
     }
   }, []);
@@ -226,31 +215,31 @@ export const useHydroSystem = () => {
     setAlerts(prev => [...prev.filter(a => !a.resolved), ...newAlerts]);
   }, []);
 
- const fetchSystemStatusPerDevice = useCallback(async () => {
-  try {
-    const data = await systemService.getSystemStatus();
-    setDeviceStatusList(data);
-    setError(null); // clear any previous error
-    checkForAlerts(data);
-  } catch (err: any) {
-    // Detect Axios timeout / abort
-    if (err.code === "ECONNABORTED" || err.message?.includes("aborted")) {
-      console.warn("System status request timed out — skipping error display");
-      return; // ✅ do not set error, just skip this cycle
+  const fetchSystemStatusPerDevice = useCallback(async () => {
+    try {
+      const data = await systemService.getSystemStatus();
+      setDeviceStatusList(data);
+      setError(null); // clear any previous error
+      checkForAlerts(data);
+    } catch (err: any) {
+      // Detect Axios timeout / abort
+      if (err.code === "ECONNABORTED" || err.message?.includes("aborted")) {
+        console.warn("System status request timed out — skipping error display");
+        return; // ✅ do not set error, just skip this cycle
+      }
+
+      const detail = err?.response?.data?.detail;
+
+      if (detail === "No devices found for this user") {
+        setDeviceStatusList([]);
+        setError(null); // show empty state, not error
+      } else {
+        setError(detail || "Failed to fetch system status");
+      }
+
+      console.error("fetchSystemStatusPerDevice error:", err);
     }
-
-    const detail = err?.response?.data?.detail;
-
-    if (detail === "No devices found for this user") {
-      setDeviceStatusList([]);
-      setError(null); // show empty state, not error
-    } else {
-      setError(detail || "Failed to fetch system status");
-    }
-
-    console.error("fetchSystemStatusPerDevice error:", err);
-  }
-}, [checkForAlerts]);
+  }, [checkForAlerts]);
 
 
   const createControlHandler = (
@@ -273,34 +262,53 @@ export const useHydroSystem = () => {
   const restartSystemScheduler = createControlHandler('Restart Scheduler', systemService.restartScheduler);
 
   const setActuatorManualMode = useCallback(
-  async (actuatorId: number, state: boolean | null) => {
-    const label =
-      state === null
-        ? `Actuator ${actuatorId} AUTO`
-        : `Actuator ${actuatorId} ${state ? "MANUAL ON" : "MANUAL OFF"}`;
+    async (actuatorId: number, state: boolean | null) => {
+      const label =
+        state === null
+          ? `Actuator ${actuatorId} AUTO`
+          : `Actuator ${actuatorId} ${state ? "MANUAL ON" : "MANUAL OFF"}`;
 
-    try {
-      await systemService.setActuatorManualMode(actuatorId, state);
-      appendAction(createControlAction(label, true, "Manual mode updated"));
-      await fetchSystemStatusPerDevice();
-    } catch {
-      appendAction(createControlAction(label, false, "Failed to set manual mode"));
-      setError("Failed to set actuator manual mode");
-    }
-  },
-  [fetchSystemStatusPerDevice]
-);
+      try {
+        await systemService.setActuatorManualMode(actuatorId, state);
+        appendAction(createControlAction(label, true, "Manual mode updated"));
+        await fetchSystemStatusPerDevice();
+      } catch {
+        appendAction(createControlAction(label, false, "Failed to set manual mode"));
+        setError("Failed to set actuator manual mode");
+      }
+    },
+    [fetchSystemStatusPerDevice]
+  );
 
-  const updateSystemThresholds = useCallback(async (device_id: number, newThresholds: Partial<Thresholds>) => {
-    try {
-      const result = await systemService.updateThresholds(device_id, newThresholds);
-      setThresholds(result.data);
-      appendAction(createControlAction(`Update Thresholds (Device ${device_id})`, true, 'Thresholds updated'));
-      await fetchSystemStatusPerDevice();
-    } catch {
-      setError('Failed to update thresholds');
-    }
-  }, [fetchSystemStatusPerDevice]);
+  const updateSystemThresholds =
+    useCallback(
+      async (
+        device_id: number,
+        newThresholds: Partial<Thresholds>
+      ) => {
+
+        try {
+          await systemService.updateThresholds(
+            device_id,
+            newThresholds
+          );
+
+          appendAction(
+            createControlAction(
+              `Update Thresholds (Device ${device_id})`,
+              true,
+              'Thresholds updated'
+            )
+          );
+
+          await fetchSystemStatusPerDevice();
+
+        } catch {
+          setError('Failed to update thresholds');
+        }
+      },
+      [fetchSystemStatusPerDevice]
+    );
 
   const resolveAlert = useCallback((alertId: string) => {
     setAlerts(prev => prev.map(a => a.id === alertId ? { ...a, resolved: true } : a));
@@ -588,7 +596,6 @@ export const useHydroSystem = () => {
   const refreshData = useCallback((includeHardwareDetection: boolean = false, location?: string) => {
     fetchSystemStatusPerDevice();
     fetchSensorData();
-    fetchThresholds();
 
     if (includeHardwareDetection) {
       fetchHardwareDetections(location);
@@ -597,7 +604,7 @@ export const useHydroSystem = () => {
         fetchLocationStatus(location);
       }
     }
-  }, [fetchSystemStatusPerDevice, fetchSensorData, fetchThresholds, fetchHardwareDetections, fetchDetectionSummaries, fetchLocationStatus]);
+  }, [fetchSystemStatusPerDevice, fetchSensorData, fetchHardwareDetections, fetchDetectionSummaries, fetchLocationStatus]);
 
   useEffect(() => {
     const init = async () => {
@@ -606,7 +613,6 @@ export const useHydroSystem = () => {
         await Promise.all([
           fetchSystemStatusPerDevice(),
           fetchSensorData(),
-          fetchThresholds(),
           fetchAvailableLocations(),
           fetchHardwareTypes(),
           fetchConditionStatuses()
@@ -618,15 +624,15 @@ export const useHydroSystem = () => {
       }
     };
     init();
-  }, [fetchSystemStatusPerDevice, fetchSensorData, fetchThresholds, fetchAvailableLocations, fetchHardwareTypes, fetchConditionStatuses]);
+  }, [fetchSystemStatusPerDevice, fetchSensorData, fetchAvailableLocations, fetchHardwareTypes, fetchConditionStatuses]);
 
   useEffect(() => {
-  // ✅ Only poll if devices exist
-  if (deviceStatusList.length === 0) return;
+    // ✅ Only poll if devices exist
+    if (deviceStatusList.length === 0) return;
 
-  const interval = setInterval(() => refreshData(false), 5000);
-  return () => clearInterval(interval);
-}, [deviceStatusList.length, refreshData]);
+    const interval = setInterval(() => refreshData(false), 5000);
+    return () => clearInterval(interval);
+  }, [deviceStatusList.length, refreshData]);
 
 
   // Cleanup WebSocket on unmount
@@ -640,7 +646,6 @@ export const useHydroSystem = () => {
     // Original hydro system data
     deviceStatusList,
     sensorData,
-    thresholds,
     alerts,
     controlActions,
     loading,

@@ -75,20 +75,43 @@ export const systemService = {
   },
 
   // Thresholds
-  async getThresholds(): Promise<Thresholds> {
-    const response = await apiClient.get<Thresholds>('/sensor/thresholds');
-    return response.data;
-  },
+  // async getThresholds(): Promise<Thresholds> {
+  //   const response = await apiClient.get<Thresholds>('/sensor/thresholds');
+  //   return response.data;
+  // },
+  async getThresholds(
+  device_id: number
+): Promise<Thresholds> {
+  const response = await apiClient.get<Thresholds>(
+    `/sensor/thresholds/${device_id}`
+  );
 
-  async updateThresholds(
-    device_id: number,
-    thresholds: Partial<Thresholds>
-  ): Promise<ApiResponse<Thresholds>> {
-    const response = await apiClient.post<ApiResponse<Thresholds>>(
-      '/sensor/thresholds',
-      thresholds,
-      { params: { device_id } }
-    );
-    return response.data;
-  }
+  return response.data;
+},
+
+  // async updateThresholds(
+  //   device_id: number,
+  //   thresholds: Partial<Thresholds>
+  // ): Promise<ApiResponse<Thresholds>> {
+  //   const response = await apiClient.post<ApiResponse<Thresholds>>(
+  //     '/sensor/thresholds',
+  //     thresholds,
+  //     { params: { device_id } }
+  //   );
+  //   return response.data;
+  // }
+async updateThresholds(
+  device_id: number,
+  thresholds: Partial<Thresholds>
+): Promise<any> {
+
+  const response = await apiClient.post(
+    `/sensor/thresholds/${device_id}`,
+    thresholds
+  );
+
+  return response.data;
+}
+
+
 };
