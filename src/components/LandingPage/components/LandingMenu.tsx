@@ -168,7 +168,7 @@ const LandingMenu: React.FC = () => {
                                             </>
                                         }
                                         items={[
-                                            { label: t('btn.'), value: 'hydroponic-system' },
+                                            { label: t('btn.dashboard'), value: 'hydroponic-system' },
                                             { label: t('btn.edit_profile'), value: 'edit-profile' },
                                             { label: t('btn.logout'), value: 'logout' },
                                         ]}
