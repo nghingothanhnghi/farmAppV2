@@ -232,10 +232,10 @@ const LandingMenu: React.FC = () => {
                         </div>
                     ))}
 
-                    <div onClick={() => navigate('/admin/dashboard')}>
+                    <div onClick={() => navigate('/hydroponic-system')}>
                         <ListLink
-                            to="/admin/dashboard"
-                            label="Dashboard"
+                            to="/hydroponic-system"
+                            label={t('btn.dashboard')}
                             icon={<IconHome />}
                         />
                     </div>
