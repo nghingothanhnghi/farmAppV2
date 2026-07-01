@@ -13,7 +13,6 @@ import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 
 import ScheduleManager from './ScheduleManager';
-import ScheduleForm from './ScheduleForm';
 import ActuatorModalConfig from './ActuatorModalConfig';
 
 interface ActuatorCardProps {
@@ -51,23 +50,19 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
     const [openEdit, setOpenEdit] = React.useState(false);
 
-    // const [openSchedule, setOpenSchedule] = React.useState(false);
-    // const [mode, setMode] = React.useState<"create" | "edit">("create");
-    // const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
-
-        // ✅ single state for the schedule manager modal
+    // ✅ single state for the schedule manager modal
     const [openScheduleManager, setOpenScheduleManager] = React.useState(false);
     const { actions: scheduleActions } = useSchedule();
 
-const [scheduleCount, setScheduleCount] = React.useState<number>(0);
+    const [scheduleCount, setScheduleCount] = React.useState<number>(0);
 
-React.useEffect(() => {
-    let mounted = true;
-    scheduleActions.fetchByActuator(actuator.id).then((data) => {
-        if (mounted) setScheduleCount(data?.length ?? 0);
-    });
-    return () => { mounted = false; };
-}, [actuator.id]);
+    React.useEffect(() => {
+        let mounted = true;
+        scheduleActions.fetchByActuator(actuator.id).then((data) => {
+            if (mounted) setScheduleCount(data?.length ?? 0);
+        });
+        return () => { mounted = false; };
+    }, [actuator.id]);
 
     const [isHovered, setIsHovered] = React.useState(false);
 
@@ -132,29 +127,8 @@ React.useEffect(() => {
                             onChange={(e) => onToggle(actuator.id, e.target.checked)}
                         />
                     )}
-                    {/* <Button
-                        variant="secondary"
-                        icon={<IconClock size={16} />}
-                        iconOnly
-                        className='bg-transparent'
-                        onClick={async () => {
-                            const data = await scheduleActions.fetchByActuator(actuator.id);
 
-                            if (data && data.length > 0) {
-                                setMode("edit");
-                                setSelectedSchedule(data[0]);
-                            } else {
-                                setMode("create");
-                                setSelectedSchedule(null);
-                            }
-
-                            setOpenSchedule(true);
-                        }}
-                        rounded='full'
-                        size='sm'
-                    /> */}
-
-              {/* ✅ ONE clock button, opens ScheduleManager, shows count badge */}
+                    {/* ✅ ONE clock button, opens ScheduleManager, shows count badge */}
                     <div className="relative">
                         <Button
                             variant="secondary"
@@ -245,7 +219,7 @@ React.useEffect(() => {
                 </p>
             )}
 
-                   {/* ✅ Only ScheduleManager here — it owns its own ScheduleForm internally */}
+            {/* ✅ Only ScheduleManager here — it owns its own ScheduleForm internally */}
             <ScheduleManager
                 isOpen={openScheduleManager}
                 onClose={() => setOpenScheduleManager(false)}
@@ -255,18 +229,6 @@ React.useEffect(() => {
                     scheduleActions.fetchByActuator(actuator.id).then((d) => setScheduleCount(d?.length ?? 0));
                 }}
             />
-
-            {/* <ScheduleForm
-                isOpen={openSchedule}
-                onClose={() => setOpenSchedule(false)}
-                actuatorId={actuator.id}
-                actuatorName={actuator.name}
-                mode={mode}
-                initialData={selectedSchedule}
-                scheduleId={selectedSchedule?.id}
-                onSubmit={scheduleActions.createSchedule}
-                onUpdate={scheduleActions.updateSchedule}
-            /> */}
 
             <ActuatorModalConfig
                 isOpen={openEdit}
