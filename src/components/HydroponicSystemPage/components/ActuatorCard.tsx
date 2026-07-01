@@ -5,13 +5,15 @@ import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
 import { IconClock, IconEdit } from '@tabler/icons-react';
-import ScheduleForm from './ScheduleForm';
+
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
 
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 
+import ScheduleManager from './ScheduleManager';
+import ScheduleForm from './ScheduleForm';
 import ActuatorModalConfig from './ActuatorModalConfig';
 
 interface ActuatorCardProps {
@@ -49,10 +51,23 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
     const [openEdit, setOpenEdit] = React.useState(false);
 
-    const [openSchedule, setOpenSchedule] = React.useState(false);
-    const [mode, setMode] = React.useState<"create" | "edit">("create");
-    const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
+    // const [openSchedule, setOpenSchedule] = React.useState(false);
+    // const [mode, setMode] = React.useState<"create" | "edit">("create");
+    // const [selectedSchedule, setSelectedSchedule] = React.useState<any>(null);
+
+        // ✅ single state for the schedule manager modal
+    const [openScheduleManager, setOpenScheduleManager] = React.useState(false);
     const { actions: scheduleActions } = useSchedule();
+
+const [scheduleCount, setScheduleCount] = React.useState<number>(0);
+
+React.useEffect(() => {
+    let mounted = true;
+    scheduleActions.fetchByActuator(actuator.id).then((data) => {
+        if (mounted) setScheduleCount(data?.length ?? 0);
+    });
+    return () => { mounted = false; };
+}, [actuator.id]);
 
     const [isHovered, setIsHovered] = React.useState(false);
 
@@ -117,7 +132,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             onChange={(e) => onToggle(actuator.id, e.target.checked)}
                         />
                     )}
-                    <Button
+                    {/* <Button
                         variant="secondary"
                         icon={<IconClock size={16} />}
                         iconOnly
@@ -137,7 +152,26 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         }}
                         rounded='full'
                         size='sm'
-                    />
+                    /> */}
+
+              {/* ✅ ONE clock button, opens ScheduleManager, shows count badge */}
+                    <div className="relative">
+                        <Button
+                            variant="secondary"
+                            icon={<IconClock size={16} />}
+                            iconOnly
+                            className='bg-transparent'
+                            onClick={() => setOpenScheduleManager(true)}
+                            rounded='full'
+                            size='sm'
+                        />
+                        {scheduleCount > 0 && (
+                            <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-[0.55rem] rounded-full w-3.5 h-3.5 flex items-center justify-center">
+                                {scheduleCount}
+                            </span>
+                        )}
+                    </div>
+
                     <Button
                         variant="secondary"
                         icon={<IconEdit size={16} />}
@@ -211,7 +245,18 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 </p>
             )}
 
-            <ScheduleForm
+                   {/* ✅ Only ScheduleManager here — it owns its own ScheduleForm internally */}
+            <ScheduleManager
+                isOpen={openScheduleManager}
+                onClose={() => setOpenScheduleManager(false)}
+                actuatorId={actuator.id}
+                actuatorName={actuator.name}
+                onChanged={() => {
+                    scheduleActions.fetchByActuator(actuator.id).then((d) => setScheduleCount(d?.length ?? 0));
+                }}
+            />
+
+            {/* <ScheduleForm
                 isOpen={openSchedule}
                 onClose={() => setOpenSchedule(false)}
                 actuatorId={actuator.id}
@@ -221,7 +266,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 scheduleId={selectedSchedule?.id}
                 onSubmit={scheduleActions.createSchedule}
                 onUpdate={scheduleActions.updateSchedule}
-            />
+            /> */}
 
             <ActuatorModalConfig
                 isOpen={openEdit}
