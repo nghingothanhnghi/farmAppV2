@@ -1,14 +1,10 @@
 // src/components/CMS/components/PostGrid.tsx
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { useNavigate } from 'react-router';
+import { useMemo } from 'react';
 import type { CmsPost } from "../../../models/interfaces/Post";
 import DataGrid from '../../common/dataGrid/dataGrid';
 import Avatar from "../../common/Avatar";
 import ActionButtons from '../../common/dataGrid/actionButton';
-import Button from '../../common/Button';
 import Badge from '../../common/Badge';
-import Modal from '../../common/Modal';
-import ModeToggle from '../../common/ModeToggle';
 import PostStatusBadge from './PostStatusBadge';
 
 interface Props {

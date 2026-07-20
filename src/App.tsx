@@ -47,6 +47,7 @@ const CreateDrawPage = lazy(() => import("./components/Jackpot").then(m => ({ de
 const MigrationPage = lazy(() => import("./components/Migration").then(m => ({ default: m.MigrationPage })));
 const MigrationWizardPage = lazy(() => import("./components/Migration").then(m => ({ default: m.MigrationWizardPage })));
 const ProductManagementPage = lazy(() => import("./components/Product").then(m => ({ default: m.ProductManagementPage })));
+const CmsPostManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostManagementPage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -114,6 +115,16 @@ function App() {
               element={
                 <PrivateRoute>
                   <ProductManagementPage />
+                </PrivateRoute>
+              }
+            />
+
+
+            <Route
+              path="/dashboard/cms"
+              element={
+                <PrivateRoute>
+                  <CmsPostManagementPage />
                 </PrivateRoute>
               }
             />

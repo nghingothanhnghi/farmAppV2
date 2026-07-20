@@ -1,2 +1,1 @@
-import CmsPostManagementPage from './CmsPostManagementPage';
-export default CmsPostManagementPage;
+export { default as CmsPostManagementPage } from './CmsPostManagementPage';
