@@ -9,6 +9,7 @@ import Button from '../../common/Button';
 import Badge from '../../common/Badge';
 import Modal from '../../common/Modal';
 import ModeToggle from '../../common/ModeToggle';
+import PostStatusBadge from './PostStatusBadge';
 
 interface Props {
 
@@ -48,7 +49,7 @@ export default function PostGrid({
             field: "featured_image",
             width: 70,
 
-            cellRenderer: ({ data }) => (
+            cellRenderer: ({ data }: any) => (
 
                 <Avatar
 
@@ -80,7 +81,7 @@ export default function PostGrid({
         {
             headerName: "Category",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 data.category
                     ? data.category.name
@@ -90,7 +91,7 @@ export default function PostGrid({
         {
             headerName: "Status",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 <PostStatusBadge
                     status={data.status}
@@ -101,7 +102,7 @@ export default function PostGrid({
         {
             headerName: "Featured",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 data.is_featured
                     ? <Badge label="Featured" variant="success" />
@@ -117,17 +118,15 @@ export default function PostGrid({
         {
             headerName: "Published",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 data.published_at
-                    ? formatDate(data.published_at)
-                    : "-"
         },
 
         {
             headerName: "Author",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 data.author.username
         },
@@ -139,7 +138,7 @@ export default function PostGrid({
 
             pinned: "right",
 
-            cellRenderer: ({ data }) =>
+            cellRenderer: ({ data }: any) =>
 
                 <ActionButtons
 
