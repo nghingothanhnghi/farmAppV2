@@ -48,6 +48,8 @@ const MigrationPage = lazy(() => import("./components/Migration").then(m => ({ d
 const MigrationWizardPage = lazy(() => import("./components/Migration").then(m => ({ default: m.MigrationWizardPage })));
 const ProductManagementPage = lazy(() => import("./components/Product").then(m => ({ default: m.ProductManagementPage })));
 const CmsPostManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostManagementPage })));
+const CmsPostEditPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostEditPage })));
+const CmsPostCreatePage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostCreatePage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -119,12 +121,27 @@ function App() {
               }
             />
 
-
             <Route
               path="/dashboard/cms"
               element={
                 <PrivateRoute>
                   <CmsPostManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/cms/new"
+              element={
+                <PrivateRoute>
+                  <CmsPostCreatePage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/cms/:id/edit"
+              element={
+                <PrivateRoute>
+                  <CmsPostEditPage />
                 </PrivateRoute>
               }
             />

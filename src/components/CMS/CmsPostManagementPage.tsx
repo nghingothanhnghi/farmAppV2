@@ -1,7 +1,7 @@
 // src/components/CMS/CmsPostManagementPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { usePost } from '../../hooks/usePost';
+import { usePostContext } from '../../contexts/postContext';
 import { useAlert } from '../../contexts/alertContext';
 import type { CmsPost } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
@@ -9,7 +9,7 @@ import LinearProgress from '../common/LinearProgress';
 import PostGrid from './components/PostGrid';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
 
 
 const CmsPostManagementPage: React.FC = () => {
@@ -19,17 +19,15 @@ const CmsPostManagementPage: React.FC = () => {
         posts,
         loading,
         actions
-    } = usePost();
+    } = usePostContext();
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
-    const [deleteMode, setDeleteMode] = useState(false); // distinguish between remove role & delete user
 
     const handleConfirmDelete = async () => {
         if (!selectedPost) return;
 
         try {
-
             await actions.deletePost(selectedPost.id);
 
             setAlert({
@@ -41,17 +39,39 @@ const CmsPostManagementPage: React.FC = () => {
             setSelectedPost(null);
 
         } catch (err: any) {
-
             setAlert({
                 type: "error",
                 message:
                     err.response?.data?.detail ??
                     "Failed to delete post.",
             });
-
         }
     };
 
+
+    const handlePublish = async (post: CmsPost) => {
+        try {
+            await actions.publishPost(post.id);
+            setAlert({ type: "success", message: `"${post.title}" published.` });
+        } catch (err: any) {
+            setAlert({
+                type: "error",
+                message: err.response?.data?.detail ?? "Failed to publish post.",
+            });
+        }
+    };
+
+    const handleArchive = async (post: CmsPost) => {
+        try {
+            await actions.archivePost(post.id);
+            setAlert({ type: "success", message: `"${post.title}" archived.` });
+        } catch (err: any) {
+            setAlert({
+                type: "error",
+                message: err.response?.data?.detail ?? "Failed to archive post.",
+            });
+        }
+    };
 
     if (loading) return <LinearProgress
         position='absolute'
@@ -62,19 +82,29 @@ const CmsPostManagementPage: React.FC = () => {
     return (
         <div className="">
             <PageTitle
-                title="User Management"
+                title="Post Management"
+                actions={
+                    <Button
+                        type="button"
+                        label="New Post"
+                        onClick={() => navigate('/dashboard/cms/new')}
+                        variant="secondary"
+                        icon={<IconPlus size={16} className="text-gray-500" />}
+                        iconPosition='left'
+                        rounded='lg'
+                    />
+                }
             />
             <PostGrid
                 posts={posts}
                 loading={loading}
-                onEdit={(post) => navigate(`/cms/${post.id}/edit`)}
+                onEdit={(post) => navigate(`/dashboard/cms/${post.id}/edit`)}
                 onDelete={(post) => {
                     setSelectedPost(post);
-                    setDeleteMode(true);
                     setConfirmModalOpen(true);
                 }}
-                onPublish={(post) => actions.publishPost(post.id)}
-                onArchive={(post) => actions.archivePost(post.id)}
+                onPublish={handlePublish}
+                onArchive={handleArchive}
             />
             <Modal
                 showCloseButton={false}
@@ -87,17 +117,8 @@ const CmsPostManagementPage: React.FC = () => {
                 content={
                     <div className="text-sm px-10 pt-6 pb-10 text-center">
                         <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-                        {deleteMode ? (
-                            <>
-                                Are you sure you want to delete post{' '}
-                                <strong>{selectedPost?.title}</strong>?
-                            </>
-                        ) : (
-                            <>
-                                Are you sure you want to remove role{' '}
-                                <strong>{selectedPost?.title}</strong>?
-                            </>
-                        )}
+                        Are you sure you want to delete post{' '}
+                        <strong>{selectedPost?.title}</strong>?
                     </div>
                 }
                 actions={

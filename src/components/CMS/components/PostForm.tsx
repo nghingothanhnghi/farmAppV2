@@ -1,15 +1,33 @@
 // src/components/CMS/components/PostForm.tsx
 import { useMemo } from 'react';
-import type { CmsPostCreate, CmsPostUpdate } from "../../../models/interfaces/Post";
+import type { CmsPostCreate, CmsPostUpdate, PostType, PostStatus } from "../../../models/interfaces/Post";
 import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormSelect } from '../../../components/common/Form';
 import Button from '../../common/Button';
 
+// ✅ Own shape for the form — compatible with both Create and Update payloads.
+export interface PostFormData {
+    title?: string;
+    slug?: string;
+    excerpt?: string;
+    content?: string;
+    post_type?: PostType;
+    status?: PostStatus;
+    category_id?: number | null;
+    featured_image_id?: number | null;
+    tag_ids?: number[];
+    meta_title?: string;
+    meta_description?: string;
+    is_featured?: boolean;
+    published_at?: string | null;
+}
+
 interface Props {
-    formData: Partial<CmsPostCreate & CmsPostUpdate>;
+    formData: PostFormData;
     onChange: (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => void;
     onSubmit: (e: React.FormEvent) => void;
+    onCancel?: () => void;
     loading: boolean;
     isEdit: boolean;
     fieldErrors: Record<string, string>;
@@ -20,6 +38,7 @@ export default function PostForm({
     formData,
     onChange,
     onSubmit,
+    onCancel,
     loading,
     isEdit,
     fieldErrors,
@@ -141,6 +160,39 @@ export default function PostForm({
                         </div>
                     </FormGroup>
 
+                    {/* Category / Tags */}
+                    <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <FormLabel htmlFor="category_id">Category ID</FormLabel>
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                Numeric ID of the category (leave blank for none).
+                            </p>
+                        </div>
+                        <FormInput
+                            id="category_id"
+                            name="category_id"
+                            type="number"
+                            value={formData.category_id ?? ""}
+                            onChange={onChange}
+                        />
+                    </FormGroup>
+
+                    <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <FormLabel htmlFor="tag_ids">Tag IDs</FormLabel>
+                            <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                Comma-separated numeric tag IDs, e.g. "1, 2, 5".
+                            </p>
+                        </div>
+                        <FormInput
+                            id="tag_ids"
+                            name="tag_ids"
+                            type="text"
+                            value={(formData.tag_ids ?? []).join(", ")}
+                            onChange={onChange}
+                        />
+                    </FormGroup>
+
                 </div>
 
                 {/* Right */}
@@ -201,13 +253,13 @@ export default function PostForm({
                 <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
 
                 <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
-
                     <Button
                         type="button"
                         label="Back"
                         variant="secondary"
                         rounded="lg"
                         fullWidth
+                        onClick={onCancel} // ✅ fixed
                     />
 
                     <Button

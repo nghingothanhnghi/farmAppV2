@@ -10,6 +10,7 @@ import { CartProvider } from './contexts/cartContext.tsx'
 import { WishlistProvider } from './contexts/wishlistContext.tsx'
 import { CheckoutDialogProvider } from './contexts/checkoutDialogContext.tsx'
 import { ProductProvider } from './contexts/productContext.tsx'
+import { PostProvider } from './contexts/postContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
 import { PlantBatchProvider } from './contexts/plantBatchContext.tsx'
 import Alert from './components/alert/alert.tsx'
@@ -28,7 +29,9 @@ createRoot(document.getElementById('root')!).render(
                   <JackpotProvider>
                     <CheckoutDialogProvider>
                       <ProductProvider>
-                        <App />
+                        <PostProvider>
+                          <App />
+                        </PostProvider>
                       </ProductProvider>
                     </CheckoutDialogProvider>
                   </JackpotProvider>
