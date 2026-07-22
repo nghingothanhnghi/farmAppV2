@@ -34,7 +34,10 @@ export const usePost = ()=>{
 
             const data=await postService.getAll(query);
 
-            setPosts(data.items);
+                    // ✅ defensive guard against unexpected shape
+        const items = Array.isArray(data?.items) ? data.items : [];
+
+        setPosts(items);
 
             setPagination({
                 total:data.total,
@@ -46,7 +49,7 @@ export const usePost = ()=>{
             setError(null);
 
         }catch(err:any){
-
+setPosts([]); // ✅ don't leave posts undefined on error either
             setError(err.response?.data?.detail ?? "Failed loading posts");
 
         }finally{
