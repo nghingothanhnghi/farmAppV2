@@ -135,7 +135,7 @@ export interface CmsPostUpdate {
 
 export interface PaginatedPosts {
 
-  items: CmsPost[];
+  results: CmsPost[];
 
   total: number;
 
@@ -143,5 +143,5 @@ export interface PaginatedPosts {
 
   page_size: number;
 
-  pages: number;
+   pages?: number; 
 }
