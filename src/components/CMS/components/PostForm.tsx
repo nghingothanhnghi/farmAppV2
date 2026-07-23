@@ -299,6 +299,7 @@ export default function PostForm({
                         rounded="lg"
                         fullWidth
                         onClick={onCancel} // ✅ fixed
+                        disabled={loading}
                     />
 
                     <Button

@@ -2,7 +2,6 @@
 import { useMemo } from 'react';
 import type { CmsPost } from "../../../models/interfaces/Post";
 import DataGrid from '../../common/dataGrid/dataGrid';
-import Avatar from "../../common/Avatar";
 import ProductImage from "../../common/ProductImage";
 import ActionButtons from '../../common/dataGrid/actionButton';
 import Button from '../../common/Button';
@@ -49,15 +48,15 @@ export default function PostGrid({
             filter: false,
             sortable: false,
             resizable: false,
+            cellStyle: { display: "flex", justifyContent: "center", alignItems: "center", padding: 0 },
             cellRenderer: ({ data }: any) => (
                         <ProductImage
                             imageUrl={data.featured_image?.url}
                             alt={data.title}
-                            size={36}
+                            size={24}
                             rounded="lg"
                             className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                         />
-
             )
         },
         { headerName: "Title", field: "title", flex: 2 },

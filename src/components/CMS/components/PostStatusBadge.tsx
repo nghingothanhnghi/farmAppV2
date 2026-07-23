@@ -2,43 +2,21 @@
 
 import Badge from "../../common/Badge";
 import type { PostStatus } from "../../../models/interfaces/Post";
+import { getPostStatus } from "../../../utils/post";
 
 interface Props {
   status: PostStatus;
 }
 
-const STATUS_CONFIG: Record<
-  PostStatus,
-  {
-    label: string;
-    variant: "success" | "warning" | "info" | "secondary";
-  }
-> = {
-  draft: {
-    label: "Draft",
-    variant: "warning",
-  },
-  published: {
-    label: "Published",
-    variant: "success",
-  },
-  scheduled: {
-    label: "Scheduled",
-    variant: "info",
-  },
-  archived: {
-    label: "Archived",
-    variant: "secondary",
-  },
-};
-
 export default function PostStatusBadge({ status }: Props) {
-  const config = STATUS_CONFIG[status];
+  
+
+  const { label, variant } = getPostStatus(status);
 
   return (
     <Badge
-      label={config.label}
-      variant={config.variant}
+      label={label}
+      variant={variant}
     />
   );
 }
