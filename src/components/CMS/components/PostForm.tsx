@@ -1,8 +1,10 @@
 // src/components/CMS/components/PostForm.tsx
-import { useMemo } from 'react';
-import type { CmsPostCreate, CmsPostUpdate, PostType, PostStatus } from "../../../models/interfaces/Post";
+import { useRef } from 'react';
+import type { PostType, PostStatus } from "../../../models/interfaces/Post";
 import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormSelect } from '../../../components/common/Form';
 import Button from '../../common/Button';
+import FileInput from '../../common/FileInput';
+import ProductImage from '../../common/ProductImage';
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
 export interface PostFormData {
@@ -31,7 +33,8 @@ interface Props {
     loading: boolean;
     isEdit: boolean;
     fieldErrors: Record<string, string>;
-
+    featuredImageUrl?: string | null;   // current/preview URL to display
+    onImageChange?: (file: File | null) => void; // lifts the selected File to the parent
 }
 
 export default function PostForm({
@@ -42,7 +45,11 @@ export default function PostForm({
     loading,
     isEdit,
     fieldErrors,
+    featuredImageUrl,
+    onImageChange,
 }: Props) {
+
+    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const fields = [
         [
@@ -156,6 +163,38 @@ export default function PostForm({
                                 <p className="mt-1 text-xs text-red-500">
                                     {fieldErrors.content}
                                 </p>
+                            )}
+                        </div>
+                    </FormGroup>
+
+                    <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
+                        <div className="space-y-1">
+                            <FormLabel htmlFor="featured_image">Featured Image</FormLabel>
+                        </div>
+                        <div className="space-y-1">
+                            <div className="aspect-video w-full lg:w-[255px] bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
+                                {featuredImageUrl ? (
+                                    <ProductImage
+                                        imageUrl={featuredImageUrl}
+                                        alt={formData.title || "Featured image"}
+                                        size={200}
+                                        rounded="lg"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-gray-400 text-sm">No Image</span>
+                                )}
+                            </div>
+                            {onImageChange && (
+                                <FileInput
+                                    id="featured_image"
+                                    inputRef={fileInputRef}
+                                    accept="image/*"
+                                    label="Upload Image"
+                                    onChange={(e) =>
+                                        onImageChange(e.target.files?.[0] || null)
+                                    }
+                                />
                             )}
                         </div>
                     </FormGroup>

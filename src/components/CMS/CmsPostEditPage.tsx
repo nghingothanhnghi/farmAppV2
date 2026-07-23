@@ -15,6 +15,8 @@ const CmsPostEditPage: React.FC = () => {
     const { selectedPost, loading, actions } = usePostContext();
     const [formData, setFormData] = useState<Partial<PostFormData>>({});
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
     useEffect(() => {
         if (id) {
@@ -39,6 +41,7 @@ const CmsPostEditPage: React.FC = () => {
                 is_featured: selectedPost.is_featured,
                 published_at: selectedPost.published_at ?? null,
             });
+            setPreviewUrl(selectedPost.featured_image?.url ?? null);
         }
     }, [selectedPost, id]);
 
@@ -62,12 +65,22 @@ const CmsPostEditPage: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
 
+    const handleImageChange = (file: File | null) => {
+        setImageFile(file);
+        setPreviewUrl(file ? URL.createObjectURL(file) : (selectedPost?.featured_image?.url ?? null));
+    };
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!id) return;
 
         try {
-            await actions.updatePost(Number(id), formData as CmsPostUpdate);
+            const updated = await actions.updatePost(Number(id), formData as CmsPostUpdate);
+
+            // ✅ NEW
+            if (imageFile) {
+                await actions.uploadFeaturedImage(updated.id, imageFile);
+            }
             setAlert({ type: "success", message: "Post updated successfully." });
             navigate("/dashboard/cms");
         } catch (err: any) {
@@ -97,6 +110,8 @@ const CmsPostEditPage: React.FC = () => {
                 loading={loading}
                 isEdit
                 fieldErrors={fieldErrors}
+                featuredImageUrl={previewUrl}       // ✅ NEW
+                onImageChange={handleImageChange} 
             />
         </div>
     );

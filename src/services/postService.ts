@@ -27,38 +27,47 @@ export const postService = {
         return res.data;
     },
 
-    async getById(id:number):Promise<CmsPost>{
+    async getById(id: number): Promise<CmsPost> {
         const res = await apiClient.get(`/cms/posts/${id}`);
         return res.data;
     },
 
-    async getBySlug(slug:string){
+    async getBySlug(slug: string) {
         const res = await apiClient.get(`/cms/posts/slug/${slug}`);
         return res.data;
     },
 
-    async create(data:CmsPostCreate){
-        const res = await apiClient.post("/cms/posts",data);
+    async create(data: CmsPostCreate) {
+        const res = await apiClient.post("/cms/posts", data);
         return res.data;
     },
 
-    async update(id:number,data:CmsPostUpdate){
-        const res = await apiClient.put(`/cms/posts/${id}`,data);
+    async update(id: number, data: CmsPostUpdate) {
+        const res = await apiClient.put(`/cms/posts/${id}`, data);
         return res.data;
     },
 
-    async delete(id:number){
+    async delete(id: number) {
         await apiClient.delete(`/cms/posts/${id}`);
     },
 
-    async publish(id:number){
+    async publish(id: number) {
         const res = await apiClient.post(`/cms/posts/${id}/publish`);
         return res.data;
     },
 
-    async archive(id:number){
+    async archive(id: number) {
         const res = await apiClient.post(`/cms/posts/${id}/archive`);
         return res.data;
-    }
+    },
+
+    async uploadFeaturedImage(postId: number, file: File): Promise<CmsPost> {
+        const formData = new FormData();
+        formData.append("file", file);
+        const res = await apiClient.post(`/cms/posts/${postId}/upload-image`, formData, {
+            headers: { "Content-Type": "multipart/form-data" },
+        });
+        return res.data;
+    },
 
 }

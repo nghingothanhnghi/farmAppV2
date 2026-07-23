@@ -24,6 +24,9 @@ const CmsPostCreatePage: React.FC = () => {
     const [formData, setFormData] = useState<PostFormData>(DEFAULT_FORM);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
+    const [imageFile, setImageFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
@@ -42,6 +45,11 @@ const CmsPostCreatePage: React.FC = () => {
         }
 
         setFormData(prev => ({ ...prev, [name]: finalValue }));
+    };
+
+    const handleImageChange = (file: File | null) => {
+        setImageFile(file);
+        setPreviewUrl(file ? URL.createObjectURL(file) : null);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -65,6 +73,11 @@ const CmsPostCreatePage: React.FC = () => {
             };
 
             const created = await actions.createPost(payload);
+
+            if (imageFile) {
+                await actions.uploadFeaturedImage(created.id, imageFile);
+            }
+
             setAlert({ type: "success", message: `"${created.title}" created.` });
             navigate("/dashboard/cms");
         } catch (err: any) {
@@ -87,6 +100,8 @@ const CmsPostCreatePage: React.FC = () => {
                 loading={loading}
                 isEdit={false}
                 fieldErrors={fieldErrors}
+                featuredImageUrl={previewUrl}       // ✅ NEW
+                onImageChange={handleImageChange}
             />
         </div>
     );
