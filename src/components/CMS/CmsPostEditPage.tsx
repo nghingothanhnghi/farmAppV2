@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
+import { mediaService } from '../../services/mediaService';
 import { useAlert } from '../../contexts/alertContext';
 import type { CmsPostUpdate } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
@@ -15,6 +16,8 @@ const CmsPostEditPage: React.FC = () => {
     const { selectedPost, loading, actions } = usePostContext();
     const [formData, setFormData] = useState<Partial<PostFormData>>({});
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [submitting, setSubmitting] = useState(false);
+
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
@@ -74,13 +77,22 @@ const CmsPostEditPage: React.FC = () => {
         e.preventDefault();
         if (!id) return;
 
-        try {
-            const updated = await actions.updatePost(Number(id), formData as CmsPostUpdate);
+        setSubmitting(true);
 
-            // ✅ NEW
+        try {
+            let featuredImageId = formData.featured_image_id ?? undefined;
+
+            // ✅ Upload to media library first, get back the media id
             if (imageFile) {
-                await actions.uploadFeaturedImage(updated.id, imageFile);
+                const media = await mediaService.upload(imageFile, formData.title);
+                featuredImageId = media.id;
             }
+
+            await actions.updatePost(Number(id), {
+                ...formData,
+                featured_image_id: featuredImageId,
+            } as CmsPostUpdate);
+
             setAlert({ type: "success", message: "Post updated successfully." });
             navigate("/dashboard/cms");
         } catch (err: any) {
@@ -89,6 +101,8 @@ const CmsPostEditPage: React.FC = () => {
                 type: "error",
                 message: err.response?.data?.detail ?? "Failed to update post.",
             });
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -107,11 +121,11 @@ const CmsPostEditPage: React.FC = () => {
                 onChange={handleChange}
                 onSubmit={handleSubmit}
                 onCancel={() => navigate("/dashboard/cms")}
-                loading={loading}
+                loading={loading || submitting}
                 isEdit
                 fieldErrors={fieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
-                onImageChange={handleImageChange} 
+                onImageChange={handleImageChange}
             />
         </div>
     );

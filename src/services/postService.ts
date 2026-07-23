@@ -61,13 +61,6 @@ export const postService = {
         return res.data;
     },
 
-    async uploadFeaturedImage(postId: number, file: File): Promise<CmsPost> {
-        const formData = new FormData();
-        formData.append("file", file);
-        const res = await apiClient.post(`/cms/posts/${postId}/upload-image`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
-        });
-        return res.data;
-    },
+
 
 }

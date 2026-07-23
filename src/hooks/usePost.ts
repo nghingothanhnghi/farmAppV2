@@ -122,13 +122,6 @@ export const usePost = () => {
 
     }, []);
 
-    const uploadFeaturedImage = useCallback(async (postId: number, file: File) => {
-        const updated = await postService.uploadFeaturedImage(postId, file);
-        setPosts(prev => prev.map(p => p.id === postId ? updated : p));
-        setSelectedPost(prev => (prev?.id === postId ? updated : prev));
-        return updated;
-    }, []);
-
     useEffect(() => {
         fetchPosts();
     }, [fetchPosts]);
@@ -149,7 +142,6 @@ export const usePost = () => {
             deletePost,
             publishPost,
             archivePost,
-            uploadFeaturedImage,
         }
 
     };

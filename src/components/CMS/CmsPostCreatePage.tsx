@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
+import { mediaService } from '../../services/mediaService';
 import { useAlert } from '../../contexts/alertContext';
 import type { CmsPostCreate } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
@@ -23,6 +24,7 @@ const CmsPostCreatePage: React.FC = () => {
     const { loading, actions } = usePostContext();
     const [formData, setFormData] = useState<PostFormData>(DEFAULT_FORM);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const [submitting, setSubmitting] = useState(false);
 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -60,7 +62,18 @@ const CmsPostCreatePage: React.FC = () => {
             return;
         }
 
+        setSubmitting(true);
+
         try {
+
+            let featuredImageId = formData.featured_image_id ?? undefined;
+
+            // ✅ Upload to media library first, get back the media id
+            if (imageFile) {
+                const media = await mediaService.upload(imageFile, formData.title);
+                featuredImageId = media.id;
+            }
+
             // category_id/featured_image_id on Create don't allow null — normalize.
             const payload: CmsPostCreate = {
                 ...formData,
@@ -68,15 +81,11 @@ const CmsPostCreatePage: React.FC = () => {
                 content: formData.content,
                 post_type: formData.post_type ?? "post",
                 category_id: formData.category_id ?? undefined,
-                featured_image_id: formData.featured_image_id ?? undefined,
+                featured_image_id: featuredImageId,
                 published_at: formData.published_at ?? undefined,
             };
 
             const created = await actions.createPost(payload);
-
-            if (imageFile) {
-                await actions.uploadFeaturedImage(created.id, imageFile);
-            }
 
             setAlert({ type: "success", message: `"${created.title}" created.` });
             navigate("/dashboard/cms");
@@ -86,6 +95,8 @@ const CmsPostCreatePage: React.FC = () => {
                 type: "error",
                 message: err.response?.data?.detail ?? "Failed to create post.",
             });
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -97,7 +108,7 @@ const CmsPostCreatePage: React.FC = () => {
                 onChange={handleChange}
                 onSubmit={handleSubmit}
                 onCancel={() => navigate("/dashboard/cms")}
-                loading={loading}
+                loading={loading || submitting}
                 isEdit={false}
                 fieldErrors={fieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
