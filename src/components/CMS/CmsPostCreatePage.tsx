@@ -49,6 +49,16 @@ const CmsPostCreatePage: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
 
+        // ✅ NEW
+    const handleCategoryChange = (categoryId: number | null) => {
+        setFormData(prev => ({ ...prev, category_id: categoryId }));
+    };
+
+    // ✅ NEW
+    const handleTagsChange = (tagIds: number[]) => {
+        setFormData(prev => ({ ...prev, tag_ids: tagIds }));
+    };
+
     const handleImageChange = (file: File | null) => {
         // ✅ revoke old blob before creating a new one
         if (previewUrl?.startsWith("blob:")) {
@@ -117,6 +127,8 @@ const CmsPostCreatePage: React.FC = () => {
                 fieldErrors={fieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
                 onImageChange={handleImageChange}
+                onCategoryChange={handleCategoryChange}
+                onTagsChange={handleTagsChange}
             />
         </div>
     );

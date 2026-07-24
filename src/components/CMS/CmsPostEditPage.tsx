@@ -68,6 +68,16 @@ const CmsPostEditPage: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
 
+    // ✅ NEW
+    const handleCategoryChange = (categoryId: number | null) => {
+        setFormData(prev => ({ ...prev, category_id: categoryId }));
+    };
+
+    // ✅ NEW
+    const handleTagsChange = (tagIds: number[]) => {
+        setFormData(prev => ({ ...prev, tag_ids: tagIds }));
+    };
+
     const handleImageChange = (file: File | null) => {
         if (previewUrl?.startsWith("blob:")) {
             URL.revokeObjectURL(previewUrl);
@@ -94,6 +104,7 @@ const CmsPostEditPage: React.FC = () => {
             await actions.updatePost(Number(id), {
                 ...formData,
                 featured_image_id: featuredImageId,
+                tag_ids: formData.tag_ids ?? [],
             } as CmsPostUpdate);
 
             setAlert({ type: "success", message: "Post updated successfully." });
@@ -129,6 +140,8 @@ const CmsPostEditPage: React.FC = () => {
                 fieldErrors={fieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
                 onImageChange={handleImageChange}
+                onCategoryChange={handleCategoryChange}
+                onTagsChange={handleTagsChange}
             />
         </div>
     );

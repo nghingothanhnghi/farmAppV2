@@ -1,10 +1,13 @@
 // src/components/CMS/components/PostForm.tsx
-import { useRef } from 'react';
-import type { PostType, PostStatus } from "../../../models/interfaces/Post";
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { PostType, PostStatus, CmsCategory, CmsTag } from "../../../models/interfaces/Post";
+import { categoryService } from "../../../services/categoryService";
+import { tagService } from "../../../services/tagService";
 import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormSelect } from '../../../components/common/Form';
 import Button from '../../common/Button';
 import FileInput from '../../common/FileInput';
-import ProductImage from '../../common/ProductImage';
+import DropdownButton from '../../common/DropdownButton';
+import MultiSelectDropdown from '../../common/MultiSelectDropdown';
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
 export interface PostFormData {
@@ -33,8 +36,12 @@ interface Props {
     loading: boolean;
     isEdit: boolean;
     fieldErrors: Record<string, string>;
+
     featuredImageUrl?: string | null;   // current/preview URL to display
     onImageChange?: (file: File | null) => void; // lifts the selected File to the parent
+
+    onCategoryChange?: (categoryId: number | null) => void;
+    onTagsChange?: (tagIds: number[]) => void;
 }
 
 export default function PostForm({
@@ -47,9 +54,52 @@ export default function PostForm({
     fieldErrors,
     featuredImageUrl,
     onImageChange,
+    onCategoryChange,
+    onTagsChange,
 }: Props) {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+    // ✅ NEW — category & tag data
+    const [categories, setCategories] = useState<CmsCategory[]>([]);
+    const [tags, setTags] = useState<CmsTag[]>([]);
+    const [loadingTaxonomy, setLoadingTaxonomy] = useState(true);
+
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const [cats, tgs] = await Promise.all([
+                    categoryService.getAll(),
+                    tagService.getAll(),
+                ]);
+                if (mounted) {
+                    setCategories(cats);
+                    setTags(tgs);
+                }
+            } catch (err) {
+                console.error("Failed to load categories/tags", err);
+            } finally {
+                if (mounted) setLoadingTaxonomy(false);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []);
+
+    const categoryItems = useMemo(() => [
+        { label: "No category", value: "" },
+        ...categories.map((c) => ({ label: c.name, value: String(c.id) })),
+    ], [categories]);
+
+    const selectedCategory = categories.find((c) => c.id === formData.category_id);
+
+    const tagOptions = useMemo(() => (
+        tags.map((t) => ({
+            label: t.name,
+            value: String(t.id),
+            checked: (formData.tag_ids ?? []).includes(t.id),
+        }))
+    ), [tags, formData.tag_ids]);
 
     const fields = [
         [
@@ -197,37 +247,54 @@ export default function PostForm({
                         </div>
                     </FormGroup>
 
-                    {/* Category / Tags */}
+                    {/* ✅ Category picker */}
                     <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                         <div className="space-y-1">
-                            <FormLabel htmlFor="category_id">Category ID</FormLabel>
+                            <FormLabel htmlFor="category_id">Category</FormLabel>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                Numeric ID of the category (leave blank for none).
+                                Choose a category for this post.
                             </p>
                         </div>
-                        <FormInput
-                            id="category_id"
-                            name="category_id"
-                            type="number"
-                            value={formData.category_id ?? ""}
-                            onChange={onChange}
-                        />
+                        <div>
+                            <DropdownButton
+                                label={
+                                    loadingTaxonomy
+                                        ? "Loading..."
+                                        : selectedCategory?.name || "No category"
+                                }
+                                items={categoryItems}
+                                disabled={loadingTaxonomy}
+                                onSelect={(item) =>
+                                    onCategoryChange?.(item.value ? Number(item.value) : null)
+                                }
+                                className="w-full sm:w-auto"
+                                variant="secondary"
+                            />
+                        </div>
                     </FormGroup>
 
+                    {/* ✅ Tags picker */}
                     <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                         <div className="space-y-1">
-                            <FormLabel htmlFor="tag_ids">Tag IDs</FormLabel>
+                            <FormLabel htmlFor="tag_ids">Tags</FormLabel>
                             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                Comma-separated numeric tag IDs, e.g. "1, 2, 5".
+                                Select one or more tags.
                             </p>
                         </div>
-                        <FormInput
-                            id="tag_ids"
-                            name="tag_ids"
-                            type="text"
-                            value={(formData.tag_ids ?? []).join(", ")}
-                            onChange={onChange}
-                        />
+                        <div>
+                            <MultiSelectDropdown
+                                title={
+                                    (formData.tag_ids ?? []).length > 0
+                                        ? `Tags (${(formData.tag_ids ?? []).length})`
+                                        : "Select tags"
+                                }
+                                options={tagOptions}
+                                disabled={loadingTaxonomy}
+                                onChange={(selected) =>
+                                    onTagsChange?.(selected.map((v) => Number(v)))
+                                }
+                            />
+                        </div>
                     </FormGroup>
 
                 </div>
