@@ -50,6 +50,10 @@ const CmsPostCreatePage: React.FC = () => {
     };
 
     const handleImageChange = (file: File | null) => {
+        // ✅ revoke old blob before creating a new one
+        if (previewUrl?.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
         setImageFile(file);
         setPreviewUrl(file ? URL.createObjectURL(file) : null);
     };

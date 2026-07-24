@@ -69,6 +69,9 @@ const CmsPostEditPage: React.FC = () => {
     };
 
     const handleImageChange = (file: File | null) => {
+        if (previewUrl?.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
         setImageFile(file);
         setPreviewUrl(file ? URL.createObjectURL(file) : (selectedPost?.featured_image?.url ?? null));
     };
