@@ -35,6 +35,8 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
     });
 
     const [imageFile, setImageFile] = useState<File | null>(null);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
     const isViewMode = mode === "view";
 
     /* -------------------------------------------------- */
@@ -63,6 +65,9 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                     variants: selectedProduct.variants || [],
                 };
             });
+
+            // ✅ seed preview with the existing server image (if any)
+            setPreviewUrl(selectedProduct.image_url || null);
         }
     }, [selectedProduct, mode]);
 
@@ -75,6 +80,38 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             }));
         }
     }, [formData.name, formData.sku, mode]);
+
+    // ✅ Cleanup any dangling blob URL when component unmounts
+    useEffect(() => {
+        return () => {
+            if (previewUrl?.startsWith("blob:")) {
+                URL.revokeObjectURL(previewUrl);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // ✅ Creates a local preview and feeds it into formData.image_url
+    // so ProductInfoForm renders the picked image immediately.
+    const handleImageChange = (file: File | null) => {
+        // revoke old blob before creating a new one
+        if (previewUrl?.startsWith("blob:")) {
+            URL.revokeObjectURL(previewUrl);
+        }
+
+        setImageFile(file);
+
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviewUrl(url);
+            setFormData(prev => ({ ...prev, image_url: url }));
+        } else {
+            // no file selected — fall back to existing server image (edit mode) or empty (add mode)
+            const fallback = selectedProduct?.image_url || "";
+            setPreviewUrl(fallback || null);
+            setFormData(prev => ({ ...prev, image_url: fallback }));
+        }
+    };
 
     /* -------------------------------------------------- */
     /* Draft / unsaved detection                           */
@@ -157,8 +194,12 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         try {
             let product: Product;
 
+            // ✅ Strip the local preview blob URL before sending to the API —
+            // the real image is set via uploadProductImage below.
+            const { image_url: _previewOnly, ...payloadWithoutPreview } = formData;
+
             if (mode === "add") {
-                product = await actions.createProduct(formData);
+                product = await actions.createProduct(payloadWithoutPreview as ProductCreate);
 
                 for (const v of formData.variants as DraftVariant[]) {
                     if (!v.name?.trim()) continue;
@@ -222,7 +263,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                 data={formData}
                 isViewMode={isViewMode}
                 onChange={handleChange}
-                onImageChange={setImageFile}
+                onImageChange={handleImageChange}
 
                 qrCodeUrl={selectedProduct?.qr_code_url}
                 onRegenerateQr={handleRegenerateQr}

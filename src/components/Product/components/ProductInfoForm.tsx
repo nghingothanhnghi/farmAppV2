@@ -3,7 +3,6 @@ import { FormGroup, FormLabel, FormInput, FormCheckbox } from "../../common/Form
 import FileInput from "../../common/FileInput";
 import RichTextEditor from "../../common/RichTextEditor";
 import QRCodeImage from "../../common/QRCodeImage";
-import ProductImage from "../../common/ProductImage";
 import type { ProductCreate } from "../../../models/interfaces/Product";
 
 interface ProductInfoFormProps {
@@ -113,13 +112,12 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
         <div className="space-y-1">
           <div className="aspect-square w-full lg:w-[255px] bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
             {data.image_url ? (
-              <ProductImage
-                imageUrl={data.image_url}
+              <img
+                src={data.image_url}
                 alt={data.name}
-                size={200} // width/height of the card image
-                rounded="lg"
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                className="w-full h-full object-cover"
               />
+
             ) : (
               <span className="text-gray-400 text-sm">No Image</span>
             )}

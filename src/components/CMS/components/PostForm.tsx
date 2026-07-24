@@ -174,11 +174,9 @@ export default function PostForm({
                         <div className="space-y-1">
                             <div className="aspect-video w-full lg:w-[255px] bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
                                 {featuredImageUrl ? (
-                                    <ProductImage
-                                        imageUrl={featuredImageUrl}
+                                    <img
+                                        src={featuredImageUrl}
                                         alt={formData.title || "Featured image"}
-                                        size={200}
-                                        rounded="lg"
                                         className="w-full h-full object-cover"
                                     />
                                 ) : (
