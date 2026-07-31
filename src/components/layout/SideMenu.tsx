@@ -1,5 +1,5 @@
 // src/components/layout/SideMenu.tsx
-import { IconDeviceMobileCheck, IconCamera, IconBrain, IconPlant, IconUserShield, IconSportBillard, IconCheese, IconCalendarCheck, IconAnalyze, IconCashRegister } from '@tabler/icons-react';
+import { IconDeviceMobileCheck, IconCamera, IconBrain, IconPlant, IconUserShield, IconSportBillard, IconCheese, IconArticle, IconCalendarCheck, IconAnalyze, IconCashRegister } from '@tabler/icons-react';
 import ListLink from '../common/ListLink';
 import { APP_NAME } from '../../config/constants';
 import Header from './Header';
@@ -44,6 +44,7 @@ export default function SideMenu({ open = false, onClose }: SideMenuProps) {
                         <ListLink to="/hydroponic-system" onClick={handleLinkClick} icon={<IconPlant size={16} />} label="Hydroponic System" />
                         <ListLink to="/jackpot" onClick={handleLinkClick} icon={<IconSportBillard size={16} />} label="Jackpot" />
                         <ListLink to="/dashboard/products" onClick={handleLinkClick} icon={<IconCheese size={16} />} label="Products" />
+                        <ListLink to="/dashboard/cms" onClick={handleLinkClick} icon={<IconArticle size={16} />} label="CMS Content" />
                         <ListLink to="/users" onClick={handleLinkClick} icon={<IconUserShield size={16} />} label="Users" />
                         <ListLink to="/migrate" onClick={handleLinkClick} icon={<IconAnalyze size={16} />} label="Data Migration" />
                         <ListLink to="/payments" onClick={handleLinkClick} icon={<IconCashRegister size={16} />} label="Payments" />
