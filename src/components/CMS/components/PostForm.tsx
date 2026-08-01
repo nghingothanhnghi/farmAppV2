@@ -8,6 +8,12 @@ import Button from '../../common/Button';
 import FileInput from '../../common/FileInput';
 import DropdownButton from '../../common/DropdownButton';
 import MultiSelectDropdown from '../../common/MultiSelectDropdown';
+import { IconPlus } from '@tabler/icons-react';
+import CategoryFormModal from './CategoryFormModal';
+import TagFormModal from './TagFormModal';
+import type { CategoryInput } from '../../../hooks/useCategory';
+import type { TagInput } from '../../../hooks/useTag';
+
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
 export interface PostFormData {
@@ -65,6 +71,10 @@ export default function PostForm({
     const [tags, setTags] = useState<CmsTag[]>([]);
     const [loadingTaxonomy, setLoadingTaxonomy] = useState(true);
 
+    // ✅ inline create modals
+    const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+    const [tagModalOpen, setTagModalOpen] = useState(false);
+
     useEffect(() => {
         let mounted = true;
         (async () => {
@@ -85,6 +95,20 @@ export default function PostForm({
         })();
         return () => { mounted = false; };
     }, []);
+
+    // ✅ handle inline category creation — refresh list + auto-select the new one
+    const handleCreateCategory = async (data: CategoryInput) => {
+        const created = await categoryService.create(data);
+        setCategories(prev => [...prev, created]);
+        onCategoryChange?.(created.id); // auto-select newly created category
+    };
+
+    // ✅ handle inline tag creation — refresh list + auto-add to selected tags
+    const handleCreateTag = async (data: TagInput) => {
+        const created = await tagService.create(data);
+        setTags(prev => [...prev, created]);
+        onTagsChange?.([...(formData.tag_ids ?? []), created.id]); // auto-select newly created tag
+    };
 
     const categoryItems = useMemo(() => [
         { label: "No category", value: "" },
@@ -133,7 +157,7 @@ export default function PostForm({
 
 
     return (
-        <Form onSubmit={onSubmit} className="mx-auto max-w-6xl">
+        <Form onSubmit={onSubmit} className="mx-auto max-w-4xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* Left */}
@@ -255,7 +279,7 @@ export default function PostForm({
                                 Choose a category for this post.
                             </p>
                         </div>
-                        <div>
+                        <div className="flex items-center gap-2">
                             <DropdownButton
                                 label={
                                     loadingTaxonomy
@@ -267,8 +291,18 @@ export default function PostForm({
                                 onSelect={(item) =>
                                     onCategoryChange?.(item.value ? Number(item.value) : null)
                                 }
-                                className="w-full sm:w-auto"
+                                className="flex-1"
                                 variant="secondary"
+                            />
+                            <Button
+                                type="button"
+                                icon={<IconPlus size={16} />}
+                                iconOnly
+                                label="New Category"
+                                variant="secondary"
+                                rounded="full"
+                                size="sm"
+                                onClick={() => setCategoryModalOpen(true)}
                             />
                         </div>
                     </FormGroup>
@@ -281,7 +315,7 @@ export default function PostForm({
                                 Select one or more tags.
                             </p>
                         </div>
-                        <div>
+                        <div className="flex items-center gap-2">
                             <MultiSelectDropdown
                                 title={
                                     (formData.tag_ids ?? []).length > 0
@@ -293,6 +327,16 @@ export default function PostForm({
                                 onChange={(selected) =>
                                     onTagsChange?.(selected.map((v) => Number(v)))
                                 }
+                            />
+                            <Button
+                                type="button"
+                                icon={<IconPlus size={16} />}
+                                iconOnly
+                                label="New Tag"
+                                variant="secondary"
+                                rounded="full"
+                                size="sm"
+                                onClick={() => setTagModalOpen(true)}
                             />
                         </div>
                     </FormGroup>
@@ -386,7 +430,20 @@ export default function PostForm({
                 </FormActions>
 
             </div>
+            {/* ✅ Inline create modals */}
+            <CategoryFormModal
+                isOpen={categoryModalOpen}
+                onClose={() => setCategoryModalOpen(false)}
+                mode="create"
+                categories={categories}
+                onSubmit={handleCreateCategory}
+            />
 
+            <TagFormModal
+                isOpen={tagModalOpen}
+                onClose={() => setTagModalOpen(false)}
+                onSubmit={handleCreateTag}
+            />
         </Form>
     )
 
