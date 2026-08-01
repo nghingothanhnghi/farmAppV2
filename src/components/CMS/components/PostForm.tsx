@@ -7,6 +7,7 @@ import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormS
 import Button from '../../common/Button';
 import Spinner from '../../common/Spinner';
 import FileInput from '../../common/FileInput';
+import RichTextEditor from "../../common/RichTextEditor";
 import DropdownButton from '../../common/DropdownButton';
 import MultiSelectDropdown from '../../common/MultiSelectDropdown';
 import { IconPlus } from '@tabler/icons-react';
@@ -14,6 +15,7 @@ import CategoryFormModal from './CategoryFormModal';
 import TagFormModal from './TagFormModal';
 import type { CategoryInput } from '../../../hooks/useCategory';
 import type { TagInput } from '../../../hooks/useTag';
+import { slugify } from "../../../utils/slug";
 
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
@@ -49,6 +51,8 @@ interface Props {
 
     onCategoryChange?: (categoryId: number | null) => void;
     onTagsChange?: (tagIds: number[]) => void;
+
+    onContentChange?: (html: string) => void;
 }
 
 export default function PostForm({
@@ -63,6 +67,7 @@ export default function PostForm({
     onImageChange,
     onCategoryChange,
     onTagsChange,
+    onContentChange,
 }: Props) {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -75,6 +80,10 @@ export default function PostForm({
     // ✅ inline create modals
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
     const [tagModalOpen, setTagModalOpen] = useState(false);
+
+    // ✅ NEW — auto-slug tracking. In edit mode, assume the slug is already
+    // intentional and don't touch it until the user edits it directly.
+    const [slugTouched, setSlugTouched] = useState(isEdit);
 
 
     useEffect(() => {
@@ -97,6 +106,30 @@ export default function PostForm({
         })();
         return () => { mounted = false; };
     }, []);
+
+    // ✅ NEW — auto-generate slug from title while untouched
+    useEffect(() => {
+        if (slugTouched) return;
+        if (!formData.title) return;
+
+        const generated = slugify(formData.title);
+        if (generated === formData.slug) return; // avoid redundant updates
+
+        onChange({
+            target: { name: "slug", value: generated, type: "text" },
+        } as unknown as React.ChangeEvent<HTMLInputElement>);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [formData.title, slugTouched]);
+
+    // ✅ NEW — wraps onChange so manual slug edits stop the auto-fill
+    const handleFieldChange = (
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    ) => {
+        if (e.target.name === "slug") {
+            setSlugTouched(true);
+        }
+        onChange(e);
+    };
 
     // ✅ handle inline category creation — refresh list + auto-select the new one
     const handleCreateCategory = async (data: CategoryInput) => {
@@ -140,7 +173,7 @@ export default function PostForm({
             "Slug",
             "text",
             true,
-            "Unique URL slug. Leave empty to auto-generate.",
+            "Unique URL slug. Auto-generated from title until you edit it.",
         ],
         [
             "excerpt",
@@ -199,7 +232,7 @@ export default function PostForm({
                                         name={name}
                                         type={type}
                                         value={(formData[name] as string) ?? ""}
-                                        onChange={onChange}
+                                        onChange={handleFieldChange}
                                         required={required}
                                     />
                                 )}
@@ -226,13 +259,28 @@ export default function PostForm({
                         </div>
 
                         <div>
-                            <textarea
+                            {/* <textarea
                                 id="content"
                                 name="content"
                                 rows={12}
                                 value={formData.content ?? ""}
                                 onChange={onChange}
                                 className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2"
+                            /> */}
+
+                            <RichTextEditor
+                                value={formData.content || ""}
+                                onChange={(html) => onContentChange?.(html)}
+                                toolbar={{
+                                    bold: true,
+                                    italic: true,
+                                    underline: true,
+                                    strike: true,
+                                    heading: true,
+                                    bulletList: true,
+                                    orderedList: true,
+                                    image: true,
+                                }}
                             />
 
                             {fieldErrors.content && (

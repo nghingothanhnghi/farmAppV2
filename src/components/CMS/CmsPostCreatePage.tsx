@@ -49,7 +49,11 @@ const CmsPostCreatePage: React.FC = () => {
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
 
-        // ✅ NEW
+    const handleContentChange = (html: string) => {
+        setFormData(prev => ({ ...prev, content: html }));
+    };
+
+    // ✅ NEW
     const handleCategoryChange = (categoryId: number | null) => {
         setFormData(prev => ({ ...prev, category_id: categoryId }));
     };
@@ -129,6 +133,7 @@ const CmsPostCreatePage: React.FC = () => {
                 onImageChange={handleImageChange}
                 onCategoryChange={handleCategoryChange}
                 onTagsChange={handleTagsChange}
+                onContentChange={handleContentChange}
             />
         </div>
     );

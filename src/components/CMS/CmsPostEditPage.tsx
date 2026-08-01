@@ -67,6 +67,11 @@ const CmsPostEditPage: React.FC = () => {
 
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
+    
+    const handleContentChange = (html: string) => {
+        setFormData(prev => ({ ...prev, content: html }));
+    };
+
 
     // ✅ NEW
     const handleCategoryChange = (categoryId: number | null) => {
@@ -142,6 +147,7 @@ const CmsPostEditPage: React.FC = () => {
                 onImageChange={handleImageChange}
                 onCategoryChange={handleCategoryChange}
                 onTagsChange={handleTagsChange}
+                onContentChange={handleContentChange}
             />
         </div>
     );
