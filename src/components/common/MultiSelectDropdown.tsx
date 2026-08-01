@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { createPortal } from "react-dom";
 import Button from './Button';
 import { FormCheckbox } from './Form';
 
@@ -120,7 +121,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     );
 
     return (
-        <div className="relative inline-block text-left">
+        <div
+            ref={buttonRef}
+            className="relative inline-block text-left"
+        >
             <Button
                 type="button"
                 variant='secondary'

@@ -5,6 +5,7 @@ import { categoryService } from "../../../services/categoryService";
 import { tagService } from "../../../services/tagService";
 import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormSelect } from '../../../components/common/Form';
 import Button from '../../common/Button';
+import Spinner from '../../common/Spinner';
 import FileInput from '../../common/FileInput';
 import DropdownButton from '../../common/DropdownButton';
 import MultiSelectDropdown from '../../common/MultiSelectDropdown';
@@ -74,6 +75,7 @@ export default function PostForm({
     // ✅ inline create modals
     const [categoryModalOpen, setCategoryModalOpen] = useState(false);
     const [tagModalOpen, setTagModalOpen] = useState(false);
+
 
     useEffect(() => {
         let mounted = true;
@@ -283,7 +285,7 @@ export default function PostForm({
                             <DropdownButton
                                 label={
                                     loadingTaxonomy
-                                        ? "Loading..."
+                                        ? <Spinner size={16} colorClass="border-white" />
                                         : selectedCategory?.name || "No category"
                                 }
                                 items={categoryItems}
