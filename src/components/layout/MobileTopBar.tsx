@@ -16,10 +16,13 @@ interface RouteMap {
 // Define your path-to-title mapping
 const pathTitleMap: RouteMap[] = [
     { pattern: '/', title: 'Android Device Streaming Demo' },
+    { pattern: '/scheduler-health', title: 'Scheduler Health' },
     { pattern: '/ar-detection', title: 'AR Object Detection' },
     { pattern: '/model-training', title: 'Train YOLOv8 Model' },
     { pattern: '/hydroponic-system', title: 'Hydroponic System Dashboard' },
     { pattern: '/projects/:projectId/settings', title: 'Project Settings' },
+    { pattern: '/dashboard/products', title: 'Product Management' },
+    { pattern: '/dashboard/cms', title: 'CMS Management' },
     // add more routes as needed
 ];
 
