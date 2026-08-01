@@ -128,7 +128,7 @@ const CmsPostEditPage: React.FC = () => {
     return (
         <div className="">
             <PageTitle
-                title="User Management"
+                title="Edit Post"
             />
             <PostForm
                 formData={formData}
