@@ -50,6 +50,8 @@ const ProductManagementPage = lazy(() => import("./components/Product").then(m =
 const CmsPostManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostManagementPage })));
 const CmsPostEditPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostEditPage })));
 const CmsPostCreatePage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostCreatePage })));
+const CmsCategoryManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsCategoryManagementPage })));
+const CmsTagManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsTagManagementPage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -129,6 +131,24 @@ function App() {
                 </PrivateRoute>
               }
             />
+
+            <Route
+              path="/dashboard/cms/categories"
+              element={
+                <PrivateRoute>
+                  <CmsCategoryManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/cms/tags"
+              element={
+                <PrivateRoute>
+                  <CmsTagManagementPage />
+                </PrivateRoute>
+              }
+            />
+
             <Route
               path="/dashboard/cms/new"
               element={
