@@ -259,15 +259,6 @@ export default function PostForm({
                         </div>
 
                         <div>
-                            {/* <textarea
-                                id="content"
-                                name="content"
-                                rows={12}
-                                value={formData.content ?? ""}
-                                onChange={onChange}
-                                className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2"
-                            /> */}
-
                             <RichTextEditor
                                 value={formData.content || ""}
                                 onChange={(html) => onContentChange?.(html)}
@@ -290,37 +281,7 @@ export default function PostForm({
                             )}
                         </div>
                     </FormGroup>
-
-                    <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
-                        <div className="space-y-1">
-                            <FormLabel htmlFor="featured_image">Featured Image</FormLabel>
-                        </div>
-                        <div className="space-y-1">
-                            <div className="aspect-video w-full lg:w-[255px] bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
-                                {featuredImageUrl ? (
-                                    <img
-                                        src={featuredImageUrl}
-                                        alt={formData.title || "Featured image"}
-                                        className="w-full h-full object-cover"
-                                    />
-                                ) : (
-                                    <span className="text-gray-400 text-sm">No Image</span>
-                                )}
-                            </div>
-                            {onImageChange && (
-                                <FileInput
-                                    id="featured_image"
-                                    inputRef={fileInputRef}
-                                    accept="image/*"
-                                    label="Upload Image"
-                                    onChange={(e) =>
-                                        onImageChange(e.target.files?.[0] || null)
-                                    }
-                                />
-                            )}
-                        </div>
-                    </FormGroup>
-
+                    <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
                     {/* ✅ Category picker */}
                     <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                         <div className="space-y-1">
@@ -356,7 +317,7 @@ export default function PostForm({
                             />
                         </div>
                     </FormGroup>
-
+                    <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
                     {/* ✅ Tags picker */}
                     <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                         <div className="space-y-1">
@@ -403,10 +364,8 @@ export default function PostForm({
                         </div>
 
                         <div className="space-y-4 px-4 pb-4">
-
-                            <FormGroup>
+                            <FormGroup className="space-y-1">
                                 <FormLabel htmlFor="status">Status</FormLabel>
-
                                 <FormSelect
                                     name="status"
                                     id="status"
@@ -420,9 +379,8 @@ export default function PostForm({
                                 </FormSelect>
                             </FormGroup>
 
-                            <FormGroup>
+                            <FormGroup className="space-y-1">
                                 <FormLabel htmlFor="post_type">Post Type</FormLabel>
-
                                 <FormSelect
                                     name="post_type"
                                     id="post_type"
@@ -441,6 +399,34 @@ export default function PostForm({
                                 checked={formData.is_featured ?? false}
                                 onChange={onChange}
                             />
+
+                            <FormGroup className="space-y-1">
+                                <FormLabel htmlFor="featured_image">Featured Image</FormLabel>
+                                <div className="space-y-1">
+                                    <div className="aspect-video w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
+                                        {featuredImageUrl ? (
+                                            <img
+                                                src={featuredImageUrl}
+                                                alt={formData.title || "Featured image"}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        ) : (
+                                            <span className="text-gray-400 text-sm">No Image</span>
+                                        )}
+                                    </div>
+                                    {onImageChange && (
+                                        <FileInput
+                                            id="featured_image"
+                                            inputRef={fileInputRef}
+                                            accept="image/*"
+                                            label="Upload Image"
+                                            onChange={(e) =>
+                                                onImageChange(e.target.files?.[0] || null)
+                                            }
+                                        />
+                                    )}
+                                </div>
+                            </FormGroup>
 
                         </div>
                     </div>
