@@ -297,6 +297,7 @@ export const FormToggle: React.FC<FormToggleProps> = ({
 
 interface FormCheckboxProps {
   id: string;
+  name?: string;
   checked: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label?: string;
@@ -306,6 +307,7 @@ interface FormCheckboxProps {
 
 export const FormCheckbox: React.FC<FormCheckboxProps> = ({
   id,
+  name,
   checked,
   onChange,
   label,
@@ -321,6 +323,7 @@ export const FormCheckbox: React.FC<FormCheckboxProps> = ({
         <input
           type="checkbox"
           id={id}
+          name={name}
           checked={checked}
           onChange={onChange}
           disabled={disabled}

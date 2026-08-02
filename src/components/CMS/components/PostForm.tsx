@@ -436,6 +436,7 @@ export default function PostForm({
 
                             <FormCheckbox
                                 id="is_featured"
+                                name="is_featured"
                                 label="Featured post"
                                 checked={formData.is_featured ?? false}
                                 onChange={onChange}

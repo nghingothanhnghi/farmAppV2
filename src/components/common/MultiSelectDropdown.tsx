@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { createPortal } from "react-dom";
 import Button from './Button';
+import Spinner from './Spinner';
 import { FormCheckbox } from './Form';
 
 interface Option {
@@ -12,8 +13,10 @@ interface Option {
 
 interface MultiSelectDropdownProps {
     options: Option[];
-    title?: string;
+    title?: React.ReactNode;      // ✅ was string, now accepts spinner/JSX
     disabled?: boolean;
+    loading?: boolean;            // ✅ NEW — shows spinner in trigger + body
+    emptyMessage?: string;        // ✅ NEW — shown when there are no options
     onChange?: (selected: string[]) => void;
     size?: 'xs' | 'sm' | 'md' | 'lg';
 }
@@ -23,6 +26,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     title = 'Permissions',
     disabled,
     size = 'md',
+    loading = false,
+    emptyMessage = 'No options',
     onChange
 }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -33,8 +38,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         options.filter((o) => o.checked).map((o) => o.value)
     );
 
+    const isDisabled = disabled || loading;
+
     const toggleDropdown = () => {
-        if (!disabled) setIsOpen(!isOpen);
+        if (!isDisabled) setIsOpen(!isOpen);
     };
 
     const handleToggleOption = (value: string) => {
@@ -89,6 +96,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         };
     }, [isOpen]);
 
+    // ✅ Close automatically if loading kicks in while open (e.g. refetch)
+    useEffect(() => {
+        if (loading) setIsOpen(false);
+    }, [loading]);
 
     const dropdownContent = (
         <div
@@ -96,7 +107,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
             style={{ top: position.top, left: position.left }}
             ref={dropdownRef}
         >
-            <ul>
+            {/* <ul>
                 {options.map((option, idx) => (
                     <li
                         key={idx}
@@ -116,7 +127,40 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                         </span>
                     </li>
                 ))}
-            </ul>
+            </ul> */}
+            {loading ? (
+                <div className="flex items-center justify-center py-6">
+                    <Spinner size={20} />
+                </div>
+            ) : options.length === 0 ? (
+                <p className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500 italic text-center">
+                    {emptyMessage}
+                </p>
+            ) : (
+                <ul>
+                    {options.map((option, idx) => (
+                        <li
+                            key={idx}
+                            className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-900 hover:bg-gray-200"
+                            onClick={() => !option.disabled && handleToggleOption(option.value)}
+                        >
+                            <FormCheckbox
+                                id={`option-${idx}`}
+                                checked={selectedValues.includes(option.value)}
+                                onChange={() => handleToggleOption(option.value)}
+                                disabled={option.disabled}
+                            />
+                            <span
+                                className={`text-sm ${option.disabled ? 'text-gray-400 line-through' : ''}`}
+                            >
+                                {option.label}
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+
         </div>
     );
 
@@ -130,30 +174,32 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                 variant='secondary'
                 size={size}
                 onClick={toggleDropdown}
-                disabled={disabled}
+                disabled={isDisabled}
                 label=""
                 rounded='lg'
                 icon={
                     <div className="flex items-center gap-2">
-                        {title}
-                        <svg
-                            className={`w-4 h-4 ml-1 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'
-                                }`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
+                        {loading ? <Spinner size={16} /> : title}
+                        {!loading && (
+                            <svg
+                                className={`w-4 h-4 ml-1 transform transition-transform duration-200 ${isOpen ? 'rotate-180' : 'rotate-0'
+                                    }`}
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        )}
                     </div>
                 }
             />
-            
+
             {isOpen && createPortal(dropdownContent, document.body)}
         </div>
     );
