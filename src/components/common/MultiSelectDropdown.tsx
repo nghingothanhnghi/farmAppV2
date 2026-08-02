@@ -103,31 +103,10 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
     const dropdownContent = (
         <div
-            className="z-[9999] fixed w-64 max-h-72 min-h-10 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 border"
+            className="z-[9999] fixed w-64 max-h-72 min-h-10 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border"
             style={{ top: position.top, left: position.left }}
             ref={dropdownRef}
         >
-            {/* <ul>
-                {options.map((option, idx) => (
-                    <li
-                        key={idx}
-                        className="gap-2 flex items-center px-4 py-2 cursor-pointer text-sm bg-gray-100 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-900 hover:bg-gray-200"
-                        onClick={() => !option.disabled && handleToggleOption(option.value)}
-                    >
-                        <FormCheckbox
-                            id={`option-${idx}`}
-                            checked={selectedValues.includes(option.value)}
-                            onChange={() => handleToggleOption(option.value)}
-                            disabled={option.disabled}
-                        />
-                        <span
-                            className={`text-sm ${option.disabled ? 'text-gray-400 line-through' : ''}`}
-                        >
-                            {option.label}
-                        </span>
-                    </li>
-                ))}
-            </ul> */}
             {loading ? (
                 <div className="flex items-center justify-center py-6">
                     <Spinner size={20} />
