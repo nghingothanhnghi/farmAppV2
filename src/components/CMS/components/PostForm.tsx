@@ -447,39 +447,41 @@ export default function PostForm({
 
                 </div>
 
-
-                <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-
-                <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
-                    <Button
-                        type="button"
-                        label="Back"
-                        variant="secondary"
-                        rounded="lg"
-                        fullWidth
-                        onClick={onCancel} // ✅ fixed
-                        disabled={loading}
-                    />
-
-                    <Button
-                        type="submit"
-                        label={
-                            loading
-                                ? isEdit
-                                    ? "Updating..."
-                                    : "Creating..."
-                                : isEdit
-                                    ? "Update Post"
-                                    : "Create Post"
-                        }
-                        disabled={loading}
-                        rounded="lg"
-                        fullWidth
-                    />
-
-                </FormActions>
-
             </div>
+
+            <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
+
+            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
+                <Button
+                    type="button"
+                    label="Back"
+                    variant="secondary"
+                    className="md:w-auto"
+                    fullWidth={true}
+                    rounded="lg"
+                    onClick={onCancel} // ✅ fixed
+                    disabled={loading}
+                />
+
+                <Button
+                    type="submit"
+                    label={
+                        loading
+                            ? isEdit
+                                ? "Updating..."
+                                : "Creating..."
+                            : isEdit
+                                ? "Update Post"
+                                : "Create Post"
+                    }
+                    disabled={loading}
+                    className="md:w-auto"
+                    fullWidth={true}
+                    rounded="lg"
+                />
+
+            </FormActions>
+
             {/* ✅ Inline create modals */}
             <CategoryFormModal
                 isOpen={categoryModalOpen}
