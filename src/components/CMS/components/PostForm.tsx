@@ -395,15 +395,14 @@ export default function PostForm({
 
                 {/* Right */}
                 <div className="space-y-6">
-
-                    <div className="rounded-lg border border-gray-100 dark:border-gray-700 shadow-sm">
+                    <div className="shadow-sm border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700 rounded-lg">
                         <div className="p-4">
                             <h3 className="text-sm font-medium">
                                 Publish
                             </h3>
                         </div>
 
-                        <div className="space-y-4 p-4">
+                        <div className="space-y-4 px-4 pb-4">
 
                             <FormGroup>
                                 <FormLabel htmlFor="status">Status</FormLabel>
