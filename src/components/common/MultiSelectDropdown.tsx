@@ -103,7 +103,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
     const dropdownContent = (
         <div
-            className="z-[9999] fixed w-64 max-h-72 min-h-10 overflow-y-auto rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border"
+            className="z-[9999] fixed w-64 max-h-72 min-h-10 overflow-y-auto rounded-md shadow-lg bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border"
             style={{ top: position.top, left: position.left }}
             ref={dropdownRef}
         >
