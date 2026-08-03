@@ -1,5 +1,5 @@
 // src/components/CMS/CmsPostManagementPage.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
 import { useAlert } from '../../contexts/alertContext';
@@ -9,20 +9,23 @@ import LinearProgress from '../common/LinearProgress';
 import PostGrid from './components/PostGrid';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
+import ScheduleModal from './components/ScheduleModal';
 import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
-
 
 const CmsPostManagementPage: React.FC = () => {
     const navigate = useNavigate();
     const { setAlert } = useAlert();
-    const {
-        posts,
-        loading,
-        actions
-    } = usePostContext();
+    const { posts, loading, actions } = usePostContext();
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
+
+    const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
+    const [schedulingPost, setSchedulingPost] = useState<CmsPost | null>(null);
+
+    useEffect(() => {
+        actions.fetchPosts();
+    }, []);
 
     const handleConfirmDelete = async () => {
         if (!selectedPost) return;
@@ -73,6 +76,20 @@ const CmsPostManagementPage: React.FC = () => {
         }
     };
 
+    const handleScheduleSubmit = async (isoDate: string) => {
+        if (!schedulingPost) return;
+        try {
+            await actions.schedulePost(schedulingPost.id, isoDate);
+            setAlert({ type: "success", message: `"${schedulingPost.title}" scheduled.` });
+        } catch (err: any) {
+            setAlert({
+                type: "error",
+                message: err.response?.data?.detail ?? "Failed to schedule post.",
+            });
+            throw err;
+        }
+    };
+
     if (loading) return <LinearProgress
         position='absolute'
         thickness="h-1"
@@ -105,7 +122,16 @@ const CmsPostManagementPage: React.FC = () => {
                 }}
                 onPublish={handlePublish}
                 onArchive={handleArchive}
+                onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
             />
+
+            <ScheduleModal
+                isOpen={scheduleModalOpen}
+                onClose={() => { setScheduleModalOpen(false); setSchedulingPost(null); }}
+                post={schedulingPost}
+                onSubmit={handleScheduleSubmit}
+            />
+
             <Modal
                 showCloseButton={false}
                 size='xsmall'

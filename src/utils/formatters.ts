@@ -1,4 +1,9 @@
 // src/utils/formatters.ts
+
+// ==============================
+// String
+// ==============================
+
 /**
  * Formats a device serial number for display
  */
@@ -17,6 +22,11 @@ export const formatCoordinates = (x: number, y: number): string => {
   return `(${x}, ${y})`;
 };
 
+
+// ==============================
+// Number
+// ==============================
+
 /**
  * Formats file size (bytes) to KB/MB
  */
@@ -25,6 +35,29 @@ export const formatFileSize = (size: number): string => {
   if (size >= 1024) return `${(size / 1024).toFixed(1)} KB`;
   return `${size} Bytes`;
 };
+
+// Format number into locale string (e.g. "1,234,567.89")
+export const formatCurrency = (value: number, locale = navigator.language): string => {
+  if (!value || isNaN(value)) return "";
+  return new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
+
+// Parse a localized numeric string back into a number
+export const parseLocaleNumber = (value: string, locale = navigator.language): number => {
+  const example = Intl.NumberFormat(locale).format(1.1);
+  const decimalSeparator = example.charAt(1);
+  const normalized = value
+    .replace(new RegExp(`[^0-9${decimalSeparator}]`, "g"), "")
+    .replace(decimalSeparator, ".");
+  return parseFloat(normalized) || 0;
+}
+
+// ==============================
+// Date & Time - Display
+// ==============================
 
 /**
  * Formats countdown timer from seconds to "Xm Ss"
@@ -52,22 +85,28 @@ export const formatDateVN = (dateString: string | Date): string => {
   });
 };
 
+// ==============================
+// Date & Time - Conversion
+// ==============================
 
-// Format number into locale string (e.g. "1,234,567.89")
-export function formatCurrency(value: number, locale = navigator.language): string {
-  if (!value || isNaN(value)) return "";
-  return new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(value);
-}
+// ✅ helpers to convert between <input type="datetime-local"> (no timezone, "YYYY-MM-DDTHH:mm")
+// and ISO strings the backend expects ("2026-08-10T09:00:00Z")
+export const isoToDatetimeLocal = (iso?: string | null): string => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
 
-// Parse a localized numeric string back into a number
-export function parseLocaleNumber(value: string, locale = navigator.language): number {
-  const example = Intl.NumberFormat(locale).format(1.1);
-  const decimalSeparator = example.charAt(1);
-  const normalized = value
-    .replace(new RegExp(`[^0-9${decimalSeparator}]`, "g"), "")
-    .replace(decimalSeparator, ".");
-  return parseFloat(normalized) || 0;
-}
+export const datetimeLocalToIso = (value: string): string | undefined => {
+    if (!value) return undefined;
+    const d = new Date(value); // interpreted in the browser's local timezone
+    if (isNaN(d.getTime())) return undefined;
+    return d.toISOString(); // → UTC ISO string, e.g. "2026-08-10T09:00:00.000Z"
+};
+
+
+
+
+

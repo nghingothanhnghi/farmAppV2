@@ -5,7 +5,7 @@ import DataGrid from '../../common/dataGrid/dataGrid';
 import ProductImage from "../../common/ProductImage";
 import ActionButtons from '../../common/dataGrid/actionButton';
 import Button from '../../common/Button';
-import { IconSend, IconArchive } from '@tabler/icons-react';
+import { IconSend, IconArchive, IconClock } from '@tabler/icons-react';
 import Badge from '../../common/Badge';
 import PostStatusBadge from './PostStatusBadge';
 
@@ -23,6 +23,7 @@ interface Props {
 
     onArchive: (post: CmsPost) => void;
 
+    onSchedule: (post: CmsPost) => void;
 }
 
 export default function PostGrid({
@@ -31,7 +32,8 @@ export default function PostGrid({
     onEdit,
     onDelete,
     onPublish,
-    onArchive
+    onArchive,
+    onSchedule,
 }: Props) {
 
     if (loading) {
@@ -50,13 +52,13 @@ export default function PostGrid({
             resizable: false,
             cellStyle: { display: "flex", justifyContent: "center", alignItems: "center", padding: 0 },
             cellRenderer: ({ data }: any) => (
-                        <ProductImage
-                            imageUrl={data.featured_image?.url}
-                            alt={data.title}
-                            size={24}
-                            rounded="lg"
-                            className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        />
+                <ProductImage
+                    imageUrl={data.featured_image?.url}
+                    alt={data.title}
+                    size={24}
+                    rounded="lg"
+                    className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                />
             )
         },
         { headerName: "Title", field: "title", flex: 2 },
@@ -73,7 +75,16 @@ export default function PostGrid({
             width: 120,
             filter: false,
             sortable: false,
-            cellRenderer: ({ data }: any) => <PostStatusBadge status={data.status} />
+            cellRenderer: ({ data }: any) => (
+                <div className="flex flex-col gap-0.5">
+                    <PostStatusBadge status={data.status} />
+                    {data.status === "scheduled" && data.scheduled_at && (
+                        <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                            {new Date(data.scheduled_at).toLocaleString()}
+                        </span>
+                    )}
+                </div>
+            )
         },
         {
             headerName: "Featured",
@@ -123,6 +134,17 @@ export default function PostGrid({
                         className="bg-transparent"
                     />
                     <Button
+                        icon={<IconClock size={16} stroke={1.5} />}
+                        iconOnly
+                        variant="secondary"
+                        onClick={() => onSchedule(data)}
+                        disabled={data.status === "published" || data.status === "archived"}
+                        label="Schedule"
+                        size="xs"
+                        rounded="full"
+                        className="bg-transparent"
+                    />
+                    <Button
                         icon={<IconArchive size={16} stroke={1.5} />}
                         iconOnly
                         variant="secondary"
@@ -147,7 +169,7 @@ export default function PostGrid({
                 </div>
             )
         }
-    ], [onEdit, onDelete, onPublish, onArchive]);
+    ], [onEdit, onDelete, onPublish, onArchive, onSchedule]);
 
     return (
 

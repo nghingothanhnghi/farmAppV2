@@ -16,7 +16,7 @@ import TagFormModal from './TagFormModal';
 import type { CategoryInput } from '../../../hooks/useCategory';
 import type { TagInput } from '../../../hooks/useTag';
 import { slugify } from "../../../utils/slug";
-
+import { isoToDatetimeLocal, datetimeLocalToIso } from '../../../utils/formatters';
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
 export interface PostFormData {
@@ -55,23 +55,6 @@ interface Props {
 
     onContentChange?: (html: string) => void;
 }
-
-// ✅ helpers to convert between <input type="datetime-local"> (no timezone, "YYYY-MM-DDTHH:mm")
-// and ISO strings the backend expects ("2026-08-10T09:00:00Z")
-const toDatetimeLocalValue = (iso?: string | null): string => {
-    if (!iso) return "";
-    const d = new Date(iso);
-    if (isNaN(d.getTime())) return "";
-    const pad = (n: number) => String(n).padStart(2, "0");
-    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-};
-
-const fromDatetimeLocalValue = (value: string): string | undefined => {
-    if (!value) return undefined;
-    const d = new Date(value); // interpreted in the browser's local timezone
-    if (isNaN(d.getTime())) return undefined;
-    return d.toISOString(); // → UTC ISO string, e.g. "2026-08-10T09:00:00.000Z"
-};
 
 export default function PostForm({
     formData,
@@ -162,7 +145,7 @@ export default function PostForm({
 
     // ✅ NEW — datetime-local input → ISO string handoff
     const handleScheduledAtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const iso = fromDatetimeLocalValue(e.target.value);
+        const iso = datetimeLocalToIso(e.target.value);
         onChange({
             target: { name: "scheduled_at", value: iso ?? "", type: "text" },
         } as unknown as React.ChangeEvent<HTMLInputElement>);
@@ -433,7 +416,7 @@ export default function PostForm({
                                         id="scheduled_at"
                                         name="scheduled_at"
                                         type="datetime-local"
-                                        value={toDatetimeLocalValue(formData.scheduled_at)}
+                                        value={isoToDatetimeLocal(formData.scheduled_at)}
                                         onChange={handleScheduledAtChange}
                                         required
                                     />
