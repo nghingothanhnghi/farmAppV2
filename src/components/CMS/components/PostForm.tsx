@@ -33,6 +33,7 @@ export interface PostFormData {
     meta_description?: string;
     is_featured?: boolean;
     published_at?: string | null;
+    scheduled_at?: string | null;
 }
 
 interface Props {
@@ -54,6 +55,23 @@ interface Props {
 
     onContentChange?: (html: string) => void;
 }
+
+// ✅ helpers to convert between <input type="datetime-local"> (no timezone, "YYYY-MM-DDTHH:mm")
+// and ISO strings the backend expects ("2026-08-10T09:00:00Z")
+const toDatetimeLocalValue = (iso?: string | null): string => {
+    if (!iso) return "";
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return "";
+    const pad = (n: number) => String(n).padStart(2, "0");
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
+const fromDatetimeLocalValue = (value: string): string | undefined => {
+    if (!value) return undefined;
+    const d = new Date(value); // interpreted in the browser's local timezone
+    if (isNaN(d.getTime())) return undefined;
+    return d.toISOString(); // → UTC ISO string, e.g. "2026-08-10T09:00:00.000Z"
+};
 
 export default function PostForm({
     formData,
@@ -131,6 +149,26 @@ export default function PostForm({
         onChange(e);
     };
 
+    // ✅ NEW — status <select> needs special handling: switching away from
+    // "scheduled" clears scheduled_at so a stale date doesn't linger.
+    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        onChange(e);
+        if (e.target.value !== "scheduled") {
+            onChange({
+                target: { name: "scheduled_at", value: "", type: "text" },
+            } as unknown as React.ChangeEvent<HTMLInputElement>);
+        }
+    };
+
+    // ✅ NEW — datetime-local input → ISO string handoff
+    const handleScheduledAtChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const iso = fromDatetimeLocalValue(e.target.value);
+        onChange({
+            target: { name: "scheduled_at", value: iso ?? "", type: "text" },
+        } as unknown as React.ChangeEvent<HTMLInputElement>);
+    };
+
+
     // ✅ handle inline category creation — refresh list + auto-select the new one
     const handleCreateCategory = async (data: CategoryInput) => {
         const created = await categoryService.create(data);
@@ -190,6 +228,7 @@ export default function PostForm({
 
     }
 
+    const isScheduled = formData.status === "scheduled";
 
     return (
         <Form onSubmit={onSubmit} className="mx-auto max-w-4xl">
@@ -377,7 +416,7 @@ export default function PostForm({
                                     name="status"
                                     id="status"
                                     value={formData.status ?? "draft"}
-                                    onChange={onChange}
+                                    onChange={handleStatusChange}
                                 >
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
@@ -385,6 +424,27 @@ export default function PostForm({
                                     <option value="archived">Archived</option>
                                 </FormSelect>
                             </FormGroup>
+
+                                {/* ✅ NEW — only visible when status is "scheduled" */}
+                            {isScheduled && (
+                                <FormGroup className="space-y-1">
+                                    <FormLabel htmlFor="scheduled_at">Publish at</FormLabel>
+                                    <FormInput
+                                        id="scheduled_at"
+                                        name="scheduled_at"
+                                        type="datetime-local"
+                                        value={toDatetimeLocalValue(formData.scheduled_at)}
+                                        onChange={handleScheduledAtChange}
+                                        required
+                                    />
+                                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                        The post will automatically publish at this local time.
+                                    </p>
+                                    {fieldErrors.scheduled_at && (
+                                        <p className="text-xs text-red-500">{fieldErrors.scheduled_at}</p>
+                                    )}
+                                </FormGroup>
+                            )}
 
                             <FormGroup className="space-y-1">
                                 <FormLabel htmlFor="post_type">Post Type</FormLabel>

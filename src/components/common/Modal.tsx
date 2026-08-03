@@ -66,9 +66,9 @@ const Modal: React.FC<ModalProps> = ({
 
 
         {variant === 'sidebar' ? (
-          <div className='flex'>
+          <div className='flex flex-col lg:flex-row'>
             {/* Left side (tabs + close) */}
-            <div className="w-1/3 p-4 flex flex-col border-r border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 transition-all duration-300">
+            <div className="w-full lg:w-1/3 p-4 flex flex-col border-r border-gray-200 bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-100 transition-all duration-300">
               <div className='flex justify-between align-middle'>
                 <Button
                   variant="secondary"
@@ -80,7 +80,7 @@ const Modal: React.FC<ModalProps> = ({
                   rounded='full'
                 />
               </div>
-              <div className="py-5 space-y-2">
+              <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
                 {sidebarTabs.map((tab) => (
                   <button
                     key={tab.id}
@@ -98,7 +98,15 @@ const Modal: React.FC<ModalProps> = ({
               </div>
             </div>
             {/* Right side (content) */}
-            <div className="w-2/3 p-6 flex flex-col min-h-[480px] overflow-y-auto">
+            <div
+              className="
+            w-full
+            lg:w-2/3
+            p-6
+            flex flex-col
+            min-h-[480px]
+            overflow-y-auto
+        ">
               <div className="flex-grow overflow-y-auto text-sm">{content}</div>
               {actions && <div className="mt-6">{actions}</div>}
             </div>

@@ -101,6 +101,7 @@ const CmsPostCreatePage: React.FC = () => {
                 category_id: formData.category_id ?? undefined,
                 featured_image_id: featuredImageId,
                 published_at: formData.published_at ?? undefined,
+                scheduled_at: formData.scheduled_at ?? undefined,
             };
 
             const created = await actions.createPost(payload);

@@ -59,6 +59,8 @@ export interface CmsPost {
 
   published_at?: string;
 
+  scheduled_at?: string;
+
   created_at: string;
 
   updated_at?: string;
@@ -103,6 +105,8 @@ export interface CmsPostCreate {
   is_featured?: boolean;
 
   published_at?: string;
+
+  scheduled_at?: string;
 }
 
 export interface CmsPostUpdate {
@@ -132,6 +136,8 @@ export interface CmsPostUpdate {
   is_featured?: boolean;
 
   published_at?: string | null;
+
+  scheduled_at?: string | null;
 }
 
 export interface PaginatedPosts {

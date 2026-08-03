@@ -61,6 +61,12 @@ export const postService = {
         return res.data;
     },
 
+    async schedule(id: number, scheduledAt: string): Promise<CmsPost> {
+        const res = await apiClient.post(`/cms/posts/${id}/schedule`, {
+            scheduled_at: scheduledAt,
+        });
+        return res.data;
+    },
 
 
 }

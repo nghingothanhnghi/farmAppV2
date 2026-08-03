@@ -122,6 +122,13 @@ export const usePost = () => {
 
     }, []);
 
+    const schedulePost = useCallback(async (id: number, scheduledAt: string) => {
+        const updated = await postService.schedule(id, scheduledAt);
+        setPosts(prev => prev.map(p => p.id === id ? updated : p));
+        setSelectedPost(prev => (prev?.id === id ? updated : prev));
+        return updated;
+    }, []);    
+
     useEffect(() => {
         fetchPosts();
     }, [fetchPosts]);
@@ -142,6 +149,7 @@ export const usePost = () => {
             deletePost,
             publishPost,
             archivePost,
+            schedulePost,
         }
 
     };
