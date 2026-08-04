@@ -4,6 +4,7 @@ import FileInput from "../../common/FileInput";
 import RichTextEditor from "../../common/RichTextEditor";
 import QRCodeImage from "../../common/QRCodeImage";
 import type { ProductCreate } from "../../../models/interfaces/Product";
+import Button from "../../common/Button";
 
 interface ProductInfoFormProps {
   data: ProductCreate;
@@ -150,13 +151,13 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
             />
 
             {!isViewMode && (
-              <button
-                type="button"
-                onClick={onRegenerateQr}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                Regenerate QR Code
-              </button>
+            <Button
+              type="button"
+              label="Regenerate QR Code"
+              onClick={onRegenerateQr}
+              rounded='lg'
+            />
+
             )}
           </div>
         </FormGroup>

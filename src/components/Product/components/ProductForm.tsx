@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { generateSKU, generateVariantSKU } from "../../../utils/product";
+import { generateDraftId } from "../../../utils/uuid";
 import Form, { FormGroup, FormActions } from "../../common/Form";
 import Button from "../../common/Button";
 import type { Product, ProductCreate, ProductVariant } from "../../../models/interfaces/Product";
@@ -301,7 +302,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                                 variants: [
                                     ...(prev.variants || []),
                                     {
-                                        _draftId: crypto.randomUUID(),
+                                        _draftId: generateDraftId(),
                                         name: "",
                                         price: 0,
                                         sku: "",
