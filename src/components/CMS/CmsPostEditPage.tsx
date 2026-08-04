@@ -68,7 +68,7 @@ const CmsPostEditPage: React.FC = () => {
 
         setFormData(prev => ({ ...prev, [name]: finalValue }));
     };
-    
+
     const handleContentChange = (html: string) => {
         setFormData(prev => ({ ...prev, content: html }));
     };
@@ -105,6 +105,12 @@ const CmsPostEditPage: React.FC = () => {
             if (imageFile) {
                 const media = await mediaService.upload(imageFile, formData.title);
                 featuredImageId = media.id;
+            }
+
+            // In handleSubmit, before building payload:
+            if (formData.status === "scheduled" && !formData.scheduled_at) {
+                setAlert({ type: "error", message: "Please select a publish date/time for scheduled posts." });
+                return;
             }
 
             await actions.updatePost(Number(id), {

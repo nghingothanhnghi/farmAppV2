@@ -92,6 +92,12 @@ const CmsPostCreatePage: React.FC = () => {
                 featuredImageId = media.id;
             }
 
+            // In handleSubmit, before building payload:
+            if (formData.status === "scheduled" && !formData.scheduled_at) {
+                setAlert({ type: "error", message: "Please select a publish date/time for scheduled posts." });
+                return;
+            }
+
             // category_id/featured_image_id on Create don't allow null — normalize.
             const payload: CmsPostCreate = {
                 ...formData,

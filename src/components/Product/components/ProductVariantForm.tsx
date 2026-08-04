@@ -177,6 +177,8 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             label={isSaved ? "Saved" : "Save Variant"}
             onClick={handleSave}
             variant={isSaved ? "secondary" : "primary"}
+            rounded="lg"
+            size="sm"
           />
         </div>
       )}

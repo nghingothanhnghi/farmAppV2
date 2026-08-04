@@ -310,6 +310,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                                 ],
                             }))
                         }
+                        rounded="lg"
                     />
                 )}
             </FormGroup>
@@ -323,6 +324,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         variant="secondary"
                         onClick={onCancel}
                         disabled={loading}
+                        rounded="lg"
                     />
                 )}
 

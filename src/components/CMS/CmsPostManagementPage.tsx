@@ -10,7 +10,7 @@ import PostGrid from './components/PostGrid';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import ScheduleModal from './components/ScheduleModal';
-import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
+import { IconAlertCircle, IconCirclePlus } from '@tabler/icons-react';
 
 const CmsPostManagementPage: React.FC = () => {
     const navigate = useNavigate();
@@ -106,7 +106,7 @@ const CmsPostManagementPage: React.FC = () => {
                         label="New Post"
                         onClick={() => navigate('/dashboard/cms/new')}
                         variant="secondary"
-                        icon={<IconPlus size={16} className="text-gray-500" />}
+                        icon={<IconCirclePlus size={16} stroke={2} />}
                         iconPosition='left'
                         rounded='lg'
                     />
