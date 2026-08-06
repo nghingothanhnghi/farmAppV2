@@ -96,7 +96,7 @@ const CmsPostEditPage: React.FC = () => {
         e.preventDefault();
         if (!id) return;
 
-                // Defensive narrowing — PostForm's Yup schema should already guarantee
+        // Defensive narrowing — PostForm's Yup schema should already guarantee
         // title/content are non-empty, but keeps TS happy and guards against
         // PostForm being reused elsewhere without validation.
         if (!formData.title || !formData.content) {
