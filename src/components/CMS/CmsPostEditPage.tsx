@@ -96,6 +96,13 @@ const CmsPostEditPage: React.FC = () => {
         e.preventDefault();
         if (!id) return;
 
+                // Defensive narrowing — PostForm's Yup schema should already guarantee
+        // title/content are non-empty, but keeps TS happy and guards against
+        // PostForm being reused elsewhere without validation.
+        if (!formData.title || !formData.content) {
+            return;
+        }
+
         setSubmitting(true);
 
         try {
@@ -107,16 +114,13 @@ const CmsPostEditPage: React.FC = () => {
                 featuredImageId = media.id;
             }
 
-            // In handleSubmit, before building payload:
-            if (formData.status === "scheduled" && !formData.scheduled_at) {
-                setAlert({ type: "error", message: "Please select a publish date/time for scheduled posts." });
-                return;
-            }
-
             await actions.updatePost(Number(id), {
                 ...formData,
+                title: formData.title,       // ✅ now correctly narrowed to string
+                content: formData.content,   // ✅ same
                 featured_image_id: featuredImageId,
                 tag_ids: formData.tag_ids ?? [],
+                scheduled_at: formData.scheduled_at ?? undefined,
             } as CmsPostUpdate);
 
             setAlert({ type: "success", message: "Post updated successfully." });
@@ -150,6 +154,7 @@ const CmsPostEditPage: React.FC = () => {
                 loading={loading || submitting}
                 isEdit
                 fieldErrors={fieldErrors}
+                setFieldErrors={setFieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
                 onImageChange={handleImageChange}
                 onCategoryChange={handleCategoryChange}

@@ -75,8 +75,10 @@ const CmsPostCreatePage: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Defensive narrowing — PostForm's Yup schema should already guarantee
+        // this, but keeps TS happy and guards against PostForm being reused
+        // elsewhere without validation.
         if (!formData.title || !formData.content) {
-            setAlert({ type: "error", message: "Title and content are required." });
             return;
         }
 
@@ -90,12 +92,6 @@ const CmsPostCreatePage: React.FC = () => {
             if (imageFile) {
                 const media = await mediaService.upload(imageFile, formData.title);
                 featuredImageId = media.id;
-            }
-
-            // In handleSubmit, before building payload:
-            if (formData.status === "scheduled" && !formData.scheduled_at) {
-                setAlert({ type: "error", message: "Please select a publish date/time for scheduled posts." });
-                return;
             }
 
             // category_id/featured_image_id on Create don't allow null — normalize.
@@ -136,6 +132,7 @@ const CmsPostCreatePage: React.FC = () => {
                 loading={loading || submitting}
                 isEdit={false}
                 fieldErrors={fieldErrors}
+                setFieldErrors={setFieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
                 onImageChange={handleImageChange}
                 onCategoryChange={handleCategoryChange}

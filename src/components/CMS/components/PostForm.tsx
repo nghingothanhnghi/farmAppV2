@@ -1,6 +1,8 @@
 // src/components/CMS/components/PostForm.tsx
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import * as Yup from 'yup';
 import type { PostType, PostStatus, CmsCategory, CmsTag } from "../../../models/interfaces/Post";
+import { postSchema } from "../../../validation/postValidation";
 import { categoryService } from "../../../services/categoryService";
 import { tagService } from "../../../services/tagService";
 import Form, { FormGroup, FormLabel, FormInput, FormActions, FormCheckbox, FormSelect } from '../../../components/common/Form';
@@ -45,8 +47,8 @@ interface Props {
     onCancel?: () => void;
     loading: boolean;
     isEdit: boolean;
-    fieldErrors: Record<string, string>;
-
+    fieldErrors: Record<string, string>;  // ✅ still accepted — for backend errors
+    setFieldErrors?: (errors: Record<string, string>) => void; // ✅ NEW — lets PostForm push its own validation errors up
     featuredImageUrl?: string | null;   // current/preview URL to display
     onImageChange?: (file: File | null) => void; // lifts the selected File to the parent
 
@@ -64,6 +66,7 @@ export default function PostForm({
     loading,
     isEdit,
     fieldErrors,
+    setFieldErrors,
     featuredImageUrl,
     onImageChange,
     onCategoryChange,
@@ -85,6 +88,9 @@ export default function PostForm({
     // ✅ NEW — auto-slug tracking. In edit mode, assume the slug is already
     // intentional and don't touch it until the user edits it directly.
     const [slugTouched, setSlugTouched] = useState(isEdit);
+
+    // ✅ NEW — local validation errors, merged with backend fieldErrors for display
+    const [localErrors, setLocalErrors] = useState<Record<string, string>>({});
 
 
     useEffect(() => {
@@ -129,17 +135,30 @@ export default function PostForm({
         if (e.target.name === "slug") {
             setSlugTouched(true);
         }
+
+        // ✅ clear that field's local error as the user edits it
+        if (localErrors[e.target.name]) {
+            setLocalErrors(prev => {
+                const next = { ...prev };
+                delete next[e.target.name];
+                return next;
+            });
+        }
+
         onChange(e);
     };
 
-    // ✅ NEW — status <select> needs special handling: switching away from
-    // "scheduled" clears scheduled_at so a stale date doesn't linger.
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        onChange(e);
+        handleFieldChange(e);
         if (e.target.value !== "scheduled") {
             onChange({
                 target: { name: "scheduled_at", value: "", type: "text" },
             } as unknown as React.ChangeEvent<HTMLInputElement>);
+            setLocalErrors(prev => {
+                const next = { ...prev };
+                delete next.scheduled_at;
+                return next;
+            });
         }
     };
 
@@ -149,6 +168,17 @@ export default function PostForm({
         onChange({
             target: { name: "scheduled_at", value: iso ?? "", type: "text" },
         } as unknown as React.ChangeEvent<HTMLInputElement>);
+    };
+
+    const handleContentEditorChange = (html: string) => {
+        if (localErrors.content) {
+            setLocalErrors(prev => {
+                const next = { ...prev };
+                delete next.content;
+                return next;
+            });
+        }
+        onContentChange?.(html);
     };
 
 
@@ -205,6 +235,32 @@ export default function PostForm({
         ],
     ] as const;
 
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            await postSchema.validate(formData, { abortEarly: false });
+            setLocalErrors({});
+            onSubmit(e);
+        } catch (err) {
+            if (err instanceof Yup.ValidationError) {
+                const errors: Record<string, string> = {};
+                err.inner.forEach((validationError) => {
+                    if (validationError.path && !errors[validationError.path]) {
+                        errors[validationError.path] = validationError.message;
+                    }
+                });
+                setLocalErrors(errors);
+                setFieldErrors?.(errors); // also surface to parent if it wants to know
+            }
+        }
+    };
+
+    // ✅ merge backend errors (fieldErrors prop) with local validation errors —
+    // local errors take precedence since they're freshest
+    const mergedErrors = { ...fieldErrors, ...localErrors };
+
     if (loading) {
 
         return <div>Loading...</div>;
@@ -214,7 +270,7 @@ export default function PostForm({
     const isScheduled = formData.status === "scheduled";
 
     return (
-        <Form onSubmit={onSubmit} className="mx-auto max-w-4xl">
+        <Form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {/* Left */}
@@ -257,9 +313,9 @@ export default function PostForm({
                                         />
                                     )}
 
-                                    {fieldErrors[name] && (
+                                    {mergedErrors[name] && (
                                         <p className="mt-1 text-xs text-red-500">
-                                            {fieldErrors[name]}
+                                            {mergedErrors[name]}
                                         </p>
                                     )}
                                 </div>
@@ -290,7 +346,7 @@ export default function PostForm({
                         <div>
                             <RichTextEditor
                                 value={formData.content || ""}
-                                onChange={(html) => onContentChange?.(html)}
+                                onChange={handleContentEditorChange}
                                 toolbar={{
                                     bold: true,
                                     italic: true,
@@ -303,9 +359,9 @@ export default function PostForm({
                                 }}
                             />
 
-                            {fieldErrors.content && (
+                            {mergedErrors.content && (
                                 <p className="mt-1 text-xs text-red-500">
-                                    {fieldErrors.content}
+                                    {mergedErrors.content}
                                 </p>
                             )}
                         </div>
@@ -408,7 +464,7 @@ export default function PostForm({
                                 </FormSelect>
                             </FormGroup>
 
-                                {/* ✅ NEW — only visible when status is "scheduled" */}
+                            {/* ✅ NEW — only visible when status is "scheduled" */}
                             {isScheduled && (
                                 <FormGroup className="space-y-1">
                                     <FormLabel htmlFor="scheduled_at">Publish at</FormLabel>
@@ -423,8 +479,8 @@ export default function PostForm({
                                     <p className="text-xs text-zinc-500 dark:text-zinc-400">
                                         The post will automatically publish at this local time.
                                     </p>
-                                    {fieldErrors.scheduled_at && (
-                                        <p className="text-xs text-red-500">{fieldErrors.scheduled_at}</p>
+                                    {mergedErrors.scheduled_at && (
+                                        <p className="text-xs text-red-500">{mergedErrors.scheduled_at}</p>
                                     )}
                                 </FormGroup>
                             )}
