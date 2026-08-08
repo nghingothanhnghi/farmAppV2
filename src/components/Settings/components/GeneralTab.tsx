@@ -30,7 +30,7 @@ const GeneralTab: React.FC = () => {
                     <FormLabel htmlFor="language">{t('language.label')}</FormLabel>
                     <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
                 </div>
-                <div>
+                <div className="flex justify-end">
                     <DropdownButton
                         label={languageItems.find((item) => item.value === language)?.label || t('select')}
                         items={languageItems}
@@ -46,7 +46,7 @@ const GeneralTab: React.FC = () => {
                     <FormLabel htmlFor="theme">Theme</FormLabel>
                     <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
                 </div>
-                <div>
+                <div className="flex justify-end">
                     <DropdownButton
                         label={themeItems.find((item) => item.value === theme)?.label || 'Select'}
                         items={themeItems}
