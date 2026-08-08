@@ -28,7 +28,7 @@ const GeneralTab: React.FC = () => {
             <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-1'>
                     <FormLabel htmlFor="language">{t('language.label')}</FormLabel>
-                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
+                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"> Choose your preferred language.</p>
                 </div>
                 <div className="flex justify-end">
                     <DropdownButton
@@ -44,7 +44,7 @@ const GeneralTab: React.FC = () => {
             <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-1'>
                     <FormLabel htmlFor="theme">Theme</FormLabel>
-                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"></p>
+                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"> Choose how the interface looks.</p>
                 </div>
                 <div className="flex justify-end">
                     <DropdownButton
