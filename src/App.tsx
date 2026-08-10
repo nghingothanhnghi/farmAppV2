@@ -52,6 +52,7 @@ const CmsPostEditPage = lazy(() => import("./components/CMS").then(m => ({ defau
 const CmsPostCreatePage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsPostCreatePage })));
 const CmsCategoryManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsCategoryManagementPage })));
 const CmsTagManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsTagManagementPage })));
+const CmsMediaManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsMediaManagementPage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -148,7 +149,14 @@ function App() {
                 </PrivateRoute>
               }
             />
-
+            <Route
+              path="/dashboard/cms/media"
+              element={
+                <PrivateRoute>
+                  <CmsMediaManagementPage />
+                </PrivateRoute>
+              }
+            />
             <Route
               path="/dashboard/cms/new"
               element={
