@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { IconBold, IconItalic, IconUnderline, IconStrikethrough, IconH3, IconList, IconListNumbers, IconPolaroid } from '@tabler/icons-react';
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -5,6 +6,7 @@ import Underline from "@tiptap/extension-underline";
 import Image from '@tiptap/extension-image'
 import Button from "./Button";
 import ButtonGroup from "./ButtonGroup";
+import MediaPickerModal from "./MediaPickerModal";
 
 interface ToolbarConfig {
     bold?: boolean;
@@ -25,6 +27,8 @@ interface Props {
 }
 
 const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar }) => {
+
+    const [showMediaPicker, setShowMediaPicker] = useState(false);
 
     /* ----------------------------------------
        Toolbar defaults
@@ -71,8 +75,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive('bold')
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'}
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() => editor.chain().focus().toggleBold().run()}
                                     size="xs"
                                     iconOnly
@@ -83,8 +87,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive('italic')
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'}
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() => editor.chain().focus().toggleItalic().run()}
                                     size="xs"
                                     iconOnly
@@ -95,8 +99,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive('underline')
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'}                                    
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() => editor.chain().focus().toggleUnderline().run()}
                                     size="xs"
                                     iconOnly
@@ -107,8 +111,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive('strike')
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'} 
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() => editor.chain().focus().toggleStrike().run()}
                                     size="xs"
                                     iconOnly
@@ -122,8 +126,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                         <Button
                             variant="outline"
                             className={editor.isActive("heading", { level: 3 })
-                            ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                            : 'text-gray-500'}
+                                ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                : 'text-gray-500'}
                             onClick={() =>
                                 editor.chain().focus().toggleHeading({ level: 3 }).run()
                             }
@@ -140,8 +144,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive("bulletList")
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'}
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() =>
                                         editor.chain().focus().toggleBulletList().run()
                                     }
@@ -154,8 +158,8 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                                 <Button
                                     variant="outline"
                                     className={editor.isActive("orderedList")
-                                    ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                                    : 'text-gray-500'}
+                                        ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                        : 'text-gray-500'}
                                     onClick={() =>
                                         editor.chain().focus().toggleOrderedList().run()
                                     }
@@ -171,14 +175,9 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                         <Button
                             variant="outline"
                             className={editor.isActive("image")
-                            ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
-                            : 'text-gray-500'}                        
-                            onClick={() => {
-                                const url = prompt("Image URL");
-                                if (url) {
-                                    editor.chain().focus().setImage({ src: url }).run();
-                                }
-                            }}
+                                ? 'text-orange-600 bg-orange-50 dark:bg-orange-900/20'
+                                : 'text-gray-500'}
+                            onClick={() => setShowMediaPicker(true)}
                             size="xs"
                             iconOnly
                             icon={<IconPolaroid stroke={1.5} size={18} />}
@@ -197,6 +196,14 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                     [&_.ProseMirror]:min-h-[120px]
                     [&_.ProseMirror:focus]:outline-none
                 "
+            />
+
+            <MediaPickerModal
+                isOpen={showMediaPicker}
+                onClose={() => setShowMediaPicker(false)}
+                onSelect={(url) => {
+                    editor.chain().focus().setImage({ src: url }).run();
+                }}
             />
         </div>
     );
