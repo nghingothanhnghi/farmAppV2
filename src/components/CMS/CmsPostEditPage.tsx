@@ -8,6 +8,7 @@ import type { CmsPostUpdate } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
 import LinearProgress from '../common/LinearProgress';
 import PostForm, { type PostFormData } from './components/PostForm';
+import { getImageUrl } from "../../utils/getImageUrl";
 
 const CmsPostEditPage: React.FC = () => {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ const CmsPostEditPage: React.FC = () => {
                 published_at: selectedPost.published_at ?? null,
                 scheduled_at: selectedPost.scheduled_at ?? null,
             });
-            setPreviewUrl(selectedPost.featured_image?.url ?? null);
+            setPreviewUrl(selectedPost.featured_image?.url ? getImageUrl(selectedPost.featured_image.url) : null);
         }
     }, [selectedPost, id]);
 
@@ -89,7 +90,13 @@ const CmsPostEditPage: React.FC = () => {
             URL.revokeObjectURL(previewUrl);
         }
         setImageFile(file);
-        setPreviewUrl(file ? URL.createObjectURL(file) : (selectedPost?.featured_image?.url ?? null));
+                setPreviewUrl(
+            file
+                ? URL.createObjectURL(file)
+                : selectedPost?.featured_image?.url
+                    ? getImageUrl(selectedPost.featured_image.url)
+                    : null
+        );
     };
 
     const handleSubmit = async (e: React.FormEvent) => {

@@ -4,6 +4,7 @@ import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import type { CmsMedia } from "../../../models/interfaces/Post";
+import { getImageUrl } from "../../../utils/getImageUrl";
 
 interface Props {
     isOpen: boolean;
@@ -43,7 +44,7 @@ const MediaEditModal: React.FC<Props> = ({ isOpen, onClose, media, onSubmit }) =
                     {media?.url && (
                         <div className="aspect-video w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
                             <img
-                                src={media.url}
+                                src={getImageUrl(media.url)}
                                 alt={media.alt_text || media.filename}
                                 className="w-full h-full object-contain"
                             />

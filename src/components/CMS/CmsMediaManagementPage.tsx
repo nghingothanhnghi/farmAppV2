@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { IconPlus, IconAlertCircle, IconMoodEmpty, IconPencil, IconTrash, IconCopy } from "@tabler/icons-react";
 import { mediaService } from "../../services/mediaService";
+import { getImageUrl } from "../../utils/getImageUrl";
 import { useAlert } from "../../contexts/alertContext";
 import type { CmsMedia } from "../../models/interfaces/Post";
 import PageTitle from "../common/PageTitle";
@@ -151,7 +152,7 @@ const CmsMediaManagementPage: React.FC = () => {
                             >
                                 <div className="aspect-square w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden">
                                     <img
-                                        src={item.url}
+                                        src={getImageUrl(item.url)}
                                         alt={item.alt_text || item.filename}
                                         className="w-full h-full object-cover"
                                     />
@@ -175,7 +176,7 @@ const CmsMediaManagementPage: React.FC = () => {
                                         size="xxs"
                                         rounded="full"
                                         className="bg-transparent"
-                                        onClick={() => handleCopyUrl(item.url)}
+                                        onClick={() => handleCopyUrl(getImageUrl(item.url))}
                                     />
                                     <Button
                                         variant="secondary"
