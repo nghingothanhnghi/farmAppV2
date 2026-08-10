@@ -181,6 +181,7 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                             size="xs"
                             iconOnly
                             icon={<IconPolaroid stroke={1.5} size={18} />}
+                            rounded="lg"
                         />
                     )}
                 </div>
