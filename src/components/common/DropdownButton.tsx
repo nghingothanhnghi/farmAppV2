@@ -46,7 +46,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState<number>(-1);
     const [position, setPosition] = useState<DropdownDirection>('bottom');
-    const [coords, setCoords] = useState<{ top: number; left: number; width: number }>({
+    const [coords, setCoords] = useState({
         top: 0,
         left: 0,
         width: 0,
@@ -56,14 +56,15 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     const dropdownRef = useRef<HTMLUListElement>(null);
 
     const updateCoords = () => {
-        if (containerRef.current) {
-            const rect = containerRef.current.getBoundingClientRect();
-            setCoords({
-                top: rect.bottom + window.scrollY,
-                left: rect.left + window.scrollX,
-                width: rect.width,
-            });
-        }
+        if (!containerRef.current) return;
+
+        const rect = containerRef.current.getBoundingClientRect();
+
+        setCoords({
+            top: rect.bottom + 4,
+            left: rect.left,
+            width: rect.width,
+        });
     };
 
     const handleToggle = () => {
@@ -158,9 +159,16 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     // Recalculate coords on scroll/resize
     useEffect(() => {
         if (!isOpen) return;
-        const handleResizeScroll = () => updateCoords();
+
+        updateCoords();
+
+        const handleResizeScroll = () => {
+            updateCoords();
+        };
+
         window.addEventListener('resize', handleResizeScroll);
         window.addEventListener('scroll', handleResizeScroll, true);
+
         return () => {
             window.removeEventListener('resize', handleResizeScroll);
             window.removeEventListener('scroll', handleResizeScroll, true);
@@ -176,7 +184,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     return (
         <div
             ref={containerRef}
-            className={`relative ${className} flex`}
+            className={`relative flex`}
             onKeyDown={handleKeyDown}
             tabIndex={0}
         >
@@ -222,19 +230,22 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
                 createPortal(
                     <ul
                         ref={dropdownRef}
-                        className="z-[9999] min-w-[200px] bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border       
-                        rounded shadow absolute"
+                        className="z-[9999] min-w-[200px] bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border rounded shadow fixed"
                         style={{
                             top:
                                 position.startsWith('top')
-                                    ? coords.top - (dropdownRef.current?.offsetHeight ?? 0) - 4
+                                    ? coords.top - (dropdownRef.current?.offsetHeight ?? 0) - 8
                                     : coords.top,
+
                             left:
                                 position.endsWith('right')
                                     ? coords.left + coords.width - (dropdownRef.current?.offsetWidth ?? 0)
                                     : position.endsWith('left')
                                         ? coords.left
-                                        : coords.left + coords.width / 2 - (dropdownRef.current?.offsetWidth ?? 0) / 2,
+                                        : coords.left +
+                                        coords.width / 2 -
+                                        (dropdownRef.current?.offsetWidth ?? 0) / 2,
+
                             width: coords.width,
                         }}
                     >
