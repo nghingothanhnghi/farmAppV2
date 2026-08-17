@@ -5,6 +5,7 @@ import type { Role } from '../models/interfaces/Role';
 import type { User } from '../models/interfaces/User';
 import * as authService from '../services/authService';
 import { isJwtExpired } from '../utils/jwt';
+import { setUnauthorizedHandler } from '../api/client';
 
 interface AuthContextType {
     user: User | null;
@@ -30,17 +31,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [showLoginModal, setShowLoginModal] = useState(false);
 
     useEffect(() => {
-    if (token) {
-        if (isJwtExpired(token)) {
-            logout();
-            setShowLoginModal(true); // 🟢 trigger login modal immediately
+        if (token) {
+            if (isJwtExpired(token)) {
+                logout();
+                setShowLoginModal(true); // 🟢 trigger login modal immediately
+            } else {
+                getUser();
+            }
         } else {
-            getUser();
+            setLoading(false);
         }
-    } else {
-        setLoading(false);
-    }
-}, [token]);
+    }, [token]);
+
+    // 👇 NEW: whenever the backend responds 401 (expired/invalid token),
+    // log the user out and pop the login modal — regardless of what
+    // screen or action triggered the request.
+    useEffect(() => {
+        setUnauthorizedHandler(() => {
+            logout();
+        });
+        return () => setUnauthorizedHandler(null);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
 
     const login = async (username: string, password: string) => {
