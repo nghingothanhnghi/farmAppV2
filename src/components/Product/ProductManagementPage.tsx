@@ -40,6 +40,7 @@ const ProductManagementPage: React.FC = () => {
         <div className="">
             <PageTitle
                 title="Product Management"
+                subtitle="Manage your product catalog by adding, editing, and maintaining product information in one place, with a streamlined interface for efficient product administration."
                 actions={(
                     <Button
                         type="button"

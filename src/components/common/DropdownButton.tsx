@@ -184,7 +184,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     return (
         <div
             ref={containerRef}
-            className={`relative flex`}
+            className={`relative`}
             onKeyDown={handleKeyDown}
             tabIndex={0}
         >

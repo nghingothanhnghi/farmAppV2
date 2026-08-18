@@ -236,7 +236,6 @@ const UserManagementPage: React.FC = () => {
       resizable: false,
       pinned: "right",
       width: 200,
-      cellStyle: { display: "flex", justifyContent: "center", alignItems: "center", padding: 0 },
       cellRenderer: ({ data }: any) => {
         const dropdownItems = roles.map((role) => ({
           label: role.display_name,
@@ -244,14 +243,17 @@ const UserManagementPage: React.FC = () => {
         }));
 
         return (
-          <DropdownButton
-            label="Assign Role"
-            items={dropdownItems}
-            disabled={!isRoles}
-            onSelect={(item) => handleAssignRole(data.id, parseInt(item.value))}
-            variant="secondary"
-            size="xs"
-          />
+          <div className="flex flex-col gap-2">
+            <DropdownButton
+              label="Assign Role"
+              items={dropdownItems}
+              disabled={!isRoles}
+              onSelect={(item) => handleAssignRole(data.id, parseInt(item.value))}
+              variant="secondary"
+              size="xs"
+            />
+          </div>
+
         );
       },
     },

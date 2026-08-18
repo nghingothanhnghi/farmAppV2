@@ -120,7 +120,10 @@ const HydroponicSystemPage: React.FC = () => {
   if (!loading && deviceStatusList.length === 0) {
     return (
       <div className="hydroponic-system-page min-h-screen">
-        <PageTitle title="Hydroponic System Dashboard" />
+        <PageTitle
+          title="Hydroponic System Dashboard"
+          subtitle="Monitor and control your hydroponic growing system"
+        />
         <div className="bg-white rounded-lg shadow-md border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 py-44 text-center">
           <div className="text-gray-400 text-4xl mb-4">📦</div>
           <h3 className="text-lg font-medium text-gray-700 dark:text-gray-100">No Devices Found</h3>
