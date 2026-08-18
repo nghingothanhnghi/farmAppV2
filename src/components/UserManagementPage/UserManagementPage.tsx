@@ -320,6 +320,8 @@ const UserManagementPage: React.FC = () => {
     <div className="">
       <PageTitle
         title="User Management"
+        subtitle="Manage user accounts, assign roles, control role status, and review permissions to ensure each user has the appropriate level of access.  
+"
       />
       <DataGrid
         rowData={users}

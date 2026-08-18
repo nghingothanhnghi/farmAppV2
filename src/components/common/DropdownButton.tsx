@@ -230,7 +230,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
                 createPortal(
                     <ul
                         ref={dropdownRef}
-                        className="z-[9999] min-w-[200px] bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border rounded shadow fixed"
+                        className="z-[9999] py-2 min-w-[200px] bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border rounded shadow fixed"
                         style={{
                             top:
                                 position.startsWith('top')
