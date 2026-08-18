@@ -76,7 +76,7 @@ export default function PostGrid({
             filter: false,
             sortable: false,
             cellRenderer: ({ data }: any) => (
-                <div className="flex flex-col gap-0.5">
+                <div className="gap-0.5">
                     <PostStatusBadge status={data.status} />
                     {data.status === "scheduled" && data.scheduled_at && (
                         <span className="text-[10px] text-gray-500 dark:text-gray-400">
