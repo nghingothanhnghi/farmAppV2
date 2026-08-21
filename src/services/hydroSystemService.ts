@@ -89,17 +89,6 @@ export const systemService = {
   return response.data;
 },
 
-  // async updateThresholds(
-  //   device_id: number,
-  //   thresholds: Partial<Thresholds>
-  // ): Promise<ApiResponse<Thresholds>> {
-  //   const response = await apiClient.post<ApiResponse<Thresholds>>(
-  //     '/sensor/thresholds',
-  //     thresholds,
-  //     { params: { device_id } }
-  //   );
-  //   return response.data;
-  // }
 async updateThresholds(
   device_id: number,
   thresholds: Partial<Thresholds>
