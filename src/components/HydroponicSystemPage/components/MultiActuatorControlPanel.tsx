@@ -10,12 +10,14 @@ import { getActuatorIcon } from '../../../utils/actuator';
 interface MultiActuatorControlPanelProps {
   systemStatus: SystemStatusPerDevice | null;
   onManualModeChange: (actuatorId: number, state: boolean | null) => void;
+  onStop: (actuatorId: number) => void;
   loading?: boolean;
 }
 
 const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
   systemStatus,
   onManualModeChange,
+  onStop,
   loading = false
 }) => {
 
@@ -151,6 +153,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             loading={loading}
             variant="control"
             onManualModeChange={handleManualModeChange}
+            onStop={onStop}
           />
         ))
         : groupedActuators[selectedType]?.map((actuator) => (
@@ -161,6 +164,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             loading={loading}
             variant="control"
             onManualModeChange={handleManualModeChange}
+            onStop={onStop}
           />
         ))
       }

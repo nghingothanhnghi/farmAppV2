@@ -251,6 +251,9 @@ const HydroponicSystemPage: React.FC = () => {
                 onManualModeChange={(id, state) => {
                   actions.setActuatorManualMode(id, state);
                 }}
+                onStop={(id) => {
+                  actions.stopActuator(id); // 👈 new
+                }}
                 loading={loading}
               />
               <SchedulerControlPanel

@@ -280,6 +280,21 @@ export const useHydroSystem = () => {
     [fetchSystemStatusPerDevice]
   );
 
+const stopActuator = useCallback(
+  async (actuatorId: number) => {
+    const label = `Actuator ${actuatorId} STOP`;
+    try {
+      await systemService.stopActuator(actuatorId);
+      appendAction(createControlAction(label, true, "Door stopped"));
+      await fetchSystemStatusPerDevice();
+    } catch {
+      appendAction(createControlAction(label, false, "Failed to stop door"));
+      setError("Failed to stop actuator");
+    }
+  },
+  [fetchSystemStatusPerDevice]
+);  
+
   const updateSystemThresholds =
     useCallback(
       async (
@@ -666,6 +681,7 @@ export const useHydroSystem = () => {
       stopSystemScheduler,
       restartSystemScheduler,
       setActuatorManualMode,
+      stopActuator,
       updateSystemThresholds,
       resolveAlert,
       getDeviceThresholds,

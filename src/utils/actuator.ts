@@ -7,7 +7,8 @@ import {
     IconRipple,
     IconEngine,
     IconClock,
-    IconSettings
+    IconSettings,
+    IconArrowsHorizontal,
 } from '@tabler/icons-react';
 
 const actuatorConfig = {
@@ -56,6 +57,12 @@ const actuatorConfig = {
         bg: "bg-purple-500",
         hover: "hover:bg-purple-600",
     },
+    sliding_door: {
+        icon: IconArrowsHorizontal,
+        color: "text-indigo-500",
+        bg: "bg-indigo-500",
+        hover: "hover:bg-indigo-600",
+    },    
 };
 
 export const getActuatorIcon = (type?: string) => {

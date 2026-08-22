@@ -4,7 +4,7 @@ import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconClock, IconEdit } from '@tabler/icons-react';
+import { IconClock, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop } from '@tabler/icons-react';
 
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
@@ -22,6 +22,7 @@ interface ActuatorCardProps {
     variant?: "control" | "linked"; // control = buttons, linked = toggle
     onToggle?: (id: number, active: boolean) => void;
     onManualModeChange?: (id: number, state: boolean | null) => void;
+    onStop?: (id: number) => void;
     onUpdated?: () => void; // callback to parent after actuator is updated
 }
 
@@ -32,6 +33,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     variant = "control",
     onToggle,
     onManualModeChange,
+    onStop,
     onUpdated,
 }) => {
 
@@ -77,6 +79,8 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
     const reasonMeta = getActuatorReason(actuator.automation_reason);
 
+    const isSlidingDoor = actuator.type === "sliding_door";
+
     return (
         <div
             className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 relative overflow-hidden"
@@ -89,7 +93,36 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 className="absolute right-2 top-2 z-10"
             >
                 <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 py-0.5 px-1 rounded-full shadow-md">
-                    {variant === "control" && onManualModeChange && (
+                                        {variant === "control" && isSlidingDoor && onManualModeChange && (
+                        <ButtonGroup className='ms-1'>
+                            <Button
+                                label="Up"
+                                variant='secondary'
+                                onClick={() => onManualModeChange?.(actuator.id, true)}
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_ON"}
+                                size="xs"
+                                icon={<IconChevronUp size={14} />}
+                            />
+                            <Button
+                                label="Stop"
+                                variant='danger'
+                                onClick={() => onStop?.(actuator.id)}
+                                disabled={loading || !actuator.is_active}
+                                size="xs"
+                                icon={<IconPlayerStop size={14} />}
+                            />
+                            <Button
+                                label="Down"
+                                variant='secondary'
+                                onClick={() => onManualModeChange?.(actuator.id, false)}
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_OFF"}
+                                size="xs"
+                                icon={<IconChevronDown size={14} />}
+                            />
+                        </ButtonGroup>
+                    )}
+                    
+                    {variant === "control" && !isSlidingDoor && onManualModeChange && (
                         <ButtonGroup className='ms-1'>
                             {/* AUTO */}
                             <Button
