@@ -218,11 +218,11 @@ const HydroponicSystemPage: React.FC = () => {
       icon: <IconDashboard stroke={2} size={18} />,
       content: activeTab === "overview" && (
         <div className="space-y-6">
-          <div className='flex flex-col lg:flex-row gap-6'>
-            <div className='flex-1'>
+          <div className='flex flex-col lg:flex-row gap-6 lg:h-[calc(100vh-340px)]'>
+            <div className='flex-1 min-h-0'>
               <CameraByLocation location={currentDevice?.location} />
             </div>
-            <div className='lg:w-[350px] space-y-2 flex flex-col max-h-full'>
+            <div className='lg:w-[350px] space-y-2 flex flex-col min-h-0'>
               {/* Location Panel */}
               <LocationPanel
                 title={currentDevice?.location || "Unknown Location"}

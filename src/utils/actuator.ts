@@ -66,7 +66,19 @@ const actuatorConfig = {
 };
 
 export const getActuatorIcon = (type?: string) => {
-    const config = actuatorConfig[type as keyof typeof actuatorConfig];
+        if (!type) {
+        return {
+            Icon: IconSettings,
+            color: "text-gray-400",
+            bg: "bg-gray-500",
+            hover: "hover:bg-gray-600",
+        };
+    }
+
+    const baseType = type.replace(/_\d+$/, "");
+
+    const config =
+        actuatorConfig[baseType as keyof typeof actuatorConfig];
 
     return {
         Icon: config?.icon || IconSettings,

@@ -93,7 +93,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 className="absolute right-2 top-2 z-10"
             >
                 <div className="flex items-center space-x-1 bg-white dark:bg-gray-800 py-0.5 px-1 rounded-full shadow-md">
-                                        {variant === "control" && isSlidingDoor && onManualModeChange && (
+                    {variant === "control" && isSlidingDoor && onManualModeChange && (
                         <ButtonGroup className='ms-1'>
                             <Button
                                 label="Up"
@@ -105,7 +105,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             />
                             <Button
                                 label="Stop"
-                                variant='danger'
+                                variant='secondary'
                                 onClick={() => onStop?.(actuator.id)}
                                 disabled={loading || !actuator.is_active}
                                 size="xs"
@@ -121,7 +121,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             />
                         </ButtonGroup>
                     )}
-                    
+
                     {variant === "control" && !isSlidingDoor && onManualModeChange && (
                         <ButtonGroup className='ms-1'>
                             {/* AUTO */}
