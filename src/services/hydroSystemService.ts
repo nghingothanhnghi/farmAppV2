@@ -79,11 +79,6 @@ export const systemService = {
     return response.data;
   },
 
-  // Thresholds
-  // async getThresholds(): Promise<Thresholds> {
-  //   const response = await apiClient.get<Thresholds>('/sensor/thresholds');
-  //   return response.data;
-  // },
   async getThresholds(
     device_id: number
   ): Promise<Thresholds> {
