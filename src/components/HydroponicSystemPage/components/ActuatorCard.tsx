@@ -4,7 +4,7 @@ import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
-import { IconClock, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop } from '@tabler/icons-react';
+import { IconClock, IconTrash, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop, IconAlertCircle } from '@tabler/icons-react';
 
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
@@ -14,6 +14,7 @@ import { HoverSlideIn } from "../../common/HoverSlideIn";
 
 import ScheduleManager from './ScheduleManager';
 import ActuatorModalConfig from './ActuatorModalConfig';
+import Modal from '../../common/Modal';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
@@ -67,6 +68,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     }, [actuator.id]);
 
     const [isHovered, setIsHovered] = React.useState(false);
+    const [confirmDeleteOpen, setConfirmDeleteOpen] = React.useState(false);
 
     const manualState = actuator.manual_state ?? null;
 
@@ -188,6 +190,16 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         rounded="full"
                         size="sm"
                     />
+
+                    <Button
+                        variant="secondary"
+                        icon={<IconTrash size={16} />}
+                        iconOnly
+                        className="bg-transparent"
+                        onClick={() => setConfirmDeleteOpen(true)}
+                        rounded="full"
+                        size="sm"
+                    />
                 </div>
             </HoverSlideIn>
             <div className='flex items-center justify-between mb-1'>
@@ -276,6 +288,43 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     await onUpdated?.(); // 👈 REFRESH LIST
                 }}
             />
+
+            <Modal
+                showCloseButton={false}
+                size="xsmall"
+                isOpen={confirmDeleteOpen}
+                onClose={() => setConfirmDeleteOpen(false)}
+                content={
+                    <div className="text-sm px-10 pt-6 pb-10 text-center">
+                        <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+                        Are you sure you want to delete actuator{" "}
+                        <strong>{actuator.name}</strong>?
+                    </div>
+                }
+                actions={
+                    <div className="flex gap-4">
+                        <Button
+                            label="Yes, Delete"
+                            variant="danger"
+                            onClick={async () => {
+                                await actions.deleteActuator(actuator.id);
+                                setConfirmDeleteOpen(false);
+                                await onUpdated?.();
+                            }}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => setConfirmDeleteOpen(false)}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                    </div>
+                }
+            />
+
         </div>
     );
 };

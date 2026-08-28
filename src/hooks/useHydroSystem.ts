@@ -155,6 +155,9 @@ export const useHydroSystem = () => {
     return actuatorService.patch(id, updates);
   };
 
+const deleteActuator = async (id: number) => {
+  return actuatorService.delete(id);
+};  
 
   const checkForAlerts = useCallback((statuses: SystemStatusPerDevice[]) => {
     const newAlerts: SystemAlert[] = [];
@@ -689,6 +692,7 @@ const stopActuator = useCallback(
       refreshData,
       updateActuator,
       patchActuator,
+      deleteActuator,
 
       // Hardware detection actions
       fetchHardwareDetections,

@@ -1,3 +1,5 @@
+// src
+
 // API Configuration
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 export const OBJECT_DETECTION_STREAM_MODE = (import.meta.env.VITE_OBJECT_DETECTION_STREAM_MODE || 'http') as 'http' | 'websocket';

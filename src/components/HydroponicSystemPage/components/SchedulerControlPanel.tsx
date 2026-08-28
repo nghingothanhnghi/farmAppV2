@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconCalendarTime } from '@tabler/icons-react';
+import { IconCalendarTime, IconPlayerStop, IconPlayerPlay, IconRefresh } from '@tabler/icons-react';
 import ButtonGroup from '../../common/ButtonGroup';
 import Button from '../../common/Button';
 import { playSound } from '../../../utils/sound';
@@ -69,23 +69,32 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
           <ButtonGroup>
             <Button
               label="Start"
+              icon={<IconPlayerPlay size={14} />}
+              iconOnly
+              variant="secondary"
               onClick={handleStart}
               disabled={loading || running === true}
-              className={`flex-1 ${running === true ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600 text-white'}`}
+              className="flex-1"
               size='xs'
             />
             <Button
               label="Stop"
+              icon={<IconPlayerStop size={14} />}
+              iconOnly
+              variant="secondary"
               onClick={handleStop}
               disabled={loading || running === false}
-              className={`flex-1 ${running === false ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600 text-white'}`}
+              className="flex-1"
               size='xs'
             />
             <Button
               label="Restart"
+              icon={<IconRefresh size={14} />}
+              iconOnly
+              variant="secondary"
               onClick={handleRestart}
               disabled={loading || running === false}
-              className={`flex-1 ${running === false ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-yellow-500 hover:bg-yellow-600 text-white'}`}
+              className="flex-1"
               size='xs'
             />
           </ButtonGroup>

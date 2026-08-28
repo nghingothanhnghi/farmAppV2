@@ -4,6 +4,8 @@ import ListLink from '../common/ListLink';
 import { APP_NAME } from '../../config/constants';
 import Header from './Header';
 import Footer from './Footer';
+import { menuItems } from '../../config/menu';
+import MultiLevelMenu from './MultiLevelMenu';
 
 interface SideMenuProps {
     open?: boolean;
@@ -37,7 +39,7 @@ export default function SideMenu({ open = false, onClose }: SideMenuProps) {
                 <div className='flex h-full min-h-0 flex-col'>
                     <Header appName={APP_NAME} onClose={onClose} />
                     <div className="flex flex-1 flex-col overflow-y-auto p-4 space-y-0.5">
-                        <ListLink to="/scheduler-health" onClick={handleLinkClick} icon={<IconCalendarCheck size={16} />} label="Scheduler Health" />
+                        {/* <ListLink to="/scheduler-health" onClick={handleLinkClick} icon={<IconCalendarCheck size={16} />} label="Scheduler Health" />
                         <ListLink to="/devices-controller" onClick={handleLinkClick} icon={<IconDeviceMobileCheck size={16} />} label="Devices Controller" />
                         <ListLink to="/ar-detection" onClick={handleLinkClick} icon={<IconCamera size={16} />} label="AR Object Detection" />
                         <ListLink to="/model-training" onClick={handleLinkClick} icon={<IconBrain size={16} />} label="Train YOLOv8 Model" />
@@ -47,7 +49,14 @@ export default function SideMenu({ open = false, onClose }: SideMenuProps) {
                         <ListLink to="/dashboard/cms" onClick={handleLinkClick} icon={<IconArticle size={16} />} label="CMS Content" />
                         <ListLink to="/users" onClick={handleLinkClick} icon={<IconUserShield size={16} />} label="Users" />
                         <ListLink to="/migrate" onClick={handleLinkClick} icon={<IconAnalyze size={16} />} label="Data Migration" />
-                        <ListLink to="/payments" onClick={handleLinkClick} icon={<IconCashRegister size={16} />} label="Payments" />
+                        <ListLink to="/payments" onClick={handleLinkClick} icon={<IconCashRegister size={16} />} label="Payments" /> */}
+
+                        <MultiLevelMenu
+                            items={menuItems}
+                            mobile={true}
+                            onNavigate={handleLinkClick}
+                        />
+
                     </div>
                     <Footer />
                 </div>

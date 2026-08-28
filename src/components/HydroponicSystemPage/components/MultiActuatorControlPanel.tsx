@@ -24,14 +24,14 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
   console.log('MultiActuatorControlPanel - systemStatus:', systemStatus);
 
   const handleManualModeChange = (
-  actuatorId: number,
-  state: boolean | null
-) => {
-  if (state === true) playSound('on');
-  else if (state === false) playSound('off');
+    actuatorId: number,
+    state: boolean | null
+  ) => {
+    if (state === true) playSound('on');
+    else if (state === false) playSound('off');
 
-  onManualModeChange(actuatorId, state);
-};
+    onManualModeChange(actuatorId, state);
+  };
 
   // 📦 Group actuators by type (pump, light, fan...)
   // This helps for filtering + dropdown display
@@ -144,30 +144,32 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
       {/* 🧠 Main render logic */}
       {/* If "all" → show everything */}
       {/* Else → show only selected group */}
-      {selectedType === "all"
-        ? systemStatus?.actuators.map((actuator) => (
-          <ActuatorCard
-            key={actuator.id}
-            actuator={actuator}
-            allActuators={systemStatus?.actuators || []}
-            loading={loading}
-            variant="control"
-            onManualModeChange={handleManualModeChange}
-            onStop={onStop}
-          />
-        ))
-        : groupedActuators[selectedType]?.map((actuator) => (
-          <ActuatorCard
-            key={actuator.id}
-            actuator={actuator}
-            allActuators={systemStatus?.actuators || []}
-            loading={loading}
-            variant="control"
-            onManualModeChange={handleManualModeChange}
-            onStop={onStop}
-          />
-        ))
-      }
+      <div className='p-2 space-y-1'>
+        {selectedType === "all"
+          ? systemStatus?.actuators.map((actuator) => (
+            <ActuatorCard
+              key={actuator.id}
+              actuator={actuator}
+              allActuators={systemStatus?.actuators || []}
+              loading={loading}
+              variant="control"
+              onManualModeChange={handleManualModeChange}
+              onStop={onStop}
+            />
+          ))
+          : groupedActuators[selectedType]?.map((actuator) => (
+            <ActuatorCard
+              key={actuator.id}
+              actuator={actuator}
+              allActuators={systemStatus?.actuators || []}
+              loading={loading}
+              variant="control"
+              onManualModeChange={handleManualModeChange}
+              onStop={onStop}
+            />
+          ))
+        }
+      </div>
     </div>
   );
 };
