@@ -3,6 +3,7 @@ import { Outlet, Route, Routes } from "react-router";
 import LandingLayout from "./components/layout/LandingLayout";
 import PageLayout from "./components/layout/PageLayout";
 import MainLayout from './components/layout/MainLayout';
+import SmartHomeLayout from './components/layout/SmartHomeLayout';
 import './App.css';
 import PrivateRoute from "./components/common/PrivateRoute";
 import LinearProgress from "./components/common/LinearProgress";
@@ -36,7 +37,13 @@ const PlantBatchPage = lazy(() =>
   import("./components/HydroponicSystemPage/HydroponicPlantPage")
 );
 
+const SmartHomeView = lazy(() =>
+  import("./components/HydroponicSystemPage/components/SmartHomeView")
+);
 
+const SmartHomeViewWithParam = lazy(() =>
+  import("./components/HydroponicSystemPage/components/SmartHomeViewWithParam")
+);
 
 const ProductDetailPage = lazy(() => import("./components/layout/Pages/ProductDetailPage"));
 const RoleAssignmentForm = lazy(() => import("./components/RoleAssignment"));
@@ -79,6 +86,27 @@ function App() {
           <Route element={<PageLayout />}>
             <Route path="/wishlist" element={<WishlistPage />} />
             <Route path="/products/:id" element={<ProductDetailPage />} />
+          </Route>
+
+
+                    {/* ✅ NEW — Smart Home view, own layout root, outside dashboard/MainLayout */}
+          <Route element={<SmartHomeLayout />}>
+            <Route
+              path="/smart-home"
+              element={
+                <PrivateRoute>
+                  <SmartHomeView />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/smart-home/:deviceId"
+              element={
+                <PrivateRoute>
+                  <SmartHomeViewWithParam />
+                </PrivateRoute>
+              }
+            />
           </Route>
 
           {/* Dashboard / Admin routes (MainLayout) */}
