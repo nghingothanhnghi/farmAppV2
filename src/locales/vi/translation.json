@@ -45,7 +45,12 @@
     "badge_status":{
         "inStock": "Còn hàng",
         "outStock": "Liên hệ",
-        "lowStock": "Sắp hết"
+        "lowStock": "Sắp hết",
+        "on": "Bật",
+        "off": "Tắt", 
+        "up": "Lên", 
+        "down": "Xuống", 
+        "stop": "Dừng"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"

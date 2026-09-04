@@ -264,6 +264,7 @@ interface FormToggleProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   label?: string;
   className?: string;
+  size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
 }
 
 export const FormToggle: React.FC<FormToggleProps> = ({
@@ -271,12 +272,77 @@ export const FormToggle: React.FC<FormToggleProps> = ({
   checked,
   onChange,
   label,
-  className = ''
+  className = '',
+  size = 'xs',
 }) => {
+
+  const sizeStyles = {
+    xxs: {
+      toggle: 'h-3 w-6',
+      knob: 'h-2 w-2',
+      checkedPosition: 'peer-checked:start-3',
+      label: 'text-[10px]',
+    },
+    xs: {
+      toggle: 'h-3.5 w-7',
+      knob: 'h-2.5 w-2.5',
+      checkedPosition: 'peer-checked:start-3.5',
+      label: 'text-xs',
+    },
+    sm: {
+      toggle: 'h-4 w-8',
+      knob: 'h-3 w-3',
+      checkedPosition: 'peer-checked:start-4',
+      label: 'text-sm',
+    },
+    md: {
+      toggle: 'h-5 w-10',
+      knob: 'h-4 w-4',
+      checkedPosition: 'peer-checked:start-5',
+      label: 'text-sm',
+    },
+    lg: {
+      toggle: 'h-6 w-12',
+      knob: 'h-5 w-5',
+      checkedPosition: 'peer-checked:start-6',
+      label: 'text-base',
+    },
+  };
+
+  const currentSize = sizeStyles[size];
+
   return (
-    <label
+    // <label
+    //   htmlFor={id}
+    //   className={`relative block h-4 w-8 rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-green-500 ${className}`}
+    // >
+    //   <input
+    //     type="checkbox"
+    //     id={id}
+    //     checked={checked}
+    //     onChange={onChange}
+    //     className="peer sr-only"
+    //   />
+    //   <span className="absolute inset-y-0 start-0 m-0.5 h-3 w-3 rounded-full bg-white dark:bg-gray-700 transition-[inset-inline-start] peer-checked:start-4" />
+    //   {label && (
+    //     <span className="ml-3 text-sm text-gray-700 dark:text-gray-300 absolute top-1.5 left-16">
+    //       {label}
+    //     </span>
+    //   )}
+    // </label>
+        <label
       htmlFor={id}
-      className={`relative block h-4 w-8 rounded-full bg-gray-300 transition-colors [-webkit-tap-highlight-color:_transparent] has-checked:bg-green-500 ${className}`}
+      className={`
+        relative inline-block
+        ${currentSize.toggle}
+        rounded-full
+        bg-gray-300
+        transition-colors
+        [-webkit-tap-highlight-color:_transparent]
+        has-checked:bg-amber-600
+        dark:has-checked:bg-amber-400
+        ${className}
+      `}
     >
       <input
         type="checkbox"
@@ -285,9 +351,36 @@ export const FormToggle: React.FC<FormToggleProps> = ({
         onChange={onChange}
         className="peer sr-only"
       />
-      <span className="absolute inset-y-0 start-0 m-0.5 h-3 w-3 rounded-full bg-white dark:bg-gray-700 transition-[inset-inline-start] peer-checked:start-4" />
+
+      <span
+        className={`
+          absolute
+          inset-y-0
+          start-0
+          m-0.5
+          ${currentSize.knob}
+          rounded-full
+          bg-white
+          dark:bg-gray-700
+          transition-[inset-inline-start]
+          ${currentSize.checkedPosition}
+        `}
+      />
+
       {label && (
-        <span className="ml-3 text-sm text-gray-700 dark:text-gray-300 absolute top-1.5 left-16">
+        <span
+          className={`
+            absolute
+            left-full
+            ml-3
+            top-1/2
+            -translate-y-1/2
+            whitespace-nowrap
+            text-gray-700
+            dark:text-gray-300
+            ${currentSize.label}
+          `}
+        >
           {label}
         </span>
       )}

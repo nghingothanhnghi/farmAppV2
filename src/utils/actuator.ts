@@ -17,6 +17,7 @@ const actuatorConfig = {
         color: "text-yellow-500",
         bg: "bg-yellow-500",
         hover: "hover:bg-yellow-600",
+        animation: "animate-pulse",
     },
     // 🔧 Generic pump (mechanical)
     pump: {
@@ -24,6 +25,7 @@ const actuatorConfig = {
         color: "text-orange-500",
         bg: "bg-orange-500",
         hover: "hover:bg-orange-600",
+        animation: "animate-pulse",
     },
 
     // 💧 Water pump (liquid)
@@ -32,36 +34,42 @@ const actuatorConfig = {
         color: "text-blue-500",
         bg: "bg-blue-500",
         hover: "hover:bg-blue-600",
+        animation: "animate-bounce",
     },
     fan: {
         icon: IconWindmill,
         color: "text-gray-500",
         bg: "bg-gray-500",
         hover: "hover:bg-gray-600",
+        animation: "animate-spin",
     },
     valve: {
         icon: IconRipple,
         color: "text-cyan-500",
         bg: "bg-cyan-500",
         hover: "hover:bg-cyan-600",
+        animation: "animate-spin",
     },
     motor: {
         icon: IconEngine,
         color: "text-orange-500",
         bg: "bg-orange-500",
         hover: "hover:bg-orange-600",
+        animation: "animate-spin",
     },
     timer: {
         icon: IconClock,
         color: "text-purple-500",
         bg: "bg-purple-500",
         hover: "hover:bg-purple-600",
+        animation: "animate-pulse",
     },
     sliding_door: {
         icon: IconArrowsHorizontal,
         color: "text-indigo-500",
         bg: "bg-indigo-500",
         hover: "hover:bg-indigo-600",
+        animation: "animate-pulse",
     },    
 };
 
@@ -72,6 +80,7 @@ export const getActuatorIcon = (type?: string) => {
             color: "text-gray-400",
             bg: "bg-gray-500",
             hover: "hover:bg-gray-600",
+            animation: "",
         };
     }
 
@@ -85,6 +94,7 @@ export const getActuatorIcon = (type?: string) => {
         color: config?.color || "text-gray-400",
         bg: config?.bg || "bg-gray-500",
         hover: config?.hover || "hover:bg-gray-600",
+        animation: config?.animation || "",
     };
 };
 

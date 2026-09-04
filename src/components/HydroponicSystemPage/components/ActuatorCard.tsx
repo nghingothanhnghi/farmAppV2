@@ -172,7 +172,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             className='bg-transparent'
                             onClick={() => setOpenScheduleManager(true)}
                             rounded='full'
-                            size='sm'
+                            size='xs'
                         />
                         {scheduleCount > 0 && (
                             <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-[0.55rem] rounded-full w-3.5 h-3.5 flex items-center justify-center">
@@ -188,7 +188,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         className="bg-transparent"
                         onClick={() => setOpenEdit(true)}
                         rounded="full"
-                        size="sm"
+                        size="xs"
                     />
 
                     <Button
@@ -198,7 +198,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         className="bg-transparent"
                         onClick={() => setConfirmDeleteOpen(true)}
                         rounded="full"
-                        size="sm"
+                        size="xs"
                     />
                 </div>
             </HoverSlideIn>

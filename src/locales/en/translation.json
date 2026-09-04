@@ -45,7 +45,12 @@
     "badge_status":{
         "inStock": "In Stock",
         "outStock": "Contact",
-        "lowStock": "Low Stock"
+        "lowStock": "Low Stock",
+        "on": "On",
+        "off": "Off", 
+        "up": "Up", 
+        "down": "Down", 
+        "stop": "Stop"
     },
     "loading_state":{
         "message_01": "Loading banner..."

@@ -56,6 +56,7 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                 onClose={onClose}
                 title={`Lịch trình - ${actuatorName}`}
                 size="small"
+                position="bottom"
                 content={
                     <div className="px-6 pb-4 space-y-3">
                         {loading && <p className="text-sm text-gray-500">Loading...</p>}

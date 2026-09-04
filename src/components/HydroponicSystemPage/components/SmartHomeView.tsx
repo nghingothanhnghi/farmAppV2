@@ -1,6 +1,7 @@
 // src/components/HydroponicSystemPage/components/SmartHomeView.tsx
 import React, { useMemo, useState, useEffect } from 'react';
 import { IconHome2, IconChevronUp, IconChevronDown, IconPlayerStop, IconArtboard, IconClock } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { useSchedule } from '../../../hooks/useSchedule';
 import useHasAnyRole from '../../../hooks/useHasAnyRole';
@@ -25,6 +26,8 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     deviceId,
     allowedRoles = DEFAULT_CONTROL_ROLES,
 }) => {
+
+    const { t } = useTranslation();
     const { deviceStatusList, loading, actions } = useHydroSystem();
     const { actions: scheduleActions } = useSchedule();
 
@@ -118,7 +121,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     if (!device) {
         return (
             <div className="text-center py-20 text-sm text-gray-500 dark:text-gray-400">
-                No devices found for this location.
+                {t('noDevicesFound')}
             </div>
         );
     }
@@ -171,7 +174,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
             {/* Body — responsive card grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 {device.actuators.map((actuator) => {
-                    const { Icon, color } = getActuatorIcon(actuator.type);
+                    const { Icon, color, animation } = getActuatorIcon(actuator.type);
                     const isSlidingDoor = actuator.type === 'sliding_door';
                     const isActive = actuator.current_state;
                     const scheduleCount = scheduleCounts[actuator.id] ?? 0;
@@ -194,7 +197,11 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     ${isActive ? 'bg-white/70 dark:bg-white/10' : 'bg-gray-100 dark:bg-gray-800'}
                   `}
                                 >
-                                    <Icon size={20} className={isActive ? color : 'text-gray-400'} />
+                                    <Icon size={20} className={`
+            ${isActive ? color : 'text-gray-400'}
+            transition-all duration-300
+            ${isActive ? animation : ""}
+        `} />
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -237,7 +244,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                     {actuator.name}
                                 </p>
                                 <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
-                                    {isActive ? 'On' : 'Off'}
+                                    {isActive ? t('badge_status.on') : t('badge_status.off')}
                                 </p>
                             </div>
 
@@ -289,6 +296,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     actuatorId={scheduleManagerActuator.id}
                     actuatorName={scheduleManagerActuator.name}
                     onChanged={() => refreshScheduleCount(scheduleManagerActuator.id)}
+                    
                 />
             )}
 

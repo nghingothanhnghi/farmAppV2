@@ -45,7 +45,7 @@ const Modal: React.FC<ModalProps> = ({
   // Positioning logic
   const positionClasses = {
     center: 'items-center', // Center vertically
-    bottom: 'items-end', // Stick to bottom with padding
+    bottom: 'items-end sm:items-center', // Stick to bottom with padding
   };
 
   return ReactDOM.createPortal(
@@ -56,12 +56,46 @@ const Modal: React.FC<ModalProps> = ({
     `}
     >
       <div
-        className={`bg-white rounded-3xl border border-gray-300 dark:bg-gray-700 dark:border-gray-500 dark:text-gray-100 shadow-md flex flex-col
-        transition-all duration-300 transform ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
-          } 
-        ${fullWidth ? 'w-full max-w-4/5' : modalSizeClasses[size] || modalSizeClasses.medium} 
-        ${fullHeight ? 'h-screen' : 'max-h-[90vh]'} 
-        overflow-y-auto`}
+        className={`
+    bg-white
+    border border-gray-300
+    dark:bg-gray-700
+    dark:border-gray-500
+    dark:text-gray-100
+    shadow-md
+    flex flex-col
+    overflow-y-auto
+
+    transition-all duration-300 transform
+
+${isOpen
+            ? 'translate-y-0 opacity-100 scale-100'
+            : position === 'bottom'
+              ? 'translate-y-full opacity-0'
+              : 'scale-95 opacity-0'
+          }
+
+    ${fullWidth
+            ? 'w-full max-w-4/5'
+            : modalSizeClasses[size] || modalSizeClasses.medium
+          }
+
+    ${fullHeight
+            ? 'h-screen'
+            : 'max-h-[90vh]'
+          }
+
+    ${position === 'bottom'
+            ? `
+          rounded-t-3xl
+          rounded-b-none
+          sm:rounded-3xl
+        `
+            : `
+          rounded-3xl
+        `
+          }
+  `}
       >
 
 
