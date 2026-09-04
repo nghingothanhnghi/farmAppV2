@@ -5,6 +5,8 @@ import Badge from '../../common/Badge';
 import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useAlert } from '../../../contexts/alertContext';
+import { useTranslation } from 'react-i18next';
+import { getDayLabel } from '../../../constants/days';
 import ScheduleForm from './ScheduleForm';
 import type { HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 
@@ -19,6 +21,7 @@ interface Props {
 const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, onClose, onChanged }) => {
     const { actions } = useSchedule();
     const { setAlert } = useAlert();
+    const { i18n } = useTranslation();
 
     const [schedules, setSchedules] = useState<HydroScheduleOut[]>([]);
     const [loading, setLoading] = useState(false);
@@ -75,7 +78,11 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                                         {s.start_time.slice(0, 5)} → {s.end_time.slice(0, 5)}
                                     </div>
                                     <div className="text-[11px] text-gray-500 flex items-center gap-2">
-                                        {s.repeat_days.split(",").join(", ")}
+                                        {/* ✅ translate each day code to Vietnamese label, join for display only */}
+                                        {s.repeat_days
+                                            .split(",")
+                                            .map((d) => getDayLabel(d, i18n.language))
+                                            .join(", ")}
                                         {!s.is_active && <Badge label="Inactive" variant="warning" size="xsmall" />}
                                     </div>
                                 </div>

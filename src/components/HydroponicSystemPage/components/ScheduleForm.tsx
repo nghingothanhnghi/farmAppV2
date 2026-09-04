@@ -7,9 +7,10 @@ import { motion } from 'framer-motion';
 import { useAlert } from "../../../contexts/alertContext";
 import type { HydroScheduleCreate, HydroScheduleUpdate, HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 import { timeToMinutes, toApiTime } from '../../../utils/time';
+import { DAYS, getDayLabel } from '../../../constants/days';
+import { useTranslation } from 'react-i18next';
 
-
-const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+// const DAYS = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 
 interface Props {
     isOpen: boolean;
@@ -34,11 +35,12 @@ const ScheduleForm: React.FC<Props> = ({
     onSubmit,
     onClose
 }) => {
+    const { i18n } = useTranslation();
     const { setAlert } = useAlert();
 
     const [startTime, setStartTime] = useState("08:00");
     const [endTime, setEndTime] = useState("20:00");
-    const [selectedDays, setSelectedDays] = useState<string[]>(DAYS);
+    const [selectedDays, setSelectedDays] = useState<string[]>([...DAYS]);
     const [isActive, setIsActive] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -54,7 +56,7 @@ const ScheduleForm: React.FC<Props> = ({
         } else {
             setStartTime("08:00");
             setEndTime("20:00");
-            setSelectedDays(DAYS);
+            setSelectedDays([...DAYS]);
             setIsActive(true);
         }
     }, [isOpen, mode, initialData]);
@@ -192,7 +194,7 @@ const ScheduleForm: React.FC<Props> = ({
                                         whileHover={{ scale: 1.05 }}
                                     >
                                         <Button
-                                            label={day.toUpperCase()}
+                                            label={getDayLabel(day, i18n.language)}
                                             size="xxs"
                                             rounded="full"
                                             variant={selected ? "primary" : "secondary"}
@@ -223,7 +225,7 @@ const ScheduleForm: React.FC<Props> = ({
                             <Button
                                 size="xxs"
                                 label="All"
-                                onClick={() => setSelectedDays(DAYS)}
+                                onClick={() => setSelectedDays([...DAYS])}
                                 variant='outline'
                                 rounded='full'
                             />
