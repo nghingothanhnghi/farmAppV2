@@ -1,6 +1,4 @@
 // src/components/layout/SideMenu.tsx
-import { IconDeviceMobileCheck, IconCamera, IconBrain, IconPlant, IconUserShield, IconSportBillard, IconCheese, IconArticle, IconCalendarCheck, IconAnalyze, IconCashRegister } from '@tabler/icons-react';
-import ListLink from '../common/ListLink';
 import { APP_NAME } from '../../config/constants';
 import Header from './Header';
 import Footer from './Footer';
