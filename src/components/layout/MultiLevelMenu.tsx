@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { IconChevronRight, IconChevronLeft } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import Button from '../common/Button';
