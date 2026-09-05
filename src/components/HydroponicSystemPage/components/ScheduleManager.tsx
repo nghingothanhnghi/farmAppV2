@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
 import Badge from '../../common/Badge';
-import { IconEdit, IconTrash, IconPlus } from '@tabler/icons-react';
+import { IconEdit, IconTrash, IconPlus, IconMoodEmpty } from '@tabler/icons-react';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useAlert } from '../../../contexts/alertContext';
 import { useTranslation } from 'react-i18next';
 import { getDayLabel } from '../../../constants/days';
 import ScheduleForm from './ScheduleForm';
+import EmptyState from '../../common/EmptyState';
 import type { HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 
 interface Props {
@@ -21,7 +22,7 @@ interface Props {
 const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, onClose, onChanged }) => {
     const { actions } = useSchedule();
     const { setAlert } = useAlert();
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
 
     const [schedules, setSchedules] = useState<HydroScheduleOut[]>([]);
     const [loading, setLoading] = useState(false);
@@ -65,7 +66,11 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                         {loading && <p className="text-sm text-gray-500">Loading...</p>}
 
                         {!loading && schedules.length === 0 && (
-                            <p className="text-sm text-gray-500">No schedules yet for this actuator.</p>
+
+                            <EmptyState
+                                icon={<IconMoodEmpty size={48} />}
+                                message={t("info.actuator.message_01")}
+                            />
                         )}
 
                         {schedules.map((s) => (
@@ -112,7 +117,7 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                         ))}
 
                         <Button
-                            label="Add schedule window"
+                            label={t("btn.add_schedule")}
                             icon={<IconPlus size={14} />}
                             variant="outline"
                             iconPosition='left'
@@ -127,7 +132,7 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                     </div>
                 }
                 actions={
-                    <Button label="Close" variant="secondary" onClick={onClose} className="min-w-[150px]" rounded="lg" />
+                    <Button label={t("btn.cancel")} variant="secondary" onClick={onClose} className="min-w-[150px]" rounded="lg" />
                 }
             />
 

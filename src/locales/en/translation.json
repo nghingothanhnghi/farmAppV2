@@ -40,7 +40,15 @@
         "quick_view": "Quick View",
         "learn_more": "Learn More",
         "go_to_cart": "Go to cart",
-        "edit_profile": "Edit Profile"
+        "edit_profile": "Edit Profile",
+        "add_schedule": "Add Time Slot",
+        "saving": "Saving...",
+        "update_schedule": "Update Time Slot",
+        "updating": "Updating...",
+        "delete_schedule": "Delete Time Slot",
+        "week_days": "Weekdays",
+        "weekend_days": "Weekend",
+        "all_days": "All Days"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -162,6 +170,26 @@
         "cvv_length":{
             "label": "CVV",
             "placeholder": ""
+        },
+        "start_time":{
+            "label": "Start Time",
+            "placeholder": ""
+        },
+        "end_time":{
+            "label": "End Time",
+            "placeholder": ""
+        },
+        "repeat_days":{
+            "label": "Repeat Days",
+            "placeholder": "selected"
+        }
+    },
+    "toggle":{
+        "actuator_linked": {
+            "label": "Linked"
+        },
+        "actuator_unlinked": {
+            "label": "Unlinked"
         }
     },
     "dataGrid": {
@@ -344,6 +372,9 @@
         },
         "checkout":{
             "message_01": "You can proceed with guest checkout without creating an account."
+        },
+        "actuator":{
+            "message_01": "No schedules yet for this actuator."
         }
     },
     "warning": {

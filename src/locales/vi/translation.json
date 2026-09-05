@@ -40,7 +40,15 @@
         "quick_view": "Xem nhanh",
         "learn_more": "Xem thêm",
         "go_to_cart": "Đi đến giỏ hàng?",
-        "edit_profile": "Chỉnh sửa tài khoản"
+        "edit_profile": "Chỉnh sửa tài khoản",
+        "add_schedule": "Thêm khung giờ",
+        "saving": "Đang lưu...",
+        "update_schedule": "Cập nhật khung giờ",
+        "updating": "Đang cập nhật...",
+        "delete_schedule": "Xóa khung giờ",
+        "week_days": "Ngày trong tuần",
+        "weekend_days": "Cuối tuần",
+        "all_days": "Tất cả"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -162,6 +170,26 @@
         "cvv_length":{
             "label": "CVV",
             "placeholder": ""
+        },
+        "start_time":{
+            "label": "Thời gian bắt đầu",
+            "placeholder": ""
+        },
+        "end_time":{
+            "label": "Thời gian kết thúc",
+            "placeholder": ""
+        },
+        "repeat_days":{
+            "label": "Lặp lại vào các ngày",
+            "placeholder": "đã chọn"
+        }
+    },
+    "toggle":{
+        "actuator_linked": {
+            "label": "Đã liên kết"
+        },
+        "actuator_unlinked": {
+            "label": "Chưa liên kết"
         }
     },
     "dataGrid": {
@@ -344,6 +372,9 @@
         },
         "checkout":{
             "message_01": "Bạn có thể tiếp tục thanh toán với tư cách khách mà không cần tạo tài khoản."
+        },
+        "actuator":{
+            "message_01": "Chưa có lịch nào cho thiết bị này."
         }
     },
     "warning": {

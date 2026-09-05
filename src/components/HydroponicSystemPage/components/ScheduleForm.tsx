@@ -35,7 +35,7 @@ const ScheduleForm: React.FC<Props> = ({
     onSubmit,
     onClose
 }) => {
-    const { i18n } = useTranslation();
+    const { t, i18n } = useTranslation();
     const { setAlert } = useAlert();
 
     const [startTime, setStartTime] = useState("08:00");
@@ -103,7 +103,7 @@ const ScheduleForm: React.FC<Props> = ({
         const payload: HydroScheduleCreate = {
             actuator_id: actuatorId,
             start_time: toApiTime(startTime),
-  end_time: toApiTime(endTime),
+            end_time: toApiTime(endTime),
             repeat_days: selectedDays.join(","),
             is_active: isActive,
         };
@@ -151,11 +151,11 @@ const ScheduleForm: React.FC<Props> = ({
             title={`${mode === "edit" ? "Chỉnh sửa" : "Thêm"} Lịch trình - ${actuatorName}`}
             size="small"
             content={
-                <div className="px-10 pb-4 space-y-5">
+                <div className="px-10 pt-4 pb-4 space-y-5">
                     {/* ⏰ Time Picker */}
                     <div className="flex gap-4">
-                        <FormGroup className="flex-1">
-                            <FormLabel htmlFor="start-time">Start</FormLabel>
+                        <FormGroup className="flex-1 space-y-1">
+                            <FormLabel htmlFor="start-time">{t("input.start_time.label")}</FormLabel>
                             <FormInput
                                 id="start-time"
                                 type="time"
@@ -164,8 +164,8 @@ const ScheduleForm: React.FC<Props> = ({
                             />
                         </FormGroup>
 
-                        <FormGroup className="flex-1">
-                            <FormLabel htmlFor="end-time">End</FormLabel>
+                        <FormGroup className="flex-1 space-y-1">
+                            <FormLabel htmlFor="end-time">{t("input.end_time.label")}</FormLabel>
                             <FormInput
                                 id="end-time"
                                 type="time"
@@ -174,12 +174,13 @@ const ScheduleForm: React.FC<Props> = ({
                             />
                         </FormGroup>
                     </div>
+                    <hr role="presentation" className="my-4 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
                     {/* 📅 Repeat Days (Animated) */}
                     <div>
                         <div className="flex justify-between items-center mb-2">
-                            <label className="text-sm">Repeat Days</label>
-                            <span className="text-xs text-gray-500">
-                                {selectedDays.length}/7 selected
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-100">{t("input.repeat_days.label")}</label>
+                            <span className="text-xs text-gray-600 dark:text-gray-400">
+                                {selectedDays.length}/7 {t("input.repeat_days.placeholder")}
                             </span>
                         </div>
 
@@ -210,28 +211,31 @@ const ScheduleForm: React.FC<Props> = ({
                         <div className="flex justify-end gap-2 mt-3">
                             <Button
                                 size="xxs"
-                                label="Weekdays"
+                                label={t("btn.week_days")}
                                 onClick={() => setSelectedDays(["mon", "tue", "wed", "thu", "fri"])}
-                                variant='outline'
+                                variant='secondary'
+                                className='bg-transparent'
                                 rounded='full'
                             />
                             <Button
                                 size="xxs"
-                                label="Weekend"
+                                label={t("btn.weekend_days")}
                                 onClick={() => setSelectedDays(["sat", "sun"])}
-                                variant='outline'
+                                variant='secondary'
+                                className='bg-transparent'
                                 rounded='full'
                             />
                             <Button
                                 size="xxs"
-                                label="All"
+                                label={t("btn.all_days")}
                                 onClick={() => setSelectedDays([...DAYS])}
-                                variant='outline'
+                                variant='secondary'
+                                className='bg-transparent'
                                 rounded='full'
                             />
                         </div>
                     </div>
-
+                    <hr role="presentation" className="my-4 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
                     {/* ✅ Active Toggle */}
                     <div className="flex items-center gap-2">
                         <FormToggle
@@ -239,7 +243,7 @@ const ScheduleForm: React.FC<Props> = ({
                             checked={isActive}
                             onChange={(e) => setIsActive(e.target.checked)}
                         />
-                        <span className="text-sm">Active</span>
+                        <span className="text-sm">{t(`toggle.actuator_${isActive ? 'linked' : 'unlinked'}.label`)}</span>
                     </div>
 
                 </div>
@@ -249,16 +253,16 @@ const ScheduleForm: React.FC<Props> = ({
                     <Button
                         label={
                             loading
-                                ? (mode === "edit" ? "Updating..." : "Saving...")
-                                : (mode === "edit" ? "Update Schedule" : "Save Schedule")
+                                ? (mode === "edit" ? t("btn.updating") : t("btn.saving"))
+                                : (mode === "edit" ? t("btn.update_schedule") : t("btn.add_schedule"))
                         }
-                        variant="danger"
+                        variant="primary"
                         onClick={handleSubmit}
                         className='min-w-[150px]'
                         rounded='lg'
                     />
                     <Button
-                        label="Cancel"
+                        label={t("btn.cancel")}
                         variant="secondary"
                         onClick={onClose}
                         className='min-w-[150px]'
