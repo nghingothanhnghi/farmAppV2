@@ -11,6 +11,7 @@ import LinearProgress from '../common/LinearProgress';
 import Button from '../common/Button';
 import { loginSchema } from '../../validation/authValidation';
 import { IconEye, IconEyeOff } from '@tabler/icons-react';
+import OAuthButtons from './OAuthButtons';
 
 const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
     const { setAlert } = useAlert();
@@ -137,6 +138,9 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                         fullWidth
                         rounded='lg'
                     />
+
+                    <OAuthButtons />
+
                     <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-5">
                         Don’t have an account?{' '}
                         <Link

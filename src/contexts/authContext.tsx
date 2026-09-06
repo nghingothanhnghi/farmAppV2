@@ -5,6 +5,7 @@ import type { Role } from '../models/interfaces/Role';
 import type { User } from '../models/interfaces/User';
 import * as authService from '../services/authService';
 import { isJwtExpired } from '../utils/jwt';
+import { extractOAuthTokenFromHash, clearOAuthHash } from '../utils/oauth';
 import { setUnauthorizedHandler } from '../api/client';
 
 interface AuthContextType {
@@ -29,6 +30,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const [loading, setLoading] = useState(true);
     const [showLoginModal, setShowLoginModal] = useState(false);
+
+    // 🟢 NEW: pick up the token dropped in the URL hash by the OAuth callback
+    useEffect(() => {
+        const oauthToken = extractOAuthTokenFromHash();
+        if (oauthToken) {
+            localStorage.setItem('token', oauthToken);
+            setToken(oauthToken);
+            clearOAuthHash();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     useEffect(() => {
         if (token) {

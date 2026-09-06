@@ -11,6 +11,7 @@ import { loginSchema } from '../../validation/authValidation';
 import { useAuth } from '../../contexts/authContext';
 import { useAlert } from '../../contexts/alertContext';
 import useToggle from '../../hooks/useToggle';
+import OAuthButtons from './OAuthButtons';
 
 const LoginPage: React.FC = () => {
   const { setAlert } = useAlert();
@@ -21,7 +22,7 @@ const LoginPage: React.FC = () => {
   const [fieldErrors, setFieldErrors] = useState<{ username?: string; password?: string }>({});
   const { value: showPassword, toggle: togglePassword } = useToggle();
 
-    // 🚀 Redirect when logged in
+  // 🚀 Redirect when logged in
   useEffect(() => {
     if (isAuthenticated) {
       navigate("/dashboard/products");
@@ -140,6 +141,7 @@ const LoginPage: React.FC = () => {
               fullWidth
               rounded='lg'
             />
+            <OAuthButtons />
             <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-5">
               Don’t have an account?{' '}
               <Link
