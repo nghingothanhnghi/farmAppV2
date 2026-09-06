@@ -176,8 +176,8 @@ const SignUpPage: React.FC = () => {
                         ))}
                     </div>
                     <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
-                    
-                    <OAuthButtons className="mb-8" />
+
+
 
                     <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4'>
                         <Button
@@ -200,6 +200,7 @@ const SignUpPage: React.FC = () => {
                             rounded='lg'
                         />
                     </FormActions>
+                    <OAuthButtons className="mb-8" />
                 </Form>
             </div>
         </div>
