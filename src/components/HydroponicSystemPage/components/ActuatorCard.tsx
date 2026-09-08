@@ -84,6 +84,11 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
     const isSlidingDoor = actuator.type === "sliding_door";
 
+    // ✅ NEW — status label: sliding doors read as Up/Down, everything else On/Off
+    const statusLabel = isSlidingDoor
+        ? (isActive ? t('badge_status.up') : t('badge_status.down'))
+        : (isActive ? t('badge_status.on') : t('badge_status.off'));
+
     return (
         <div
             className="bg-gray-100 dark:bg-gray-900 rounded-lg px-4 py-2 relative overflow-hidden"
@@ -209,45 +214,45 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     <div className='flex-1'>
                         <div className="flex items-center space-x-2">
                             <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
-                            <div className="flex items-center space-x-1">
-                                {/* STATUS DOT */}
-                                <div
-                                    className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'
-                                        }`}
-                                />
-
-                                {/* STATUS TEXT */}
-                                <span
-                                    className={`text-[0.625rem] ${isActive ? 'text-green-600' : 'text-gray-400'
-                                        }`}
-                                >
-                                    {isActive ? 'Running' : 'Stopped'}
-                                </span>
-                                {/* MODE */}
-                                <span
-                                    className={
-                                        modeManual === "AUTO"
-                                            ? "text-blue-500 text-[0.625rem]"
-                                            : modeManual === "MANUAL_ON"
-                                                ? "text-green-600 text-[0.625rem]"
-                                                : "text-red-500 text-[0.625rem]"
-                                    }
-                                >
-                                    {modeManual === "AUTO"
-                                        ? "Auto"
+                        </div>
+                        <div className="flex items-center space-x-1">
+                            {/* STATUS DOT */}
+                            <div
+                                className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'
+                                    }`}
+                            />
+                            {/* STATUS TEXT */}
+                            <span
+                                className={`text-[0.625rem] ${isActive ? 'text-green-600' : 'text-gray-400'
+                                    }`}
+                            >
+                                {statusLabel}
+                            </span>
+                            <div className="h-2 border-l border-gray-500 mx-2"></div>
+                            {/* MODE */}
+                            <span
+                                className={
+                                    modeManual === "AUTO"
+                                        ? "text-blue-500 text-[0.625rem]"
                                         : modeManual === "MANUAL_ON"
-                                            ? "Manual On"
-                                            : "Manual Off"}
+                                            ? "text-green-600 text-[0.625rem]"
+                                            : "text-red-500 text-[0.625rem]"
+                                }
+                            >
+                                {modeManual === "AUTO"
+                                    ? t('badge_status.auto')
+                                    : modeManual === "MANUAL_ON"
+                                        ? t('actuator_reason.manual_on')
+                                        : t('actuator_reason.manual_off')}
+                            </span>
+                            {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
+                                <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
+                                    ({t(reasonMeta.labelKey)})
                                 </span>
-                                {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
-                                    <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
-                                        ({t(reasonMeta.labelKey)})
-                                    </span>
-                                )}
-                            </div>
+                            )}
                         </div>
                         <p className="text-[0.625rem] text-gray-500">
-                            Kênh: Pin {actuator.pin} • Port {actuator.port}
+                            Pin {actuator.pin} • Port {actuator.port}
                         </p>
                         {!actuator.is_active && (
                             <Badge label='Interrupted' variant='warning' size='xsmall' />
