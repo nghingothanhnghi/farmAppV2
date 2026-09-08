@@ -209,7 +209,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 </div>
             </HoverSlideIn>
             <div className='flex items-center justify-between mb-1'>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-start space-x-2">
                     <span className="text-lg"><Icon size={18} className={color} /></span>
                     <div className='flex-1'>
                         <div className="flex items-center space-x-2">
