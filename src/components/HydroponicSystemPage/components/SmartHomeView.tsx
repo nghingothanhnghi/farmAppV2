@@ -179,7 +179,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
             </div>
 
             {/* Body — responsive card grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 xlg:grid-cols-4 gap-4">
                 {device.actuators.map((actuator) => {
                     const { Icon, color, animation } = getActuatorIcon(actuator.type);
                     const isSlidingDoor = actuator.type === 'sliding_door';
@@ -213,19 +213,19 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                             <div className="flex items-start justify-between">
                                 <div
                                     className={`
-                    w-10 h-10 rounded-full flex items-center justify-center
-                    ${isActive ? 'bg-white/70 dark:bg-white/10' : 'bg-gray-100 dark:bg-gray-800'}
-                  `}
+                                        w-10 h-10 rounded-full flex items-center justify-center
+                                        ${isActive ? 'bg-white/70 dark:bg-white/10' : 'bg-gray-100 dark:bg-gray-800'}
+                                    `}
                                 >
                                     <Icon size={20} className={`
-            ${isActive ? color : 'text-gray-400'}
-            transition-all duration-300
-            ${isActive ? animation : ""}
-        `} />
+                                        ${isActive ? color : 'text-gray-400'}
+                                        transition-all duration-300
+                                        ${isActive ? animation : ""}
+                                    `} 
+                                    />
                                 </div>
 
-                                <div className="flex items-center gap-2">
-
+                                <div className="flex gap-2">
                                     {/* ✅ Schedule button — opens ScheduleManager, shows count badge */}
                                     {canControl && (
                                         <div className="relative">
@@ -258,22 +258,61 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                                 disabled={!actuator.is_active || modeManual === "AUTO"}
                                             />
                                             <Button
-                                                label="On"
+                                                label={t('badge_status.on')}
                                                 variant="secondary"
                                                 size="xxs"
                                                 onClick={() => handleToggle(actuator, true)}
-                                                disabled={!actuator.is_active || modeManual === "MANUAL_ON"}
+                                                disabled={
+                                                    !actuator.is_active ||
+                                                    modeManual === "MANUAL_ON" ||
+                                                    (modeManual === "AUTO" && isActive) // ✅ already on via auto — no need to press On
+                                                }
                                             />
                                             <Button
-                                                label="Off"
+                                                label={t('badge_status.off')}
                                                 variant="secondary"
                                                 size="xxs"
                                                 onClick={() => handleToggle(actuator, false)}
-                                                disabled={!actuator.is_active || modeManual === "MANUAL_OFF"}
+                                                disabled={
+                                                    !actuator.is_active ||
+                                                    modeManual === "MANUAL_OFF" ||
+                                                    (modeManual === "AUTO" && !isActive) // ✅ already off via auto — no need to press Off
+                                                }
                                             />
                                         </ButtonGroup>
                                     )}
-
+                                    {/* sliding_door special control */}
+                                    {isSlidingDoor && (
+                                        <ButtonGroup vertical={true}>
+                                            <Button
+                                                icon={<IconChevronUp size={14} />}
+                                                iconOnly
+                                                label={t('badge_status.up')}
+                                                variant="secondary"
+                                                size="xxs"
+                                                disabled={!canControl}
+                                                onClick={() => handleSlidingDoor(actuator, 'up')}
+                                            />
+                                            <Button
+                                                icon={<IconPlayerStop size={14} />}
+                                                iconOnly
+                                                label={t('badge_status.stop')}
+                                                variant="secondary"
+                                                size="xxs"
+                                                disabled={!canControl}
+                                                onClick={() => handleSlidingDoor(actuator, 'stop')}
+                                            />
+                                            <Button
+                                                icon={<IconChevronDown size={14} />}
+                                                iconOnly
+                                                label={t('badge_status.down')}
+                                                variant="secondary"
+                                               size="xxs"
+                                                disabled={!canControl}
+                                                onClick={() => handleSlidingDoor(actuator, 'down')}
+                                            />
+                                        </ButtonGroup>
+                                    )}
                                     {/* Read-only fallback keeps a disabled toggle for quick visual state */}
                                     {!isSlidingDoor && !canControl && (
                                         <FormToggle
@@ -288,20 +327,14 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
 
                             </div>
 
-                            <div className="mt-2">
+                            <div className="mt-2 space-y-1">
                                 <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
                                     {actuator.name}
                                 </p>
-                                {/* <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
-                                    {isActive ? t('badge_status.on') : t('badge_status.off')}
-                                </p>
-                                 */}
-                                <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
-                                    {statusLabel}
-                                </p>
+                                <p className={`text-[10px] ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                                    {statusLabel} <span className="border-l border-gray-300 mx-2"></span>
 
-                                {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
-                                <p className="text-[10px] mt-0.5">
+                                    {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
                                     <span
                                         className={
                                             modeManual === "AUTO"
@@ -312,54 +345,18 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                         }
                                     >
                                         {modeManual === "AUTO"
-                                            ? "Auto"
+                                            ? t("badge_status.auto")
                                             : modeManual === "MANUAL_ON"
-                                                ? "Manual On"
-                                                : "Manual Off"}
+                                                ? t("badge_status.manual")
+                                                : t("badge_status.off")}
                                     </span>
-                                    {modeManual === "AUTO" && isActive && reasonMeta.label && (
+                                    {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
                                         <span className={`ml-1 ${reasonMeta.color}`}>
-                                            ({reasonMeta.label})
+                                            {t(reasonMeta.labelKey)}
                                         </span>
                                     )}
                                 </p>
                             </div>
-
-                            {/* sliding_door special control */}
-                            {isSlidingDoor && (
-                                <div className="flex items-center justify-between gap-1 mt-3">
-                                    <Button
-                                        icon={<IconChevronUp size={14} />}
-                                        iconOnly
-                                        label="Up"
-                                        variant="secondary"
-                                        size="xs"
-                                        rounded="full"
-                                        disabled={!canControl}
-                                        onClick={() => handleSlidingDoor(actuator, 'up')}
-                                    />
-                                    <Button
-                                        icon={<IconPlayerStop size={14} />}
-                                        iconOnly
-                                        label="Stop"
-                                        variant="secondary"
-                                        size="xs"
-                                        rounded="full"
-                                        disabled={!canControl}
-                                        onClick={() => handleSlidingDoor(actuator, 'stop')}
-                                    />
-                                    <Button
-                                        icon={<IconChevronDown size={14} />}
-                                        iconOnly
-                                        label="Down"
-                                        variant="secondary"
-                                        size="xs"
-                                        rounded="full"
-                                        disabled={!canControl}
-                                        onClick={() => handleSlidingDoor(actuator, 'down')}
-                                    />
-                                </div>
-                            )}
                         </div>
                     );
                 })}

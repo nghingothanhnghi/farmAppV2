@@ -58,7 +58,11 @@
         "off": "Off", 
         "up": "Up", 
         "down": "Down", 
-        "stop": "Stop"
+        "stop": "Stop",
+        "auto": "Auto",
+        "manual": "Manual",
+        "auto_triggered": "Auto Triggered",
+        "sensor_triggered": "Sensor Triggered"
     },
     "loading_state":{
         "message_01": "Loading banner..."
@@ -191,6 +195,17 @@
         "actuator_unlinked": {
             "label": "Unlinked"
         }
+    },
+    "actuator_reason": {
+        "idle": "Idle",
+        "manual_on": "Manual On",
+        "manual_off": "Manual Off",
+        "high_temperature": "High Temperature",
+        "low_water_level": "Low Water Level",
+        "scheduled": "Scheduled",
+        "interval": "Interval",
+        "one_time_run": "One Time Run",
+        "sensor_triggered": "Sensor Triggered"
     },
     "dataGrid": {
         "headerName":{

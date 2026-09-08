@@ -58,7 +58,11 @@
         "off": "Tắt", 
         "up": "Lên", 
         "down": "Xuống", 
-        "stop": "Dừng"
+        "stop": "Dừng",
+        "auto": "Tự động",
+        "manual": "Thủ công",
+        "auto_triggered": "Tự động kích hoạt",
+        "sensor_triggered": "Tự động theo cảm biến"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"
@@ -191,6 +195,17 @@
         "actuator_unlinked": {
             "label": "Chưa liên kết"
         }
+    },
+    "actuator_reason": {
+        "idle": "Đang chờ",
+        "manual_on": "Bật thủ công",
+        "manual_off": "Tắt thủ công",
+        "high_temperature": "Nhiệt độ cao",
+        "low_water_level": "Mực nước thấp",
+        "scheduled": "Theo lịch",
+        "interval": "Chế độ định kỳ",
+        "one_time_run": "Chạy một lần",
+        "sensor_triggered": "Kích hoạt bởi cảm biến"
     },
     "dataGrid": {
         "headerName":{

@@ -5,7 +5,7 @@ import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import { FormToggle } from '../../../components/common/Form';
 import { IconClock, IconTrash, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop, IconAlertCircle } from '@tabler/icons-react';
-
+import { useTranslation } from 'react-i18next';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
@@ -49,6 +49,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
         isActive
     });
 
+    const { t } = useTranslation();
     const { actions } = useHydroSystem();
 
     const [openEdit, setOpenEdit] = React.useState(false);
@@ -238,9 +239,9 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                             ? "Manual On"
                                             : "Manual Off"}
                                 </span>
-                                {modeManual === "AUTO" && isActive && reasonMeta.label && (
+                                {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
                                     <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
-                                        ({reasonMeta.label})
+                                        ({t(reasonMeta.labelKey)})
                                     </span>
                                 )}
                             </div>

@@ -101,53 +101,118 @@ export const getActuatorIcon = (type?: string) => {
 // =========================
 // ACTUATOR REASON MAP
 // =========================
-const actuatorReasonMap: Record<string, { label: string; color?: string }> = {
+// const actuatorReasonMap: Record<string, { label: string; color?: string }> = {
+//     off: {
+//         label: "Idle",
+//         color: "text-gray-400",
+//     },
+
+//     manual_on: {
+//         label: "Manual ON",
+//         color: "text-green-500",
+//     },
+//     manual_off: {
+//         label: "Manual OFF",
+//         color: "text-red-500",
+//     },
+
+//     safety_high_temp: {
+//         label: "High temperature",
+//         color: "text-red-500",
+//     },
+//     safety_low_water: {
+//         label: "Low water level",
+//         color: "text-red-500",
+//     },
+
+//     schedule: {
+//         label: "Scheduled",
+//         color: "text-blue-500",
+//     },
+//     interval: {
+//         label: "Interval mode",
+//         color: "text-purple-500",
+//     },
+//     oneshot: {
+//         label: "One-time run",
+//         color: "text-pink-500",
+//     },
+
+//     sensor: {
+//         label: "Sensor triggered",
+//         color: "text-orange-500",
+//     },
+// };
+
+const actuatorReasonMap: Record<
+    string,
+    { labelKey: string; color?: string }
+> = {
     off: {
-        label: "Idle",
+        labelKey: "actuator_reason.idle",
         color: "text-gray-400",
     },
 
     manual_on: {
-        label: "Manual ON",
+        labelKey: "actuator_reason.manual_on",
         color: "text-green-500",
     },
     manual_off: {
-        label: "Manual OFF",
+        labelKey: "actuator_reason.manual_off",
         color: "text-red-500",
     },
 
     safety_high_temp: {
-        label: "High temperature",
+        labelKey: "actuator_reason.high_temperature",
         color: "text-red-500",
     },
     safety_low_water: {
-        label: "Low water level",
+        labelKey: "actuator_reason.low_water_level",
         color: "text-red-500",
     },
 
     schedule: {
-        label: "Scheduled",
+        labelKey: "actuator_reason.scheduled",
         color: "text-blue-500",
     },
     interval: {
-        label: "Interval mode",
+        labelKey: "actuator_reason.interval",
         color: "text-purple-500",
     },
     oneshot: {
-        label: "One-time run",
+        labelKey: "actuator_reason.one_time_run",
         color: "text-pink-500",
     },
 
     sensor: {
-        label: "Sensor triggered",
+        labelKey: "actuator_reason.sensor_triggered",
         color: "text-orange-500",
     },
 };
 
+// export const getActuatorReason = (reason?: string) => {
+//     if (!reason) {
+//         return {
+//             label: "",
+//             color: "text-gray-400",
+//         };
+//     }
+
+//     const mapped = actuatorReasonMap[reason];
+
+//     if (mapped) return mapped;
+
+//     // fallback (for unknown future reasons)
+//     return {
+//         label: reason.replace(/_/g, " "),
+//         color: "text-gray-400",
+//     };
+// };
+
 export const getActuatorReason = (reason?: string) => {
     if (!reason) {
         return {
-            label: "",
+            labelKey: "",
             color: "text-gray-400",
         };
     }
@@ -156,9 +221,9 @@ export const getActuatorReason = (reason?: string) => {
 
     if (mapped) return mapped;
 
-    // fallback (for unknown future reasons)
+    // fallback for unknown future reasons
     return {
-        label: reason.replace(/_/g, " "),
+        labelKey: reason.replace(/_/g, " "),
         color: "text-gray-400",
     };
 };
