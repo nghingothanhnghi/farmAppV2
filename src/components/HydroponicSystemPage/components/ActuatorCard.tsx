@@ -146,7 +146,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 label="On"
                                 variant='secondary'
                                 onClick={() => onManualModeChange?.(actuator.id, true)}
-                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_ON"}
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_ON" || (modeManual === "AUTO" && isActive)} // ✅ already on via auto — no need to press On
                                 size="xs"
                             />
 
@@ -155,7 +155,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                 label="Off"
                                 variant='secondary'
                                 onClick={() => onManualModeChange?.(actuator.id, false)}
-                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_OFF"}
+                                disabled={loading || !actuator.is_active || modeManual === "MANUAL_OFF" || (modeManual === "AUTO" && !isActive)}
                                 size="xs"
                             />
                         </ButtonGroup>
