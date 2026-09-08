@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { useSchedule } from '../../../hooks/useSchedule';
 import useHasAnyRole from '../../../hooks/useHasAnyRole';
-import { getActuatorIcon } from '../../../utils/actuator';
+import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
 import { FormToggle } from '../../common/Form';
 import Button from '../../common/Button';
 import DropdownButton from '../../common/DropdownButton';
 import Spinner from '../../common/Spinner';
 import ScheduleManager from './ScheduleManager';
 import type { HydroActuator, SystemStatusPerDevice } from '../../../models/interfaces/HydroSystem';
+import ButtonGroup from '../../common/ButtonGroup';
 
 interface SmartHomeViewProps {
     /** Optional — pick a specific device. Defaults to the first device found. */
@@ -71,6 +72,12 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     const handleToggle = (actuator: HydroActuator, checked: boolean) => {
         if (!canControl) return;
         actions.setActuatorManualMode(actuator.id, checked);
+    };
+
+    // ✅ NEW — set back to automatic (manual_state = null), same semantics as ActuatorCard
+    const handleAuto = (actuator: HydroActuator) => {
+        if (!canControl) return;
+        actions.setActuatorManualMode(actuator.id, null);
     };
 
     const handleSlidingDoor = (actuator: HydroActuator, direction: 'up' | 'stop' | 'down') => {
@@ -178,17 +185,30 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     const isSlidingDoor = actuator.type === 'sliding_door';
                     const isActive = actuator.current_state;
                     const scheduleCount = scheduleCounts[actuator.id] ?? 0;
+                    // ✅ NEW — same mode derivation as ActuatorCard
+                    const manualState = actuator.manual_state ?? null;
+                    const modeManual =
+                        manualState === null
+                            ? "AUTO"
+                            : manualState
+                                ? "MANUAL_ON"
+                                : "MANUAL_OFF";
+                    const reasonMeta = getActuatorReason(actuator.automation_reason);
 
+                    // ✅ NEW — status label: sliding doors read as Up/Down, everything else On/Off
+                    const statusLabel = isSlidingDoor
+                        ? (isActive ? t('badge_status.up') : t('badge_status.down'))
+                        : (isActive ? t('badge_status.on') : t('badge_status.off'));
                     return (
                         <div
                             key={actuator.id}
                             className={`
-                rounded-2xl p-4 flex flex-col justify-between aspect-square
-                border border-gray-100 dark:border-white/5 shadow-sm transition-colors
-                ${isActive
+                                        rounded-2xl p-4 flex flex-col justify-between aspect-square
+                                        border border-gray-100 dark:border-white/5 shadow-sm transition-colors
+                                        ${isActive
                                     ? 'bg-gradient-to-b from-amber-50 to-white dark:from-amber-900/20 dark:to-gray-900'
                                     : 'bg-white dark:bg-gray-900'}
-              `}
+                        `}
                         >
                             <div className="flex items-start justify-between">
                                 <div
@@ -226,12 +246,41 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                             )}
                                         </div>
                                     )}
-                                    {!isSlidingDoor && (
+
+                                    {/* ✅ CHANGED — non-sliding-door actuators now get Auto/On/Off instead of a plain toggle */}
+                                    {!isSlidingDoor && canControl && (
+                                        <ButtonGroup>
+                                            <Button
+                                                label="Auto"
+                                                variant="secondary"
+                                                size="xxs"
+                                                onClick={() => handleAuto(actuator)}
+                                                disabled={!actuator.is_active || modeManual === "AUTO"}
+                                            />
+                                            <Button
+                                                label="On"
+                                                variant="secondary"
+                                                size="xxs"
+                                                onClick={() => handleToggle(actuator, true)}
+                                                disabled={!actuator.is_active || modeManual === "MANUAL_ON"}
+                                            />
+                                            <Button
+                                                label="Off"
+                                                variant="secondary"
+                                                size="xxs"
+                                                onClick={() => handleToggle(actuator, false)}
+                                                disabled={!actuator.is_active || modeManual === "MANUAL_OFF"}
+                                            />
+                                        </ButtonGroup>
+                                    )}
+
+                                    {/* Read-only fallback keeps a disabled toggle for quick visual state */}
+                                    {!isSlidingDoor && !canControl && (
                                         <FormToggle
                                             id={`toggle-${actuator.id}`}
                                             checked={isActive}
-                                            onChange={(e) => handleToggle(actuator, e.target.checked)}
-                                            className={!canControl ? 'opacity-50 pointer-events-none' : ''}
+                                            onChange={() => { }}
+                                            className="opacity-50 pointer-events-none"
                                         />
                                     )}
                                 </div>
@@ -243,8 +292,36 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                 <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
                                     {actuator.name}
                                 </p>
-                                <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                                {/* <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
                                     {isActive ? t('badge_status.on') : t('badge_status.off')}
+                                </p>
+                                 */}
+                                <p className={`text-xs ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                                    {statusLabel}
+                                </p>
+
+                                {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
+                                <p className="text-[10px] mt-0.5">
+                                    <span
+                                        className={
+                                            modeManual === "AUTO"
+                                                ? "text-blue-500"
+                                                : modeManual === "MANUAL_ON"
+                                                    ? "text-green-600"
+                                                    : "text-red-500"
+                                        }
+                                    >
+                                        {modeManual === "AUTO"
+                                            ? "Auto"
+                                            : modeManual === "MANUAL_ON"
+                                                ? "Manual On"
+                                                : "Manual Off"}
+                                    </span>
+                                    {modeManual === "AUTO" && isActive && reasonMeta.label && (
+                                        <span className={`ml-1 ${reasonMeta.color}`}>
+                                            ({reasonMeta.label})
+                                        </span>
+                                    )}
                                 </p>
                             </div>
 
@@ -296,7 +373,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     actuatorId={scheduleManagerActuator.id}
                     actuatorName={scheduleManagerActuator.name}
                     onChanged={() => refreshScheduleCount(scheduleManagerActuator.id)}
-                    
+
                 />
             )}
 
