@@ -203,7 +203,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                         <div
                             key={actuator.id}
                             className={`
-                                        rounded-2xl p-4 flex flex-col justify-between aspect-square
+                                        rounded-2xl p-4 flex flex-col justify-between aspect-[4/3]
                                         border border-gray-100 dark:border-white/5 shadow-sm transition-colors
                                         ${isActive
                                     ? 'bg-gradient-to-b from-amber-50 to-white dark:from-amber-900/20 dark:to-gray-900'
@@ -333,7 +333,6 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                 </p>
                                 <p className={`text-[10px] ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
                                     {statusLabel} <span className="border-l border-gray-300 dark:border-gray-700 h-2 mx-2"></span>
-
                                     {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
                                     <span
                                         className={
