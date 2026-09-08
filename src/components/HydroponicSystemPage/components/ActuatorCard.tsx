@@ -228,7 +228,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             >
                                 {statusLabel}
                             </span>
-                            <div className="h-2 border-l border-gray-500 mx-2"></div>
+                            <div className="h-2 border-l border-gray-500 dark:border-gray-700 mx-2"></div>
                             {/* MODE */}
                             <span
                                 className={
