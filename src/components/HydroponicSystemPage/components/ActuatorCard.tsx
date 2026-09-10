@@ -228,28 +228,36 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             >
                                 {statusLabel}
                             </span>
-                            <div className="h-2 border-l border-gray-500 dark:border-gray-700 mx-2"></div>
-                            {/* MODE */}
-                            <span
-                                className={
-                                    modeManual === "AUTO"
-                                        ? "text-blue-500 text-[0.625rem]"
-                                        : modeManual === "MANUAL_ON"
-                                            ? "text-green-600 text-[0.625rem]"
-                                            : "text-red-500 text-[0.625rem]"
-                                }
-                            >
-                                {modeManual === "AUTO"
-                                    ? t('badge_status.auto')
-                                    : modeManual === "MANUAL_ON"
-                                        ? t('actuator_reason.manual_on')
-                                        : t('actuator_reason.manual_off')}
-                            </span>
-                            {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
-                                <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
-                                    ({t(reasonMeta.labelKey)})
-                                </span>
+
+                            {/* MODE — only for normal actuators */}
+                            {!isSlidingDoor && (
+                                <>
+                                    <div className="h-2 border-l border-gray-500 dark:border-gray-700 mx-2" />
+                                    {/* MODE */}
+                                    <span
+                                        className={
+                                            modeManual === "AUTO"
+                                                ? "text-blue-500 text-[0.625rem]"
+                                                : modeManual === "MANUAL_ON"
+                                                    ? "text-green-600 text-[0.625rem]"
+                                                    : "text-red-500 text-[0.625rem]"
+                                        }
+                                    >
+                                        {modeManual === "AUTO"
+                                            ? t('badge_status.auto')
+                                            : modeManual === "MANUAL_ON"
+                                                ? t('actuator_reason.manual_on')
+                                                : t('actuator_reason.manual_off')}
+                                    </span>
+                                    {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
+                                        <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
+                                            ({t(reasonMeta.labelKey)})
+                                        </span>
+                                    )}
+                                </>
                             )}
+
+
                         </div>
                         <p className="text-[0.625rem] text-gray-500">
                             Pin {actuator.pin} • Port {actuator.port}
