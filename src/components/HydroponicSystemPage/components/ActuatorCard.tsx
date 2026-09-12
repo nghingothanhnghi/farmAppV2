@@ -3,6 +3,7 @@ import type { HydroActuator } from '../../../models/interfaces/HydroSystem';
 import Button from '../../common/Button';
 import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
+import Spinner from '../../common/Spinner';
 import { FormToggle } from '../../../components/common/Form';
 import { IconClock, IconTrash, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop, IconAlertCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -53,6 +54,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     const { actions } = useHydroSystem();
 
     const [openEdit, setOpenEdit] = React.useState(false);
+    const [isUpdating, setIsUpdating] = React.useState(false);
 
     // ✅ single state for the schedule manager modal
     const [openScheduleManager, setOpenScheduleManager] = React.useState(false);
@@ -213,7 +215,17 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     <span className="text-lg"><Icon size={18} className={color} /></span>
                     <div className='flex-1'>
                         <div className="flex items-center space-x-2">
-                            <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">{actuator.name}</h3>
+                            <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">
+                                {actuator.name}
+                            </h3>
+                            {!isUpdating && (
+                                <div className="flex items-center gap-1 text-gray-400">
+                                    <Spinner size={10} />
+                                    <span className="text-[0.55rem]">
+                                        {t('btn.saving')}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                         <div className="flex items-center space-x-1">
                             {/* STATUS DOT */}
@@ -298,8 +310,15 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                     .map(a => `${a.pin}`)
                     .filter(Boolean)}
                 onSubmit={async (id, data) => {
-                    await actions.patchActuator(id, data);
-                    await onUpdated?.(); // 👈 REFRESH LIST
+                    setIsUpdating(true);
+
+                    try {
+                        await actions.patchActuator(id, data);
+                        await onUpdated?.(); // REFRESH LIST
+                        setOpenEdit(false);
+                    } finally {
+                        setIsUpdating(false);
+                    }
                 }}
             />
 
