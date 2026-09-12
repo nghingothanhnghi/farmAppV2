@@ -218,7 +218,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             <h3 className="text-[0.625rem] font-medium text-gray-700 dark:text-gray-300">
                                 {actuator.name}
                             </h3>
-                            {!isUpdating && (
+                            {isUpdating && (
                                 <div className="flex items-center gap-1 text-gray-400">
                                     <Spinner size={10} />
                                     <span className="text-[0.55rem]">
