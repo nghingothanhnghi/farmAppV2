@@ -62,10 +62,21 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     const allOn =
         controllableActuators.length > 0 && controllableActuators.every((a) => a.current_state);
 
+    const allAuto =
+        controllableActuators.length > 0 &&
+        controllableActuators.every((a) => a.manual_state === null);
+
     const handleMasterToggle = (checked: boolean) => {
         if (!canControl) return;
         controllableActuators.forEach((a) => {
             actions.setActuatorManualMode(a.id, checked);
+        });
+    };
+
+    const handleAutoAll = () => {
+        if (!canControl) return;
+        controllableActuators.forEach((a) => {
+            actions.setActuatorManualMode(a.id, null);
         });
     };
 
@@ -135,7 +146,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
 
     return (
         <div className="space-y-6">
-            {/* Header — location name + device switcher + master switch */}
+            {/* Header — location name + device switcher + bulk controls */}
             <div className="flex items-center justify-between px-1 gap-3">
                 <div className="flex items-center gap-2 min-w-0">
                     <IconHome2 size={22} className="text-gray-500 dark:text-gray-400 shrink-0" />
@@ -167,11 +178,21 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     )}
 
                     {canControl ? (
-                        <FormToggle
-                            id="master-switch"
-                            checked={allOn}
-                            onChange={(e) => handleMasterToggle(e.target.checked)}
-                        />
+                        <>
+                            <Button
+                                label="Auto"
+                                variant="secondary"
+                                size="xs"
+                                rounded='sm'
+                                onClick={handleAutoAll}
+                                disabled={controllableActuators.length === 0 || allAuto}
+                            />
+                            <FormToggle
+                                id="master-switch"
+                                checked={allOn}
+                                onChange={(e) => handleMasterToggle(e.target.checked)}
+                            />
+                        </>
                     ) : (
                         <span className="text-xs text-gray-400">Read only</span>
                     )}

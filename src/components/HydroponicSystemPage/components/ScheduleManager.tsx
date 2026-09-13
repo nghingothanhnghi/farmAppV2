@@ -58,6 +58,7 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
+                showCloseButton={false}
                 title={`Lịch trình - ${actuatorName}`}
                 size="small"
                 position="bottom"

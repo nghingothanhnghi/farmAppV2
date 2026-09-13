@@ -148,7 +148,7 @@ ${isOpen
         ) : (
           <>
             {(title || showCloseButton) && (
-              <div className="py-4 px-10 flex justify-between items-center">
+              <div className="py-4 px-7 flex justify-between items-center">
                 {title ? (
                   <div className='modal-title text-lg font-semibold'>{title}</div>
                 ) : (
