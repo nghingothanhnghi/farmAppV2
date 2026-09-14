@@ -33,6 +33,11 @@ const StageTimeline: React.FC<Props> = ({
     if (!stages.length) return null;
 
     const totalDays = stages[stages.length - 1].day_end;
+    // A batch may be scheduled for a future date, for which the backend returns
+    // a negative `days_growing` value and no current stage. Keep the timeline at
+    // the first stage until the batch begins rather than falling through to the
+    // final-stage fallback below.
+    const displayDaysGrowing = Math.max(daysGrowing, 0);
 
     // ✅ PRIORITY: use backend current_stage_id
     let currentIndex = stages.findIndex(s => s.id === currentStageId);
@@ -41,8 +46,8 @@ const StageTimeline: React.FC<Props> = ({
     if (currentIndex === -1) {
         currentIndex = stages.findIndex(
             (s) =>
-                daysGrowing >= s.day_start &&
-                daysGrowing <= s.day_end
+                displayDaysGrowing >= s.day_start &&
+                displayDaysGrowing <= s.day_end
         );
     }
 
@@ -57,7 +62,7 @@ const StageTimeline: React.FC<Props> = ({
 
     // ✅ remaining days in CURRENT stage
     const remainingDays = currentStage
-        ? Math.max(currentStage.day_end - daysGrowing, 0)
+        ? Math.max(currentStage.day_end - displayDaysGrowing, 0)
         : 0;
 
     const isLastStage = currentIndex === stages.length - 1;
@@ -65,7 +70,7 @@ const StageTimeline: React.FC<Props> = ({
     // ✅ next stage (if exists)
     const nextStage = !isLastStage ? stages[currentIndex + 1] : null;
 
-    const progress = Math.min((daysGrowing / totalDays) * 100, 100);
+    const progress = Math.min((displayDaysGrowing / totalDays) * 100, 100);
 
     return (
         <div className={`relative w-full space-y-1 ${className}`}>
@@ -77,7 +82,7 @@ const StageTimeline: React.FC<Props> = ({
                 </div>
                 {/* 👉 info */}
                 <div className="flex justify-between text-[10px] text-gray-500 dark:text-gray-400">
-                    Ngày {daysGrowing} / {totalDays} ngày
+                    Ngày {displayDaysGrowing} / {totalDays} ngày
                 </div>
             </div>
             <div className={progressPositionClass}>
