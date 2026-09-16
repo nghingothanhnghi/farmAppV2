@@ -230,12 +230,12 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         <div className="flex items-center space-x-1">
                             {/* STATUS DOT */}
                             <div
-                                className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-500' : 'bg-gray-400'
+                                className={`w-1.5 h-1.5 rounded-full ${isActive ? 'bg-green-600 dark:bg-green-300' : 'bg-gray-400'
                                     }`}
                             />
                             {/* STATUS TEXT */}
                             <span
-                                className={`text-[0.625rem] ${isActive ? 'text-green-600' : 'text-gray-400'
+                                className={`text-[0.625rem] ${isActive ? 'text-green-600 dark:text-green-300' : 'text-gray-400'
                                     }`}
                             >
                                 {statusLabel}
@@ -249,10 +249,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                     <span
                                         className={
                                             modeManual === "AUTO"
-                                                ? "text-blue-500 text-[0.625rem]"
+                                                ? "text-gray-400 text-[0.625rem]"
                                                 : modeManual === "MANUAL_ON"
-                                                    ? "text-green-600 text-[0.625rem]"
-                                                    : "text-red-500 text-[0.625rem]"
+                                                    ? "text-gray-400 text-[0.625rem]"
+                                                    : "text-yellow-900 dark:text-yellow-300 text-[0.625rem]"
                                         }
                                     >
                                         {modeManual === "AUTO"
@@ -262,7 +262,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                                                 : t('actuator_reason.manual_off')}
                                     </span>
                                     {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
-                                        <span className={`text-[0.6rem] ml-1 ${reasonMeta.color}`}>
+                                        <span className={`text-[0.625rem] ml-1 ${reasonMeta.color}`}>
                                             ({t(reasonMeta.labelKey)})
                                         </span>
                                     )}

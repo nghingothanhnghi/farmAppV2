@@ -283,7 +283,7 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
           </div>
           <div className='text-xs'>
             <span className="text-gray-500">Auto-refresh:</span>
-            <div className="font-medium text-green-600">
+            <div className="font-medium text-green-600 dark:text-green-300">
               Every 5 seconds
             </div>
           </div>
