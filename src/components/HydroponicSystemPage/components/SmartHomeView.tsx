@@ -352,16 +352,16 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                 <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
                                     {actuator.name}
                                 </p>
-                                <p className={`text-[10px] ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-gray-400'}`}>
+                                <p className={`text-[10px] ${isActive ? 'text-green-600 dark:text-green-300' : 'text-gray-400'}`}>
                                     {statusLabel} <span className="border-l border-gray-300 dark:border-gray-700 h-2 mx-2"></span>
                                     {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
                                     <span
                                         className={
                                             modeManual === "AUTO"
-                                                ? "text-blue-500"
+                                                ? "text-gray-400 text-[0.625rem]"
                                                 : modeManual === "MANUAL_ON"
-                                                    ? "text-green-600"
-                                                    : "text-red-500"
+                                                    ? "text-gray-400 text-[0.625rem]"
+                                                    : "text-yellow-900 dark:text-yellow-300 text-[0.625rem]"
                                         }
                                     >
                                         {modeManual === "AUTO"
