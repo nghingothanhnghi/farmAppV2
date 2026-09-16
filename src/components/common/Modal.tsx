@@ -114,7 +114,7 @@ ${isOpen
                   rounded='full'
                 />
               </div>
-              <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible">
+              <div className="flex lg:flex-col pt-2 gap-2 overflow-x-auto lg:overflow-visible">
                 {sidebarTabs.map((tab) => (
                   <button
                     key={tab.id}
