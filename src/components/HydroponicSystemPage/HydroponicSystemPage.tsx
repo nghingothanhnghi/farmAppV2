@@ -210,6 +210,16 @@ const HydroponicSystemPage: React.FC = () => {
     return 'normal';
   };
 
+  const getRainStatus = () => {
+    if (!currentDevice) return 'normal';
+    const rainDetected = currentDevice.sensors?.rain_detected;
+    const intensity = currentDevice.sensors?.rain_intensity ?? 0;
+    const strongThreshold = currentDevice.automation?.thresholds?.rain_strong_threshold ?? 10;
+    if (!rainDetected) return 'normal';
+    if (intensity >= strongThreshold) return 'error';
+    return 'warning';
+  };
+
 
   const tabs = [
     {
@@ -268,7 +278,7 @@ const HydroponicSystemPage: React.FC = () => {
             </div>
           </div>
           {/* Main Dashboard Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1fr_1fr_1fr_350px] grid-rows-2 auto-rows-fr gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1fr_1fr_1fr_350px] auto-rows-fr gap-6">
             <StatusCard
               className='row-span-2'
               title="Water Level"
@@ -332,6 +342,13 @@ const HydroponicSystemPage: React.FC = () => {
               unit="ppm"
               status={getPpmStatus()}
               icon="🧬"
+            />
+            <StatusCard
+              title="Rain"
+              value={currentDevice?.sensors?.rain_intensity?.toFixed(1) ?? '0.0'}
+              unit="mm"
+              status={getRainStatus()}
+              icon={currentDevice?.sensors?.rain_detected ? '🌧️' : '☀️'}
             />
           </div>
           {/* Alerts Panel */}

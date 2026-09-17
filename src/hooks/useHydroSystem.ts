@@ -155,9 +155,9 @@ export const useHydroSystem = () => {
     return actuatorService.patch(id, updates);
   };
 
-const deleteActuator = async (id: number) => {
-  return actuatorService.delete(id);
-};  
+  const deleteActuator = async (id: number) => {
+    return actuatorService.delete(id);
+  };
 
   const checkForAlerts = useCallback((statuses: SystemStatusPerDevice[]) => {
     const newAlerts: SystemAlert[] = [];
@@ -191,6 +191,16 @@ const deleteActuator = async (id: number) => {
           id: `light-${device_id}-${Date.now()}`,
           type: 'info',
           message: `${device_name}: Low light (${sensors.light} lx < ${t.light_min} lx)`,
+          timestamp: new Date().toISOString(),
+          resolved: false,
+        });
+      }
+
+      if (sensors.rain_detected && sensors.rain_intensity && sensors.rain_intensity >= (t.rain_strong_threshold ?? 10)) {
+        newAlerts.push({
+          id: `rain-${device_id}-${Date.now()}`,
+          type: 'warning',
+          message: `${device_name}: Heavy rain detected (${sensors.rain_intensity}mm)`,
           timestamp: new Date().toISOString(),
           resolved: false,
         });
@@ -283,20 +293,20 @@ const deleteActuator = async (id: number) => {
     [fetchSystemStatusPerDevice]
   );
 
-const stopActuator = useCallback(
-  async (actuatorId: number) => {
-    const label = `Actuator ${actuatorId} STOP`;
-    try {
-      await systemService.stopActuator(actuatorId);
-      appendAction(createControlAction(label, true, "Door stopped"));
-      await fetchSystemStatusPerDevice();
-    } catch {
-      appendAction(createControlAction(label, false, "Failed to stop door"));
-      setError("Failed to stop actuator");
-    }
-  },
-  [fetchSystemStatusPerDevice]
-);  
+  const stopActuator = useCallback(
+    async (actuatorId: number) => {
+      const label = `Actuator ${actuatorId} STOP`;
+      try {
+        await systemService.stopActuator(actuatorId);
+        appendAction(createControlAction(label, true, "Door stopped"));
+        await fetchSystemStatusPerDevice();
+      } catch {
+        appendAction(createControlAction(label, false, "Failed to stop door"));
+        setError("Failed to stop actuator");
+      }
+    },
+    [fetchSystemStatusPerDevice]
+  );
 
   const updateSystemThresholds =
     useCallback(

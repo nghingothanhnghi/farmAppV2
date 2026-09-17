@@ -45,6 +45,8 @@ export interface SensorReading {
   ec: number | null;
   ppm: number | null;
   water_level: number;
+  rain_detected?: boolean;   // ✅ NEW
+  rain_intensity?: number;
   created_at: string;
 }
 
@@ -105,6 +107,8 @@ export interface SystemThresholds {
   ec_max: number;
   ppm_min: number;
   ppm_max: number;
+  rain_detected_action?: string;
+  rain_strong_threshold?: number
 }
 
 export interface SystemAlert {
