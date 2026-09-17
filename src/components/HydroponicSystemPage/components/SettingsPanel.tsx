@@ -269,6 +269,29 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         </div>
       </FormGroup>
 
+      <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
+      {/* Rain Thresholds */}
+      <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+        <div className="space-y-1">
+          <FormLabel htmlFor="rain_strong_threshold">Strong Rain Threshold</FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400">
+            Rain intensity (mm) above which an alert is treated as heavy rain
+          </p>
+        </div>
+        <div className="relative w-50">
+          <NumberInput
+            id="rain_strong_threshold"
+            value={localThresholds.rain_strong_threshold ?? 10}
+            onChange={(v) => handleThresholdChange('rain_strong_threshold', v)}
+            min={0}
+            max={100}
+            step={1}
+          />
+          <span className="absolute right-0 top-1/2 -translate-y-1/2 text-sm text-gray-500">
+            mm
+          </span>
+        </div>
+      </FormGroup>
 
       <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
       {/* System Information */}

@@ -13,4 +13,9 @@ export const defaultThresholds: SystemThresholds = {
   // ✅ PPM
   ppm_min: 600,
   ppm_max: 1200,
+
+  // ✅ Rain detection
+  rain_detected_action: "notify",
+  rain_strong_threshold: 10,
+
 };
