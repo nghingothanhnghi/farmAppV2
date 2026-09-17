@@ -1,6 +1,6 @@
 // src/components/HydroponicSystemPage/components/SettingsPanel.tsx
 import React, { useState, useEffect } from 'react';
-import Form, { FormGroup, FormLabel, FormActions } from '../../common/Form'
+import Form, { FormGroup, FormLabel, FormSelect, FormActions } from '../../common/Form'
 import type { SystemThresholds as Thresholds } from '../../../models/interfaces/HydroSystem';
 import Button from '../../common/Button';
 import NumberInput from '../../common/NumberInput';
@@ -13,6 +13,23 @@ interface SettingsPanelProps {
   loading?: boolean;
 }
 
+// ✅ NEW — actuator types the rain policy applies to, with friendly labels
+const RAIN_ACTUATOR_TYPES: { value: string; label: string }[] = [
+  { value: "pump", label: "Pump" },
+  { value: "water_pump", label: "Water Pump" },
+  { value: "valve", label: "Valve" },
+  { value: "nutrient_pump", label: "Nutrient Pump" },
+  { value: "light", label: "Light" },
+  { value: "fan", label: "Fan" },
+];
+
+// ✅ NEW — the 3 supported actions per actuator type
+const RAIN_ACTION_OPTIONS: { value: "off" | "on" | "ignore"; label: string }[] = [
+  { value: "off", label: "Turn Off" },
+  { value: "on", label: "Turn On" },
+  { value: "ignore", label: "Ignore (no change)" },
+];
+
 const SettingsPanel: React.FC<SettingsPanelProps> = ({
   thresholds,
   onUpdateThresholds,
@@ -24,7 +41,16 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
 
   useEffect(() => {
     if (thresholds) {
-      setLocalThresholds(thresholds);
+      // ✅ merge in default rain_actuator_actions in case the API hasn't
+      // returned that field yet for older records
+      setLocalThresholds({
+        ...defaultThresholds,
+        ...thresholds,
+        rain_actuator_actions: {
+          ...defaultThresholds.rain_actuator_actions,
+          ...thresholds.rain_actuator_actions,
+        },
+      });
       setHasChanges(false);
     }
   }, [thresholds]);
@@ -33,6 +59,21 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
     setLocalThresholds(prev => ({
       ...prev,
       [key]: value
+    }));
+    setHasChanges(true);
+  };
+
+  // ✅ NEW — update a single actuator type's rain action
+  const handleRainActionChange = (
+    actuatorType: string,
+    action: "off" | "on" | "ignore"
+  ) => {
+    setLocalThresholds(prev => ({
+      ...prev,
+      rain_actuator_actions: {
+        ...prev.rain_actuator_actions,
+        [actuatorType]: action,
+      },
     }));
     setHasChanges(true);
   };
@@ -293,6 +334,52 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         </div>
       </FormGroup>
 
+      {/* ✅ NEW — Rain Actuator Actions */}
+      <FormGroup className="grid gap-y-6">
+        <div className="space-y-1">
+          <FormLabel htmlFor="rain_actuator_actions">
+            Rain Actuator Actions
+          </FormLabel>
+          <p className="text-sm text-zinc-500 dark:text-zinc-400 max-w-2xl">
+            When rain is detected, the system checks these rules for each
+            actuator type: choose <b>Turn Off</b> to force the actuator off while
+            it's raining (e.g. stop a pump so it doesn't overflow a tank),{" "}
+            <b>Turn On</b> to force it on (e.g. run a drain valve), or{" "}
+            <b>Ignore</b> to leave that actuator type running on its normal
+            schedule/automation, unaffected by rain. This applies as soon as
+            any rain is detected — it does not wait for the "Strong Rain
+            Threshold" above, which only affects alert severity.
+          </p>
+        </div>
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          {RAIN_ACTUATOR_TYPES.map(({ value, label }) => (
+            <FormGroup key={value} className="grid grid-cols-2 items-center gap-4">
+              <FormLabel htmlFor={`rain_action_${value}`} className="text-sm">
+                {label}
+              </FormLabel>
+              <FormSelect
+                id={`rain_action_${value}`}
+                value={localThresholds.rain_actuator_actions?.[value] ?? "ignore"}
+                onChange={(e) =>
+                  handleRainActionChange(
+                    value,
+                    e.target.value as "off" | "on" | "ignore"
+                  )
+                }
+                className="w-full"
+              >
+                {RAIN_ACTION_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </FormSelect>
+            </FormGroup>
+          ))}
+        </div>
+      </FormGroup>
+
       <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
       {/* System Information */}
       <div>
@@ -300,13 +387,13 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div className='text-xs'>
             <span className="text-gray-500">Last Updated:</span>
-            <div className="font-medium">
+            <div className="font-medium mt-1">
               {new Date().toLocaleString()}
             </div>
           </div>
           <div className='text-xs'>
             <span className="text-gray-500">Auto-refresh:</span>
-            <div className="font-medium text-green-600 dark:text-green-300">
+            <div className="font-medium text-green-600 dark:text-green-300 mt-1">
               Every 5 seconds
             </div>
           </div>

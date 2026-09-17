@@ -18,4 +18,14 @@ export const defaultThresholds: SystemThresholds = {
   rain_detected_action: "notify",
   rain_strong_threshold: 10,
 
+  // ✅ NEW
+  rain_actuator_actions: {
+    pump: "off",
+    water_pump: "off",
+    valve: "off",
+    nutrient_pump: "off",
+    light: "ignore",
+    fan: "ignore",
+  },
+
 };

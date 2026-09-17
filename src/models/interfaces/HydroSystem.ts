@@ -108,7 +108,9 @@ export interface SystemThresholds {
   ppm_min: number;
   ppm_max: number;
   rain_detected_action?: string;
-  rain_strong_threshold?: number
+  rain_strong_threshold?: number;
+  // ✅ NEW — per-actuator-type behavior when rain is detected
+  rain_actuator_actions?: Record<string, "off" | "on" | "ignore">;
 }
 
 export interface SystemAlert {
