@@ -419,7 +419,7 @@ const HydroponicSystemPage: React.FC = () => {
   label: "AI Vision",
   icon: <IconEyeSearch stroke={2} size={18} />,
   content: activeTab === "ai-vision" && currentDevice?.growing_batch && (
-    <AiVisionPanel plantId={currentDevice.growing_batch.id} />
+    <AiVisionPanel hydroBatchId={currentDevice.growing_batch.id} />
   ),
 },
     {

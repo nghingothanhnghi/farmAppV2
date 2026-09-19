@@ -6,6 +6,8 @@
 
 export interface VisionPlant {
   id: number;
+  hydro_batch_id: number;
+  species?: string;  
   name: string;
   status?: string;
   created_at: string;

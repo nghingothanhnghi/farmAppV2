@@ -7,13 +7,12 @@ import Spinner from "../../common/Spinner";
 import EmptyState from "../../common/EmptyState";
 import FileInput from "../../common/FileInput";
 import Button from "../../common/Button";
-import {FormInput} from '../../../components/common/Form';
+import { FormInput } from '../../../components/common/Form';
 import DropdownButton from "../../common/DropdownButton";
 import { useCamera } from "../../../hooks/useCamera";
 
 interface Props {
-    plantId: number;
-    cameraId?: number;
+    hydroBatchId: number;
 }
 
 const severityVariant = {
@@ -23,8 +22,13 @@ const severityVariant = {
     critical: "danger",
 } as const;
 
-const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
+const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
     const {
+        plant,
+        linking,
+        camerasForPlant,
+        selectedCameraId,
+        setSelectedCameraId,
         health,
         growthHistory,
         anomalies,
@@ -34,11 +38,9 @@ const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
         uploading,
         analyzing,
         error,
-        camerasForPlant,
-        selectedCameraId,
-        setSelectedCameraId,
+
         actions,
-    } = useAiVision(plantId);
+    } = useAiVision(hydroBatchId);
 
     const inputRef = useRef<HTMLInputElement | null>(null);
     const latestGrowth = growthHistory[0];
@@ -58,7 +60,7 @@ const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
         if (!newCameraName.trim()) return;
         setCreatingCamera(true);
         try {
-            await actions.createCamera(newCameraName.trim(), plantId);
+            await actions.createCamera(newCameraName.trim());
             setNewCameraName("");
         } finally {
             setCreatingCamera(false);
@@ -77,7 +79,7 @@ const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
         canvas.toBlob(async (blob) => {
             if (!blob) return;
             const file = new File([blob], `capture-${Date.now()}.jpg`, { type: "image/jpeg" });
-            await actions.uploadAndAnalyze(plantId, file, selectedCameraId);
+            await actions.uploadAndAnalyze(file, selectedCameraId);
             stopCamera();
             setShowLiveCapture(false);
         }, "image/jpeg", 0.9);
@@ -86,9 +88,26 @@ const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
     const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        await actions.uploadAndAnalyze(plantId, file, cameraId);
+        await actions.uploadAndAnalyze(file, selectedCameraId);
         if (inputRef.current) inputRef.current.value = "";
     };
+
+    if (linking) {
+        return (
+            <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 py-10 justify-center">
+                <Spinner size={20} />
+                Linking plant to AI Vision...
+            </div>
+        );
+    }
+
+    if (!plant) {
+        return (
+            <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3 text-sm">
+                {error ?? "Could not link this batch to AI Vision."}
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
@@ -227,7 +246,7 @@ const AiVisionPanel: React.FC<Props> = ({ plantId, cameraId }) => {
             {/* Health & Growth */}
             <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
                 <h4 className="text-sm font-medium flex items-center gap-2">
-                    <IconLeaf size={16} /> Health & Growth
+                    <IconLeaf size={16} /> Health & Growth {plant.id && `(Plant ID: ${plant.id})`} {plant.species && `- ${plant.species}`}
                 </h4>
                 {health ? (
                     <div className="flex items-center justify-between text-sm">
