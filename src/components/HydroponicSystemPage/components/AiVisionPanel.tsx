@@ -244,70 +244,275 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
             )}
 
             {/* Health & Growth */}
-            <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
+            {/* Health & Growth */}
+            <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
                 <h4 className="text-sm font-medium flex items-center gap-2">
                     <IconLeaf size={16} /> Health & Growth {plant.id && `(Plant ID: ${plant.id})`} {plant.species && `- ${plant.species}`}
                 </h4>
+
                 {health ? (
-                    <div className="flex items-center justify-between text-sm">
-                        <span>Health Score</span>
-                        <Badge
-                            label={`${health.health_score}/100 — ${health.status}`}
-                            variant={health.status === "healthy" ? "success" : "warning"}
-                        />
+                    <div className="space-y-4">
+                        {/* Score + Status + Confidence */}
+                        <div className="grid grid-cols-3 gap-3">
+                            <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Health Score</p>
+                                <p className="text-lg font-bold text-gray-800 dark:text-gray-100">{health.health_score}<span className="text-xs text-gray-400">/100</span></p>
+                            </div>
+                            <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Status</p>
+                                <Badge
+                                    label={health.status}
+                                    variant={health.status === "healthy" || health.status === "normal" ? "success" : "warning"}
+                                    size="small"
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
+                                <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">Confidence</p>
+                                <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
+                                    {health.confidence != null ? `${Math.round(health.confidence * 100)}%` : "N/A"}
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* Visual Indicators */}
+                        {health.visual_indicators && health.visual_indicators.length > 0 && (
+                            <div>
+                                <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                                    Visual Indicators
+                                </p>
+                                <div className="flex flex-wrap gap-1.5">
+                                    {health.visual_indicators.map((indicator, i) => (
+                                        <Badge key={i} label={indicator.replace(/_/g, " ")} variant="warning" size="xsmall" />
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Possible Issues */}
+                        {health.possible_issues && health.possible_issues.length > 0 && (
+                            <div>
+                                <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                                    Possible Issues
+                                </p>
+                                <div className="space-y-1.5">
+                                    {health.possible_issues.map((issue, i) => (
+                                        <div key={i} className="flex items-center justify-between text-sm bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800/40 rounded-lg px-3 py-1.5">
+                                            <span className="text-gray-700 dark:text-gray-200 capitalize">
+                                                {issue.issue.replace(/_/g, " ")}
+                                            </span>
+                                            <span className="text-xs text-yellow-700 dark:text-yellow-400 font-medium">
+                                                {Math.round(issue.confidence * 100)}% confidence
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Sensor Snapshot */}
+                        {health.sensor_snapshot && (
+                            <div>
+                                <div className="flex items-center justify-between mb-1.5">
+                                    <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                                        Sensor Snapshot
+                                    </p>
+                                    <p className="text-[10px] text-gray-400">
+                                        {new Date(health.sensor_snapshot.window_start).toLocaleTimeString()} → {new Date(health.sensor_snapshot.window_end).toLocaleTimeString()}
+                                    </p>
+                                </div>
+                                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                                    {[
+                                        { label: "Temp", value: health.sensor_snapshot.temperature, unit: "°C" },
+                                        { label: "Humidity", value: health.sensor_snapshot.humidity, unit: "%" },
+                                        { label: "Light", value: health.sensor_snapshot.light, unit: "lux" },
+                                        { label: "Moisture", value: health.sensor_snapshot.moisture, unit: "%" },
+                                        { label: "Water", value: health.sensor_snapshot.water_level, unit: "%" },
+                                        { label: "EC", value: health.sensor_snapshot.ec, unit: "mS/cm", noSensor: true },
+                                        { label: "PPM", value: health.sensor_snapshot.ppm, unit: "", noSensor: true },
+                                        { label: "Flow", value: health.sensor_snapshot.flow_rate, unit: "L/min" },
+                                    ].map((s) => (
+                                        <div key={s.label} className="rounded-lg bg-gray-50 dark:bg-gray-800/80 border border-gray-100 dark:border-white/5 px-2 py-1.5 text-center">
+                                            <p className="text-[9px] text-gray-500 dark:text-gray-400">{s.label}</p>
+                                            <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                                                {s.noSensor && (!s.value || s.value === 0) ? (
+                                                    <span className="text-gray-400 font-normal">N/A</span>
+                                                ) : (
+                                                    <>{s.value ?? "--"}{s.unit && <span className="text-[9px] font-normal text-gray-400 ml-0.5">{s.unit}</span>}</>
+                                                )}
+                                            </p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Growth Rate (existing) */}
+                        {latestGrowth?.growth_rate_pct != null && (
+                            <div className="flex items-center justify-between text-sm border-t border-gray-100 dark:border-white/5 pt-3">
+                                <span className="text-gray-600 dark:text-gray-300">Latest Growth Rate</span>
+                                <span className="font-medium">{latestGrowth.growth_rate_pct.toFixed(1)}%</span>
+                            </div>
+                        )}
+
+                        {/* Model metadata */}
+                        {(health.model_name || health.created_at) && (
+                            <div className="flex items-center justify-between text-[10px] text-gray-400 border-t border-gray-100 dark:border-white/5 pt-2">
+                                <span>{health.model_name}{health.model_version ? ` (${health.model_version})` : ""}</span>
+                                <span>{new Date(health.created_at).toLocaleString()}</span>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     <p className="text-xs text-gray-500">No health record yet.</p>
-                )}
-                {latestGrowth?.growth_rate_pct != null && (
-                    <div className="flex items-center justify-between text-sm">
-                        <span>Latest Growth Rate</span>
-                        <span className="font-medium">{latestGrowth.growth_rate_pct.toFixed(1)}%</span>
-                    </div>
                 )}
             </div>
 
             {/* Anomalies + Recommendations */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Anomalies */}
                 <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
                     <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
                         <IconAlertTriangle size={16} /> Anomalies
+                        {anomalies.length > 0 && (
+                            <span className="text-xs text-gray-400 font-normal">({anomalies.length})</span>
+                        )}
                     </h3>
                     {anomalies.length === 0 ? (
                         <EmptyState message="No anomalies detected." />
                     ) : (
-                        anomalies.map((a) => (
-                            <div
-                                key={a.id}
-                                className="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/5 text-sm"
-                            >
-                                <span>{a.type}</span>
-                                <Badge label={a.severity} variant={severityVariant[a.severity]} size="xsmall" />
-                            </div>
-                        ))
+                        <div className="space-y-3">
+                            {anomalies.map((a) => (
+                                <div
+                                    key={a.id}
+                                    className="rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-gray-800/80 p-3 space-y-2"
+                                >
+                                    {/* Header row */}
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div>
+                                            <p className="text-sm font-medium text-gray-800 dark:text-gray-100 capitalize">
+                                                {a.anomaly_type.replace(/_/g, " ")}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400">
+                                                #{a.id} · {new Date(a.detected_at).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 shrink-0">
+                                            <Badge label={a.severity} variant={severityVariant[a.severity]} size="xsmall" />
+                                            <Badge
+                                                label={a.is_resolved ? "Resolved" : "Unresolved"}
+                                                variant={a.is_resolved ? "success" : "gray"}
+                                                size="xsmall"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* Description */}
+                                    {a.description && (
+                                        <p className="text-xs text-gray-600 dark:text-gray-300">
+                                            {a.description}
+                                        </p>
+                                    )}
+
+                                    {/* Evidence */}
+                                    {a.evidence && Object.keys(a.evidence).length > 0 && (
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1 border-t border-gray-200 dark:border-white/5">
+                                            {Object.entries(a.evidence).map(([key, value]) => (
+                                                <div key={key} className="bg-white dark:bg-gray-900 rounded-md px-2 py-1 text-center">
+                                                    <p className="text-[9px] text-gray-500 dark:text-gray-400 capitalize truncate">
+                                                        {key.replace(/_/g, " ")}
+                                                    </p>
+                                                    <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                                                        {typeof value === "number" ? value.toLocaleString(undefined, { maximumFractionDigits: 2 }) : String(value)}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            ))}
+                        </div>
                     )}
                 </div>
 
+                {/* Recommendations */}
                 <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
                     <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
                         <IconBulb size={16} /> Recommendations
+                        {recommendations.length > 0 && (
+                            <span className="text-xs text-gray-400 font-normal">({recommendations.length})</span>
+                        )}
                     </h3>
                     {recommendations.length === 0 ? (
                         <EmptyState message="No recommendations yet." />
                     ) : (
-                        recommendations.map((r) => (
-                            <div key={r.id} className="py-2 border-b border-gray-100 dark:border-white/5 text-sm space-y-1">
-                                <div className="flex items-center justify-between">
-                                    <p className="font-medium">{r.title}</p>
-                                    <Badge
-                                        label={r.status.replace("_", " ")}
-                                        variant={r.status === "approved" ? "success" : "gray"}
-                                        size="xsmall"
-                                    />
+                        <div className="space-y-3">
+                            {recommendations.map((r) => (
+                                <div
+                                    key={r.id}
+                                    className="rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50 dark:bg-gray-800/80 p-3 space-y-2"
+                                >
+                                    {/* Header row */}
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex-1">
+                                            <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                                                {r.recommendation}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 mt-0.5">
+                                                #{r.id} · {new Date(r.created_at).toLocaleString()}
+                                            </p>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-1 shrink-0">
+                                            <Badge
+                                                label={r.status.replace(/_/g, " ")}
+                                                variant={
+                                                    r.status === "approved" ? "success"
+                                                        : r.status === "rejected" ? "danger"
+                                                            : r.status === "applied" ? "info"
+                                                                : "gray"
+                                                }
+                                                size="xsmall"
+                                            />
+                                            {r.severity && (
+                                                <Badge label={r.severity} variant={severityVariant[r.severity]} size="xsmall" />
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Confidence */}
+                                    {r.confidence != null && (
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex-1 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                                <div
+                                                    className="h-full bg-indigo-500"
+                                                    style={{ width: `${Math.round(r.confidence * 100)}%` }}
+                                                />
+                                            </div>
+                                            <span className="text-[10px] text-gray-500 dark:text-gray-400 shrink-0">
+                                                {Math.round(r.confidence * 100)}% confidence
+                                            </span>
+                                        </div>
+                                    )}
+
+                                    {/* Reasons */}
+                                    {r.reasons && r.reasons.length > 0 && (
+                                        <div className="pt-1 border-t border-gray-200 dark:border-white/5">
+                                            <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                                                Reasons
+                                            </p>
+                                            <ul className="space-y-1">
+                                                {r.reasons.map((reason, i) => (
+                                                    <li key={i} className="text-xs text-gray-600 dark:text-gray-300 flex items-start gap-1.5">
+                                                        <span className="text-gray-400 mt-0.5">•</span>
+                                                        <span>{reason}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
                                 </div>
-                                <p className="text-xs text-gray-500">{r.description}</p>
-                            </div>
-                        ))
+                            ))}
+                        </div>
                     )}
                 </div>
             </div>

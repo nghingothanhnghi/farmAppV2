@@ -53,15 +53,40 @@ export interface InferenceJob {
   completed_at?: string | null;
 }
 
+export interface PossibleIssue {
+  issue: string;
+  confidence: number;
+}
+
+export interface HealthSensorSnapshot {
+  window_start: string;
+  window_end: string;
+  temperature?: number;
+  humidity?: number;
+  light?: number;
+  moisture?: number;
+  water_level?: number;
+  ec?: number;
+  ppm?: number;
+  flow_rate?: number;
+}
+
 export interface PlantHealthRecord {
-  id: number;
+  id?: number;
   plant_id: number;
   image_id?: number;
   health_score: number;
-  status: "healthy" | "stressed" | "diseased" | "unknown";
-  sensor_context?: Record<string, any>;
+  status: "healthy" | "stressed" | "diseased" | "unknown" | "normal" | string;
+  visual_indicators?: string[];
+  possible_issues?: PossibleIssue[];
+  sensor_snapshot?: HealthSensorSnapshot;
+  confidence?: number;
+  model_name?: string;
+  model_version?: string;
   created_at: string;
 }
+
+
 
 export interface PlantGrowthRecord {
   id: number;
@@ -79,20 +104,22 @@ export interface PlantAnomaly {
   id: number;
   plant_id: number;
   image_id?: number;
-  type: string;
+  anomaly_type: string;
   severity: AnomalySeverity;
+  description?: string;
   evidence?: Record<string, any>;
   detected_at: string;
-  resolved?: boolean;
+  is_resolved: boolean;
 }
 
 export interface AIRecommendation {
   id: number;
   plant_id: number;
   image_id?: number;
-  title: string;
-  description: string;
-  reasoning?: string;
+  recommendation: string;
+  reasons?: string[];
+  severity?: "low" | "medium" | "high" | "critical";
+  confidence?: number;
   status: "pending_review" | "approved" | "rejected" | "applied";
   created_at: string;
 }
