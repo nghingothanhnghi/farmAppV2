@@ -6,7 +6,7 @@ import LinearProgress from '../common/LinearProgress';
 import DropdownButton from '../common/DropdownButton';
 import Tabs from "../common/Tabs";
 import WaterLevelBucket from '../common/chartCustom/WaterLevelBucket';
-import { IconPlus, IconArtboard, IconDashboard, IconTimeline, IconPhotoSensor, IconSettings } from '@tabler/icons-react';
+import { IconPlus, IconArtboard, IconDashboard, IconTimeline, IconPhotoSensor, IconSettings, IconEyeSearch } from '@tabler/icons-react';
 import { useHydroSystem } from '../../hooks/useHydroSystem';
 import type { SystemStatusPerDevice } from '../../models/interfaces/HydroSystem';
 
@@ -21,6 +21,7 @@ import HardwareDetection from './components/HardwareDetection';
 import SensorChart from './components/SensorChart';
 import AlertsPanel from './components/AlertsPanel';
 import SettingsPanel from './components/SettingsPanel';
+import AiVisionPanel from './components/AiVisionPanel';
 import ActivityLog from './components/ActivityLog';
 import Button from '../common/Button';
 
@@ -413,6 +414,14 @@ const HydroponicSystemPage: React.FC = () => {
         <HardwareDetection location={currentDevice.location} />
       ),
     },
+    {
+  id: "ai-vision",
+  label: "AI Vision",
+  icon: <IconEyeSearch stroke={2} size={18} />,
+  content: activeTab === "ai-vision" && currentDevice?.growing_batch && (
+    <AiVisionPanel plantId={currentDevice.growing_batch.id} />
+  ),
+},
     {
       id: "settings",
       label: "Settings",
