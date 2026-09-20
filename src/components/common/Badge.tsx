@@ -1,3 +1,4 @@
+// src/components/common/Badge.tsx
 import React from 'react';
 
 type BadgeProps = {

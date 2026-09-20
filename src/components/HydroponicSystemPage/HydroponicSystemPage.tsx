@@ -21,7 +21,7 @@ import HardwareDetection from './components/HardwareDetection';
 import SensorChart from './components/SensorChart';
 import AlertsPanel from './components/AlertsPanel';
 import SettingsPanel from './components/SettingsPanel';
-import AiVisionPanel from './components/AiVisionPanel';
+import AiVisionPanel from './components/AiVision/AiVisionPanel';
 import ActivityLog from './components/ActivityLog';
 import Button from '../common/Button';
 
