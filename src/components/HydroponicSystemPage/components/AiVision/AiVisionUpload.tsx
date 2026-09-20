@@ -3,6 +3,7 @@ import Badge from "../../../common/Badge";
 import FileInput from "../../../common/FileInput";
 import type { RefObject } from "react";
 import { getJobVariant } from "../../../../utils/aiVision";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 interface Props {
     inputRef: RefObject<HTMLInputElement | null>;
@@ -47,7 +48,7 @@ const AiVisionUpload: React.FC<Props> = ({
         {lastImage && lastJob && (
             <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 flex items-center gap-4">
                 <img
-                    src={lastImage.url}
+                    src={getImageUrl(lastImage.url)}
                     alt=""
                     className="w-20 h-20 object-cover rounded-lg"
                 />
