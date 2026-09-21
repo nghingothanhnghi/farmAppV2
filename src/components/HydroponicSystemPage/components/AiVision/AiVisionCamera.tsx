@@ -1,3 +1,4 @@
+// src/components/HydroponicSystemPage/components/AiVision/AiVisionCamera.tsx
 import React, { useRef, useState } from "react";
 import { IconCamera, IconPlus } from "@tabler/icons-react";
 import Button from "../../../common/Button";
@@ -18,7 +19,7 @@ interface Props {
     onAnalyze: (file: File, cameraId?: number) => Promise<unknown>;
 }
 
-const CameraCard: React.FC<Props> = ({
+const AiVisionCamera: React.FC<Props> = ({
     cameras,
     selectedCameraId,
     onSelectCamera,
@@ -179,4 +180,4 @@ const CameraCard: React.FC<Props> = ({
     );
 };
 
-export default CameraCard;
+export default AiVisionCamera;

@@ -415,13 +415,13 @@ const HydroponicSystemPage: React.FC = () => {
       ),
     },
     {
-  id: "ai-vision",
-  label: "AI Vision",
-  icon: <IconEyeSearch stroke={2} size={18} />,
-  content: activeTab === "ai-vision" && currentDevice?.growing_batch && (
-    <AiVisionPanel hydroBatchId={currentDevice.growing_batch.id} />
-  ),
-},
+      id: "ai-vision",
+      label: "AI Vision",
+      icon: <IconEyeSearch stroke={2} size={18} />,
+      content: activeTab === "ai-vision" && currentDevice?.growing_batch && (
+        <AiVisionPanel hydroBatchId={currentDevice.growing_batch.id} />
+      ),
+    },
     {
       id: "settings",
       label: "Settings",
