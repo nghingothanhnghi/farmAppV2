@@ -2,8 +2,7 @@
 import React, { useRef } from "react";
 import { useAiVision } from "../../../../hooks/useAiVision";
 import Spinner from "../../../common/Spinner";
-import AiVisionCamera from "./AiVisionCamera";
-import AiVisionUpload from "./AiVisionUpload";
+import AiMediaDetectionCard from "./AiMediaDetectionCard";
 import HealthGrowthCard from "./HealthGrowthCard";
 import AnomaliesCard from "./AnomaliesCard";
 import RecommendationsCard from "./RecommendationsCard";
@@ -66,25 +65,18 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
 
     return (
         <div className="space-y-6 mx-auto max-w-4xl">
-            <div className="grid grid-cols-2 auto-rows-fr gap-6">
-                <AiVisionCamera
+                <AiMediaDetectionCard
                     cameras={camerasForPlant}
                     selectedCameraId={selectedCameraId}
                     onSelectCamera={setSelectedCameraId}
                     onCreateCamera={actions.createCamera}
                     onAnalyze={actions.uploadAndAnalyze}
-                />
-
-                <AiVisionUpload
                     inputRef={inputRef}
                     uploading={uploading}
                     lastImage={lastImage}
                     lastJob={lastJob}
                     onChange={handleUpload}
                 />
-            </div>
-
-
             {(uploading || analyzing) && (
                 <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
                     <Spinner size={20} />
