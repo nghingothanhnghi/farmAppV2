@@ -5,11 +5,8 @@ import { useCamera } from "../../../../hooks/useCamera";
 import {
     IconCamera,
     IconPhoto,
-    IconPlus,
     IconRefresh,
 } from "@tabler/icons-react";
-import Button from "../../../common/Button";
-import DropdownButton from "../../../common/DropdownButton";
 import Badge from "../../../common/Badge";
 import AddCameraModal from "./AddCameraModal";
 import FileInput from "../../../common/FileInput";
@@ -45,9 +42,7 @@ interface Props {
 type MediaMode = "camera" | "image";
 
 const AiMediaDetectionCard: React.FC<Props> = ({
-    cameras, 
     selectedCameraId,
-    onSelectCamera,
     onCreateCamera,
     onAnalyze,
 
