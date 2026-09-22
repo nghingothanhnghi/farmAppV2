@@ -22,7 +22,6 @@ export function useAiVision(hydroBatchId?: number) {
   );
   const [linking, setLinking] = useState(false);
 
-  const [plants, setPlants] = useState<VisionPlant[]>([]);
   const [cameras, setCameras] = useState<VisionCamera[]>([]);
   const [selectedCameraId, setSelectedCameraId] = useState<number | undefined>(undefined);
 
@@ -187,7 +186,6 @@ export function useAiVision(hydroBatchId?: number) {
   return {
     plant,           // the ai_vision Plant, once linked
     linking,         // true while link-batch is in flight
-    plants,
     cameras,
     camerasForPlant,
     selectedCameraId,
