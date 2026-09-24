@@ -136,9 +136,9 @@ const AiMediaDetectionCard: React.FC<Props> = ({
                     <div className="left-media-button flex flex-col items-center justify-center">
                         <div className="flex flex-col items-center align-middle">
                             <div className="text-gray-400 mb-2">
-                                <IconCamera size={24} />
+                                <IconCamera size={64} />
                             </div>
-                            <h4 className="text-lg font-medium text-gray-900">Tab to take a photo</h4>
+                            <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Tab to take a photo</h4>
                             <p className="text-gray-500 mb-4">
                                 or select from gallery
                             </p>

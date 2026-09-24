@@ -27,7 +27,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
     usedPins = [],
 }) => {
 
-    
+
     const [form, setForm] = useState<Partial<HydroActuator>>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -238,43 +238,53 @@ const ActuatorModalConfig: React.FC<Props> = ({
                         )}
                     </FormGroup>
                     <div className="space-y-2">
-                        {/* ENABLED */}
-                        <FormGroup className="flex items-center justify-between rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-white/5 px-3 py-2">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    Enabled
-                                </p>
-                                <p className="text-[11px] text-gray-500">
-                                    Allow actuator automation & control
-                                </p>
-                            </div>
-                            <FormToggle
-                                id="is_active"
-                                checked={form.is_active || false}
-                                onChange={(e) =>
-                                    handleChange("is_active", e.target.checked)
-                                }
-                            />
-                        </FormGroup>
-                        {/* DEFAULT STATE */}
-                        <FormGroup className="flex items-center justify-between rounded-lg dark:bg-gray-800 border border-gray-200 dark:border-white/5 px-3 py-2">
-                            <div className="flex-1">
-                                <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                    Default ON
-                                </p>
-                                <p className="text-[11px] text-gray-500">
-                                    Initial state when device boots
-                                </p>
-                            </div>
+                        <ul className="mt-4 divide-y divide-gray-200 dark:divide-white/5">
+                            <li className="py-3">
+                                {/* ENABLED */}
+                                <FormGroup className="flex items-center justify-between">
+                                    <div>
+                                        <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            Enabled
+                                        </p>
+                                        <p className="text-[11px] text-gray-500">
+                                            Allow actuator automation & control
+                                        </p>
+                                    </div>
+                                    <FormToggle
+                                        id="is_active"
+                                        checked={form.is_active || false}
+                                        onChange={(e) =>
+                                            handleChange("is_active", e.target.checked)
+                                        }
+                                        className="shrink-0"
+                                    />
+                                </FormGroup>
+                            </li>
+                            <li className="py-3">
+                                {/* DEFAULT STATE */}
+                                <FormGroup className="flex items-center justify-between">
+                                    <div className="flex-1">
+                                        <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                                            Default ON
+                                        </p>
+                                        <p className="text-[11px] text-gray-500">
+                                            Initial state when device boots
+                                        </p>
+                                    </div>
 
-                            <FormToggle
-                                id="default_state"
-                                checked={form.default_state || false}
-                                onChange={(e) =>
-                                    handleChange("default_state", e.target.checked)
-                                }
-                            />
-                        </FormGroup>
+                                    <FormToggle
+                                        id="default_state"
+                                        checked={form.default_state || false}
+                                        onChange={(e) =>
+                                            handleChange("default_state", e.target.checked)
+                                        }
+                                        className="shrink-0"
+                                    />
+                                </FormGroup>
+                            </li>
+                        </ul>
+
+
                     </div>
                 </div>
             }

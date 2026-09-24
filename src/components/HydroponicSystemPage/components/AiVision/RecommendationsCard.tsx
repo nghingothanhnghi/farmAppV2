@@ -10,7 +10,7 @@ interface Props {
 
 const RecommendationsCard: React.FC<Props> = ({ recommendations }) => (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
-        <h3 className="text-sm font-medium mb-3 flex items-center gap-2">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-3 flex items-center gap-2">
             <IconBulb size={16} />
             Recommendations
 
