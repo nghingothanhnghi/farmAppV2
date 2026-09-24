@@ -12,15 +12,16 @@ import AddCameraModal from "./AddCameraModal";
 import FileInput from "../../../common/FileInput";
 import { getJobVariant } from "../../../../utils/aiVision";
 import { getImageUrl } from "../../../../utils/getImageUrl";
+import type { VisionCamera, VisionImage } from "../../../../models/interfaces/AiVision";
 
-interface Camera {
-    id: number;
-    name: string;
-}
+// interface Camera {
+//     id: number;
+//     name: string;
+// }
 
 interface Props {
     // camera props
-    cameras: Camera[];
+    cameras: VisionCamera[];
     selectedCameraId?: number;
     onSelectCamera: (id?: number) => void;
     onCreateCamera: (name: string) => Promise<unknown>;
@@ -29,9 +30,7 @@ interface Props {
     // upload props
     inputRef: RefObject<HTMLInputElement | null>;
     uploading: boolean;
-    lastImage: {
-        url: string;
-    } | null;
+    lastImage: VisionImage | null;
     lastJob: {
         status: string;
         error_message?: string | null;
@@ -285,7 +284,7 @@ const AiMediaDetectionCard: React.FC<Props> = ({
                         ) : lastImage ? (
                             <>
                                 <img
-                                    src={getImageUrl(lastImage.url)}
+                                    src={getImageUrl(lastImage.public_url)}
                                     alt="AI vision result"
                                     className="aspect-[4/3] w-full object-cover"
                                 />

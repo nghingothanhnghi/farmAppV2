@@ -37,8 +37,11 @@ export interface VisionImage {
   id: number;
   plant_id: number;
   camera_id?: number | null;
-  url: string;
-  created_at: string;
+  public_url: string;
+  width: number | null;
+  height: number | null;
+  processing_status: string;
+  captured_at: string;
 }
 
 export type InferenceJobStatus = "queued" | "processing" | "completed" | "failed";
