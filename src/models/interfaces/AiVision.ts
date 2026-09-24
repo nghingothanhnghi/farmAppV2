@@ -106,7 +106,7 @@ export type AnomalySeverity = "low" | "medium" | "high" | "critical";
 export interface PlantAnomaly {
   id: number;
   plant_id: number;
-  image_id?: number;
+  // image_id?: number;
   anomaly_type: string;
   severity: AnomalySeverity;
   description?: string;

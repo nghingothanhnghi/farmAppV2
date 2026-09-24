@@ -3,9 +3,10 @@ import { IconAlertTriangle } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
 import EmptyState from "../../../common/EmptyState";
 import { formatLabel, severityVariant } from "../../../../utils/aiVision";
+import type { PlantAnomaly } from "../../../../models/interfaces/AiVision";
 
 interface Props {
-    anomalies: any[];
+    anomalies: PlantAnomaly[];
 }
 
 const AnomaliesCard: React.FC<Props> = ({ anomalies }) => (
