@@ -132,12 +132,12 @@ const actuatorReasonMap: Record<
 // ----- // Schedule // -----    
     schedule: {
         labelKey: "actuator_reason.scheduled",
-        color: "text-blue-500",
+        color: "text-gray-500",
     },
 
     schedule_off: {
         labelKey: "actuator_reason.scheduled_off",
-        color: "text-blue-500",        
+        color: "text-gray-500",        
     },
 
 // ---- // Interval // -----    
