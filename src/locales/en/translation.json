@@ -203,6 +203,7 @@
         "high_temperature": "High Temperature",
         "low_water_level": "Low Water Level",
         "scheduled": "Scheduled",
+        "scheduled_off": "Schedule Off",
         "interval": "Interval",
         "one_time_run": "One Time Run",
         "sensor_triggered": "Sensor Triggered"

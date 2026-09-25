@@ -203,6 +203,7 @@
         "high_temperature": "Nhiệt độ cao",
         "low_water_level": "Mực nước thấp",
         "scheduled": "Theo lịch",
+        "scheduled_off": "Lịch đã dừng",
         "interval": "Chế độ định kỳ",
         "one_time_run": "Chạy một lần",
         "sensor_triggered": "Kích hoạt bởi cảm biến"
