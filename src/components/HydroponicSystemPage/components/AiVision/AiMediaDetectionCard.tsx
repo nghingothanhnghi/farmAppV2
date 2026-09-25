@@ -35,6 +35,7 @@ interface Props {
         status: string;
         error_message?: string | null;
     } | null;
+    displayImageUrl?: string;
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -49,6 +50,7 @@ const AiMediaDetectionCard: React.FC<Props> = ({
     uploading,
     lastImage,
     lastJob,
+    displayImageUrl,
     onChange,
 }) => {
     const [mediaMode, setMediaMode] = useState<MediaMode>("camera");
@@ -284,15 +286,24 @@ const AiMediaDetectionCard: React.FC<Props> = ({
                         ) : lastImage ? (
                             <>
                                 <img
-                                    src={getImageUrl(lastImage.public_url)}
+                                    // src={getImageUrl(lastImage.public_url)}
+                                    src={getImageUrl(displayImageUrl || lastImage.public_url)}
                                     alt="AI vision result"
                                     className="aspect-[4/3] w-full object-cover"
                                 />
 
                                 <div className="absolute right-3 top-3">
                                     <Badge
-                                        label="IMAGE"
-                                        variant="info"
+                                        label={
+                                            lastJob?.status === "completed"
+                                                ? "ANNOTATED"
+                                                : "IMAGE"
+                                        }
+                                        variant={
+                                            lastJob?.status === "completed"
+                                                ? "success"
+                                                : "info"
+                                        }
                                         size="xsmall"
                                     />
                                 </div>

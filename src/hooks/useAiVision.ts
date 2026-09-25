@@ -1,5 +1,5 @@
 // src/hooks/useAiVision.ts
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useRef, useState, useCallback, useEffect, useMemo } from "react";
 import { aiVisionService } from "../services/aiVisionService";
 import type {
   VisionPlant,
@@ -15,6 +15,9 @@ import type {
 // module-level cache so switching tabs / remounting doesn't re-link the
 // same batch over and over
 const batchLinkCache = new Map<number, VisionPlant>();
+
+const POLL_INTERVAL_MS = 2000;
+const isTerminal = (status: string) => status === "completed" || status === "failed";
 
 export function useAiVision(hydroBatchId?: number) {
   const [plant, setPlant] = useState<VisionPlant | null>(
@@ -37,10 +40,32 @@ export function useAiVision(hydroBatchId?: number) {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // ✅ NEW — polling handle
+  const pollTimerRef = useRef<number | null>(null);
+
+  const stopPolling = useCallback(() => {
+    if (pollTimerRef.current !== null) {
+      window.clearInterval(pollTimerRef.current);
+      pollTimerRef.current = null;
+    }
+  }, []);
+
+  // Always stop polling on unmount
+  useEffect(() => () => stopPolling(), [stopPolling]);
+
   const camerasForPlant = useMemo(
     () => cameras.filter((c) => !c.plant_id || c.plant_id === plant?.id),
     [cameras, plant?.id]
   );
+
+  // ✅ NEW — the URL the UI should actually render:
+  // annotated_url once the job is completed, otherwise the raw upload.
+  const displayImageUrl = useMemo(() => {
+    if (lastJob?.status === "completed" && lastJob.annotated_url) {
+      return lastJob.annotated_url;
+    }
+    return lastImage?.public_url;
+  }, [lastJob, lastImage]);
 
   const fetchCameras = useCallback(async () => {
     try {
@@ -137,12 +162,86 @@ export function useAiVision(hydroBatchId?: number) {
     }
   }, [refreshPlantData]);
 
+  const checkJobStatus = useCallback(async (jobId: number) => {
+    const job = await aiVisionService.getInferenceJob(jobId);
+    setLastJob(job);
+    return job;
+  }, []);
+
+  // ✅ NEW — single poll loop: GET /api/v1/ai/inference/{id} every 2s until
+  // status is "completed" or "failed". annotated_url arrives on that same
+  // "completed" payload, so nothing else needs to be fetched here.
+  const pollJobUntilComplete = useCallback(
+    (jobId: number, plantId: number) => {
+      stopPolling();
+
+      pollTimerRef.current = window.setInterval(async () => {
+        try {
+          const job = await checkJobStatus(jobId);
+
+          if (isTerminal(job.status)) {
+            stopPolling();
+            setAnalyzing(false);
+
+            if (job.status === "failed") {
+              setError(job.error_message ?? "Analysis failed");
+            } else {
+              await refreshPlantData(plantId);
+            }
+          }
+        } catch (err) {
+          console.error("Failed to poll inference job", err);
+          stopPolling();
+          setAnalyzing(false);
+          setError("Lost connection while checking analysis status");
+        }
+      }, POLL_INTERVAL_MS);
+    },
+    [stopPolling, checkJobStatus, refreshPlantData]
+  );
+
+  // const uploadAndAnalyze = useCallback(
+  //   async (file: File, cameraId?: number) => {
+  //     if (!plant) throw new Error("No linked vision plant yet");
+  //     setError(null);
+  //     stopPolling();
+  //     try {
+  //       setUploading(true);
+  //       const image = await aiVisionService.uploadImage(plant.id, file, cameraId);
+  //       setLastImage(image);
+  //       setUploading(false);
+
+  //       setAnalyzing(true);
+  //       const job = await aiVisionService.analyzeNow(image.id);
+  //       setLastJob(job);
+
+  //       if (job.status === "failed") {
+  //         setError(job.error_message ?? "Analysis failed");
+  //       } else {
+  //         await refreshPlantData(plant.id);
+  //       }
+
+  //       return { image, job };
+  //     } catch (err: any) {
+  //       setError(err?.response?.data?.detail ?? "Failed to upload or analyze image");
+  //       throw err;
+  //     } finally {
+  //       setUploading(false);
+  //       setAnalyzing(false);
+  //     }
+  //   },
+  //   [plant, refreshPlantData]
+  // );
+
   const uploadAndAnalyze = useCallback(
     async (file: File, cameraId?: number) => {
       if (!plant) throw new Error("No linked vision plant yet");
       setError(null);
+      stopPolling();
+
       try {
         setUploading(true);
+        // POST /api/v1/vision/images → public_url, show immediately
         const image = await aiVisionService.uploadImage(plant.id, file, cameraId);
         setLastImage(image);
         setUploading(false);
@@ -151,29 +250,31 @@ export function useAiVision(hydroBatchId?: number) {
         const job = await aiVisionService.analyzeNow(image.id);
         setLastJob(job);
 
-        if (job.status === "failed") {
-          setError(job.error_message ?? "Analysis failed");
+        if (isTerminal(job.status)) {
+          setAnalyzing(false);
+          if (job.status === "failed") {
+            setError(job.error_message ?? "Analysis failed");
+          } else {
+            await refreshPlantData(plant.id);
+          }
         } else {
-          await refreshPlantData(plant.id);
+          // queued / processing — start the poll loop
+          pollJobUntilComplete(job.id, plant.id);
         }
 
         return { image, job };
       } catch (err: any) {
         setError(err?.response?.data?.detail ?? "Failed to upload or analyze image");
+        setAnalyzing(false);
         throw err;
       } finally {
         setUploading(false);
-        setAnalyzing(false);
       }
     },
-    [plant, refreshPlantData]
+    [plant, refreshPlantData, pollJobUntilComplete, stopPolling]
   );
 
-  const checkJobStatus = useCallback(async (jobId: number) => {
-    const job = await aiVisionService.getInferenceJob(jobId);
-    setLastJob(job);
-    return job;
-  }, []);
+
 
   useEffect(() => {
     fetchCameras();
@@ -196,6 +297,7 @@ export function useAiVision(hydroBatchId?: number) {
     recommendations,
     lastImage,
     lastJob,
+    displayImageUrl,
     loading,
     uploading,
     analyzing,

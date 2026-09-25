@@ -38,6 +38,7 @@ export interface VisionImage {
   plant_id: number;
   camera_id?: number | null;
   public_url: string;
+  annotated_url?: string | null;
   width: number | null;
   height: number | null;
   processing_status: string;
@@ -51,6 +52,8 @@ export interface InferenceJob {
   image_id: number;
   status: InferenceJobStatus;
   error_message?: string | null;
+  public_url?: string;
+  annotated_url?: string | null;
   created_at: string;
   updated_at?: string;
   completed_at?: string | null;

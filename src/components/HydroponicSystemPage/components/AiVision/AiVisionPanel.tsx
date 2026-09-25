@@ -24,6 +24,7 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
         recommendations,
         lastImage,
         lastJob,
+        displayImageUrl,
         uploading,
         analyzing,
         error,
@@ -65,22 +66,27 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
 
     return (
         <div className="space-y-6 mx-auto max-w-4xl">
-                <AiMediaDetectionCard
-                    cameras={camerasForPlant}
-                    selectedCameraId={selectedCameraId}
-                    onSelectCamera={setSelectedCameraId}
-                    onCreateCamera={actions.createCamera}
-                    onAnalyze={actions.uploadAndAnalyze}
-                    inputRef={inputRef}
-                    uploading={uploading}
-                    lastImage={lastImage}
-                    lastJob={lastJob}
-                    onChange={handleUpload}
-                />
+            <AiMediaDetectionCard
+                cameras={camerasForPlant}
+                selectedCameraId={selectedCameraId}
+                onSelectCamera={setSelectedCameraId}
+                onCreateCamera={actions.createCamera}
+                onAnalyze={actions.uploadAndAnalyze}
+                inputRef={inputRef}
+                uploading={uploading}
+                lastImage={lastImage}
+                lastJob={lastJob}
+                displayImageUrl={displayImageUrl}
+                onChange={handleUpload}
+            />
             {(uploading || analyzing) && (
                 <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
                     <Spinner size={20} />
-                    {uploading ? "Uploading image..." : "Running analysis..."}
+                    {uploading
+                        ? "Uploading image..."
+                        : lastJob?.status === "processing"
+                            ? "Running analysis..."
+                            : "Queued for analysis..."}
                 </div>
             )}
 
