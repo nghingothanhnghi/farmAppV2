@@ -275,7 +275,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                             Pin {actuator.pin} • Port {actuator.port}
                         </p>
                         {!actuator.is_active && (
-                            <Badge label='Interrupted' variant='warning' size='xsmall' />
+                            <Badge label={t("toggle.actuator_unlinked.label")} variant='warning' size='xsmall' />
                         )}
                     </div>
                 </div>

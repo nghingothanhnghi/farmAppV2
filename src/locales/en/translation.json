@@ -190,11 +190,19 @@
     },
     "toggle":{
         "actuator_linked": {
-            "label": "Linked"
+            "label": "Online"
         },
         "actuator_unlinked": {
-            "label": "Unlinked"
-        }
+            "label": "Offline"
+        },
+        "actuator_isActive":{
+            "label": "Kích hoạt",
+            "description": "Cho phép điều khiển và tự động hóa"
+        },
+        "actuator_defaultState":{
+            "label": "Default State",
+            "description": "Initial state when device boots"
+        }    
     },
     "actuator_reason": {
         "idle": "Idle",
@@ -345,6 +353,9 @@
     },
     "category": {
         "uncategorized": "Uncategorized"
+    },
+    "actuator":{
+        "title_list": "Actuators"
     },
     "placeholder_message":{
         "search":{

@@ -1,6 +1,7 @@
 // src/components/HydroponicSystemPage/components/DeviceForm.tsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router'; // Add this at the top of your file
+import { useTranslation } from 'react-i18next';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import type { HydroActuator } from '../../../models/interfaces/HydroSystem';
 import Form, { FormGroup, FormLabel, FormInput, FormActions } from '../../../components/common/Form';
@@ -34,6 +35,8 @@ const DeviceForm: React.FC<Props> = ({
     isEdit,
     fieldErrors,
 }) => {
+    const { t } = useTranslation();
+
     const navigate = useNavigate();
     const { actions } = useHydroSystem();
     const [actuators, setActuators] = useState<HydroActuator[]>([]);
@@ -82,7 +85,11 @@ const DeviceForm: React.FC<Props> = ({
                 </div>
                 <div className='flex flex-col shadow-sm border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700 rounded-lg space-y-0.5'>
                     <div className='p-4'>
-                        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1">Linked Actuators</h3>
+                        <h3
+                            className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1"
+                        >
+                            {t("actuator.title_list")}
+                        </h3>
                     </div>
                     {actuators.length > 0 ? (
                         <div className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">

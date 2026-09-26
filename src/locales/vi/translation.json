@@ -190,11 +190,19 @@
     },
     "toggle":{
         "actuator_linked": {
-            "label": "Đã liên kết"
+            "label": "Trực tuyến"
         },
         "actuator_unlinked": {
-            "label": "Chưa liên kết"
-        }
+            "label": "Ngoại tuyến"
+        },
+        "actuator_isActive":{
+            "label": "Kích hoạt",
+            "description": "Cho phép điều khiển và tự động hóa"
+        },
+        "actuator_defaultState":{
+            "label": "Bật khi khởi động",
+            "description": "Thiết bị sẽ bật khi khởi động"
+        }  
     },
     "actuator_reason": {
         "idle": "Đang chờ",
@@ -345,6 +353,9 @@
     },
     "category": {
         "uncategorized": "Chưa phân loại"
+    },
+    "actuator":{
+        "title_list": "Thiết bị điều khiển"
     },
     "placeholder_message":{
         "search":{

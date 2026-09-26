@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
+import { useTranslation } from "react-i18next";
 import { useAlert } from "../../../contexts/alertContext";
 import { useFormDirty } from "../../../hooks/useFormDirty";
 import type { HydroActuator } from "../../../models/interfaces/HydroSystem";
@@ -27,6 +28,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
     usedPins = [],
 }) => {
 
+    const { t } = useTranslation();
 
     const [form, setForm] = useState<Partial<HydroActuator>>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
@@ -244,10 +246,10 @@ const ActuatorModalConfig: React.FC<Props> = ({
                                 <FormGroup className="flex items-center justify-between">
                                     <div>
                                         <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            Enabled
+                                            {t("toggle.actuator_isActive.label")}
                                         </p>
-                                        <p className="text-[11px] text-gray-500">
-                                            Allow actuator automation & control
+                                        <p className="text-[11px] text-gray-400">
+                                            {t("toggle.actuator_isActive.description")}
                                         </p>
                                     </div>
                                     <FormToggle
@@ -265,10 +267,10 @@ const ActuatorModalConfig: React.FC<Props> = ({
                                 <FormGroup className="flex items-center justify-between">
                                     <div className="flex-1">
                                         <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                                            Default ON
+                                            {t("toggle.actuator_defaultState.label")}   
                                         </p>
-                                        <p className="text-[11px] text-gray-500">
-                                            Initial state when device boots
+                                        <p className="text-[11px] text-gray-400">
+                                            {t("toggle.actuator_defaultState.description")}
                                         </p>
                                     </div>
 
