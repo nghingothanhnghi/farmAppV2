@@ -95,14 +95,12 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
                     {error}
                 </div>
             )}
-
-            <HealthGrowthCard
-                plant={plant}
-                health={health}
-                latestGrowth={growthHistory[0]}
-            />
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1fr_515px] auto-rows-fr gap-4">
+                <HealthGrowthCard
+                    plant={plant}
+                    health={health}
+                    latestGrowth={growthHistory[0]}
+                />
                 <AnomaliesCard anomalies={anomalies} />
                 <RecommendationsCard recommendations={recommendations} />
             </div>

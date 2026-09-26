@@ -89,6 +89,7 @@ export interface PlantHealthRecord {
   confidence?: number;
   model_name?: string;
   model_version?: string;
+  annotated_url?: string | null;
   created_at: string;
 }
 
@@ -114,6 +115,7 @@ export interface PlantAnomaly {
   severity: AnomalySeverity;
   description?: string;
   evidence?: Record<string, any>;
+  annotated_url?: string | null; 
   detected_at: string;
   is_resolved: boolean;
 }
@@ -127,5 +129,6 @@ export interface AIRecommendation {
   severity?: "low" | "medium" | "high" | "critical";
   confidence?: number;
   status: "pending_review" | "approved" | "rejected" | "applied";
+  annotated_url?: string | null;
   created_at: string;
 }

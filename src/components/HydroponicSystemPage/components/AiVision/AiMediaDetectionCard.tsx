@@ -14,11 +14,6 @@ import { getJobVariant } from "../../../../utils/aiVision";
 import { getImageUrl } from "../../../../utils/getImageUrl";
 import type { VisionCamera, VisionImage } from "../../../../models/interfaces/AiVision";
 
-// interface Camera {
-//     id: number;
-//     name: string;
-// }
-
 interface Props {
     // camera props
     cameras: VisionCamera[];

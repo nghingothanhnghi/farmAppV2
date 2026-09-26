@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
 import Badge from '../../common/Badge';
+import Spinner from '../../common/Spinner';
 import { IconEdit, IconTrash, IconPlus, IconMoodEmpty } from '@tabler/icons-react';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useAlert } from '../../../contexts/alertContext';
@@ -64,10 +65,8 @@ const ScheduleManager: React.FC<Props> = ({ isOpen, actuatorId, actuatorName, on
                 position="bottom"
                 content={
                     <div className="px-6 pb-4 space-y-3">
-                        {loading && <p className="text-sm text-gray-500">Loading...</p>}
-
+                        {loading && <div className="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300"><Spinner size={20} /></div>}
                         {!loading && schedules.length === 0 && (
-
                             <EmptyState
                                 icon={<IconMoodEmpty size={48} />}
                                 message={t("info.actuator.message_01")}

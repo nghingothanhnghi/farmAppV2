@@ -2,6 +2,7 @@
 import React from "react";
 import { IconLeaf } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
+import { getImageUrl } from "../../../../utils/getImageUrl";
 
 interface Props {
     plant: {
@@ -69,7 +70,7 @@ const HealthGrowthCard: React.FC<Props> = ({
         : [];
 
     return (
-        <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
+        <div className="h-full row-span-2 bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
             <h4 className="text-sm font-medium flex items-center gap-2">
                 <IconLeaf size={16} />
 
@@ -85,7 +86,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                     No health record yet.
                 </p>
             ) : (
-                <div className="space-y-4">
+                <div className="space-y-4 ">
                     {/* Health summary */}
                     <div className="grid grid-cols-3 gap-3">
                         <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
@@ -110,7 +111,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                                 label={health.status}
                                 variant={
                                     health.status === "healthy" ||
-                                    health.status === "normal"
+                                        health.status === "normal"
                                         ? "success"
                                         : "warning"
                                 }
@@ -221,8 +222,8 @@ const HealthGrowthCard: React.FC<Props> = ({
 
                                         <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
                                             {sensor.noSensor &&
-                                            (!sensor.value ||
-                                                sensor.value === 0) ? (
+                                                (!sensor.value ||
+                                                    sensor.value === 0) ? (
                                                 <span className="text-gray-400 font-normal">
                                                     N/A
                                                 </span>
