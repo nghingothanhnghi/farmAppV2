@@ -15,6 +15,7 @@ import type {
     InferenceJob,
     PlantHealthRecord,
     PlantGrowthRecord,
+    GrowthPrediction,
     PlantAnomaly,
     AIRecommendation,
 } from "../models/interfaces/AiVision";
@@ -105,6 +106,26 @@ export const aiVisionService = {
         return res.data;
     },
 
+    async getGrowthPredictions(
+        plantId: number
+    ): Promise<GrowthPrediction[]> {
+        const res = await apiClient.get(
+            `/api/v1/plants/${plantId}/growth-predictions`
+        );
+
+        return res.data;
+    },
+
+    async getLatestGrowthPrediction(
+        plantId: number
+    ): Promise<GrowthPrediction | null> {
+        const res = await apiClient.get(
+            `/api/v1/plants/${plantId}/growth-predictions/latest`
+        );
+
+        return res.data ?? null;
+    },
+
     async getAnomalies(plantId: number): Promise<PlantAnomaly[]> {
         const res = await apiClient.get(`/api/v1/plants/${plantId}/anomalies`);
         return res.data;
@@ -114,4 +135,32 @@ export const aiVisionService = {
         const res = await apiClient.get(`/api/v1/plants/${plantId}/recommendations`);
         return res.data;
     },
+
+    // GET API: /{plant_id}/growth-predictions and GET Latest growth-predictions: /{plant_id}/growth-predictions/latest
+    // Schema     
+    // id: int
+    // plant_id: int
+    // growth_record_id: Optional[int] = None
+
+    // horizon_days: int
+    // target_date: datetime
+
+    // basis_growth_rate_pct_per_day: Optional[float] = None
+    // basis_sample_count: int
+    // basis_variance: Optional[float] = None
+
+    // predicted_canopy_area_px: Optional[float] = None
+    // predicted_growth_pct: Optional[float] = None
+    // confidence: Optional[float] = None
+
+    // current_stage_id: Optional[int] = None
+    // current_stage_name: Optional[str] = None
+    // scheduled_stage_transition_date: Optional[datetime] = None
+    // projected_stage_transition_date: Optional[datetime] = None
+    // stage_transition_delta_days: Optional[float] = None
+
+    // reasons: List[str]
+    // created_at: datetime
+
+
 };

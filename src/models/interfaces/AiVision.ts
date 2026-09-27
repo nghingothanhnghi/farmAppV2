@@ -105,6 +105,32 @@ export interface PlantGrowthRecord {
   created_at: string;
 }
 
+export interface GrowthPrediction {
+  id: number;
+  plant_id: number;
+  growth_record_id?: number | null;
+
+  horizon_days: number;
+  target_date: string;
+
+  basis_growth_rate_pct_per_day?: number | null;
+  basis_sample_count: number;
+  basis_variance?: number | null;
+
+  predicted_canopy_area_px?: number | null;
+  predicted_growth_pct?: number | null;
+  confidence?: number | null;
+
+  current_stage_id?: number | null;
+  current_stage_name?: string | null;
+  scheduled_stage_transition_date?: string | null;
+  projected_stage_transition_date?: string | null;
+  stage_transition_delta_days?: number | null;
+
+  reasons: string[];
+  created_at: string;
+}
+
 export type AnomalySeverity = "low" | "medium" | "high" | "critical";
 
 export interface PlantAnomaly {

@@ -4,6 +4,7 @@ import { useAiVision } from "../../../../hooks/useAiVision";
 import Spinner from "../../../common/Spinner";
 import AiMediaDetectionCard from "./AiMediaDetectionCard";
 import HealthGrowthCard from "./HealthGrowthCard";
+import GrowthPredictionCard from "./GrowthPredictionCard";
 import AnomaliesCard from "./AnomaliesCard";
 import RecommendationsCard from "./RecommendationsCard";
 
@@ -20,6 +21,7 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
         setSelectedCameraId,
         health,
         growthHistory,
+        latestGrowthPrediction,
         anomalies,
         recommendations,
         lastImage,
@@ -101,6 +103,9 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
                     health={health}
                     latestGrowth={growthHistory[0]}
                 />
+                    <GrowthPredictionCard
+        prediction={latestGrowthPrediction}
+    />
                 <AnomaliesCard anomalies={anomalies} />
                 <RecommendationsCard recommendations={recommendations} />
             </div>

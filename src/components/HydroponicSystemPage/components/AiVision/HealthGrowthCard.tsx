@@ -2,7 +2,6 @@
 import React from "react";
 import { IconLeaf } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
-import { getImageUrl } from "../../../../utils/getImageUrl";
 
 interface Props {
     plant: {

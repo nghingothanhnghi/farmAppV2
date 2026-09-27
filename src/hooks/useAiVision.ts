@@ -8,6 +8,7 @@ import type {
   InferenceJob,
   PlantHealthRecord,
   PlantGrowthRecord,
+  GrowthPrediction,
   PlantAnomaly,
   AIRecommendation,
 } from "../models/interfaces/AiVision";
@@ -30,6 +31,9 @@ export function useAiVision(hydroBatchId?: number) {
 
   const [health, setHealth] = useState<PlantHealthRecord | null>(null);
   const [growthHistory, setGrowthHistory] = useState<PlantGrowthRecord[]>([]);
+  const [growthPredictions, setGrowthPredictions] = useState<GrowthPrediction[]>([]);
+  const [latestGrowthPrediction, setLatestGrowthPrediction] =
+  useState<GrowthPrediction | null>(null);
   const [anomalies, setAnomalies] = useState<PlantAnomaly[]>([]);
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [lastImage, setLastImage] = useState<VisionImage | null>(null);
@@ -102,6 +106,22 @@ export function useAiVision(hydroBatchId?: number) {
     }
   }, []);
 
+const fetchGrowthPredictions = useCallback(async (id: number) => {
+  try {
+    const [predictions, latest] = await Promise.all([
+      aiVisionService.getGrowthPredictions(id),
+      aiVisionService.getLatestGrowthPrediction(id),
+    ]);
+
+    setGrowthPredictions(predictions);
+    setLatestGrowthPrediction(latest);
+  } catch (err) {
+    console.error("Failed to fetch growth predictions", err);
+    setGrowthPredictions([]);
+    setLatestGrowthPrediction(null);
+  }
+}, []);
+
   const fetchAnomalies = useCallback(async (id: number) => {
     try {
       setAnomalies(await aiVisionService.getAnomalies(id));
@@ -125,6 +145,7 @@ export function useAiVision(hydroBatchId?: number) {
         await Promise.all([
           fetchHealth(id),
           fetchGrowth(id),
+          fetchGrowthPredictions(id),
           fetchAnomalies(id),
           fetchRecommendations(id),
         ]);
@@ -133,7 +154,7 @@ export function useAiVision(hydroBatchId?: number) {
         setLoading(false);
       }
     },
-    [fetchHealth, fetchGrowth, fetchAnomalies, fetchRecommendations]
+    [fetchHealth, fetchGrowth, fetchGrowthPredictions, fetchAnomalies, fetchRecommendations]
   );
 
   // Resolve hydro batch → ai_vision plant, then load everything keyed on
@@ -200,39 +221,6 @@ export function useAiVision(hydroBatchId?: number) {
     [stopPolling, checkJobStatus, refreshPlantData]
   );
 
-  // const uploadAndAnalyze = useCallback(
-  //   async (file: File, cameraId?: number) => {
-  //     if (!plant) throw new Error("No linked vision plant yet");
-  //     setError(null);
-  //     stopPolling();
-  //     try {
-  //       setUploading(true);
-  //       const image = await aiVisionService.uploadImage(plant.id, file, cameraId);
-  //       setLastImage(image);
-  //       setUploading(false);
-
-  //       setAnalyzing(true);
-  //       const job = await aiVisionService.analyzeNow(image.id);
-  //       setLastJob(job);
-
-  //       if (job.status === "failed") {
-  //         setError(job.error_message ?? "Analysis failed");
-  //       } else {
-  //         await refreshPlantData(plant.id);
-  //       }
-
-  //       return { image, job };
-  //     } catch (err: any) {
-  //       setError(err?.response?.data?.detail ?? "Failed to upload or analyze image");
-  //       throw err;
-  //     } finally {
-  //       setUploading(false);
-  //       setAnalyzing(false);
-  //     }
-  //   },
-  //   [plant, refreshPlantData]
-  // );
-
   const uploadAndAnalyze = useCallback(
     async (file: File, cameraId?: number) => {
       if (!plant) throw new Error("No linked vision plant yet");
@@ -293,6 +281,8 @@ export function useAiVision(hydroBatchId?: number) {
     setSelectedCameraId,
     health,
     growthHistory,
+    growthPredictions,
+    latestGrowthPrediction,
     anomalies,
     recommendations,
     lastImage,
