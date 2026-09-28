@@ -354,8 +354,23 @@
     "category": {
         "uncategorized": "Chưa phân loại"
     },
+    "device": {
+        "title_list": "Devices",
+        "label": "Thiết bị"
+    },
     "actuator":{
         "title_list": "Thiết bị điều khiển"
+    },
+    "hydro_system": {
+        "page_title": "Nông Trại Thu Nhỏ",
+        "sub_title": "Giám sát và tưới tiêu tự động cho khu vườn nhỏ của bạn.",
+        "panels": {
+            "overview": "Nhìn chung",
+            "charts": "Lịch sử & Chỉ số",
+            "hardwareDetection": "Quét thiết bị",
+            "aiVision": "Nhận diện AI",
+            "thresholdSetting": "Thiết lập ngưỡng"
+        }
     },
     "placeholder_message":{
         "search":{

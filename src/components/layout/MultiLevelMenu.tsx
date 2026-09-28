@@ -49,7 +49,6 @@ export default function MultiLevelMenu({
 
     return (
         <div className="relative flex-1 min-h-0 overflow-hidden">
-
             {/* Current menu */}
             <div className="h-full overflow-y-auto">
 
@@ -61,9 +60,9 @@ export default function MultiLevelMenu({
                         onClick={goBack}
                         variant="secondary"
                         icon={<IconChevronLeft size={16} />}
-                        iconPosition='left'
-                        size='sm'
-                        rounded='sm'
+                        iconPosition="left"
+                        size="sm"
+                        rounded="sm"
                     />
                 )}
 
@@ -81,8 +80,7 @@ export default function MultiLevelMenu({
                                 }
                             }}
                         >
-                            <div className="flex items-center">
-
+                            <div className="flex items-center w-full">
                                 {item.to ? (
                                     <ListLink
                                         to={item.to}
@@ -90,43 +88,37 @@ export default function MultiLevelMenu({
                                             Icon ? <Icon size={16} /> : undefined
                                         }
                                         label={item.label}
-
                                         onClick={onNavigate}
                                     />
                                 ) : (
-                                    <button
+                                    <Button
                                         type="button"
+                                        label={item.label}
                                         onClick={() => openLevel(item)}
-                                        className="
-                      flex flex-1 items-center gap-2
-                      rounded-lg px-3 py-2
-                      text-sm
-                      text-gray-700 dark:text-gray-200
-                      hover:bg-gray-100
-                      dark:hover:bg-gray-800
-                    "
-                                    >
-                                        {Icon && <Icon size={16} />}
-
-                                        <span>{item.label}</span>
-                                    </button>
+                                        variant="link"
+                                        icon={
+                                            Icon ? <Icon size={16} /> : undefined
+                                        }
+                                        iconPosition="left"
+                                        size="sm"
+                                        rounded="sm"
+                                        className="flex-1 justify-start pl-4 w-full"
+                                    />
                                 )}
 
                                 {hasChildren && (
-                                    <button
+                                    <Button
                                         type="button"
+                                        label={`Open ${item.label}`}
                                         onClick={() => openLevel(item)}
-                                        className="
-                      p-2
-                      text-gray-400
-                      hover:text-gray-700
-                      dark:hover:text-gray-200
-                    "
-                                    >
-                                        <IconChevronRight size={16} />
-                                    </button>
+                                        variant="secondary"
+                                        icon={<IconChevronRight size={16} />}
+                                        iconOnly
+                                        size="sm"
+                                        rounded="sm"
+                                        className="shrink-0 bg-transparent"
+                                    />
                                 )}
-
                             </div>
                         </div>
                     );
@@ -137,16 +129,16 @@ export default function MultiLevelMenu({
             {!mobile && path.length > 0 && (
                 <div
                     className="
-            absolute
-            top-0 left-full
-            h-full w-64
-            bg-white dark:bg-zinc-900
-            border border-gray-200
-            dark:border-white/10
-            shadow-xl
-            rounded-r-xl
-            p-2
-          "
+                        absolute
+                        top-0 left-full
+                        h-full w-64
+                        bg-white dark:bg-zinc-900
+                        border border-gray-200
+                        dark:border-white/10
+                        shadow-xl
+                        rounded-r-xl
+                        p-2
+                    "
                 >
                     <MultiLevelMenu
                         items={currentItems}
@@ -155,7 +147,7 @@ export default function MultiLevelMenu({
                     />
                 </div>
             )}
-
         </div>
+
     );
 }

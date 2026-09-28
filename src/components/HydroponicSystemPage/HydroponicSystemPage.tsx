@@ -1,6 +1,7 @@
 // src/components/HydroponicSystemPage/HydroponicSystemPage.tsx
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import PageTitle from '../common/PageTitle';
 import LinearProgress from '../common/LinearProgress';
 import DropdownButton from '../common/DropdownButton';
@@ -39,6 +40,7 @@ const HydroponicSystemPage: React.FC = () => {
     actions
   } = useHydroSystem();
 
+  const {t} = useTranslation();
   const navigate = useNavigate();
 
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
@@ -225,7 +227,7 @@ const HydroponicSystemPage: React.FC = () => {
   const tabs = [
     {
       id: "overview",
-      label: "Overview",
+      label: t("hydro_system.panels.overview"),
       icon: <IconDashboard stroke={2} size={18} />,
       content: activeTab === "overview" && (
         <div className="space-y-6">
@@ -362,7 +364,7 @@ const HydroponicSystemPage: React.FC = () => {
     },
     {
       id: "charts",
-      label: "Charts",
+      label: t("hydro_system.panels.charts"),
       icon: <IconTimeline stroke={2} size={18} />,
       content: activeTab === "charts" && (
         <div className="space-y-6">
@@ -408,7 +410,7 @@ const HydroponicSystemPage: React.FC = () => {
     },
     {
       id: "hardware",
-      label: "Hardware Detection",
+      label: t("hydro_system.panels.hardwareDetection"),
       icon: <IconPhotoSensor stroke={2} size={18} />,
       content: activeTab === "hardware" && currentDevice?.location && (
         <HardwareDetection location={currentDevice.location} />
@@ -416,7 +418,7 @@ const HydroponicSystemPage: React.FC = () => {
     },
     {
       id: "ai-vision",
-      label: "AI Vision",
+      label: t("hydro_system.panels.aiVision"),
       icon: <IconEyeSearch stroke={2} size={18} />,
       content: activeTab === "ai-vision" && currentDevice?.growing_batch && (
         <AiVisionPanel hydroBatchId={currentDevice.growing_batch.id} />
@@ -424,7 +426,7 @@ const HydroponicSystemPage: React.FC = () => {
     },
     {
       id: "settings",
-      label: "Settings",
+      label: t("hydro_system.panels.thresholdSetting"),
       icon: <IconSettings stroke={2} size={18} />,
       content: activeTab === "settings" && (
         <SettingsPanel
@@ -447,8 +449,8 @@ const HydroponicSystemPage: React.FC = () => {
   return (
     <div className="hydroponic-system-page min-h-screen">
       <PageTitle
-        title="Hydroponic System Dashboard"
-        subtitle="Monitor and control your hydroponic growing system"
+        title={t("hydro_system.page_title")}
+        subtitle={t("hydro_system.sub_title")}
         actions={
           <div className='flex space-x-0.5'>
             {/* Device Selector */}

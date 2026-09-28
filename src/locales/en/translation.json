@@ -354,8 +354,23 @@
     "category": {
         "uncategorized": "Uncategorized"
     },
+    "device": {
+        "title_list": "Devices",
+        "label": "Device"
+    },
     "actuator":{
         "title_list": "Actuators"
+    },
+    "hydro_system": {
+        "page_title": "Miniature Farm",
+        "sub_title": "Monitor and auto-water your small garden.",
+        "panels": {
+            "overview": "Overview",
+            "charts": "Charts",
+            "hardwareDetection": "Hardware Detection",
+            "aiVision": "AI Vision",
+            "thresholdSetting": "Threshold Setting"
+        }
     },
     "placeholder_message":{
         "search":{

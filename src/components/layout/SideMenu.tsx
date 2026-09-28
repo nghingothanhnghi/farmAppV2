@@ -48,13 +48,11 @@ export default function SideMenu({ open = false, onClose }: SideMenuProps) {
                         <ListLink to="/users" onClick={handleLinkClick} icon={<IconUserShield size={16} />} label="Users" />
                         <ListLink to="/migrate" onClick={handleLinkClick} icon={<IconAnalyze size={16} />} label="Data Migration" />
                         <ListLink to="/payments" onClick={handleLinkClick} icon={<IconCashRegister size={16} />} label="Payments" /> */}
-
                         <MultiLevelMenu
                             items={menuItems}
                             mobile={true}
                             onNavigate={handleLinkClick}
                         />
-
                     </div>
                     <Footer />
                 </div>
