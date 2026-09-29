@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { IconPlus, IconSettings } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../../models/interfaces/PlantBatch";
+import { useTranslation } from "react-i18next";
 import { usePlants } from "../../../../hooks/usePlants";
 import { useHydroDevices } from "../../../../hooks/useHydroDevices"
 import { useGrowthPlansByPlant } from "../../../../hooks/useGrowthPlans";
@@ -43,6 +44,9 @@ const BatchForm: React.FC<Props> = ({
     hasRecipeConfig,
     fieldErrors
 }) => {
+    const { t } = useTranslation();
+
+
     const { plants, loading: plantLoading } = usePlants();
     const [localPlants, setLocalPlants] = useState(plants);
 
@@ -226,8 +230,8 @@ const BatchForm: React.FC<Props> = ({
                         <Button
                             label={
                                 isEditingRecipe
-                                    ? "✏️ Chỉnh sửa giai đoạn & tự động hóa"
-                                    : "⚙️ Create Stage & Automation"
+                                    ? t("btn.update_stage_automation")
+                                    : t("btn.create_stage_automation")
                             }
                             variant="secondary"
                             rounded="lg"

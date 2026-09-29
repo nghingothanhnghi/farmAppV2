@@ -48,7 +48,12 @@
         "delete_schedule": "Xóa khung giờ",
         "week_days": "Ngày trong tuần",
         "weekend_days": "Cuối tuần",
-        "all_days": "Tất cả"
+        "all_days": "Tất cả",
+        "add_stage": "Thêm giai đoạn",
+        "growing_recipes": "Thiết lập lịch chăm sóc",
+        "create_stage_automation": "Tạo giai đoạn & Thiết lập tự động",
+        "update_stage_automation": "Chỉnh sửa giai đoạn & tự động hóa",
+         "finish": "Hoàn thành"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -107,6 +112,10 @@
         }
     },
     "input":{
+        "stage_name":{
+            "label": "Tên giai đoạn",
+            "placeholder": "Ex: Gieo hạt và Ươm cây con, Cấy cây con,...."
+        },            
         "search_purchase_order":{
             "label": "Tìm bằng mã đơn hàng",
             "placeholder": "Nhập mã đơn hàng..."
@@ -186,6 +195,14 @@
         "repeat_days":{
             "label": "Lặp lại vào các ngày",
             "placeholder": "đã chọn"
+        },
+        "dayStart": {
+            "label": "Ngày bắt đầu",
+            "placeholder": ""
+        },        
+        "dayEnd": {
+            "label": "Ngày bắt đầu",
+            "placeholder": ""
         }
     },
     "toggle":{
@@ -202,7 +219,16 @@
         "actuator_defaultState":{
             "label": "Bật khi khởi động",
             "description": "Thiết bị sẽ bật khi khởi động"
-        }  
+        },
+        "mode":{
+            "label": "Chế độ"
+        },        
+        "interval_mode":{
+            "label": "Theo chu kỳ"
+        },
+        "time_range_mode": {
+            "label": "Theo khung giờ"
+        }
     },
     "actuator_reason": {
         "idle": "Đang chờ",
@@ -370,6 +396,10 @@
             "hardwareDetection": "Quét thiết bị",
             "aiVision": "Nhận diện AI",
             "thresholdSetting": "Thiết lập ngưỡng"
+        },
+        "stages":{
+            "stages_title": "giai đoạn phát triển",
+            "stage_title": "Giai đoạn"
         }
     },
     "placeholder_message":{

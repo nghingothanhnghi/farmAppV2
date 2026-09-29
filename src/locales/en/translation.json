@@ -48,7 +48,12 @@
         "delete_schedule": "Delete Time Slot",
         "week_days": "Weekdays",
         "weekend_days": "Weekend",
-        "all_days": "All Days"
+        "all_days": "All Days",
+        "add_stage": "Add Stage",
+        "growing_recipes": "Configure Recipes",
+        "create_stage_automation": "Create Stage & Automation",
+        "update_stage_automation": "Edit Stage & Automation",
+        "finish": "Complete"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -107,6 +112,10 @@
         }
     },
     "input":{
+        "stage_name":{
+            "label": "Name",
+            "placeholder": "Ex: Seedling, Harvest, etc...."
+        },        
         "search_purchase_order":{
             "label": "Search with purchase order code",
             "placeholder": "Typing your Purchase Order Code..."
@@ -186,6 +195,14 @@
         "repeat_days":{
             "label": "Repeat Days",
             "placeholder": "selected"
+        },
+        "dayStart": {
+            "label": "Day Start",
+            "placeholder": ""
+        },        
+        "dayEnd": {
+            "label": "Day End",
+            "placeholder": ""
         }
     },
     "toggle":{
@@ -202,7 +219,16 @@
         "actuator_defaultState":{
             "label": "Default State",
             "description": "Initial state when device boots"
-        }    
+        },
+        "mode":{
+            "label": "Mode"
+        },         
+        "interval_mode":{
+            "label": "Interval mode"
+        },
+        "time_range_mode": {
+            "label": "Time range mode"
+        }
     },
     "actuator_reason": {
         "idle": "Idle",
@@ -370,6 +396,10 @@
             "hardwareDetection": "Hardware Detection",
             "aiVision": "AI Vision",
             "thresholdSetting": "Threshold Setting"
+        },
+        "stages":{
+            "stages_title": "Stages",
+            "stage_title": "Stage"
         }
     },
     "placeholder_message":{

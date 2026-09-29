@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import Button from "../../../common/Button";
 import { IconTrash } from '@tabler/icons-react';
 import {
@@ -17,6 +18,8 @@ type Props = {
 };
 
 const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
+    const { t } = useTranslation();
+
     const [errors, setErrors] = useState<Record<string, string>>({});
 
     const isInterval = recipe.action === "interval";
@@ -59,7 +62,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
 
             {/* Mode Switch */}
             <FormGroup className="space-y-1">
-                <FormLabel htmlFor="mode">Mode</FormLabel>
+                <FormLabel htmlFor="mode">{t("toggle.mode.label")}</FormLabel>
                 <FormToggle
                     id={`mode-${recipe.actuator_type}`}
                     checked={isInterval}
@@ -74,7 +77,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
                     }
                 />
                 <span className="text-xs text-gray-500">
-                    {isInterval ? "Interval mode" : "Time range mode"}
+                    {isInterval ? t("toggle.interval_mode.label") : t("toggle.time_range_mode.label")}
                 </span>
             </FormGroup>
 
@@ -82,7 +85,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
             {!isInterval && (
                 <div className="flex gap-3">
                     <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="start_time">Start</FormLabel>
+                        <FormLabel htmlFor="start_time">{t("input.start_time.label")}</FormLabel>
                         <FormInput
                             type="time"
                             id="start_time"
@@ -98,7 +101,7 @@ const RecipeForm: React.FC<Props> = ({ recipe, onChange, onRemove }) => {
                     </FormGroup>
 
                     <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="">End</FormLabel>
+                        <FormLabel htmlFor="end_time">{t("input.end_time.label")}</FormLabel>
                         <FormInput
                             id="end_time"
                             type="time"

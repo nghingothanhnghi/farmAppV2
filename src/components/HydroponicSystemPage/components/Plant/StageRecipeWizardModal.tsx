@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import WizardLayout from "../../../common/WizardLayout";
+import { useTranslation } from "react-i18next";
 import { useGrowthStages } from "../../../../hooks/useGrowthStages";
 import { useAlert } from "../../../../contexts/alertContext";
 import { useHydroActuators } from "../../../../hooks/useHydroActuators";
@@ -49,6 +50,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   zoneId,
   onCreated
 }) => {
+
+  const {t} = useTranslation();
 
   const { actuators } = useHydroActuators(zoneId);
   const { setAlert } = useAlert();
@@ -384,7 +387,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       component: (
         <Form onSubmit={(e) => e.preventDefault()} className="space-y-4 px-6">
           <Button
-            label="Add Stage"
+            label={t("btn.add_stage")}
             variant="secondary"
             size="xs"
             rounded="full"
@@ -401,7 +404,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
           {stages.map((stage, index) => (
             <div key={index} className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-100">Stage {index + 1}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-gray-100">{t("hydro_system.stages.stage_title")} {index + 1}</span>
                 <div className="flex items-center justify-between gap-2">
                   {stages.length > 1 && (
                     <Button
@@ -422,7 +425,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                   )}
 
                   <Button
-                    label="Configure Recipes"
+                    label={t("btn.growing_recipes")}
                     size="xs"
                     variant="secondary"
                     rounded="full"
@@ -437,7 +440,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
               </div>
 
               <FormGroup className="space-y-1">
-                <FormLabel htmlFor={`name_${index}`}>Name</FormLabel>
+                <FormLabel htmlFor={`name_${index}`}>{t("input.stage_name.label")}</FormLabel>
                 <FormInput
                   id={`name_${index}`}
                   type="text"
@@ -455,7 +458,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
               <div className="flex gap-3 mb-4">
                 <FormGroup className="space-y-1">
-                  <FormLabel htmlFor={`day_start_${index}`}>Day Start</FormLabel>
+                  <FormLabel htmlFor={`day_start_${index}`}>{t("input.dayStart.label")}</FormLabel>
                   <FormInput
                     id={`day_start_${index}`}   // ✅ correct template string
                     type="number"
@@ -473,7 +476,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
                 </FormGroup>
 
                 <FormGroup className="space-y-1">
-                  <FormLabel htmlFor={`day_end_${index}`}>Day End</FormLabel>
+                  <FormLabel htmlFor={`day_end_${index}`}>{t("input.dayEnd.label")}</FormLabel>
                   <FormInput
                     id={`day_end_${index}`}
                     type="number"
@@ -626,7 +629,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
         <div className="flex justify-between w-full">
           {step > 0 ? (
             <Button
-              label="Back"
+              label={t("btn.previous")}
               variant="secondary"
               rounded="lg"
               className="min-w-[150px]"
@@ -636,14 +639,14 @@ const StageRecipeWizardModal: React.FC<Props> = ({
 
           {step < steps.length - 1 ? (
             <Button
-              label="Next"
+              label={t("btn.next")}
               rounded="lg"
               onClick={handleNext}
               className="min-w-[150px]"
             />
           ) : (
             <Button
-              label="✅ Create"
+              label={t("btn.finish")}
               rounded="lg"
               className="min-w-[150px]"
               onClick={handleCreateAll}
