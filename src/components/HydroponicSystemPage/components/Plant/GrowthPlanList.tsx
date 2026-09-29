@@ -1,6 +1,6 @@
 // src/components/HydroponicSystemPage/components/GrowthPlanList.tsx
 import React, { useMemo, useState } from "react";
-import { IconPlus, IconStar, IconStarFilled, IconMoodEmpty, IconAlertCircle } from "@tabler/icons-react";
+import { IconPlus, IconStar, IconStarFilled, IconMoodEmpty, IconAlertCircle, IconTimeline, } from "@tabler/icons-react";
 import type { GrowthPlan } from "../../../../models/interfaces/GrowthPlan";
 import {
   useGrowthPlansByPlant,
@@ -18,6 +18,7 @@ import Button from "../../../common/Button";
 import Badge from "../../../common/Badge";
 import Modal from "../../../common/Modal";
 import GrowthPlanFormModal, { type GrowthPlanFormValues } from "./GrowthPlanFormModal";
+import StageRecipeWizardModal from "./StageRecipeWizardModal";
 
 type Props = {
   plantId: number | null | undefined;
@@ -37,6 +38,9 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selected, setSelected] = useState<GrowthPlan | null>(null);
   const [deleting, setDeleting] = useState(false);
+
+  // ✅ plan whose stages are being edited in the wizard
+  const [stagesPlan, setStagesPlan] = useState<GrowthPlan | null>(null);
 
   const handleFormSubmit = async (values: GrowthPlanFormValues) => {
     if (!plantId) return;
@@ -132,6 +136,17 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
         pinned: "right",
         cellRenderer: ({ data }: { data: GrowthPlan }) => (
           <div className="flex items-center justify-center h-full">
+                        {/* ✅ NEW: edit this plan's stages + recipes */}
+            <Button
+              icon={<IconTimeline size={16} stroke={1.5} />}
+              iconOnly
+              variant="secondary"
+              label="Edit stages"
+              size="xs"
+              rounded="full"
+              className="bg-transparent"
+              onClick={() => setStagesPlan(data)}
+            />
             <Button
               icon={data.is_default ? <IconStarFilled size={16} className="text-amber-500" /> : <IconStar size={16} stroke={1.5} />}
               iconOnly
@@ -188,9 +203,16 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
       {loading && plans.length === 0 ? (
         <LinearProgress />
       ) : plans.length === 0 ? (
-        <EmptyState icon={<IconMoodEmpty size={48} />} message="This plant has no growth plans yet." />
+        <EmptyState 
+          icon={<IconMoodEmpty size={48} />} 
+          message="This plant has no growth plans yet." 
+        />
       ) : (
-        <DataGrid rowData={plans} columnDefs={columnDefs} pagination paginationPageSize={10} height="320px" />
+        <DataGrid 
+          rowData={plans} 
+          columnDefs={columnDefs} 
+          pagination paginationPageSize={10} 
+          height="320px" />
       )}
 
       <GrowthPlanFormModal
@@ -199,6 +221,15 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
         mode={formMode}
         initialData={editing}
         onSubmit={handleFormSubmit}
+      />
+
+      {/* ✅ NEW: stage wizard opened from a plan row (no batch / device needed) */}
+      <StageRecipeWizardModal
+        isOpen={!!stagesPlan}
+        plantId={stagesPlan?.plant_id ?? plantId ?? null}
+        planId={stagesPlan?.id ?? null}
+        zoneId={null}
+        onClose={() => setStagesPlan(null)}
       />
 
       <Modal

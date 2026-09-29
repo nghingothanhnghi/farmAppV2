@@ -1,6 +1,6 @@
 // src/components/PlantBatch/components/BatchForm.tsx
 import React, { useState, useEffect } from "react";
-import { IconPlus, IconSettings } from '@tabler/icons-react';
+import { IconPlus, IconSettings, IconLock } from '@tabler/icons-react';
 import type { PlantBatch } from "../../../../models/interfaces/PlantBatch";
 import { useTranslation } from "react-i18next";
 import { usePlants } from "../../../../hooks/usePlants";
@@ -10,6 +10,7 @@ import { usePlantBatchContext } from "../../../../contexts/plantBatchContext";
 import CreatePlantModal from "./CreatePlantModal";
 import StageRecipeWizardModal from "./StageRecipeWizardModal";
 import GrowthPlanList from "./GrowthPlanList";
+import PlanStagesPreview from "./PlanStagesPreview";
 import Modal from "../../../common/Modal";
 
 import Form, {
@@ -65,7 +66,9 @@ const BatchForm: React.FC<Props> = ({
 
     const { currentBatch, setStage } = usePlantBatchContext();
 
-    const isEditingRecipe = isEdit && hasRecipeConfig;
+    // ✅ Once a batch has started a stage, its plant/plan are fixed:
+    // current_stage_id points at a stage of THIS plan.
+    const planLocked = !!isEdit && !!hasRecipeConfig;
 
     const setPlanId = (planId: number | null) => {
         onChange({
@@ -86,10 +89,14 @@ const BatchForm: React.FC<Props> = ({
                 },
             } as any);
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [formData.plant_id]);
 
-    // Keep plan_id consistent with the selected plant
+    // Keep plan_id consistent with the selected plant — CREATE mode only.
+    // Existing batches are never touched (no silent changes, no false "dirty").
     useEffect(() => {
+        if (isEdit) return;
+
         const current = formData.plan_id ?? null;
 
         // no plant → no plan
@@ -109,14 +116,16 @@ const BatchForm: React.FC<Props> = ({
         if (defaultPlan) setPlanId(defaultPlan.id);
         else if (current !== null) setPlanId(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [formData.plant_id, formData.plan_id, plans, plansLoaded]);
+    }, [isEdit, formData.plant_id, formData.plan_id, plans, plansLoaded]);
 
-    const noPlansForPlant = !!formData.plant_id && plansLoaded && !plansLoading && plans.length === 0;
+    const noPlansForPlant =
+        !!formData.plant_id && plansLoaded && !plansLoading && plans.length === 0;
 
     return (
         <>
             <Form onSubmit={onSubmit} className="space-y-10 mx-auto max-w-4xl">
                 <div className="space-y-5">
+                    {/* Plant */}
                     <FormGroup className="space-y-1">
                         <FormLabel htmlFor="plant_id">Cây trồng</FormLabel>
                         <div className="flex items-center gap-4">
@@ -125,7 +134,7 @@ const BatchForm: React.FC<Props> = ({
                                 name="plant_id"
                                 value={formData.plant_id || ""}
                                 onChange={onChange}
-                                disabled={plantLoading}
+                                disabled={plantLoading || planLocked}
                                 className="min-w-0 flex-1"
                             >
                                 <option value="">Chọn cây trồng</option>
@@ -140,9 +149,10 @@ const BatchForm: React.FC<Props> = ({
                                 variant="secondary"
                                 icon={<IconPlus size={18} />}
                                 iconOnly
-                                rounded='full'
+                                rounded="full"
                                 label="Add plant"
-                                className='bg-transparent'
+                                className="bg-transparent"
+                                disabled={planLocked}
                                 onClick={() => setOpenPlantModal(true)}
                             />
                         </div>
@@ -160,7 +170,12 @@ const BatchForm: React.FC<Props> = ({
                                 name="plan_id"
                                 value={formData.plan_id ?? ""}
                                 onChange={onChange}
-                                disabled={!formData.plant_id || plansLoading || plans.length === 0}
+                                disabled={
+                                    planLocked ||
+                                    !formData.plant_id ||
+                                    plansLoading ||
+                                    plans.length === 0
+                                }
                                 className="min-w-0 flex-1"
                             >
                                 <option value="">
@@ -168,7 +183,8 @@ const BatchForm: React.FC<Props> = ({
                                 </option>
                                 {plans.map((plan) => (
                                     <option key={plan.id} value={plan.id}>
-                                        {plan.name}{plan.is_default ? " (mặc định)" : ""}
+                                        {plan.name}
+                                        {plan.is_default ? " (mặc định)" : ""}
                                     </option>
                                 ))}
                             </FormSelect>
@@ -176,24 +192,56 @@ const BatchForm: React.FC<Props> = ({
                                 variant="secondary"
                                 icon={<IconSettings size={18} />}
                                 iconOnly
-                                rounded='full'
+                                rounded="full"
                                 label="Manage growth plans"
-                                className='bg-transparent'
+                                className="bg-transparent"
                                 disabled={!formData.plant_id}
                                 onClick={() => setOpenPlanManager(true)}
                             />
                         </div>
 
                         {plansLoading && <p>Đang tải kế hoạch...</p>}
+
+                        {/* ✅ locked explanation */}
+                        {planLocked && (
+                            <p className="flex items-start gap-1.5 text-xs text-gray-500 dark:text-gray-400">
+                                <IconLock size={14} className="mt-0.5 shrink-0" />
+                                <span>
+                                    Vụ trồng đã bắt đầu giai đoạn nên không thể đổi cây trồng hoặc kế
+                                    hoạch. Bạn vẫn có thể chỉnh sửa các giai đoạn bên dưới, hoặc tạo
+                                    vụ trồng mới với kế hoạch khác.
+                                </span>
+                            </p>
+                        )}
+
+                        {/* ✅ actionable empty state */}
                         {noPlansForPlant && (
                             <p className="text-xs text-amber-600 dark:text-amber-400">
-                                Cây trồng này chưa có kế hoạch trồng — hãy tạo một kế hoạch trước
-                                (This plant has no growth plan yet — create one first).
+                                Cây trồng này chưa có kế hoạch trồng.{" "}
+                                <button
+                                    type="button"
+                                    className="underline font-medium"
+                                    onClick={() => setOpenPlanManager(true)}
+                                >
+                                    Tạo kế hoạch đầu tiên
+                                </button>
                             </p>
                         )}
                         {fieldErrors.plan_id && <p>{fieldErrors.plan_id}</p>}
+
+                        {/* ✅ read-only stage preview + edit stages (no saved batch required) */}
+                        {formData.plan_id ? (
+                            <div className="pt-2">
+                                <PlanStagesPreview
+                                    planId={formData.plan_id}
+                                    currentStageId={isEdit ? formData.current_stage_id : undefined}
+                                    onEditStages={() => setOpenWizard(true)}
+                                />
+                            </div>
+                        ) : null}
                     </FormGroup>
 
+                    {/* Device / zone */}
                     <FormGroup className="space-y-1">
                         <FormLabel htmlFor="zone_id">Thiết bị/Khu vực</FormLabel>
                         <FormSelect
@@ -205,7 +253,8 @@ const BatchForm: React.FC<Props> = ({
                             <option value="">Chọn thiết bị</option>
                             {devices.map((device) => (
                                 <option key={device.id} value={device.id}>
-                                    {device.device_id} - {device.location || "Không có vị trí"} {device.is_active ? "🟢 Online" : "🔴 Offline"}
+                                    {device.device_id} - {device.location || "Không có vị trí"}{" "}
+                                    {device.is_active ? "🟢 Online" : "🔴 Offline"}
                                 </option>
                             ))}
                         </FormSelect>
@@ -214,18 +263,19 @@ const BatchForm: React.FC<Props> = ({
                         {fieldErrors.zone_id && <p>{fieldErrors.zone_id}</p>}
                     </FormGroup>
 
+                    {/* Start date */}
                     <FormGroup className="space-y-1">
                         <FormLabel htmlFor="start_date">Ngày bắt đầu</FormLabel>
                         <FormInput
                             type="date"
                             id="start_date"
                             name="start_date"
-                            value={formData.start_date || ''}
+                            value={formData.start_date || ""}
                             onChange={onChange}
                         />
                         {fieldErrors.start_date && <p>{fieldErrors.start_date}</p>}
                     </FormGroup>
-                    <div className="flex justify-end">
+                    {/* <div className="flex justify-end">
                         <Button
                             label={
                                 isEditingRecipe
@@ -237,7 +287,7 @@ const BatchForm: React.FC<Props> = ({
                             onClick={() => setOpenWizard(true)}
                             disabled={!isEdit} // 👉 only allow when batch is created (edit mode)
                         />
-                    </div>
+                    </div> */}
                 </div>
                 <FormActions className="flex justify-end gap-4 mt-6">
                     <Button
@@ -256,7 +306,7 @@ const BatchForm: React.FC<Props> = ({
                         label="Thoát"
                         variant="secondary"
                         rounded="lg"
-                        className='min-w-[150px]'
+                        className="min-w-[150px]"
                         onClick={onCancel}
                     />
                 </FormActions>
@@ -268,13 +318,20 @@ const BatchForm: React.FC<Props> = ({
                 planId={formData.plan_id || null}
                 zoneId={formData.zone_id || null}
                 onClose={() => setOpenWizard(false)}
-                onCreated={(stageId) => {
-                    console.log("✅ Wizard created stage:", stageId);
-                    if (!stageId) return;
+                // onCreated={(stageId) => {
+                //     console.log("✅ Wizard created stage:", stageId);
+                //     if (!stageId) return;
 
-                    // 🔥 ONLY works when batch exists (edit mode)
-                    if (isEdit && currentBatch && stageId) {
-                        setStage(currentBatch.id, stageId);
+                //     // 🔥 ONLY works when batch exists (edit mode)
+                //     if (isEdit && currentBatch && stageId) {
+                //         setStage(currentBatch.id, stageId);
+                //     }
+                // }}
+                onCreated={(firstStageId) => {
+                    // Only initialise the batch's stage the first time.
+                    // Editing recipes/stages of a batch already on stage N must NOT reset it.
+                    if (isEdit && currentBatch && !hasRecipeConfig && firstStageId) {
+                        setStage(currentBatch.id, firstStageId);
                     }
                 }}
             />

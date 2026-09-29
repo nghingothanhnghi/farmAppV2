@@ -44,6 +44,8 @@ const getDetail = (err: any, fallback: string): string => {
   return typeof detail === "string" ? detail : err?.message || fallback;
 };
 
+export const invalidatePlanDetail = (planId: number) => invalidate(planKey(planId));
+
 // ------------------------------------------------------------------
 // Queries
 // ------------------------------------------------------------------

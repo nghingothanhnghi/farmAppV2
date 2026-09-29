@@ -1,15 +1,19 @@
 // src/hooks/useGrowthStages.ts
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { plantBatchService } from "../services/plantBatchService";
-import type { GrowthStage } from "../models/interfaces/GrowthStage";
-import type { GrowthStageCreate } from "../models/interfaces/GrowthStage";
-import type { GrowthRecipe } from "../models/interfaces/GrowthRecipe";
-import type { GrowthRecipeCreate } from "../models/interfaces/GrowthRecipe";
+import { growthPlanService } from "../services/growthPlanService";
+import type { GrowthStage, GrowthStageCreate } from "../models/interfaces/GrowthStage";
+import type { GrowthRecipe, GrowthRecipeCreate } from "../models/interfaces/GrowthRecipe";
+
+const sortStages = (list: GrowthStage[]) =>
+  [...list].sort((a, b) => a.day_start - b.day_start);
 
 export function useGrowthStages() {
   const [stages, setStages] = useState<GrowthStage[]>([]);
   const [loading, setLoading] = useState(false);
+  const requestId = useRef(0);
 
+    // Legacy: all stages of a plant (every plan mixed). Avoid for plan editing.
   const fetchStages = async (plantId: number) => {
     try {
       setLoading(true);
@@ -18,6 +22,25 @@ export function useGrowthStages() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // ✅ Stages of ONE plan (with recipes). Returns the list so callers can use it directly.
+  const fetchStagesByPlan = async (planId: number): Promise<GrowthStage[]> => {
+    const id = ++requestId.current;
+    try {
+      setLoading(true);
+      const plan = await growthPlanService.getGrowthPlanWithStages(planId);
+      const list = sortStages(plan.stages ?? []);
+      if (id === requestId.current) setStages(list); // ignore stale responses
+      return list;
+    } finally {
+      if (id === requestId.current) setLoading(false);
+    }
+  };  
+
+  const clearStages = () => {
+    requestId.current++; // invalidate in-flight requests
+    setStages([]);
   };
 
 const createStage = async (
@@ -84,6 +107,8 @@ const deleteRecipe = async (id: number) => {
     stages,
     loading,
     fetchStages,
+    fetchStagesByPlan,
+    clearStages,
     createStage,
     updateStage,
     updateStageWithRecipes,
