@@ -127,7 +127,7 @@ const BatchForm: React.FC<Props> = ({
                 <div className="space-y-5">
                     {/* Plant */}
                     <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="plant_id">Cây trồng</FormLabel>
+                        <FormLabel htmlFor="plant_id">{t("input.plant_name.label")}</FormLabel>
                         <div className="flex items-center gap-4">
                             <FormSelect
                                 id="plant_id"
