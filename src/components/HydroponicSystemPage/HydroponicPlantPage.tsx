@@ -10,8 +10,8 @@ import { useAlert } from '../../contexts/alertContext';
 import { usePlantBatchContext } from '../../contexts/plantBatchContext';
 import { useUnsavedChangesGuard } from "../../hooks/useUnsavedChangesGuard";
 import type { PlantBatch } from '../../models/interfaces/PlantBatch';
-import BatchList from './components/BatchList';
-import BatchForm from './components/BatchForm';
+import BatchList from './components/Plant/BatchList';
+import BatchForm from './components/Plant/BatchForm';
 import Modal from '../common/Modal';
 
 const schema = Yup.object().shape({

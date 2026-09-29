@@ -1,21 +1,21 @@
 import { useState, useEffect } from "react";
-import WizardLayout from "../../common/WizardLayout";
-import { useGrowthStages } from "../../../hooks/useGrowthStages";
-import { useAlert } from "../../../contexts/alertContext";
-import { useHydroActuators } from "../../../hooks/useHydroActuators";
-import { stageSchema, recipeSchema } from "../../../validation/growthStageValidation";
+import WizardLayout from "../../../common/WizardLayout";
+import { useGrowthStages } from "../../../../hooks/useGrowthStages";
+import { useAlert } from "../../../../contexts/alertContext";
+import { useHydroActuators } from "../../../../hooks/useHydroActuators";
+import { stageSchema, recipeSchema } from "../../../../validation/growthStageValidation";
 import { IconPlus, IconSettings, IconTrash } from '@tabler/icons-react';
-import { getActuatorIcon } from "../../../utils/actuator";
-import Modal from "../../common/Modal";
-import Button from "../../common/Button";
+import { getActuatorIcon } from "../../../../utils/actuator";
+import Modal from "../../../common/Modal";
+import Button from "../../../common/Button";
 import Form, {
   FormGroup,
   FormLabel,
   FormInput,
-} from "../../common/Form";
-import { toApiTime, fromApiTime } from '../../../utils/time';
-import type { GrowthStageCreate } from "../../../models/interfaces/GrowthStage";
-import type { GrowthRecipeCreate } from "../../../models/interfaces/GrowthRecipe";
+} from "../../../common/Form";
+import { toApiTime, fromApiTime } from '../../../../utils/time';
+import type { GrowthStageCreate } from "../../../../models/interfaces/GrowthStage";
+import type { GrowthRecipeCreate } from "../../../../models/interfaces/GrowthRecipe";
 import RecipeForm from "./RecipeForm";
 
 type Props = {

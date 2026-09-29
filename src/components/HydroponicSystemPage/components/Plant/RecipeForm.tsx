@@ -1,14 +1,14 @@
 import { useState } from "react";
-import Button from "../../common/Button";
+import Button from "../../../common/Button";
 import { IconTrash } from '@tabler/icons-react';
 import {
     FormGroup,
     FormLabel,
     FormInput,
     FormToggle
-} from "../../common/Form";
-import type { GrowthRecipeCreate } from "../../../models/interfaces/GrowthRecipe";
-import { recipeItemSchema } from "../../../validation/recipeValidation";
+} from "../../../common/Form";
+import type { GrowthRecipeCreate } from "../../../../models/interfaces/GrowthRecipe";
+import { recipeItemSchema } from "../../../../validation/recipeValidation";
 
 type Props = {
     recipe: GrowthRecipeCreate;

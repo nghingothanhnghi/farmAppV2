@@ -1,9 +1,9 @@
 // src/components/PlantBatch/components/BatchTimelineCell.tsx
 
 import { useEffect } from "react";
-import { useGrowthStages } from "../../../hooks/useGrowthStages";
-import StageTimeline from "../../../components/common/StageTimeline";
-import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
+import { useGrowthStages } from "../../../../hooks/useGrowthStages";
+import StageTimeline from "../../../../components/common/StageTimeline";
+import type { PlantBatch } from "../../../../models/interfaces/PlantBatch";
 
 type Props = {
     batch: PlantBatch;

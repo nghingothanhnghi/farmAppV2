@@ -1,15 +1,15 @@
 // src/components/Plant/CreatePlantModal.tsx
 
 import React, { useState } from "react";
-import Modal from "../../common/Modal";
-import Button from "../../common/Button";
+import Modal from "../../../common/Modal";
+import Button from "../../../common/Button";
 import {
   FormGroup,
   FormLabel,
   FormInput,
-} from "../../common/Form";
-import type { Plant } from "../../../models/interfaces/Plant";
-import { usePlants } from "../../../hooks/usePlants";
+} from "../../../common/Form";
+import type { Plant } from "../../../../models/interfaces/Plant";
+import { usePlants } from "../../../../hooks/usePlants";
 
 type Props = {
   isOpen: boolean;

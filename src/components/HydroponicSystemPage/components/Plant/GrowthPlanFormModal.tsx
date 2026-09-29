@@ -1,9 +1,9 @@
 // src/components/HydroponicSystemPage/components/GrowthPlanFormModal.tsx
 import React, { useEffect, useState } from "react";
-import Modal from "../../common/Modal";
-import Button from "../../common/Button";
-import { FormGroup, FormLabel, FormInput, FormToggle } from "../../common/Form";
-import type { GrowthPlan } from "../../../models/interfaces/GrowthPlan";
+import Modal from "../../../common/Modal";
+import Button from "../../../common/Button";
+import { FormGroup, FormLabel, FormInput, FormToggle } from "../../../common/Form";
+import type { GrowthPlan } from "../../../../models/interfaces/GrowthPlan";
 
 export interface GrowthPlanFormValues {
   name: string;

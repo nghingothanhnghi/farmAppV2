@@ -1,15 +1,15 @@
 // src/components/PlantBatch/components/BatchForm.tsx
 import React, { useState, useEffect } from "react";
 import { IconPlus, IconSettings } from '@tabler/icons-react';
-import type { PlantBatch } from "../../../models/interfaces/PlantBatch";
-import { usePlants } from "../../../hooks/usePlants";
-import { useHydroDevices } from "../../../hooks/useHydroDevices"
-import { useGrowthPlansByPlant } from "../../../hooks/useGrowthPlans";
-import { usePlantBatchContext } from "../../../contexts/plantBatchContext";
+import type { PlantBatch } from "../../../../models/interfaces/PlantBatch";
+import { usePlants } from "../../../../hooks/usePlants";
+import { useHydroDevices } from "../../../../hooks/useHydroDevices"
+import { useGrowthPlansByPlant } from "../../../../hooks/useGrowthPlans";
+import { usePlantBatchContext } from "../../../../contexts/plantBatchContext";
 import CreatePlantModal from "./CreatePlantModal";
 import StageRecipeWizardModal from "./StageRecipeWizardModal";
 import GrowthPlanList from "./GrowthPlanList";
-import Modal from "../../common/Modal";
+import Modal from "../../../common/Modal";
 
 import Form, {
     FormGroup,
@@ -17,8 +17,8 @@ import Form, {
     FormInput,
     FormSelect,
     FormActions
-} from "../../common/Form";
-import Button from "../../common/Button";
+} from "../../../common/Form";
+import Button from "../../../common/Button";
 
 type Props = {
     formData: Partial<PlantBatch>;
