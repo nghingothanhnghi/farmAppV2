@@ -125,7 +125,11 @@ const PlantBatchPage: React.FC = () => {
             [name]:
                 name === 'plant_id' || name === 'zone_id'
                     ? Number(value)
-                    : value,
+                    : name === 'plan_id'
+                        ? (value === '' || value == null ? null : Number(value))
+                        : value,
+            // plans belong to a plant, so a stale plan_id must not survive a plant change
+            ...(name === 'plant_id' ? { plan_id: null } : {}),
         }));
     };
 

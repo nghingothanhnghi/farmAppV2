@@ -57,8 +57,7 @@ const BatchForm: React.FC<Props> = ({
 
     const [openPlantModal, setOpenPlantModal] = useState(false);
     const [openWizard, setOpenWizard] = useState(false);
-
-    const [openPlanManager, setOpenPlanManager] = useState(false);
+    const [openPlanManager, setOpenPlanManager] = useState(false); // 👈 NEW
 
     const { currentBatch, setStage } = usePlantBatchContext();
 
@@ -85,7 +84,7 @@ const BatchForm: React.FC<Props> = ({
         }
     }, [formData.plant_id]);
 
-    // Keep plan_id consistent with the selected plant
+    // 👇 NEW — keep plan_id consistent with the selected plant
     useEffect(() => {
         const current = formData.plan_id ?? null;
 
@@ -148,7 +147,7 @@ const BatchForm: React.FC<Props> = ({
                         {fieldErrors.plant_id && <p>{fieldErrors.plant_id}</p>}
                     </FormGroup>
 
-                    {/* Growth Plan */}
+                    {/* 👇 NEW — Growth Plan */}
                     <FormGroup className="space-y-1">
                         <FormLabel htmlFor="plan_id">Kế hoạch trồng</FormLabel>
                         <div className="flex items-center gap-4">
@@ -262,7 +261,6 @@ const BatchForm: React.FC<Props> = ({
             <StageRecipeWizardModal
                 isOpen={openWizard}
                 plantId={formData.plant_id || null}
-                planId={formData.plan_id || null}
                 zoneId={formData.zone_id || null}
                 onClose={() => setOpenWizard(false)}
                 onCreated={(stageId) => {
@@ -316,7 +314,6 @@ const BatchForm: React.FC<Props> = ({
                     />
                 }
             />
-
         </>
     );
 };

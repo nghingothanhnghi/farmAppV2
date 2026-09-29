@@ -40,6 +40,7 @@ const updateStageWithRecipes = async (
     name: string;
     day_start: number;
     day_end: number;
+    plan_id: number;
     recipes: Omit<GrowthRecipe, "id" | "stage_id">[];
   }
 ) => {

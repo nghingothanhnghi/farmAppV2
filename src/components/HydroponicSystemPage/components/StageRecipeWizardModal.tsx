@@ -22,6 +22,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   plantId: number | null;
+  planId: number | null;
   zoneId: number | null;
   onCreated?: (firstStageId?: number) => void;
 };
@@ -44,6 +45,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   isOpen,
   onClose,
   plantId,
+  planId,
   zoneId,
   onCreated
 }) => {
@@ -89,8 +91,8 @@ const StageRecipeWizardModal: React.FC<Props> = ({
   // FETCH
   // ------------------------
   useEffect(() => {
-    if (isOpen && plantId) {
-      fetchStages(plantId);
+    if (isOpen && planId) {
+      fetchStages(planId);
     }
   }, [isOpen, plantId]);
 
@@ -103,6 +105,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       const mapped: StageWithRecipes[] = fetchedStages.map(s => ({
         id: s.id,
         name: s.name,
+        
         day_start: s.day_start,
         day_end: s.day_end,
         recipes: (s.recipes ?? []).map((r): RecipeWithId => ({
@@ -231,6 +234,11 @@ const StageRecipeWizardModal: React.FC<Props> = ({
       return;
     }
 
+    if (!planId) {
+      setAlert({ message: "Growth plan is required", type: "error" });
+      return;
+    }
+
     try {
       let firstStageId: number | undefined;
 
@@ -244,6 +252,7 @@ const StageRecipeWizardModal: React.FC<Props> = ({
           // UPDATE
           await updateStageWithRecipes(s.id, {
             name: s.name,
+            plan_id: planId,
             day_start: s.day_start,
             day_end: s.day_end,
             recipes: s.recipes.map(r => ({
@@ -270,12 +279,14 @@ const StageRecipeWizardModal: React.FC<Props> = ({
             day_start: s.day_start,
             day_end: s.day_end,
             plant_id: plantId,
+            plan_id: planId,
           });
 
           await updateStageWithRecipes(newStage.id, {
             name: newStage.name,
             day_start: newStage.day_start,
             day_end: newStage.day_end,
+            plan_id: planId,
             recipes: s.recipes.map(r => ({
               actuator_type: r.actuator_type,
               action: r.action,
