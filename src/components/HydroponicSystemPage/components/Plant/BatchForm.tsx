@@ -46,7 +46,6 @@ const BatchForm: React.FC<Props> = ({
 }) => {
     const { t } = useTranslation();
 
-
     const { plants, loading: plantLoading } = usePlants();
     const [localPlants, setLocalPlants] = useState(plants);
 

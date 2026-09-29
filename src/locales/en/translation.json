@@ -42,7 +42,9 @@
         "go_to_cart": "Go to cart",
         "edit_profile": "Edit Profile",
         "add_schedule": "Add Time Slot",
+        "save": "Save",
         "saving": "Saving...",
+        "update": "Update",
         "update_schedule": "Update Time Slot",
         "updating": "Updating...",
         "delete_schedule": "Delete Time Slot",
@@ -115,7 +117,19 @@
         "stage_name":{
             "label": "Name",
             "placeholder": "Ex: Seedling, Harvest, etc...."
-        },        
+        },
+        "plant_name":{
+            "label": "Name",
+            "placeholder": "Ex: tomato, salad etc...."
+        },   
+        "plan_name":{
+            "label": "Name",
+            "placeholder": "e.g. Summer Plan"
+        },               
+        "sensor_key":{
+            "label": "Sensor Key (Optional)",
+            "placeholder": "Ex: temperature, moisture, ec, water_level, etc...."
+        },     
         "search_purchase_order":{
             "label": "Search with purchase order code",
             "placeholder": "Typing your Purchase Order Code..."

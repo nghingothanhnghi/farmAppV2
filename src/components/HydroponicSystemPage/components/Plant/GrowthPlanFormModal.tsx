@@ -1,5 +1,6 @@
 // src/components/HydroponicSystemPage/components/GrowthPlanFormModal.tsx
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import Modal from "../../../common/Modal";
 import Button from "../../../common/Button";
 import { FormGroup, FormLabel, FormInput, FormToggle } from "../../../common/Form";
@@ -20,6 +21,7 @@ interface Props {
 }
 
 const GrowthPlanFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialData, onSubmit }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [isDefault, setIsDefault] = useState(false);
@@ -58,15 +60,15 @@ const GrowthPlanFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialDa
       title={mode === "edit" ? "Edit Growth Plan" : "New Growth Plan"}
       size="small"
       content={
-        <div className="px-10 pb-4 space-y-4">
+        <div className="px-10 py-4 space-y-4">
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="plan_name">Name</FormLabel>
+            <FormLabel htmlFor="plan_name">{t("input.plan_name.label")}</FormLabel>
             <FormInput
               id="plan_name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="e.g. Summer Plan"
+              placeholder={t("input.plan_name.placeholder")}
               required
             />
           </FormGroup>
@@ -81,34 +83,40 @@ const GrowthPlanFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialDa
               placeholder="Optional"
             />
           </FormGroup>
-
-          <FormGroup className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Default plan</p>
-              <p className="text-[11px] text-gray-400">
-                Used automatically when a batch is created without choosing a plan.
-              </p>
-            </div>
-            <FormToggle
-              id="plan_is_default"
-              checked={isDefault}
-              onChange={(e) => setIsDefault(e.target.checked)}
-              className="shrink-0"
-            />
-          </FormGroup>
+          <ul className="mt-4 divide-y divide-gray-200 dark:divide-white/5">
+            <li className="py-3">
+              {/* ENABLED */}
+              <FormGroup className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                    Default plan
+                  </p>
+                  <p className="text-[11px] text-gray-400">
+                    Used automatically when a batch is created without choosing a plan.
+                  </p>
+                </div>
+                <FormToggle
+                  id="plan_is_default"
+                  checked={isDefault}
+                  onChange={(e) => setIsDefault(e.target.checked)}
+                  className="shrink-0"
+                />
+              </FormGroup>
+            </li>
+          </ul>
         </div>
       }
       actions={
         <div className="flex gap-4">
           <Button
-            label={loading ? "Saving..." : mode === "edit" ? "Update" : "Create"}
+            label={loading ? t("btn.saving") : mode === "edit" ? t("btn.update") : t("btn.save")}
             onClick={handleSubmit}
             disabled={loading || !name.trim()}
             className="min-w-[150px]"
             rounded="lg"
           />
           <Button
-            label="Cancel"
+            label={t("btn.cancel")}
             variant="secondary"
             onClick={onClose}
             className="min-w-[150px]"

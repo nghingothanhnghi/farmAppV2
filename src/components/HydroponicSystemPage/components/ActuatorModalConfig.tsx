@@ -132,7 +132,7 @@ const ActuatorModalConfig: React.FC<Props> = ({
             title="Edit Actuator"
             size="small"
             content={
-                <div className="px-10 pb-4 space-y-4">
+                <div className="px-10 py-4 space-y-4">
                     <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                         <FormGroup className="space-y-1">
                             <FormLabel htmlFor="name">Tên thiết bị</FormLabel>
@@ -227,13 +227,13 @@ const ActuatorModalConfig: React.FC<Props> = ({
                         </FormGroup>
                     </div>
                     <FormGroup className="space-y-1">
-                        <FormLabel htmlFor="sensor_key">Sensor Key</FormLabel>
+                        <FormLabel htmlFor="sensor_key">{t("input.sensor_key.label")}</FormLabel>
                         <FormInput
                             id="sensor_key"
                             type="text"
                             value={form.sensor_key || ""}
                             onChange={(e) => handleChange("sensor_key", e.target.value)}
-                            placeholder="Sensor key (optional)"
+                            placeholder={t("input.sensor_key.placeholder")}
                         />
                         {errors.sensor_key && (
                             <p className="text-red-500 text-xs">{errors.sensor_key}</p>
@@ -293,14 +293,14 @@ const ActuatorModalConfig: React.FC<Props> = ({
             actions={
                 <div className="flex gap-4">
                     <Button
-                        label={loading ? "Saving..." : "Save"}
+                        label={loading ? t("btn.saving") : t("btn.save")}
                         onClick={handleSubmit}
                         className="min-w-[150px]"
                         rounded="lg"
                         disabled={loading || !isDirty}
                     />
                     <Button
-                        label="Cancel"
+                        label={t("btn.cancel")}
                         variant="secondary"
                         rounded="lg"
                         className="min-w-[150px]"

@@ -42,7 +42,9 @@
         "go_to_cart": "Đi đến giỏ hàng?",
         "edit_profile": "Chỉnh sửa tài khoản",
         "add_schedule": "Thêm khung giờ",
+        "save": "Lưu",
         "saving": "Đang lưu...",
+        "update": "Lưu cập nhật",
         "update_schedule": "Cập nhật khung giờ",
         "updating": "Đang cập nhật...",
         "delete_schedule": "Xóa khung giờ",
@@ -115,7 +117,19 @@
         "stage_name":{
             "label": "Tên giai đoạn",
             "placeholder": "Ex: Gieo hạt và Ươm cây con, Cấy cây con,...."
-        },            
+        },
+        "plant_name":{
+            "label": "Tên cây",
+            "placeholder": "Vd: Cà chua, cải thìa,...."
+        },   
+        "plan_name":{
+            "label": "Tên kế hoạch canh tác",
+            "placeholder": "Vd: Xà lách — Vụ mùa 2026"
+        },        
+        "sensor_key":{
+            "label": "Mã cảm biến (Tùy chọn)",
+            "placeholder": "Vd: temperature, moisture, ec, water_level, etc...."
+        },             
         "search_purchase_order":{
             "label": "Tìm bằng mã đơn hàng",
             "placeholder": "Nhập mã đơn hàng..."
