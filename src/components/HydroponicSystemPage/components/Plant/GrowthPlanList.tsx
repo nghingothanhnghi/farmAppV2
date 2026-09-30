@@ -1,6 +1,6 @@
 // src/components/HydroponicSystemPage/components/GrowthPlanList.tsx
 import React, { useMemo, useState } from "react";
-import { IconPlus, IconStar, IconStarFilled, IconMoodEmpty, IconAlertCircle, IconTimeline, } from "@tabler/icons-react";
+import { IconPlus, IconStar, IconStarFilled, IconMoodEmpty, IconAlertCircle, IconTimeline, IconCopy } from "@tabler/icons-react";
 import type { GrowthPlan } from "../../../../models/interfaces/GrowthPlan";
 import {
   useGrowthPlansByPlant,
@@ -9,6 +9,7 @@ import {
   useDeleteGrowthPlan,
   GrowthPlanInUseError,
 } from "../../../../hooks/useGrowthPlans";
+import { useTranslation } from 'react-i18next';
 import { useAlert } from "../../../../contexts/alertContext";
 import DataGrid from "../../../common/dataGrid/dataGrid";
 import ActionButtons from "../../../common/dataGrid/actionButton";
@@ -19,17 +20,21 @@ import Badge from "../../../common/Badge";
 import Modal from "../../../common/Modal";
 import GrowthPlanFormModal, { type GrowthPlanFormValues } from "./GrowthPlanFormModal";
 import StageRecipeWizardModal from "./StageRecipeWizardModal";
+import { useDuplicateGrowthPlan } from "../../../../hooks/useGrowthPlans";
+import { parseApiErrors } from "../../../../utils/errorUtils";
 
 type Props = {
   plantId: number | null | undefined;
 };
 
 const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
+   const { t } = useTranslation();
   const { setAlert } = useAlert();
   const { plans, loading } = useGrowthPlansByPlant(plantId);
   const { createGrowthPlan } = useCreateGrowthPlan();
   const { updateGrowthPlan } = useUpdateGrowthPlan();
   const { deleteGrowthPlan } = useDeleteGrowthPlan();
+  const { duplicateGrowthPlan } = useDuplicateGrowthPlan();
 
   const [formOpen, setFormOpen] = useState(false);
   const [formMode, setFormMode] = useState<"create" | "edit">("create");
@@ -41,6 +46,15 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
 
   // ✅ plan whose stages are being edited in the wizard
   const [stagesPlan, setStagesPlan] = useState<GrowthPlan | null>(null);
+
+  const handleDuplicate = async (plan: GrowthPlan) => {
+    try {
+      const copy = await duplicateGrowthPlan(plan.id); // server names it "<name> (copy)"
+      setAlert({ type: "success", message: `Created "${copy.name}".` });
+    } catch (err) {
+      setAlert({ type: "error", message: parseApiErrors(err).message });
+    }
+  };
 
   const handleFormSubmit = async (values: GrowthPlanFormValues) => {
     if (!plantId) return;
@@ -60,7 +74,7 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
     } catch (err: any) {
       setAlert({
         type: "error",
-        message: err?.response?.data?.detail ?? "Failed to save growth plan.",
+        message: parseApiErrors(err).message,
       });
       throw err; // keep the modal open
     }
@@ -74,7 +88,7 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
     } catch (err: any) {
       setAlert({
         type: "error",
-        message: err?.response?.data?.detail ?? "Failed to set default plan.",
+        message: parseApiErrors(err).message,
       });
     }
   };
@@ -113,6 +127,13 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
         valueFormatter: (p: any) => p.value || "-",
       },
       {
+        headerName: "Used by",
+        field: "batch_count",
+        width: 120,
+        filter: false,
+        valueFormatter: (p: any) => `${p.value ?? 0} batch`,
+      },
+      {
         headerName: "",
         field: "is_default",
         width: 110,
@@ -129,49 +150,57 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
       {
         headerName: "",
         field: "actions",
-        width: 150,
+        width: 160,
         filter: false,
         sortable: false,
         resizable: false,
         pinned: "right",
-        cellRenderer: ({ data }: { data: GrowthPlan }) => (
-          <div className="flex items-center justify-center h-full">
-                        {/* ✅ NEW: edit this plan's stages + recipes */}
-            <Button
-              icon={<IconTimeline size={16} stroke={1.5} />}
-              iconOnly
-              variant="secondary"
-              label="Edit stages"
-              size="xs"
-              rounded="full"
-              className="bg-transparent"
-              onClick={() => setStagesPlan(data)}
-            />
-            <Button
-              icon={data.is_default ? <IconStarFilled size={16} className="text-amber-500" /> : <IconStar size={16} stroke={1.5} />}
-              iconOnly
-              variant="secondary"
-              label={data.is_default ? "Default plan" : "Set as default"}
-              size="xs"
-              rounded="full"
-              className="bg-transparent"
-              disabled={data.is_default}
-              onClick={() => handleSetDefault(data)}
-            />
-            <ActionButtons
-              row={data}
-              onEdit={() => {
-                setEditing(data);
-                setFormMode("edit");
-                setFormOpen(true);
-              }}
-              onDelete={() => {
-                setSelected(data);
-                setConfirmOpen(true);
-              }}
-            />
-          </div>
-        ),
+        cellRenderer: ({ data }: { data: GrowthPlan }) => {
+          const inUse = (data.batch_count ?? 0) > 0;
+          return (
+            <div className="flex items-center justify-center gap-2 h-full">
+              {/* ✅ NEW: edit this plan's stages + recipes */}
+              <Button
+                icon={<IconTimeline size={16} stroke={1.5} />}
+                iconOnly
+                variant="secondary"
+                label="Edit stages"
+                size="xs"
+                rounded="full"
+                className="bg-transparent"
+                onClick={() => setStagesPlan(data)}
+              />
+              <Button icon={<IconCopy size={16} stroke={1.5} />} iconOnly variant="secondary"
+                label="Duplicate plan" size="xs" rounded="full" className="bg-transparent"
+                onClick={() => handleDuplicate(data)} />
+              <Button
+                icon={data.is_default ? <IconStarFilled size={16} className="text-amber-500" /> : <IconStar size={16} stroke={1.5} />}
+                iconOnly
+                variant="secondary"
+                label={data.is_default ? "Default plan" : "Set as default"}
+                size="xs"
+                rounded="full"
+                className="bg-transparent"
+                disabled={data.is_default}
+                onClick={() => handleSetDefault(data)}
+              />
+              <ActionButtons
+                row={data}
+                onEdit={() => {
+                  setEditing(data);
+                  setFormMode("edit");
+                  setFormOpen(true);
+                }}
+                onDelete={() => {
+                  setSelected(data);
+                  setConfirmOpen(true);
+                }}
+                deleteLabel={inUse ? `Used by ${data.batch_count} batch(es), cannot delete` : "Delete"}
+                disableDelete={inUse}
+              />
+            </div>
+          );
+        },
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -203,15 +232,15 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
       {loading && plans.length === 0 ? (
         <LinearProgress />
       ) : plans.length === 0 ? (
-        <EmptyState 
-          icon={<IconMoodEmpty size={48} />} 
-          message="This plant has no growth plans yet." 
+        <EmptyState
+          icon={<IconMoodEmpty size={48} />}
+          message="This plant has no growth plans yet."
         />
       ) : (
-        <DataGrid 
-          rowData={plans} 
-          columnDefs={columnDefs} 
-          pagination paginationPageSize={10} 
+        <DataGrid
+          rowData={plans}
+          columnDefs={columnDefs}
+          pagination paginationPageSize={10}
           height="320px" />
       )}
 

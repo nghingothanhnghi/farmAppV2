@@ -7,6 +7,7 @@ import { getActuatorIcon } from "../../../../utils/actuator";
 import Button from "../../../common/Button";
 import Badge from "../../../common/Badge";
 import Spinner from "../../../common/Spinner";
+import PlanValidationBanner from "./PlanValidationBanner";
 
 type Props = {
   planId?: number | null;
@@ -72,6 +73,7 @@ const PlanStagesPreview: React.FC<Props> = ({ planId, currentStageId, onEditStag
         </p>
       ) : (
         <>
+        <PlanValidationBanner planId={planId} />
           {/* proportional bar */}
           <div className="flex h-1.5 w-full gap-0.5 overflow-hidden rounded-full">
             {stages.map((s) => (

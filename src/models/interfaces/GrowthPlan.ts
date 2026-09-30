@@ -7,6 +7,15 @@ export interface GrowthPlan {
   name: string;
   description?: string | null;
   is_default: boolean;
+  batch_count: number; // ✅ NEW:
+}
+
+// ✅ NEW: item shape unconfirmed, formatted defensively in the UI
+export interface GrowthPlanValidation {
+  plan_id: number;
+  stage_count: number;
+  gaps: unknown[];
+  overlaps: unknown[];
 }
 
 export interface GrowthPlanCreate {

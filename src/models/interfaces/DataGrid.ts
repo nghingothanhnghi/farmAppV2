@@ -21,4 +21,18 @@ export interface ActionButtonsProps {
     onShare?: (row: any) => void;
     onEdit?: (row: any) => void;
     onDelete?: (row: any) => void;
+    /** Disable all action buttons */
+    disabled?: boolean;
+    /** Disable individual action buttons */
+    disableView?: boolean;
+    disablePrint?: boolean;
+    disableShare?: boolean;
+    disableEdit?: boolean;
+    disableDelete?: boolean;
+    // Individual labels
+    viewLabel?: string;
+    printLabel?: string;
+    shareLabel?: string;
+    editLabel?: string;
+    deleteLabel?: string;
 }

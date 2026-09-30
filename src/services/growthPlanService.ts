@@ -5,9 +5,24 @@ import type {
   GrowthPlanCreate,
   GrowthPlanUpdate,
   GrowthPlanWithStages,
+  GrowthPlanValidation,
 } from '../models/interfaces/GrowthPlan';
 
 export const growthPlanService = {
+
+  async duplicateGrowthPlan(planId: number, name?: string): Promise<GrowthPlan> {
+    const res = await apiClient.post(
+      `/growth-plans/${planId}/duplicate`,
+      name ? { name } : {}
+    );
+    return res.data;
+  },
+
+  async getGrowthPlanValidation(planId: number): Promise<GrowthPlanValidation> {
+    const res = await apiClient.get(`/growth-plans/${planId}/validation`);
+    return res.data;
+  },
+
   async createGrowthPlan(data: GrowthPlanCreate): Promise<GrowthPlan> {
     const res = await apiClient.post('/growth-plans/', data);
     return res.data;

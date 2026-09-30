@@ -3,7 +3,25 @@ import type { ActionButtonsProps } from '../../../models/interfaces/DataGrid';
 import { IconPencil, IconPrinter, IconShare, IconTrash, IconEye } from '@tabler/icons-react';
 import Button from '../Button';
 
-const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onShare, onEdit, onDelete }) => {
+const ActionButtons: React.FC<ActionButtonsProps> = ({ 
+    row, 
+    onView, 
+    onPrint, 
+    onShare, 
+    onEdit, 
+    onDelete, 
+    disabled = false,
+    disableView = false, 
+    disablePrint = false, 
+    disableShare = false, 
+    disableEdit = false, 
+    disableDelete = false,
+    viewLabel = 'View',
+    printLabel = 'Print',
+    shareLabel = 'Share',
+    editLabel = 'Edit',
+    deleteLabel = 'Delete',
+}) => {
     return (
         <div className="flex gap-2 items-center justify-center h-full">
             {onView && (
@@ -14,10 +32,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onS
                     iconOnly
                     variant="secondary"
                     onClick={() => onView(row)}
-                    label="View"
+                    label={viewLabel}
                     size='xs'
                     rounded="full"
                     className='bg-transparent'
+                    disabled={disabled || disableView}
                 />
             )}
             {onPrint && (
@@ -28,10 +47,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onS
                     iconOnly
                     variant="secondary"
                     onClick={() => onPrint(row)}
-                    label="Print"
+                    label={printLabel}
                     size='xs'
                     rounded="full"
                     className='bg-transparent'
+                    disabled={disabled || disablePrint}
                 />
             )}
             {onShare && (
@@ -42,10 +62,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onS
                     iconOnly
                     variant="secondary"
                     onClick={() => onShare(row)}
-                    label="Share"
+                    label={shareLabel}
                     size='xs'
                     rounded="full"
                     className='bg-transparent'
+                    disabled={disabled || disableShare}
                 />
             )}
             {/* Edit Button */}
@@ -57,10 +78,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onS
                     iconOnly
                     variant="secondary"
                     onClick={() => onEdit(row)}
-                    label="Edit"
+                    label={editLabel}
                     size='xs'
                     rounded="full"
                     className='bg-transparent'
+                    disabled={disabled || disableEdit}
                 />
             )}
             {/* Delete Button */}
@@ -72,10 +94,11 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({ row, onView, onPrint, onS
                     iconOnly
                     variant="secondary"
                     onClick={() => onDelete(row)}
-                    label="Delete"
+                    label={deleteLabel}
                     size='xs'
                     rounded="full"
                     className='bg-transparent'
+                    disabled={disabled || disableDelete}
                 />
             )}
         </div>

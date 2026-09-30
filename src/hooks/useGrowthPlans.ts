@@ -6,6 +6,7 @@ import type {
   GrowthPlanCreate,
   GrowthPlanUpdate,
   GrowthPlanWithStages,
+  GrowthPlanValidation
 } from "../models/interfaces/GrowthPlan";
 
 // ------------------------------------------------------------------
@@ -38,13 +39,15 @@ const invalidate = (...keys: string[]) => {
 
 const plansKey = (plantId: number) => `growth-plans:plant:${plantId}`;
 const planKey = (planId: number) => `growth-plans:plan:${planId}`;
+const validationKey = (planId: number) => `growth-plans:validation:${planId}`;
 
 const getDetail = (err: any, fallback: string): string => {
   const detail = err?.response?.data?.detail;
   return typeof detail === "string" ? detail : err?.message || fallback;
 };
 
-export const invalidatePlanDetail = (planId: number) => invalidate(planKey(planId));
+export const invalidatePlanDetail = (planId: number) =>
+  invalidate(planKey(planId), validationKey(planId));
 
 // ------------------------------------------------------------------
 // Queries
@@ -196,4 +199,49 @@ export function useDeleteGrowthPlan() {
   }, []);
 
   return { deleteGrowthPlan, loading };
+}
+
+export function useDuplicateGrowthPlan() {
+  const [loading, setLoading] = useState(false);
+
+  /** Omit `name` to get the server's auto "<name> (copy)". */
+  const duplicateGrowthPlan = useCallback(async (planId: number, name?: string) => {
+    try {
+      setLoading(true);
+      const created = await growthPlanService.duplicateGrowthPlan(planId, name);
+      invalidate(plansKey(created.plant_id));
+      return created;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return { duplicateGrowthPlan, loading };
+}
+
+export function useGrowthPlanValidation(planId?: number | null) {
+  const [state, setState] = useState<{ planId: number | null; data: GrowthPlanValidation | null }>({
+    planId: null,
+    data: null,
+  });
+  const requestId = useRef(0);
+
+  const refetch = useCallback(async () => {
+    if (!planId) return;
+    const id = ++requestId.current;
+    try {
+      const data = await growthPlanService.getGrowthPlanValidation(planId);
+      if (id === requestId.current) setState({ planId, data });
+    } catch {
+      if (id === requestId.current) setState({ planId, data: null }); // advisory only
+    }
+  }, [planId]);
+
+  useEffect(() => {
+    if (!planId) return;
+    refetch();
+    return subscribe(validationKey(planId), refetch);
+  }, [planId, refetch]);
+
+  return { validation: planId && state.planId === planId ? state.data : null, refetch };
 }
