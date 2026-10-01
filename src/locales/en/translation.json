@@ -55,7 +55,8 @@
         "growing_recipes": "Configure Recipes",
         "create_stage_automation": "Create Stage & Automation",
         "update_stage_automation": "Edit Stage & Automation",
-        "finish": "Complete"
+        "finish": "Complete",
+        "yes_delete": "Yes, Delete"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -266,7 +267,13 @@
             "shippingFee": "Shipping Fee",
             "totalAmount": "Total",
             "actions": "Actions",
-            "status": "Status"
+            "status": "Status",
+            "stage_name": "Name",
+            "plant_name":"Name",
+            "plan_name": "Name",
+            "used_by": "Used by",
+            "description": "Description",
+            "batch": "batch"
         },
         "bodyName":{
             "no_matching_results": "No matching results"

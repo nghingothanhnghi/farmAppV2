@@ -28,7 +28,7 @@ type Props = {
 };
 
 const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
-   const { t } = useTranslation();
+  const { t } = useTranslation();
   const { setAlert } = useAlert();
   const { plans, loading } = useGrowthPlansByPlant(plantId);
   const { createGrowthPlan } = useCreateGrowthPlan();
@@ -118,34 +118,32 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
 
   const columnDefs = useMemo(
     () => [
-      { headerName: "Name", field: "name", flex: 1 },
       {
-        headerName: "Description",
+        headerName: t("dataGrid.headerName.plan_name"),
+        field: "name",
+        flex: 1,
+        cellRenderer: ({ data }: { data: GrowthPlan }) => (
+          <div className="flex items-center gap-2 h-full">
+            <span>{data.name}</span>
+            {data.is_default && (
+              <Badge label="Default" variant="success" />
+            )}
+          </div>
+        ),
+      },
+      {
+        headerName: t("dataGrid.headerName.description"),
         field: "description",
         flex: 1.5,
         filter: false,
         valueFormatter: (p: any) => p.value || "-",
       },
       {
-        headerName: "Used by",
+        headerName: t("dataGrid.headerName.used_by"),
         field: "batch_count",
         width: 120,
         filter: false,
-        valueFormatter: (p: any) => `${p.value ?? 0} batch`,
-      },
-      {
-        headerName: "",
-        field: "is_default",
-        width: 110,
-        filter: false,
-        sortable: false,
-        resizable: false,
-        cellRenderer: ({ data }: { data: GrowthPlan }) =>
-          data.is_default ? (
-            <div className="flex items-center h-full">
-              <Badge label="Default" variant="success" />
-            </div>
-          ) : null,
+        valueFormatter: (p: any) => `${p.value ?? 0} ${t("dataGrid.headerName.batch")}`,
       },
       {
         headerName: "",
@@ -273,7 +271,7 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
           <div className="text-sm px-10 pt-6 pb-10 text-center">
             <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
             Are you sure you want to delete plan <strong>{selected?.name}</strong>?
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-gray-500 dark:text-gray-400 mt-2">
               Plans that are still used by batches cannot be deleted.
             </p>
           </div>
@@ -281,7 +279,7 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
         actions={
           <div className="flex gap-4">
             <Button
-              label={deleting ? "Deleting..." : "Yes, Delete"}
+              label={deleting ? "Deleting..." : t("btn.yes_delete")}
               variant="danger"
               onClick={handleConfirmDelete}
               className="min-w-[150px]"
@@ -289,7 +287,7 @@ const GrowthPlanList: React.FC<Props> = ({ plantId }) => {
               disabled={deleting}
             />
             <Button
-              label="Cancel"
+              label={t("btn.cancel")}
               variant="secondary"
               onClick={() => setConfirmOpen(false)}
               className="min-w-[150px]"
