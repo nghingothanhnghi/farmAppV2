@@ -70,7 +70,8 @@
         "auto": "Tự động",
         "manual": "Thủ công",
         "auto_triggered": "Tự động kích hoạt",
-        "sensor_triggered": "Tự động theo cảm biến"
+        "sensor_triggered": "Tự động theo cảm biến",
+        "sensor_off": "Cảm biến ngoại tuyến"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"
@@ -255,7 +256,8 @@
         "scheduled_off": "Lịch đã dừng",
         "interval": "Chế độ định kỳ",
         "one_time_run": "Chạy một lần",
-        "sensor_triggered": "Kích hoạt bởi cảm biến"
+        "sensor_triggered": "Kích hoạt bởi cảm biến",
+        "sensor_off": "Cảm biến ngoại tuyến"
     },
     "dataGrid": {
         "headerName":{
