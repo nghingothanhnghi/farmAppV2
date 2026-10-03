@@ -7,7 +7,7 @@ import LinearProgress from '../common/LinearProgress';
 import DropdownButton from '../common/DropdownButton';
 import Tabs from "../common/Tabs";
 import WaterLevelBucket from '../common/chartCustom/WaterLevelBucket';
-import { IconPlus, IconArtboard, IconDashboard, IconTimeline, IconPhotoSensor, IconSettings, IconEyeSearch } from '@tabler/icons-react';
+import { IconPlus, IconArtboard, IconDashboard, IconTimeline, IconPhotoSensor, IconSettings, IconEyeSearch, IconGitCherryPick, IconActivity } from '@tabler/icons-react';
 import { useHydroSystem } from '../../hooks/useHydroSystem';
 import type { SystemStatusPerDevice } from '../../models/interfaces/HydroSystem';
 
@@ -40,7 +40,7 @@ const HydroponicSystemPage: React.FC = () => {
     actions
   } = useHydroSystem();
 
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [activeDeviceId, setActiveDeviceId] = useState<number | null>(null);
@@ -240,11 +240,25 @@ const HydroponicSystemPage: React.FC = () => {
               <LocationPanel
                 title={currentDevice?.location || "Unknown Location"}
                 description={
-                  currentDevice
-                    ? `Device: ${currentDevice.device_name || `ID ${currentDevice.device_id}`} · 
-                       Sensors: ${getSensorCount(currentDevice.sensors)} · 
-                       Actuators: ${currentDevice.actuators?.length || 0}`
-                    : "No device data available."
+                  currentDevice ? (
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                      <span className="inline-flex items-center gap-1">
+                        <IconArtboard size={14} className="text-blue-500" />
+                        <span className='truncate max-w-36'>{currentDevice.device_name || `ID ${currentDevice.device_id}`}</span>
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <IconActivity size={14} className="text-blue-500" />
+                        <span>{getSensorCount(currentDevice.sensors)}</span>
+                      </span>
+
+                      <span className="inline-flex items-center gap-1">
+                        <IconGitCherryPick size={14} className="text-emerald-500" />
+                        <span>{currentDevice.actuators?.length ?? 0}</span>
+                      </span>
+                    </div>
+                  ) : (
+                    "No device data available."
+                  )
                 }
               />
               {currentDevice?.growing_batch && (

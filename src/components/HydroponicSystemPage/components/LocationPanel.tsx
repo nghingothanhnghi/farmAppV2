@@ -3,7 +3,7 @@ import IconMap from '../../../assets/icons/map-icon.svg'
 
 interface LocationPanelProps {
   title?: string;
-  description?: string;
+  description?: React.ReactNode;
   imageUrl?: string;
 }
 

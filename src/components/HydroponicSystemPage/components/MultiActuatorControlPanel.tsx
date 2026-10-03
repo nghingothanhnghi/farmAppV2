@@ -1,5 +1,6 @@
 // src/components/HydroponicSystemPage/components/MultiActuatorControlPanel.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import type { SystemStatusPerDevice, HydroActuator } from '../../../models/interfaces/HydroSystem';
 import DropdownButton from '../../common/DropdownButton';
 import Badge from '../../common/Badge';
@@ -22,6 +23,8 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
 }) => {
 
   console.log('MultiActuatorControlPanel - systemStatus:', systemStatus);
+
+  const { t } = useTranslation();
 
   const handleManualModeChange = (
     actuatorId: number,
@@ -97,16 +100,11 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
             bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800
             shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
           >
-            <div className="flex space-x-4 items-center dark:text-gray-200">
-              <Badge size="xsmall">
-                Total: {systemStatus.actuators.length}
-              </Badge>
-              <Badge size="xsmall">
-                Active: {systemStatus.actuators.filter(a => a.current_state).length}
-              </Badge>
-              <Badge size="xsmall">
-                Enabled: {systemStatus.actuators.filter(a => a.is_active).length}
-              </Badge>
+            <div className="flex space-x-1 items-center dark:text-gray-200">
+              <span className='text-[10px]'>Active</span> 
+              <Badge size="xsmall">{systemStatus.actuators.filter(a => a.current_state).length}</Badge>
+              <div className="h-2 border-l border-gray-500 dark:border-gray-700 mx-2" />
+              <span className='text-[10px]'>{t("toggle.actuator_isActive.label")}</span><Badge size="xsmall">{systemStatus.actuators.filter(a => a.is_active).length}</Badge>
             </div>
             <DropdownButton
               label={
