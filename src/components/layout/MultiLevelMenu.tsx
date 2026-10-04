@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import Button from '../common/Button';
 import ListLink from '../common/ListLink';
 import type { MenuItem } from '../../config/menu';
+import { useTranslation } from 'react-i18next';
 
 interface MultiLevelMenuProps {
     items: MenuItem[];
@@ -16,6 +17,7 @@ export default function MultiLevelMenu({
     mobile = false,
     onNavigate,
 }: MultiLevelMenuProps) {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const [path, setPath] = useState<MenuItem[]>([]);
@@ -56,7 +58,7 @@ export default function MultiLevelMenu({
                 {mobile && currentParent && (
                     <Button
                         type="button"
-                        label={currentParent.label}
+                        label={t(currentParent.label)}
                         onClick={goBack}
                         variant="secondary"
                         icon={<IconChevronLeft size={16} />}
@@ -87,13 +89,13 @@ export default function MultiLevelMenu({
                                         icon={
                                             Icon ? <Icon size={16} /> : undefined
                                         }
-                                        label={item.label}
+                                        label={t(item.label)}
                                         onClick={onNavigate}
                                     />
                                 ) : (
                                     <Button
                                         type="button"
-                                        label={item.label}
+                                        label={t(item.label)}
                                         onClick={() => openLevel(item)}
                                         variant="link"
                                         icon={
@@ -109,7 +111,7 @@ export default function MultiLevelMenu({
                                 {hasChildren && (
                                     <Button
                                         type="button"
-                                        label={`Open ${item.label}`}
+                                        label={`Open ${t(item.label)}`}
                                         onClick={() => openLevel(item)}
                                         variant="secondary"
                                         icon={<IconChevronRight size={16} />}

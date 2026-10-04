@@ -9,7 +9,17 @@
         "about": "About Us",
         "contact": "Contact",
         "features": "Features",
-        "setup": "Easy Setup"
+        "setup": "Easy Setup",
+        "portal":{
+            "hydro_system": {
+                "hydro_system_label":"Hydroponic System",
+                "dashboard": "Dashboard",
+                "devices": "Devices",
+                "actuators": "Actuators",
+                "sensors": "Sensors",
+                "batches": "Batches"
+            }
+        }
       },
     "btn":{
         "add_to_cart": "Add to cart",

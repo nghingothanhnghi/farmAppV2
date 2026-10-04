@@ -89,7 +89,7 @@ function App() {
           </Route>
 
 
-                    {/* ✅ NEW — Smart Home view, own layout root, outside dashboard/MainLayout */}
+          {/* ✅ NEW — Smart Home view, own layout root, outside dashboard/MainLayout */}
           <Route element={<SmartHomeLayout />}>
             <Route
               path="/smart-home"
@@ -245,7 +245,7 @@ function App() {
             <Route path="/hydro-devices/:id" element={<HydroponicDevicePage />} />
 
             <Route
-              path="/batches"
+              path="/dashboard/batches"
               element={
                 <PrivateRoute>
                   <PlantBatchPage />
@@ -254,7 +254,7 @@ function App() {
             />
 
             <Route
-              path="/batches/new"
+              path="/dashboard/batches/new"
               element={
                 <PrivateRoute>
                   <PlantBatchPage />
@@ -263,7 +263,7 @@ function App() {
             />
 
             <Route
-              path="/batches/:id"
+              path="/dashboard/batches/:id"
               element={
                 <PrivateRoute>
                   <PlantBatchPage />

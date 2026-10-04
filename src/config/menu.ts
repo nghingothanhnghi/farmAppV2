@@ -1,3 +1,4 @@
+// src/config/menu.ts
 import type { ComponentType } from 'react';
 
 import {
@@ -16,6 +17,7 @@ import {
   IconLayoutDashboard,
   IconArtboard,
   IconGitCherryPick,
+  IconCarrot,
 } from '@tabler/icons-react';
 
 export interface MenuItem {
@@ -56,24 +58,24 @@ export const menuItems: MenuItem[] = [
 
   {
     id: 'hydroponic-system',
-    label: 'Hydroponic System',
+    label: 'menu.portal.hydro_system.hydro_system_label',
     icon: IconPlant,
     children: [
       {
         id: 'hydro-dashboard',
-        label: 'Dashboard',
+        label: 'menu.portal.hydro_system.dashboard',
         icon: IconLayoutDashboard,
         to: '/hydroponic-system',
       },
       {
         id: 'hydro-devices',
-        label: 'Devices',
+        label: 'menu.portal.hydro_system.devices',
         icon: IconArtboard,
         to: '/hydro-devices',
       },
       {
         id: 'hydro-actuators',
-        label: 'Actuators',
+        label: 'menu.portal.hydro_system.actuators',
         icon: IconGitCherryPick,
         children: [
           {
@@ -95,7 +97,7 @@ export const menuItems: MenuItem[] = [
       },      
       {
         id: 'hydro-sensors',
-        label: 'Sensors',
+        label: 'menu.portal.hydro_system.sensors',
         icon: IconActivity,
         children: [
           {
@@ -110,6 +112,12 @@ export const menuItems: MenuItem[] = [
           },
         ],
       },
+      {
+        id: 'hydro-batches',
+        label: 'menu.portal.hydro_system.batches',
+        icon: IconCarrot,
+        to: '/dashboard/batches',
+      },      
     ],
   },
 

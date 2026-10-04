@@ -9,7 +9,17 @@
         "about": "Thủy sinh CNC",
         "contact": "Liên hệ",
         "features": "Điểm nổi bật",
-        "setup": "Cài đặt dễ dàng"
+        "setup": "Cài đặt dễ dàng",
+        "portal":{
+            "hydro_system": {
+                "hydro_system_label":"Hệ thống trồng trọt",
+                "dashboard": "Quản lý nông trại",
+                "devices": "Thiết bị",
+                "actuators": "Bộ chấp hành",
+                "sensors": "Cảm biến",
+                "batches": "Vụ trồng"
+            }
+        }
       },
     "btn":{
         "add_to_cart": "Thêm vào giỏ",

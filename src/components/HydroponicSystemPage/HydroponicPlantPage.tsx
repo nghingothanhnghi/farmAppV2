@@ -26,8 +26,8 @@ const PlantBatchPage: React.FC = () => {
     const { id } = useParams();
     const location = useLocation();
 
-    const isRoot = location.pathname === '/batches';
-    const isCreate = location.pathname === '/batches/new';
+    const isRoot = location.pathname === '/dashboard/batches';
+    const isCreate = location.pathname === '/dashboard/batches/new';
     const isEdit = Boolean(id);
 
     const {
@@ -109,9 +109,9 @@ const PlantBatchPage: React.FC = () => {
         const canLeave = await confirmLeave();
 
         if (canLeave) {
-            navigate('/batches');
+            navigate('/dashboard/batches');
         } else {
-            setPendingNavigation(() => () => navigate('/batches'));
+            setPendingNavigation(() => () => navigate('/dashboard/batches'));
         }
     };
 
@@ -145,13 +145,13 @@ const PlantBatchPage: React.FC = () => {
                 await updateBatch(Number(id), formData); // ✅ PUT
                 setAlert({ type: 'success', message: 'Cập nhật thành công ✏️' });
                 // ✅ stay on same page
-                navigate(`/batches`);
+                navigate(`/dashboard/batches`);
             } else {
                 const newBatch = await createBatch(formData); // ✅ MUST return data
                 setAlert({ type: 'success', message: 'Tạo vụ trồng thành công 🌱' });
 
                 // ✅ go to edit page instead of list
-                navigate(`/batches/${newBatch.id}`);
+                navigate(`/dashboard/batches/${newBatch.id}`);
             }
         } catch (err: any) {
             if (err.name === 'ValidationError') {
@@ -187,9 +187,9 @@ const PlantBatchPage: React.FC = () => {
                                 const canLeave = await confirmLeave();
 
                                 if (canLeave) {
-                                    navigate('/batches/new');
+                                    navigate('/dashboard/batches/new');
                                 } else {
-                                    setPendingNavigation(() => () => navigate('/batches/new'));
+                                    setPendingNavigation(() => () => navigate('/dashboard/batches/new'));
                                 }
                             }}
                         />
@@ -214,11 +214,11 @@ const PlantBatchPage: React.FC = () => {
                                 rounded='full'
                                 label="Close"
                                 className='bg-transparent'
-                                onClick={() => navigate('/batches/new')}
+                                onClick={() => navigate('/dashboard/batches/new')}
                             />
                         }
                     />
-                    <BatchList onSelect={(b) => navigate(`/batches/${b.id}`)} />
+                    <BatchList onSelect={(b) => navigate(`/dashboard/batches/${b.id}`)} />
                 </>
             )}
 
