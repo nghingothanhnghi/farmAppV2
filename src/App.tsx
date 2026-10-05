@@ -61,6 +61,10 @@ const CmsCategoryManagementPage = lazy(() => import("./components/CMS").then(m =
 const CmsTagManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsTagManagementPage })));
 const CmsMediaManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsMediaManagementPage })));
 
+const BilliardTablesPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardTablesPage })));
+const BilliardSessionPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardSessionPage })));
+const BilliardReportsPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardReportsPage })));
+
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
   return (
@@ -271,6 +275,11 @@ function App() {
               }
             />
             <Route path="/scheduler-health" element={<SchedulerPage />} />
+
+            <Route path="/billiard" element={<PrivateRoute><BilliardTablesPage /></PrivateRoute>} />
+            <Route path="/billiard/sessions/:sessionId" element={<PrivateRoute><BilliardSessionPage /></PrivateRoute>} />
+            <Route path="/billiard/reports" element={<PrivateRoute><BilliardReportsPage /></PrivateRoute>} />
+
           </Route>
 
           {/* Catch-all fallback */}

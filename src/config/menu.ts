@@ -18,6 +18,7 @@ import {
   IconArtboard,
   IconGitCherryPick,
   IconCarrot,
+  IconTable,
 } from '@tabler/icons-react';
 
 export interface MenuItem {
@@ -141,7 +142,11 @@ export const menuItems: MenuItem[] = [
     icon: IconArticle,
     to: '/dashboard/cms',
   },
-
+  { id: 'billiard', 
+    label: 'Billiard', 
+    icon: IconTable, 
+    to: '/billiard' 
+  },
   {
     id: 'users',
     label: 'Users',
