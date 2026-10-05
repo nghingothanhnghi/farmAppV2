@@ -181,10 +181,10 @@ const PaymentManagementPage: React.FC = () => {
                             variant="secondary"
                             size="xs"
                             items={[
-                                { label: "Pending", value: "pending" as PaymentStatus },
-                                { label: "Completed", value: "completed" as PaymentStatus },
-                                { label: "Failed", value: "failed" as PaymentStatus },
-                                { label: "Refunded", value: "refunded" as PaymentStatus },
+                                { label: "Pending", value: "pending" as PaymentStatus, disabled: data.status === "pending", },
+                                { label: "Completed", value: "completed" as PaymentStatus, disabled: data.status === "completed" },
+                                { label: "Failed", value: "failed" as PaymentStatus, disabled: data.status === "failed" },
+                                { label: "Refunded", value: "refunded" as PaymentStatus, disabled: data.status === "refunded" },
                             ]}
                             onSelect={(item) => handleStatusChange(data.id, item.value as PaymentStatus)}
 

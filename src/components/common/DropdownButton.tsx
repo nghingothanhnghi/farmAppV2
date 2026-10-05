@@ -6,6 +6,7 @@ interface DropdownItem {
     label: React.ReactNode;
     value: string;
     icon?: React.ReactNode;
+    disabled?: boolean;
 }
 
 type DropdownDirection =
@@ -78,6 +79,8 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     };
 
     const handleSelect = (item: DropdownItem) => {
+        if (item.disabled) return;
+
         onSelect(item);
         setIsOpen(false);
         setFocusedIndex(-1);
@@ -95,24 +98,71 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
         }
     };
 
+    const findNextEnabledIndex = (
+        startIndex: number,
+        direction: 1 | -1
+    ) => {
+        if (!items.length) return -1;
+
+        let index = startIndex;
+
+        for (let i = 0; i < items.length; i++) {
+            index = (index + direction + items.length) % items.length;
+
+            if (!items[index].disabled) {
+                return index;
+            }
+        }
+
+        return -1;
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         if (!isOpen) return;
 
         if (e.key === 'ArrowDown') {
             e.preventDefault();
-            setFocusedIndex((prev) => (prev + 1) % items.length);
+
+            setFocusedIndex((prev) =>
+                findNextEnabledIndex(prev, 1)
+            );
         } else if (e.key === 'ArrowUp') {
             e.preventDefault();
-            setFocusedIndex((prev) => (prev - 1 + items.length) % items.length);
+
+            setFocusedIndex((prev) =>
+                findNextEnabledIndex(prev, -1)
+            );
         } else if (e.key === 'Enter' && focusedIndex >= 0) {
             e.preventDefault();
-            handleSelect(items[focusedIndex]);
+
+            if (!items[focusedIndex].disabled) {
+                handleSelect(items[focusedIndex]);
+            }
         } else if (e.key === 'Escape') {
             e.preventDefault();
             setIsOpen(false);
             setFocusedIndex(-1);
         }
     };
+
+    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    //     if (!isOpen) return;
+
+    //     if (e.key === 'ArrowDown') {
+    //         e.preventDefault();
+    //         setFocusedIndex((prev) => (prev + 1) % items.length);
+    //     } else if (e.key === 'ArrowUp') {
+    //         e.preventDefault();
+    //         setFocusedIndex((prev) => (prev - 1 + items.length) % items.length);
+    //     } else if (e.key === 'Enter' && focusedIndex >= 0) {
+    //         e.preventDefault();
+    //         handleSelect(items[focusedIndex]);
+    //     } else if (e.key === 'Escape') {
+    //         e.preventDefault();
+    //         setIsOpen(false);
+    //         setFocusedIndex(-1);
+    //     }
+    // };
 
     // Auto-position logic
     useEffect(() => {
@@ -250,12 +300,25 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
                         }}
                     >
                         {items.map((item, index) => (
+                            // <li
+                            //     key={index}
+                            //     className={`flex items-center px-4 py-2 cursor-pointer text-sm dark:hover:bg-gray-900 ${index === focusedIndex ? '' : ''
+                            //         }`}
+                            //     onClick={() => handleSelect(item)}
+                            //     onMouseEnter={() => setFocusedIndex(index)}
+                            // >
                             <li
                                 key={index}
-                                className={`flex items-center px-4 py-2 cursor-pointer text-sm dark:hover:bg-gray-900 ${index === focusedIndex ? '' : ''
+                                className={`flex items-center px-4 py-2 text-sm ${item.disabled
+                                        ? 'opacity-50 cursor-not-allowed'
+                                        : 'cursor-pointer dark:hover:bg-gray-900'
                                     }`}
                                 onClick={() => handleSelect(item)}
-                                onMouseEnter={() => setFocusedIndex(index)}
+                                onMouseEnter={() => {
+                                    if (!item.disabled) {
+                                        setFocusedIndex(index);
+                                    }
+                                }}
                             >
                                 {item.icon && <span className="flex-shrink-0 pr-3">{item.icon}</span>}
                                 {item.label}

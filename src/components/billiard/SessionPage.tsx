@@ -1,7 +1,7 @@
 // src/components/billiard/SessionPage.tsx
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { IconAlertCircle, IconArrowLeft, IconPlus } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowLeft, IconPlus, IconPrinter } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -14,6 +14,7 @@ import StartStopButtons from './components/StartStopButtons';
 import AddItemModal from './components/AddItemModal';
 import BillView from './components/BillView';
 import PayModal from './components/PayModal';
+import ReceiptPreviewModal from './components/ReceiptPreviewModal';
 import { formatElapsed, getBillState, parseUtc } from '../../utils/billiard';
 
 const SessionPage: React.FC = () => {
@@ -31,6 +32,7 @@ const SessionPage: React.FC = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [confirmStopOpen, setConfirmStopOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
+  const [printOpen, setPrintOpen] = useState(false);
 
   const backButton = (
     <Button
@@ -111,21 +113,28 @@ const SessionPage: React.FC = () => {
         overrides={
           state === 'active' && live
             ? {
-                table_fee: live.current_table_fee,
-                product_fee: live.current_product_fee,
-                grand_total: live.current_total,
-              }
+              table_fee: live.current_table_fee,
+              product_fee: live.current_product_fee,
+              grand_total: live.current_total,
+            }
             : undefined
         }
       />
-
+      {/*  "stopped" = awaiting payment → print the bill for the customer to acknowledge */}
       {state === 'stopped' && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button label="Print bill" variant="secondary" rounded="lg"
+            icon={<IconPrinter size={16} />} iconPosition="left"
+            onClick={() => setPrintOpen(true)} />
           <Button label="Pay" rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
         </div>
       )}
+      {/* "paid" → print the receipt */}
       {state === 'paid' && (
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
+          <Button label="Print receipt" variant="secondary" rounded="lg"
+            icon={<IconPrinter size={16} />} iconPosition="left"
+            onClick={() => setPrintOpen(true)} />
           <Button label="Back to tables" variant="secondary" rounded="lg" onClick={() => navigate('/billiard')} />
         </div>
       )}
@@ -173,8 +182,15 @@ const SessionPage: React.FC = () => {
         onPay={actions.pay}
         onConfirm={actions.confirmPay}
         onSettled={() => setAlert({ type: 'success', message: 'Payment recorded.' })}
-        // StripeCheckout={YourExistingStripeComponent}  // see notes
+      // StripeCheckout={YourExistingStripeComponent}  // see notes
       />
+
+      <ReceiptPreviewModal
+        isOpen={printOpen}
+        onClose={() => setPrintOpen(false)}
+        bill={bill}
+      />
+
     </div>
   );
 };
