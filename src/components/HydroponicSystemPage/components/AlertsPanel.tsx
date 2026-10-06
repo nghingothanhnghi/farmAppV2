@@ -1,7 +1,10 @@
 // src/components/HydroponicSystemPage/components/AlertsPanel.tsx
 import React from 'react';
+import { IconMoodEmpty } from '@tabler/icons-react';
 import type { SystemAlert } from '../../../models/interfaces/HydroSystem';
 import Button from '../../common/Button';
+import EmptyState from '../../common/EmptyState';
+import { useTranslation } from 'react-i18next';
 
 interface AlertsPanelProps {
   alerts: SystemAlert[];
@@ -12,6 +15,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
   alerts,
   onResolveAlert
 }) => {
+  const { t } = useTranslation();
   const activeAlerts = alerts.filter(alert => !alert.resolved);
 
   const getAlertIcon = (type: SystemAlert['type']) => {
@@ -43,7 +47,7 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">System Alerts</h2>
+        <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100">{t('hydro_system.cards.systemAlerts.label')}</h2>
         <div className="flex items-center space-x-2">
           <span className={`px-2 py-1 rounded-full text-xs font-medium ${activeAlerts.length > 0
             ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
@@ -56,11 +60,10 @@ const AlertsPanel: React.FC<AlertsPanelProps> = ({
 
       <div className="space-y-3 max-h-64 overflow-y-auto">
         {activeAlerts.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            <div className="text-4xl mb-2">✅</div>
-            <p>No active alerts</p>
-            <p className="text-sm">System is running normally</p>
-          </div>
+          <EmptyState
+            icon={<IconMoodEmpty size={48} />}
+            message={t('hydro_system.cards.systemAlerts.noData')}
+          />
         ) : (
           activeAlerts.map((alert) => (
             <div

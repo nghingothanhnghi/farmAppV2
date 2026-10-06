@@ -66,7 +66,11 @@
         "create_stage_automation": "Create Stage & Automation",
         "update_stage_automation": "Edit Stage & Automation",
         "finish": "Complete",
-        "yes_delete": "Yes, Delete"
+        "yes_delete": "Yes, Delete",
+        "start": "Start",
+        "stop": "Stop",
+        "pause": "Pause",
+        "restart": "Restart"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -429,6 +433,59 @@
             "hardwareDetection": "Hardware Detection",
             "aiVision": "AI Vision",
             "thresholdSetting": "Threshold Setting"
+        },
+        "cards": {
+            "temperature": {
+                "label": "Temperature",
+                "unit": "°C"
+            },
+            "humidity": {
+                "label": "Humidity",
+                "unit": "%"
+            },
+            "waterLevel": {
+                "label": "Water Level",
+                "unit": "%"
+            },
+            "ec": {
+                "label": "EC",
+                "unit": "mS/cm"
+            },
+            "ph": {
+                "label": "pH",
+                "unit": ""
+            },
+            "light": {
+                "label": "Light",
+                "unit": "lux"
+            },
+            "co2": {
+                "label": "CO2",
+                "unit": "ppm"
+            },
+            "moisture": {
+                "label": "Soil Moisture",
+                "unit": "%"
+            },
+            "rain": {
+                "label": "Rain",
+                "unit": "mm"
+            },
+            "activityLog": {
+                "label": "Activity Log",
+                "description": "Recent actions and events",
+                "noData": "No recent activities"
+            },
+            "systemAlerts": {
+                "label": "System Alerts",
+                "description": "Recent alerts and notifications",
+                "noData": "No recent alerts"
+            },
+            "systemScheduler": {
+                "label": "System Scheduler",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No scheduled tasks"
+            }
         },
         "stages":{
             "stages_title": "Stages",

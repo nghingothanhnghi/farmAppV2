@@ -289,8 +289,8 @@ const HydroponicSystemPage: React.FC = () => {
                 onStop={() => { if (currentDevice?.device_id) actions.stopSystemScheduler(currentDevice.device_id); }}
                 onRestart={() => { if (currentDevice?.device_id) actions.restartSystemScheduler(currentDevice.device_id); }}
                 loading={loading}
-                title="System Scheduler"
-                summary="Start/stop/restart the automation scheduler for this device"
+                title={t("hydro_system.cards.systemScheduler.label")}
+                summary={t("hydro_system.cards.systemScheduler.description")}
               />
             </div>
           </div>
@@ -298,72 +298,72 @@ const HydroponicSystemPage: React.FC = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1fr_1fr_1fr_350px] auto-rows-fr gap-6">
             <StatusCard
               className='row-span-2'
-              title="Water Level"
+              title={t("hydro_system.cards.waterLevel.label")}
               value={currentDevice?.sensors?.water_level?.toFixed(1) || '--'}
-              unit="%"
+              unit={t("hydro_system.cards.waterLevel.unit")}
               status={getWaterLevelStatus()}
               icon="🚰">
               <WaterLevelBucket level={currentDevice?.sensors?.water_level || 0} />
             </StatusCard>
 
             <StatusCard
-              title="Temperature"
+              title={t("hydro_system.cards.temperature.label")}
               value={currentDevice?.sensors?.temperature?.toFixed(1) || '--'}
-              unit="°C"
+              unit={t("hydro_system.cards.temperature.unit")}
               status={getTemperatureStatus()}
               icon="🌡️"
             />
             <StatusCard
-              title="Humidity"
+              title={t("hydro_system.cards.humidity.label")}
               value={currentDevice?.sensors?.humidity?.toFixed(1) || '--'}
-              unit="%"
+              unit={t("hydro_system.cards.humidity.unit")}
               status="normal"
               icon="💧"
             />
             {/* Activity Log, Right side, tall block */}
             <ActivityLog className='row-span-3' actions={controlActions} />
             <StatusCard
-              title="Moisture"
+              title={t("hydro_system.cards.moisture.label")}
               value={currentDevice?.sensors?.moisture?.toFixed(1) || '--'}
-              unit="%"
+              unit={t("hydro_system.cards.moisture.unit")}
               status={getMoistureStatus()}
               icon="🌱"
             />
             <StatusCard
-              title="Light"
+              title={t("hydro_system.cards.light.label")}
               value={currentDevice?.sensors?.light?.toFixed(0) || '--'}
-              unit="lux"
+              unit={t("hydro_system.cards.light.unit")}
               status={getLightStatus()}
               icon="☀️"
             />
 
             <StatusCard
-              title="EC"
+              title={t("hydro_system.cards.ec.label")}
               value={
                 currentDevice?.sensors?.ec != null
                   ? currentDevice.sensors.ec.toFixed(2)
                   : '--'
               }
-              unit="mS/cm"
+              unit={t("hydro_system.cards.ec.unit")}
               status={getEcStatus()}
               icon="🧪"
             />
 
             <StatusCard
-              title="PPM"
+              title={t("hydro_system.cards.ph.label")}
               value={
                 currentDevice?.sensors?.ppm != null
                   ? currentDevice.sensors.ppm.toFixed(0)
                   : '--'
               }
-              unit="ppm"
+              unit={t("hydro_system.cards.ph.unit")}
               status={getPpmStatus()}
               icon="🧬"
             />
             <StatusCard
-              title="Rain"
+              title={t("hydro_system.cards.rain.label")}
               value={currentDevice?.sensors?.rain_intensity?.toFixed(1) ?? '0.0'}
-              unit="mm"
+              unit={t("hydro_system.cards.rain.unit")}
               status={getRainStatus()}
               icon={currentDevice?.sensors?.rain_detected ? '🌧️' : '☀️'}
             />

@@ -65,8 +65,12 @@
         "growing_recipes": "Thiết lập lịch chăm sóc",
         "create_stage_automation": "Tạo giai đoạn & Thiết lập tự động",
         "update_stage_automation": "Chỉnh sửa giai đoạn & tự động hóa",
-         "finish": "Hoàn thành",
-         "yes_delete": "Ok, Xóa"
+        "finish": "Hoàn thành",
+        "yes_delete": "Ok, Xóa",
+        "start": "Bắt đầu",
+        "stop": "Dừng",
+        "pause": "Tạm dừng",
+        "restart": "Khởi động lại"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -430,6 +434,59 @@
             "aiVision": "Nhận diện AI",
             "thresholdSetting": "Thiết lập ngưỡng"
         },
+        "cards": {
+            "temperature": {
+                "label": "Nhiệt độ",
+                "unit": "°C"
+            },
+            "humidity": {
+                "label": "Độ ẩm không khí",
+                "unit": "%"
+            },
+            "waterLevel": {
+                "label": "Mực nước",
+                "unit": "%"
+            },
+            "ec": {
+                "label": "EC",
+                "unit": "mS/cm"
+            },
+            "ph": {
+                "label": "pH",
+                "unit": ""
+            },
+            "light": {
+                "label": "Ánh sáng",
+                "unit": "lux"
+            },
+            "co2": {
+                "label": "CO2",
+                "unit": "ppm"
+            },
+            "moisture": {
+                "label": "Độ ẩm đất",
+                "unit": "%"
+            },
+            "rain": {
+                "label": "Mưa",
+                "unit": "mm"
+            },
+            "activityLog": {
+                "label": "Nhật ký hoạt động",
+                "description": "Recent actions and events",
+                "noData": "Chưa có hoạt động gần đây"
+            },
+            "systemAlerts": {
+                "label": "Cảnh báo hệ thống",
+                "description": "Recent alerts and notifications",
+                "noData": "Chưa có cảnh báo gần đây"
+            },
+            "systemScheduler": {
+                "label": "Lịch trình hệ thống",
+                "description": "Lịch hoạt động & tự động hóa",
+                "noData": "Chưa có nhiệm vụ được lên lịch"
+            }            
+        },        
         "stages":{
             "stages_title": "giai đoạn phát triển",
             "stage_title": "Giai đoạn"

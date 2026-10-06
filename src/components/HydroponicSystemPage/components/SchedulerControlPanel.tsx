@@ -3,6 +3,7 @@ import { IconCalendarTime, IconPlayerStop, IconPlayerPlay, IconRefresh } from '@
 import ButtonGroup from '../../common/ButtonGroup';
 import Button from '../../common/Button';
 import { playSound } from '../../../utils/sound';
+import { useTranslation } from 'react-i18next';
 interface SchedulerControlPanelProps {
   schedulerState: boolean | undefined | null;
   onStart: () => void;
@@ -23,6 +24,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
   title = 'System Automation',
   summary = 'Automated control based on sensor readings and thresholds',
 }) => {
+  const { t } = useTranslation();
   const handleStart = () => {
     playSound('success');
     onStart();
@@ -68,7 +70,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
         <div className="w-[180px] flex items-center justify-end space-x-2">
           <ButtonGroup>
             <Button
-              label="Start"
+              label={t("btn.start")}
               icon={<IconPlayerPlay size={14} />}
               iconOnly
               variant="secondary"
@@ -78,7 +80,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
               size='xs'
             />
             <Button
-              label="Stop"
+              label={t("btn.stop")}
               icon={<IconPlayerStop size={14} />}
               iconOnly
               variant="secondary"
@@ -88,7 +90,7 @@ const SchedulerControlPanel: React.FC<SchedulerControlPanelProps> = ({
               size='xs'
             />
             <Button
-              label="Restart"
+              label={t("btn.restart")}
               icon={<IconRefresh size={14} />}
               iconOnly
               variant="secondary"

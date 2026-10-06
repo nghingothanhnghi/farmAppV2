@@ -49,7 +49,7 @@ const StatusCard: React.FC<StatusCardProps> = ({
   return (
     <div className={`p-4 rounded-lg border-2 ${getStatusColor()} transition-all duration-200 hover:shadow-md h-full flex flex-col ${className}`}>
       <div className="flex items-center justify-between mb-2">
-        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200">{title}</h3>
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{title}</h3>
         {icon && <div className="text-gray-600 dark:text-gray-300">{icon}</div>}
       </div>
       <div className="flex items-end justify-between">

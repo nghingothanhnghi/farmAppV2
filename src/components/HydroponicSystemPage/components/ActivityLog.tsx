@@ -3,6 +3,7 @@ import React from 'react';
 import type { ControlAction } from '../../../models/interfaces/HydroSystem';
 import { IconMoodEmpty } from '@tabler/icons-react';
 import EmptyState from '../../common/EmptyState';
+import { useTranslation } from 'react-i18next';
 
 interface ActivityLogProps {
   actions: ControlAction[];
@@ -10,6 +11,7 @@ interface ActivityLogProps {
 }
 
 const ActivityLog: React.FC<ActivityLogProps> = ({ actions, className }) => {
+  const { t } = useTranslation();
   const getActionIcon = (action: string, success: boolean) => {
     if (!success) return '❌';
 
@@ -25,13 +27,13 @@ const ActivityLog: React.FC<ActivityLogProps> = ({ actions, className }) => {
     <div
       className={`bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-6 ${className}`}
     >
-      <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-4">Activity Log</h2>
+      <h2 className="text-base font-semibold text-gray-800 dark:text-gray-100 mb-4">{t('hydro_system.cards.activityLog.label')}</h2>
 
       <div className="space-y-3 max-h-80 overflow-y-auto">
         {actions.length === 0 ? (
           <EmptyState
             icon={<IconMoodEmpty size={48} />}
-            message="No recent activity"
+            message={t('hydro_system.cards.activityLog.noData')}
           />
         ) : (
           actions.map((action, index) => (
