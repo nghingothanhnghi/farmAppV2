@@ -8,7 +8,7 @@ export interface DataGridProps {
     pagination?: boolean;
     paginationPageSize?: number;
     onRowClicked?: (event: any) => void;
-    height?: string;
+    height?: string | "auto";
     theme?: string;
     lottieSrc?: string; // ✅ New: Lottie animation URL (optional)
     image?: string; // ✅ New: Image URL (optional)

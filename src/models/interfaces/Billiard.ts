@@ -54,11 +54,14 @@ export interface BillResponse {
   duration_minutes?: number;
   table_fee: string;
   product_fee?: string;
+  total_table_fee?: string; // response
+  total_product_fee?: string; // response
   items: BillItem[];
   grand_total: string;
   currency: string;
   payment_status?: string; // "paid" once settled
   payment_method?: PaymentMethod | null;
+  
 }
 
 export interface PayResponse extends BillResponse {

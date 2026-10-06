@@ -5,6 +5,7 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { AG_GRID_LOCALE_VN } from './locale/vi-VN';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../../hooks/useTheme';
+import { useRemainingHeight } from '../../../hooks/useRemainingHeight';
 
 // Register all Community features
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -23,6 +24,11 @@ const DataGrid: React.FC<DataGridProps> = ({
   lottieSrc, // Lottie animation URL
   image, // Fallback image URL
 }) => {
+
+const isAutoHeight = height === 'auto';
+
+const { ref: gridContainerRef, height: calculatedHeight } =
+  useRemainingHeight(0, 200);
 
   const gridApiRef = useRef<any>(null); // Store Grid API reference
   const { t, i18n } = useTranslation();
@@ -76,7 +82,15 @@ const DataGrid: React.FC<DataGridProps> = ({
 
 
   return (
-    <div className={`${appliedTheme} w-full`} style={{ height }}>
+    <div 
+    // className={`${appliedTheme} w-full`} 
+    // style={{ height }}
+        ref={isAutoHeight ? gridContainerRef : undefined}
+    className={`${appliedTheme} w-full`}
+    style={{
+      height: isAutoHeight ? calculatedHeight : height,
+    }}
+    >
       <AgGridReact
         key={appliedTheme}           // 🔥 FORCE remount grid when theme changes
         onGridReady={(params) => {

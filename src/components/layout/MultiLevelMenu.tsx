@@ -104,7 +104,7 @@ export default function MultiLevelMenu({
                                         iconPosition="left"
                                         size="sm"
                                         rounded="sm"
-                                        className="flex-1 justify-start pl-4 w-full"
+                                        className="flex-1 justify-start pl-[16px] w-full text-gray-800 dark:text-zinc-300"
                                     />
                                 )}
 

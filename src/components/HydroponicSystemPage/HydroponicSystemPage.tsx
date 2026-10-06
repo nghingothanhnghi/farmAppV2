@@ -474,7 +474,7 @@ const HydroponicSystemPage: React.FC = () => {
                   <IconArtboard size={18} />
                   <span>
                     {currentDevice
-                      ? `Device: ${currentDevice.device_name || `ID ${currentDevice.device_id}`}`
+                      ? `${currentDevice.device_name || `ID ${currentDevice.device_id}`}`
                       : 'Select Device'}
                   </span>
                 </div>

@@ -246,7 +246,7 @@ const PaymentManagementPage: React.FC = () => {
                     columnDefs={columnDefs}
                     pagination
                     paginationPageSize={10}
-                    height="100%"
+                    height="auto"
                 />
             </div>
             <Modal

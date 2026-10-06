@@ -330,7 +330,6 @@ const UserManagementPage: React.FC = () => {
         columnDefs={columnDefs}
         pagination
         paginationPageSize={10}
-        height="500px"
       />
       <Modal
         showCloseButton={false}
