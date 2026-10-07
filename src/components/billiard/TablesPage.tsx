@@ -18,6 +18,7 @@ const GROUPS: { status: TableStatus; label: string }[] = [
   { status: 'available', label: 'Available' },
   { status: 'playing', label: 'Playing' },
   { status: 'reserved', label: 'Reserved' },
+  { status: 'maintenance', label: 'Maintenance' },
 ];
 
 const TablesPage: React.FC = () => {
@@ -25,13 +26,14 @@ const TablesPage: React.FC = () => {
   const canManage = useHasAnyRole(['admin', 'super_admin', 'manager']);
 
   const { tables, loading, error, startingId, creating, actions } = useTables();
-  const { byTableId, error: liveError } = useActiveTables(30000); // poll every 30s
+  const { byTableId, error: liveError, refetch: refetchLive } = useActiveTables(30000);
   const now = useNow(1000); // local 1s tick for elapsed timers
   const [formOpen, setFormOpen] = useState(false);
 
   const handleStart = async (table: BilliardTable) => {
     const session = await actions.startTable(table.id);
     if (session) navigate(`/billiard/sessions/${session.session_id}`);
+    else refetchLive(); // 409 → live data is stale too (tables are refetched in the hook)
   };
 
   const knownStatuses = GROUPS.map((g) => g.status as string);

@@ -20,6 +20,7 @@ const STATUS_VARIANT = {
   available: 'success',
   playing: 'warning',
   reserved: 'secondary',
+  maintenance: 'danger',
 } as const;
 
 const Row: React.FC<{ label: string; value: string; bold?: boolean }> = ({ label, value, bold }) => (
@@ -90,6 +91,9 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
         )}
         {table.status === 'reserved' && (
           <p className="text-xs text-gray-400 text-center">Reserved</p>
+        )}
+        {table.status === 'maintenance' && (
+          <p className="text-xs text-gray-400 text-center">Under maintenance</p>
         )}
       </div>
     </div>

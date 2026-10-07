@@ -1,7 +1,7 @@
 // src/models/interfaces/Billiard.ts
 // Response shapes inferred from the API spec. Money = decimal STRINGS (no float math).
 
-export type TableStatus = 'available' | 'playing' | 'reserved';
+export type TableStatus = 'available' | 'playing' | 'reserved' | 'maintenance';
 export type PaymentMethod = 'cash' | 'bank_transfer' | 'stripe';
 
 export interface BilliardTable {
@@ -37,12 +37,14 @@ export interface SessionStart {
 
 export interface BillItem {
   id?: number;
-  product_id?: number;
+  product_id?: number | null; // null once the product is deleted; row is a snapshot
+  variant_id?: number | null;
   product_name: string;
   variant_name?: string | null;
   quantity: number;
   unit_price: string;
-  line_total: string;
+//   line_total: string;
+  total_price: string;
 }
 
 export interface BillResponse {
@@ -52,15 +54,20 @@ export interface BillResponse {
   start_time: string;
   end_time?: string | null; // null/absent => still running
   duration_minutes?: number;
-  table_fee: string;
-  product_fee?: string;
-  total_table_fee?: string; // response
-  total_product_fee?: string; // response
+  hourly_rate?: string;
+  billing_policy?: string;
+  total_table_fee: string;
+  total_product_fee: string;
   items: BillItem[];
   grand_total: string;
   currency: string;
-  payment_status?: string; // "paid" once settled
+  payment_state?: string; // "unpaid" | "paid" | ...
   payment_method?: PaymentMethod | null;
+  payment_reference?: string | null;
+  paid_at?: string | null;
+  opened_by?: string | null;
+  stopped_by?: string | null;
+  paid_by?: string | null;
   
 }
 

@@ -5,12 +5,13 @@ import Modal from '../../common/Modal';
 import Button from '../../common/Button';
 import { FormGroup, FormInput, FormLabel } from '../../common/Form';
 import type { TableCreate } from '../../../models/interfaces/Billiard';
+import type { CreateTableError } from '../../../hooks/useTables';
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
   loading: boolean;
-  onSubmit: (data: TableCreate) => Promise<boolean>;
+  onSubmit: (data: TableCreate) => Promise<true | CreateTableError>;
 }
 
 const schema = Yup.object({
@@ -48,8 +49,9 @@ const TableFormModal: React.FC<Props> = ({ isOpen, onClose, loading, onSubmit })
     }
     setErrors({});
     // hourly_rate stays a string - no float conversion
-    const ok = await onSubmit({ name: name.trim(), hourly_rate: rate.trim() });
-    if (ok) onClose();
+    const res = await onSubmit({ name: name.trim(), hourly_rate: rate.trim() });
+    if (res === true) onClose();
+    else if (res.status === 409) setErrors({ name: res.message });
   };
 
   return (

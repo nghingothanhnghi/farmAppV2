@@ -5,6 +5,8 @@ import { useAlert } from '../contexts/alertContext';
 import { billiardErrorMessage, getStatus } from '../utils/billiard';
 import type { BilliardTable, SessionStart, TableCreate } from '../models/interfaces/Billiard';
 
+export type CreateTableError = { status?: number; message: string };
+
 export function useTables() {
   const { setAlert } = useAlert();
   const [tables, setTables] = useState<BilliardTable[]>([]);
@@ -29,8 +31,8 @@ export function useTables() {
     fetchTables();
   }, [fetchTables]);
 
-  const createTable = async (data: TableCreate): Promise<boolean> => {
-    if (guard.current) return false;
+  const createTable = async (data: TableCreate): Promise<true | CreateTableError> => {
+    if (guard.current) return { message: '' };
     guard.current = true;
     setCreating(true);
     try {
@@ -39,8 +41,11 @@ export function useTables() {
       await fetchTables();
       return true;
     } catch (err) {
-      setAlert({ type: 'error', message: billiardErrorMessage(err, 'Failed to create table') });
-      return false;
+      const message = billiardErrorMessage(err, 'Failed to create table');
+      const status = getStatus(err);
+      if (status === 409) fetchTables(); // duplicate name: show the existing table
+      else setAlert({ type: 'error', message }); // 409 is shown on the field instead
+      return { status, message };
     } finally {
       guard.current = false;
       setCreating(false);

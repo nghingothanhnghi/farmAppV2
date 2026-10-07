@@ -12,14 +12,14 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
   const c = bill.currency;
   const state = getBillState(bill);
   const title = state === 'paid' ? 'RECEIPT' : 'BILL — NOT PAID';
-  const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
+//   const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
 
   const rows = bill.items
     .map(
       (it) => `
       <tr><td colspan="2">${esc(it.product_name)}${it.variant_name ? ` (${esc(it.variant_name)})` : ''}</td></tr>
       <tr class="sub"><td>${it.quantity} × ${esc(formatMoneyString(it.unit_price, c))}</td>
-          <td class="r">${esc(formatMoneyString(it.line_total, c))}</td></tr>`
+          <td class="r">${esc(formatMoneyString(it.total_price, c))}</td></tr>`
     )
     .join('');
 
@@ -47,12 +47,12 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
   </div>
   <hr>
   <table>
-    <tr><td>Table fee</td><td class="r">${esc(formatMoneyString(bill.table_fee, c))}</td></tr>
+    <tr><td>Table fee</td><td class="r">${esc(formatMoneyString(bill.total_table_fee, c))}</td></tr>
     ${rows}
   </table>
   <hr>
   <table>
-    <tr><td>Products</td><td class="r">${esc(formatMoneyString(productFee, c))}</td></tr>
+    <tr><td>Products</td><td class="r">${esc(formatMoneyString(bill.total_product_fee, c))}</td></tr>
     <tr class="total"><td>TOTAL</td><td class="r">${esc(formatMoneyString(bill.grand_total, c))}</td></tr>
     ${state === 'paid' && bill.payment_method
       ? `<tr><td>Paid by</td><td class="r">${esc(bill.payment_method.replace('_', ' '))}</td></tr>` : ''}

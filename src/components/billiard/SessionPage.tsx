@@ -113,8 +113,8 @@ const SessionPage: React.FC = () => {
         overrides={
           state === 'active' && live
             ? {
-              table_fee: live.current_table_fee,
-              product_fee: live.current_product_fee,
+              total_table_fee: live.current_table_fee,
+              total_product_fee: live.current_product_fee,
               grand_total: live.current_total,
             }
             : undefined

@@ -1,13 +1,13 @@
 // src/components/billiard/components/BillView.tsx
 import React from 'react';
 import Badge from '../../common/Badge';
-import { addDecimalStrings, formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
+import { formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 
 interface Props {
   bill: BillResponse;
   /** Live figures to show instead of the bill's while the session is running. */
-  overrides?: Partial<Pick<BillResponse, 'table_fee' | 'product_fee' | 'grand_total'>>;
+  overrides?: Partial<Pick<BillResponse, 'total_table_fee' | 'total_product_fee' | 'grand_total'>>;
 }
 
 const Line: React.FC<{ label: string; value: string; bold?: boolean }> = ({ label, value, bold }) => (
@@ -23,7 +23,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
   const b = { ...bill, ...overrides };
   const c = b.currency;
   const state = getBillState(bill);
-  const productFee = b.product_fee ?? addDecimalStrings(b.items.map((i) => i.line_total));
+  // const productFee = b.product_fee ?? addDecimalStrings(b.items.map((i) => i.line_total));
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
@@ -62,7 +62,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
                     {it.quantity} × {formatMoneyString(it.unit_price, c)}
                   </p>
                 </div>
-                <span className="shrink-0 text-gray-800 dark:text-gray-100">{formatMoneyString(it.line_total, c)}</span>
+                <span className="shrink-0 text-gray-800 dark:text-gray-100">{formatMoneyString(it.total_price, c)}</span>
               </li>
             ))}
           </ul>
@@ -70,8 +70,8 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       </div>
 
       <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-        <Line label="Table fee" value={formatMoneyString(b.table_fee, c)} />
-        <Line label="Products" value={formatMoneyString(productFee, c)} />
+        <Line label="Table fee" value={formatMoneyString(b.total_table_fee, c)} />
+        <Line label="Products" value={formatMoneyString(b.total_product_fee, c)} />
         <Line label="Total" value={formatMoneyString(b.grand_total, c)} bold />
         {bill.payment_method && state === 'paid' && (
           <Line label="Paid by" value={bill.payment_method.replace('_', ' ')} />
