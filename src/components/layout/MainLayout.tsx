@@ -1,14 +1,26 @@
 /* components/layout/MainLayout.tsx*/
-import React from 'react';
-import { Outlet } from "react-router";
+import React, { useEffect } from 'react';
+import { Outlet, useLocation } from "react-router";
 import SideMenu from './SideMenu';
 import MobileTopBar from './MobileTopBar';
 import DesktopSidebarToggleButton from './DesktopSidebarToggleButton';
 import { useSidebar } from '../../hooks/useSidebar';
 
+const CLOSE_SIDEBAR_ROUTES = [
+  '/billiard',
+];
 
 const MainLayout: React.FC = () => {
   const { menuOpen, setMenuOpen, handleMenuClose } = useSidebar();
+
+  const location = useLocation();
+  const closeSidebar = CLOSE_SIDEBAR_ROUTES.includes(location.pathname);
+
+  useEffect(() => {
+    if (closeSidebar) {
+      setMenuOpen(false);
+    }
+  }, [closeSidebar, setMenuOpen]);
 
   return (
     <div className="min-h-screen bg-mesh">
