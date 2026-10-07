@@ -40,10 +40,8 @@ export interface BillItem {
   product_id?: number | null; // null once the product is deleted; row is a snapshot
   variant_id?: number | null;
   product_name: string;
-  variant_name?: string | null;
   quantity: number;
   unit_price: string;
-//   line_total: string;
   total_price: string;
 }
 

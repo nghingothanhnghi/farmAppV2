@@ -65,7 +65,6 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
                 <div className="min-w-0">
                   <p className="text-gray-800 dark:text-gray-100 truncate">
                     {it.product_name}
-                    {it.variant_name ? ` (${it.variant_name})` : ''}
                   </p>
                   <p className="text-[10px] text-gray-500 dark:text-gray-400">
                     {it.quantity} × {formatMoneyString(it.unit_price, c)}

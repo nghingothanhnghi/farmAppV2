@@ -1,6 +1,6 @@
 // src/utils/receipt.ts
 import {
-  addDecimalStrings, formatDateTime, formatDuration, formatMoneyString, getBillState,
+  formatDateTime, formatDuration, formatMoneyString, getBillState,
 } from './billiard';
 import type { BillResponse } from '../models/interfaces/Billiard';
 
@@ -17,7 +17,7 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
   const rows = bill.items
     .map(
       (it) => `
-      <tr><td colspan="2">${esc(it.product_name)}${it.variant_name ? ` (${esc(it.variant_name)})` : ''}</td></tr>
+      <tr><td colspan="2">${esc(it.product_name)}: ''}</td></tr>
       <tr class="sub"><td>${it.quantity} × ${esc(formatMoneyString(it.unit_price, c))}</td>
           <td class="r">${esc(formatMoneyString(it.total_price, c))}</td></tr>`
     )
