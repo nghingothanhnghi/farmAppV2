@@ -492,6 +492,12 @@
             "stage_title": "Stage"
         }
     },
+    "billiard_tables": {
+        "billiard_tables_title":"Billiard Tables",
+        "billiard_tables_description": "Start a table, track play time and add drinks or snacks to the bill.",
+        "table_usage_report_title": "Table Usage Report",
+        "table_usage_report_description": "Play count, time and revenue per table."
+    },
     "placeholder_message":{
         "search":{
             "message_01": "No matching products found.",

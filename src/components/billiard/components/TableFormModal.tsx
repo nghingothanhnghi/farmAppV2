@@ -1,12 +1,13 @@
 // src/components/billiard/components/TableFormModal.tsx
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
+// import { formatCurrency, parseLocaleNumber } from '../../../utils/formatters';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
 import { FormGroup, FormInput, FormLabel } from '../../common/Form';
 import type { TableCreate } from '../../../models/interfaces/Billiard';
 import type { CreateTableError } from '../../../hooks/useTables';
-
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -24,6 +25,7 @@ const schema = Yup.object({
 });
 
 const TableFormModal: React.FC<Props> = ({ isOpen, onClose, loading, onSubmit }) => {
+  const { t } = useTranslation();
   const [name, setName] = useState('');
   const [rate, setRate] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -54,10 +56,12 @@ const TableFormModal: React.FC<Props> = ({ isOpen, onClose, loading, onSubmit })
     else if (res.status === 409) setErrors({ name: res.message });
   };
 
+
+
   return (
     <Modal
       isOpen={isOpen}
-      onClose={loading ? () => {} : onClose}
+      onClose={loading ? () => { } : onClose}
       title="New Table"
       size="small"
       content={
@@ -84,13 +88,20 @@ const TableFormModal: React.FC<Props> = ({ isOpen, onClose, loading, onSubmit })
       actions={
         <div className="flex gap-4">
           <Button
-            label={loading ? 'Saving...' : 'Create'}
+            label={loading ? t('btn.saving') : t('btn.save') }
             onClick={handleSubmit}
             disabled={loading}
             className="min-w-[150px]"
             rounded="lg"
           />
-          <Button label="Cancel" variant="secondary" onClick={onClose} disabled={loading} className="min-w-[150px]" rounded="lg" />
+          <Button 
+          label={t('btn.cancel')} 
+          variant="secondary" 
+          onClick={onClose} 
+          disabled={loading} 
+          className="min-w-[150px]" 
+          rounded="lg" 
+          />
         </div>
       }
     />

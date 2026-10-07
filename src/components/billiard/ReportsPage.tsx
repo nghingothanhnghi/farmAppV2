@@ -1,5 +1,6 @@
 // src/components/billiard/ReportsPage.tsx
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { IconArrowLeft, IconMoodEmpty } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
@@ -20,6 +21,7 @@ const daysAgo = (n: number) => {
 };
 
 const ReportsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setAlert } = useAlert();
   const canView = useHasAnyRole(['admin', 'super_admin', 'manager']);
@@ -53,8 +55,8 @@ const ReportsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <PageTitle
-        title="Table Usage Report"
-        subtitle="Play count, time and revenue per table."
+        title={t('billiard_tables.table_usage_report_title')}
+        subtitle={t('billiard_tables.table_usage_report_description')}
         actions={
           <Button
             label="Tables"

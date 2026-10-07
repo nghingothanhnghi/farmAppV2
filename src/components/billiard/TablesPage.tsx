@@ -1,6 +1,7 @@
 // src/components/billiard/TablesPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import {useTranslation} from 'react-i18next';
 import { IconChartBar, IconMoodEmpty, IconPlus } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
@@ -22,6 +23,7 @@ const GROUPS: { status: TableStatus; label: string }[] = [
 ];
 
 const TablesPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const canManage = useHasAnyRole(['admin', 'super_admin', 'manager']);
 
@@ -45,8 +47,8 @@ const TablesPage: React.FC = () => {
   return (
     <div>
       <PageTitle
-        title="Billiard Tables"
-        subtitle="Start a table, track play time and add drinks or snacks to the bill."
+        title={t('billiard_tables.billiard_tables_title')}
+        subtitle={t('billiard_tables.billiard_tables_description')}
         actions={
           canManage ? (
             <>

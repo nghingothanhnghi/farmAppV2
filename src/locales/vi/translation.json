@@ -18,7 +18,7 @@
                 "actuators": "Bộ chấp hành",
                 "sensors": "Cảm biến",
                 "batches": "Vụ trồng"
-            }
+            }       
         }
       },
     "btn":{
@@ -492,6 +492,12 @@
             "stage_title": "Giai đoạn"
         }
     },
+    "billiard_tables": {
+        "billiard_tables_title":"Bàn Bida",
+        "billiard_tables_description": "Mở bàn, theo dõi thời gian chơi và thêm đồ uống hoặc đồ ăn vào hóa đơn",
+        "table_usage_report_title": "Báo cáo sử dụng bàn",
+        "table_usage_report_description": "Số lượt chơi, thời gian và doanh thu theo từng bàn."
+    },    
     "placeholder_message":{
         "search":{
             "message_01": "Không tìm thấy sản phẩm phù hợp.",

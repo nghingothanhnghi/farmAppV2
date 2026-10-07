@@ -18,7 +18,7 @@ import {
   IconArtboard,
   IconGitCherryPick,
   IconCarrot,
-  IconTable,
+  IconCircleNumber1
 } from '@tabler/icons-react';
 
 export interface MenuItem {
@@ -125,7 +125,7 @@ export const menuItems: MenuItem[] = [
   {
     id: 'jackpot',
     label: 'Jackpot',
-    icon: IconSportBillard,
+    icon: IconCircleNumber1,
     to: '/jackpot',
   },
 
@@ -144,7 +144,7 @@ export const menuItems: MenuItem[] = [
   },
   { id: 'billiard', 
     label: 'Billiard', 
-    icon: IconTable, 
+    icon: IconSportBillard, 
     to: '/billiard' 
   },
   {
