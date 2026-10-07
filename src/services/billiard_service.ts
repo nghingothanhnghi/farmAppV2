@@ -28,7 +28,11 @@ export const billiardService = {
   async getActiveTables(): Promise<ActiveTable[]> {
     const res = await apiClient.get('/tables/active');
     const list: any[] = Array.isArray(res.data) ? res.data : [];
-    return list.map((r) => ({ ...r, table_id: r.table_id ?? r.id })); // tolerate id vs table_id
+    return list.map((r) => ({
+      ...r,
+      table_id: r.table_id ?? r.id,
+      table_name: r.table_name ?? r.name,
+    }));
   },
 
   async startTable(tableId: number): Promise<SessionStart> {

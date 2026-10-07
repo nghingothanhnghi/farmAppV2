@@ -62,10 +62,11 @@ export const addDecimalStrings = (values: Array<string | number>): string => {
   return `${neg ? '-' : ''}${abs / base}${frac ? `.${frac}` : ''}`;
 };
 
-export type BillState = 'active' | 'stopped' | 'paid';
+export type BillState = 'active' | 'stopped' | 'pending' | 'paid';
 
 export const getBillState = (bill: BillResponse): BillState => {
   if (bill.payment_state === 'paid') return 'paid';
+  if (bill.payment_state === 'pending') return 'pending';
   if (bill.end_time) return 'stopped';
   return 'active';
 };

@@ -17,15 +17,15 @@ export interface TableCreate {
 }
 
 export interface ActiveTable {
-  table_id: number;
-  table_name?: string;
+  table_id: number;      // mapped from `id`
+  table_name?: string;   // mapped from `name`
   session_id: number;
   start_time: string; // UTC ISO
   elapsed_minutes: number;
   current_table_fee: string;
   current_product_fee: string;
   current_total: string;
-  currency?: string;
+  currency?: string; // not sent; falls back to DEFAULT_CURRENCY
 }
 
 export interface SessionStart {

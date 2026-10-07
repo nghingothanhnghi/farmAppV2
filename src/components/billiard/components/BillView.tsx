@@ -39,8 +39,17 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
           </p>
         </div>
         <Badge
-          label={state === 'paid' ? 'Paid' : state === 'stopped' ? 'Awaiting payment' : 'Playing'}
-          variant={state === 'paid' ? 'success' : state === 'stopped' ? 'warning' : 'info'}
+          label={
+            state === 'paid' ? 'Paid'
+              : state === 'pending' ? 'Payment in progress'
+                : state === 'stopped' ? 'Awaiting payment'
+                  : 'Playing'
+          }
+          variant={
+            state === 'paid' ? 'success'
+              : state === 'pending' || state === 'stopped' ? 'warning'
+                : 'info'
+          }
           size="xsmall"
         />
       </div>

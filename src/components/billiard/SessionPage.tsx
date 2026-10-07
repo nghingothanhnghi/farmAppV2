@@ -129,6 +129,19 @@ const SessionPage: React.FC = () => {
           <Button label="Pay" rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
         </div>
       )}
+      {state === 'pending' && (
+        <div className="flex justify-end gap-2">
+          <Button label="Print bill" variant="secondary" rounded="lg"
+            icon={<IconPrinter size={16} />} iconPosition="left"
+            onClick={() => setPrintOpen(true)} />
+          <Button label={busy ? 'Confirming...' : 'Confirm payment'} rounded="lg"
+            disabled={busy}
+            onClick={async () => {
+              const res = await actions.confirmPay();
+              if (res) setAlert({ type: 'success', message: 'Payment recorded.' });
+            }} />
+        </div>
+      )}
       {/* "paid" → print the receipt */}
       {state === 'paid' && (
         <div className="flex justify-end gap-2">
