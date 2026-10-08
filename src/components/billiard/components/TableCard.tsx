@@ -5,6 +5,7 @@ import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
 import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString, parseUtc } from '../../../utils/billiard';
 import type { ActiveTable, BilliardTable } from '../../../models/interfaces/Billiard';
+import { getTableStatusLabel } from '../../../utils/status';
 
 interface Props {
   table: BilliardTable;
@@ -46,7 +47,7 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
             {formatMoneyString(table.hourly_rate)} / h
           </p>
         </div>
-        <Badge label={table.status} variant={variant} size="xsmall" className="capitalize" />
+        <Badge label={getTableStatusLabel(table.status)} variant={variant} size="xsmall" className="capitalize" />
       </div>
 
       {table.status === 'playing' && (

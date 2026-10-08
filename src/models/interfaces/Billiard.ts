@@ -2,6 +2,15 @@
 // Response shapes inferred from the API spec. Money = decimal STRINGS (no float math).
 
 export type TableStatus = 'available' | 'playing' | 'reserved' | 'maintenance';
+
+// for purpose filtering by group
+export const TABLE_STATUSES: TableStatus[] = [
+  'available',
+  'playing',
+  'reserved',
+  'maintenance',
+];
+
 export type PaymentMethod = 'cash' | 'bank_transfer' | 'stripe';
 
 export interface BilliardTable {
@@ -44,6 +53,8 @@ export interface BillItem {
   unit_price: string;
   total_price: string;
 }
+
+export type BillState = 'active' | 'stopped' | 'pending' | 'paid';
 
 export interface BillResponse {
   session_id: number;

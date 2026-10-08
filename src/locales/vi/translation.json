@@ -85,7 +85,12 @@
         "manual": "Thủ công",
         "auto_triggered": "Tự động kích hoạt",
         "sensor_triggered": "Tự động theo cảm biến",
-        "sensor_off": "Cảm biến ngoại tuyến"
+        "sensor_off": "Cảm biến ngoại tuyến",
+        "available": "Đang trống",
+        "unavailable": "Không có sẵn",
+        "maintenance": "Bảo trì",
+        "playing": "Đang chơi",
+        "reserved": "Đã đặt"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"

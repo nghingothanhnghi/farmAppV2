@@ -1,7 +1,7 @@
 // src/components/billiard/utils.ts
 import { CurrencyConfig } from "../constants/currency";
 import { parseApiErrors } from '../utils/errorUtils';
-import type { BillResponse } from '../models/interfaces/Billiard';
+import type { BillResponse, BillState } from '../models/interfaces/Billiard';
 
 export const DEFAULT_CURRENCY = 'VND';
 
@@ -61,8 +61,6 @@ export const addDecimalStrings = (values: Array<string | number>): string => {
   const frac = (abs % base).toString().padStart(SCALE, '0').replace(/0+$/, '');
   return `${neg ? '-' : ''}${abs / base}${frac ? `.${frac}` : ''}`;
 };
-
-export type BillState = 'active' | 'stopped' | 'pending' | 'paid';
 
 export const getBillState = (bill: BillResponse): BillState => {
   if (bill.payment_state === 'paid') return 'paid';

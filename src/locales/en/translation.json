@@ -85,7 +85,12 @@
         "manual": "Manual",
         "auto_triggered": "Auto Triggered",
         "sensor_triggered": "Sensor Triggered",
-        "sensor_off": "Sensor Offline"
+        "sensor_off": "Sensor Offline",
+        "available": "Available",
+        "unavailable": "Unavailable",
+        "maintenance": "Maintenance",
+        "playing": "Playing",
+        "reserved": "Reserved"
     },
     "loading_state":{
         "message_01": "Loading banner..."
