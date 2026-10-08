@@ -5,10 +5,7 @@ import SideMenu from './SideMenu';
 import MobileTopBar from './MobileTopBar';
 import DesktopSidebarToggleButton from './DesktopSidebarToggleButton';
 import { useSidebar } from '../../hooks/useSidebar';
-
-const CLOSE_SIDEBAR_ROUTES = [
-  '/billiard',
-];
+import { CLOSE_SIDEBAR_ROUTES } from '../../config/layout';
 
 const MainLayout: React.FC = () => {
   const { menuOpen, setMenuOpen, handleMenuClose } = useSidebar();

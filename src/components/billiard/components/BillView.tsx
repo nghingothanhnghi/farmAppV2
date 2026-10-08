@@ -1,6 +1,8 @@
 // src/components/billiard/components/BillView.tsx
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import Badge from '../../common/Badge';
+import EmptyState from '../../common/EmptyState';
 import { formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 
@@ -20,17 +22,17 @@ const Line: React.FC<{ label: string; value: string; bold?: boolean }> = ({ labe
 );
 
 const BillView: React.FC<Props> = ({ bill, overrides }) => {
+  const { t } = useTranslation();
   const b = { ...bill, ...overrides };
   const c = b.currency;
   const state = getBillState(bill);
-  // const productFee = b.product_fee ?? addDecimalStrings(b.items.map((i) => i.line_total));
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">
-            {b.table_name ?? `Table #${b.table_id}`} · Session #{b.session_id}
+            {b.table_name ?? `${t('billiard_tables.cards.session_billiard.table')} #${b.table_id}`} · {t('billiard_tables.cards.session_billiard.label')} #{b.session_id}
           </h3>
           <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
             {formatDateTime(b.start_time)}
@@ -55,9 +57,9 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       </div>
 
       <div className="space-y-1.5">
-        <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Items</p>
+        <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('billiard_tables.cards.items')}</p>
         {b.items.length === 0 ? (
-          <p className="text-xs text-gray-400">No items added.</p>
+          <EmptyState message="No items added." />
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-white/5">
             {b.items.map((it, idx) => (
@@ -78,9 +80,9 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       </div>
 
       <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-        <Line label="Table fee" value={formatMoneyString(b.total_table_fee, c)} />
-        <Line label="Products" value={formatMoneyString(b.total_product_fee, c)} />
-        <Line label="Total" value={formatMoneyString(b.grand_total, c)} bold />
+        <Line label={t('billiard_tables.cards.fee_table')} value={formatMoneyString(b.total_table_fee, c)} />
+        <Line label={t('billiard_tables.cards.fee_product')} value={formatMoneyString(b.total_product_fee, c)} />
+        <Line label={t('billiard_tables.cards.fee_total')} value={formatMoneyString(b.grand_total, c)} bold />
         {bill.payment_method && state === 'paid' && (
           <Line label="Paid by" value={bill.payment_method.replace('_', ' ')} />
         )}

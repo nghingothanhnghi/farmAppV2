@@ -1,5 +1,6 @@
 // src/components/Payments/PaymentManagementPage.tsx
 import React, { useEffect, useState, useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { useAlert } from "../../contexts/alertContext";
 import { paymentService } from "../../services/paymentService";
 import type { PaymentOut, PaymentStatus } from "../../models/interfaces/Payment";
@@ -21,6 +22,7 @@ import { useLocation } from "react-router";
 
 
 const PaymentManagementPage: React.FC = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const { user } = useAuth();
     const { setAlert } = useAlert();
@@ -123,11 +125,10 @@ const PaymentManagementPage: React.FC = () => {
 
     const columnDefs = useMemo(
         () => [
-            { headerName: "ID", field: "id", width: 80, filter: false, sortable: false, resizable: false, },
-            { headerName: "Reference", field: "reference_id", width: 150, },
-            { headerName: "Provider", field: "provider", width: 150, },
+            { headerName: t("dataGrid.headerName.reference"), field: "reference_id", flex: 1 },
+            { headerName: t("dataGrid.headerName.provider"), field: "provider", flex: 1 },
             {
-                headerName: "Amount",
+                headerName: t("dataGrid.headerName.amount"),
                 field: "amount",
                 flex: 1,
                 valueFormatter: (params: any) => {
@@ -137,7 +138,7 @@ const PaymentManagementPage: React.FC = () => {
                 },
             },
             {
-                headerName: "Status",
+                headerName: t("dataGrid.headerName.status"),
                 field: "status",
                 width: 140,
                 cellRenderer: ({ value }: any) => {
@@ -152,8 +153,6 @@ const PaymentManagementPage: React.FC = () => {
                     return <Badge label={value} variant={variant} />;
                 },
             },
-            { headerName: "Client", field: "client_id", flex: 1, filter: false, sortable: false, resizable: false, },
-            { headerName: "User", field: "user_id", flex: 1, filter: false, sortable: false, resizable: false, },
             {
                 headerName: "",
                 field: "actions",
@@ -218,7 +217,8 @@ const PaymentManagementPage: React.FC = () => {
     return (
         <div className="flex flex-col h-screen">
             <PageTitle
-                title="Payment Management"
+                title={t("payment.payment_title")}
+                subtitle={t("payment.payment_description")}
                 actions={(
                     <Button
                         type="button"

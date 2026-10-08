@@ -6,7 +6,3 @@ export const getTableStatusLabel = (status: TableStatus): string =>
 
 export const getPaymentMethodLabel = (method: PaymentMethod): string =>
   i18n.t(`badge_status.${method}`);
-
-export const getPaymentStateLabel = (state: 'paid' | 'pending' | 'stopped'): string => {
-  return i18n.t(`badge_status.${state}`);
-}

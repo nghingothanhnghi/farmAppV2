@@ -39,7 +39,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           </p>
         )}
       </div>
-      {actions && <div className="flex items-center justify-end space-x-2 flex-1">{actions}</div>}
+      {actions && <div className="flex items-center justify-end space-x-2 shrink-0">{actions}</div>}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React from "react";
 import useToggle from "../../../hooks/useToggle";
 import { FormInput, FormSelect } from "../../common/Form";
 import Button from "../../common/Button";
-import { IconAdjustmentsHorizontal, IconX } from '@tabler/icons-react';
+import { IconAdjustmentsHorizontal, IconX, IconSearch } from '@tabler/icons-react';
 interface ProductFilterProps {
   filters: {
     name?: string;
@@ -53,6 +53,9 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
             onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
             className="w-full"
           />
+
+          <IconSearch size={18} className="absolute inset-y-0 right-2 top-1/2 -translate-y-1/2" />
+
           {filters.name && (
             <Button
               variant="secondary"

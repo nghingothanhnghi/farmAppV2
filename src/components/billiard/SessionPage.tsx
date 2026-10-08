@@ -1,5 +1,6 @@
 // src/components/billiard/SessionPage.tsx
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { IconAlertCircle, IconArrowLeft, IconPlus, IconPrinter } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
@@ -18,6 +19,7 @@ import ReceiptPreviewModal from './components/ReceiptPreviewModal';
 import { formatElapsed, getBillState, parseUtc } from '../../utils/billiard';
 
 const SessionPage: React.FC = () => {
+  const { t } = useTranslation();
   const { sessionId } = useParams();
   const id = Number(sessionId);
   const navigate = useNavigate();
@@ -79,7 +81,7 @@ const SessionPage: React.FC = () => {
   return (
     <div className="space-y-6 mx-auto max-w-2xl">
       <PageTitle
-        title={`${bill.table_name ?? `Table #${bill.table_id}`} · Session #${bill.session_id}`}
+        title={`${bill.table_name ?? `${t('billiard_tables.cards.session_billiard.table')} #${bill.table_id}`} · ${t('billiard_tables.cards.session_billiard.label')} #${bill.session_id}`}
         actions={backButton}
       />
 

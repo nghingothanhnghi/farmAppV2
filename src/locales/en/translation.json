@@ -294,7 +294,10 @@
             "plan_name": "Name",
             "used_by": "Used by",
             "description": "Description",
-            "batch": "batch"
+            "batch": "batch",
+            "reference": "Reference",
+            "provider": "Provider",
+            "amount": "Amount"
         },
         "bodyName":{
             "no_matching_results": "No matching results"
@@ -501,7 +504,21 @@
         "billiard_tables_title":"Billiard Tables",
         "billiard_tables_description": "Start a table, track play time and add drinks or snacks to the bill.",
         "table_usage_report_title": "Table Usage Report",
-        "table_usage_report_description": "Play count, time and revenue per table."
+        "table_usage_report_description": "Play count, time and revenue per table.",
+        "cards": {
+            "session_billiard": {
+                "label": "Session",
+                "table": "Table"
+            },
+            "items": "Items",
+            "fee_table": "Table Fee",
+            "fee_product": "Foods/Drinks",
+            "fee_total": "Total"
+        }
+    },
+    "payment": {
+        "payment_title": "Payment Management",
+        "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections."
     },
     "placeholder_message":{
         "search":{
@@ -512,7 +529,8 @@
     },
     "paymentMethods": {
         "cash": "Cash",
-        "creditCard": "Credit Card"
+        "creditCard": "Credit Card",
+        "transferBank": "Bank Transfer"
     },
     "info": {
         "order":{

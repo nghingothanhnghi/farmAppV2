@@ -294,7 +294,10 @@
             "plan_name": "Tên kế hoạch canh tác",
             "used_by": "Đang dùng bởi",
             "description": "Miêu tả",
-            "batch": "Lứa trồng"
+            "batch": "Lứa trồng",
+            "reference": "Tham chiếu",
+            "provider": "Nhà cung cấp",
+            "amount": "Số tiền"
         },
         "bodyName":{
             "no_matching_results": "Không có kết quả phù hợp"
@@ -501,8 +504,22 @@
         "billiard_tables_title":"Bàn Bida",
         "billiard_tables_description": "Mở bàn, theo dõi thời gian chơi và thêm đồ uống hoặc đồ ăn vào hóa đơn",
         "table_usage_report_title": "Báo cáo sử dụng bàn",
-        "table_usage_report_description": "Số lượt chơi, thời gian và doanh thu theo từng bàn."
-    },    
+        "table_usage_report_description": "Số lượt chơi, thời gian và doanh thu theo từng bàn.",
+        "cards": {
+            "session_billiard": {
+                "label": "Lượt chơi",
+                "table": "Bàn"
+            },
+            "items": "Món gọi thêm",
+            "fee_table": "Phí bàn",
+            "fee_product": "Phí món gọi thêm",
+            "fee_total": "Tổng cộng"
+        }        
+    },
+    "payment": {
+        "payment_title": "Quản lý Thanh toán",
+        "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản."
+    },
     "placeholder_message":{
         "search":{
             "message_01": "Không tìm thấy sản phẩm phù hợp.",
@@ -512,7 +529,8 @@
     },
     "paymentMethods": {
         "cash": "Tiền mặt",
-        "creditCard": "Thẻ tín dụng"
+        "creditCard": "Thẻ tín dụng",
+        "transferBank": "Chuyển khoản ngân hàng"
     },
     "info": {
         "order":{

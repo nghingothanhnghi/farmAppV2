@@ -3,6 +3,7 @@ import React from 'react';
 import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
+import { useTranslation } from 'react-i18next';
 import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString, parseUtc } from '../../../utils/billiard';
 import type { ActiveTable, BilliardTable } from '../../../models/interfaces/Billiard';
 import { getTableStatusLabel } from '../../../utils/status';
@@ -34,6 +35,7 @@ const Row: React.FC<{ label: string; value: string; bold?: boolean }> = ({ label
 );
 
 const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onStart, onOpen }) => {
+  const { t } = useTranslation();
   const currency = live?.currency ?? DEFAULT_CURRENCY;
   const elapsed = live ? Math.max(0, Math.floor((now - parseUtc(live.start_time)) / 1000)) : 0;
   const variant = STATUS_VARIANT[table.status as keyof typeof STATUS_VARIANT] ?? 'gray';
@@ -58,9 +60,9 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
                 {formatElapsed(elapsed)}
               </div>
               <div className="space-y-1 border-t border-gray-200 dark:border-white/5 pt-2">
-                <Row label="Table fee" value={formatMoneyString(live.current_table_fee, currency)} />
-                <Row label="Products" value={formatMoneyString(live.current_product_fee, currency)} />
-                <Row label="Total" value={formatMoneyString(live.current_total, currency)} bold />
+                <Row label={t('billiard_tables.cards.fee_table')} value={formatMoneyString(live.current_table_fee, currency)} />
+                <Row label={t('billiard_tables.cards.fee_product')} value={formatMoneyString(live.current_product_fee, currency)} />
+                <Row label={t('billiard_tables.cards.fee_total')} value={formatMoneyString(live.current_total, currency)} bold />
               </div>
             </>
           ) : (
