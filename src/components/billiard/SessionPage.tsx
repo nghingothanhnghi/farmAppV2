@@ -178,7 +178,7 @@ const SessionPage: React.FC = () => {
               rounded="lg"
             />
             <Button
-              label="Cancel"
+              label={t("btn.cancel")}
               variant="secondary"
               onClick={() => setConfirmStopOpen(false)}
               disabled={busy}
