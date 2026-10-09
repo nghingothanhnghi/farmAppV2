@@ -25,10 +25,10 @@ const DataGrid: React.FC<DataGridProps> = ({
   image, // Fallback image URL
 }) => {
 
-const isAutoHeight = height === 'auto';
+  const isAutoHeight = height === 'auto';
 
-const { ref: gridContainerRef, height: calculatedHeight } =
-  useRemainingHeight(0, 200);
+  const { ref: gridContainerRef, height: calculatedHeight } =
+    useRemainingHeight(90, 0);
 
   const gridApiRef = useRef<any>(null); // Store Grid API reference
   const { t, i18n } = useTranslation();
@@ -82,14 +82,14 @@ const { ref: gridContainerRef, height: calculatedHeight } =
 
 
   return (
-    <div 
-    // className={`${appliedTheme} w-full`} 
-    // style={{ height }}
-        ref={isAutoHeight ? gridContainerRef : undefined}
-    className={`${appliedTheme} w-full`}
-    style={{
-      height: isAutoHeight ? calculatedHeight : height,
-    }}
+    <div
+      // className={`${appliedTheme} w-full`} 
+      // style={{ height }}
+      ref={isAutoHeight ? gridContainerRef : undefined}
+      className={`${appliedTheme} w-full`}
+      style={{
+        height: isAutoHeight ? calculatedHeight : height,
+      }}
     >
       <AgGridReact
         key={appliedTheme}           // 🔥 FORCE remount grid when theme changes

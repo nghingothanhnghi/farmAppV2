@@ -2,35 +2,38 @@ import { useEffect, useRef, useState } from "react";
 
 export function useRemainingHeight(
   bottomOffset = 0,
-  minHeight = 200
+  minHeight = 0
 ) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [height, setHeight] = useState(minHeight);
 
   useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    let frame = 0;
+
     const updateHeight = () => {
-      if (!ref.current) return;
+      cancelAnimationFrame(frame);
 
-      const rect = ref.current.getBoundingClientRect();
+      frame = requestAnimationFrame(() => {
+        const rect = element.getBoundingClientRect();
 
-      const availableHeight =
-        window.innerHeight - rect.top - bottomOffset;
+        const availableHeight =
+          window.innerHeight - rect.top - bottomOffset;
 
-      setHeight(Math.max(minHeight, availableHeight));
+        setHeight(Math.max(minHeight, availableHeight));
+      });
     };
 
-    // Calculate after the current layout has been rendered
-    const frame = requestAnimationFrame(updateHeight);
+    updateHeight();
 
     window.addEventListener("resize", updateHeight);
 
-    // Watch for changes to the layout above the grid
-    const resizeObserver = new ResizeObserver(() => {
-      requestAnimationFrame(updateHeight);
-    });
+    const resizeObserver = new ResizeObserver(updateHeight);
 
-    if (ref.current?.parentElement) {
-      resizeObserver.observe(ref.current.parentElement);
+    if (element.parentElement) {
+      resizeObserver.observe(element.parentElement);
     }
 
     return () => {
@@ -40,9 +43,5 @@ export function useRemainingHeight(
     };
   }, [bottomOffset, minHeight]);
 
-  
-  return {
-    ref,
-    height,
-  };
+  return { ref, height };
 }

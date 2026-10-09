@@ -70,7 +70,11 @@
         "start": "Bắt đầu",
         "stop": "Dừng",
         "pause": "Tạm dừng",
-        "restart": "Khởi động lại"
+        "restart": "Khởi động lại",
+        "add_items_billard": "Thêm món",
+        "back_to_tables": "Quay lại bàn",
+        "add_table": "Thêm bàn",
+        "table_report": "Báo cáo"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -236,8 +240,20 @@
             "placeholder": ""
         },        
         "dayEnd": {
-            "label": "Ngày bắt đầu",
+            "label": "Ngày kết thúc",
             "placeholder": ""
+        },
+        "quantity": {
+            "label": "Số lượng",
+            "placeholder": ""
+        },
+        "hourly_rate":{
+            "label": "Giá mỗi giờ (VND)",
+            "placeholder":""
+        },
+        "table_name":{
+            "label": "Tên bàn",
+            "placeholder":""
         }
     },
     "toggle":{
@@ -297,7 +313,12 @@
             "batch": "Lứa trồng",
             "reference": "Tham chiếu",
             "provider": "Nhà cung cấp",
-            "amount": "Số tiền"
+            "amount": "Số tiền",
+            "table_name": "Bàn",
+            "time_played": "Thời gian chơi",
+            "total_time_played": "Tổng thời gian chơi",
+            "revenue": "Doanh thu",
+            "unPaid": "Chưa thanh toán"              
         },
         "bodyName":{
             "no_matching_results": "Không có kết quả phù hợp"
@@ -510,11 +531,41 @@
                 "label": "Lượt chơi",
                 "table": "Bàn"
             },
+            "times_played_billiard":{
+                "label": "Tổng lượt chơi"
+            },
+            "total_time_billiard":{
+                "label": "Tổng thời gian chơi"
+            },
+            "total_revenue_billiard":{
+                "label": "Tổng doanh thu"
+            },
+            "total_unPaid_billiard":{
+                "label": "Chưa thanh toán"
+            },                                             
             "items": "Món gọi thêm",
             "fee_table": "Phí bàn",
             "fee_product": "Phí món gọi thêm",
-            "fee_total": "Tổng cộng"
-        }        
+            "fee_total": "Tổng cộng",
+            "items_content":{
+                "noData": "Chưa có món gọi thêm."
+            }            
+        },
+        "modals": {
+            "items": {
+                "title": "Thêm món",
+                "description": "Thêm đồ uống hoặc đồ ăn vào hóa đơn cho bàn này."
+            },
+            "table": {
+                "title": "Bàn mới",
+                "description": ""
+            },
+            "confirm":{
+                "stop_session":{
+                    "message": "Kết thúc lượt chơi? Thời gian chơi sẽ dừng và hóa đơn sẽ được chốt. Bạn không thể tiếp tục lượt chơi này sau khi xác nhận."
+                }  
+            }            
+        }    
     },
     "payment": {
         "payment_title": "Quản lý Thanh toán",

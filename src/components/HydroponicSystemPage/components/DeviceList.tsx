@@ -210,7 +210,7 @@ const DeviceList: React.FC<Props> = ({ onSelect, showStatus = true }) => {
         columnDefs={columnDefs}
         pagination
         paginationPageSize={10}
-        height="500px"
+        height="auto"
       />
       {/* 🧠 Device onboarding modal */}
       <Modal

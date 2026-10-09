@@ -116,6 +116,86 @@ export const FormInput: React.FC<FormInputProps> = ({
 };
 
 
+interface FloatingLabelInputProps {
+  id: string;
+  label: string;
+  type?: string;
+  name?: string;
+  value: string | number;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  disabled?: boolean;
+  min?: string | number;
+  max?: string | number;
+  step?: string | number;
+  className?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+}
+
+export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
+  id,
+  label,
+  type = 'text',
+  name,
+  value,
+  onChange,
+  required = false,
+  disabled = false,
+  min,
+  max,
+  step,
+  className = 'w-full min-w-0',
+  inputMode,
+}) => {
+  const hasValue = String(value ?? '').length > 0;
+
+  return (
+    <div className={`relative min-w-0 ${className}`}>
+      <input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={onChange}
+        required={required}
+        disabled={disabled}
+        min={min}
+        max={max}
+        step={step}
+        inputMode={inputMode}
+        placeholder={type === 'date' ? undefined : ' '}
+        className={`
+          peer w-full rounded-md border border-slate-200
+          bg-transparent px-3 pb-2 pt-5 text-sm text-slate-700
+          shadow-sm transition duration-200
+          hover:border-slate-300 focus:border-blue-500
+          focus:outline-none focus:ring-1 focus:ring-blue-500
+          dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100
+          dark:hover:border-gray-600
+          dark:focus:border-blue-400
+          disabled:cursor-not-allowed disabled:opacity-50
+        `}
+      />
+
+      <label
+        htmlFor={id}
+        className={`
+          pointer-events-none absolute left-3 z-10
+          origin-left transition-all duration-200
+          ${hasValue || type === 'date'
+            ? 'top-1 text-xs'
+            : 'top-1/2 -translate-y-1/2 text-sm peer-focus:top-1 peer-focus:translate-y-0 peer-focus:text-xs'}
+          ${disabled
+            ? 'text-slate-400 dark:text-gray-500'
+            : 'text-slate-500 dark:text-gray-400 peer-focus:text-blue-500'}
+        `}
+      >
+        {label}
+      </label>
+    </div>
+  );
+};
+
 interface FormSelectProps {
   id: string;
   name?: string;

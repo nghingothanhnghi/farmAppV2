@@ -1,5 +1,6 @@
 // src/components/billiard/components/AddItemModal.tsx
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconMoodEmpty } from '@tabler/icons-react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
@@ -19,6 +20,7 @@ interface Props {
 }
 
 const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
+  const { t } = useTranslation();
   // Existing products API (ProductProvider is mounted in main.tsx)
   const { products, loading, error, actions } = useProductContext();
   const [productId, setProductId] = useState('');
@@ -58,10 +60,11 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
       </div>
     );
   } else if (activeProducts.length === 0) {
-    body = <EmptyState icon={<IconMoodEmpty size={48} />} message="No products available." />;
+    body = <EmptyState icon={<IconMoodEmpty size={48} />} message={t('billiard_tables.cards.items_content.noData')} />;
   } else {
     body = (
       <div className="space-y-4">
+        <p className="text-sm text-gray-700 dark:text-gray-100">{t('billiard_tables.modals.items.description')}</p>
         <FormGroup className="space-y-1">
           <FormLabel htmlFor="item_product">Product</FormLabel>
           <FormSelect
@@ -97,7 +100,7 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
         )}
 
         <FormGroup className="space-y-1">
-          <FormLabel htmlFor="item_qty">Quantity</FormLabel>
+          <FormLabel htmlFor="item_qty">{t('input.quantity.label')}</FormLabel>
           <NumberInput id="item_qty" value={quantity} onChange={setQuantity} min={1} max={999} />
         </FormGroup>
       </div>
@@ -107,20 +110,20 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
   return (
     <Modal
       isOpen={isOpen}
-      onClose={busy ? () => {} : onClose}
-      title="Add item"
+      onClose={busy ? () => { } : onClose}
+      title={t('billiard_tables.modals.items.title')}
       size="small"
-      content={<div className="px-10 pb-4">{body}</div>}
+      content={<div className="px-7 pb-4 min-h-[300px]">{body}</div>}
       actions={
         <div className="flex gap-4">
           <Button
-            label={busy ? 'Adding...' : 'Add'}
+            label={busy ? t('btn.saving') : t('btn.save')}
             onClick={handleSubmit}
             disabled={busy || !productId || quantity < 1}
             className="min-w-[150px]"
             rounded="lg"
           />
-          <Button label="Cancel" variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
+          <Button label={t('btn.cancel')} variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
         </div>
       }
     />

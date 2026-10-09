@@ -215,7 +215,7 @@ const PaymentManagementPage: React.FC = () => {
     }
 
     return (
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col h-full min-h-0">
             <PageTitle
                 title={t("payment.payment_title")}
                 subtitle={t("payment.payment_description")}

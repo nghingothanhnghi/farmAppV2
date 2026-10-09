@@ -59,7 +59,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       <div className="space-y-1.5">
         <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('billiard_tables.cards.items')}</p>
         {b.items.length === 0 ? (
-          <EmptyState message="No items added." />
+          <EmptyState message={t('billiard_tables.cards.items_content.noData')} />
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-white/5">
             {b.items.map((it, idx) => (

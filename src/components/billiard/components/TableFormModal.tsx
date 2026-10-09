@@ -62,17 +62,17 @@ const TableFormModal: React.FC<Props> = ({ isOpen, onClose, loading, onSubmit })
     <Modal
       isOpen={isOpen}
       onClose={loading ? () => { } : onClose}
-      title="New Table"
+      title={t("billiard_tables.modals.table.title")}
       size="small"
       content={
-        <div className="px-10 pb-4 space-y-4">
+        <div className="px-7 pb-4 space-y-4 min-h-[300px]">
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="table_name">Name</FormLabel>
+            <FormLabel htmlFor="table_name">{t("input.table_name.label")}</FormLabel>
             <FormInput id="table_name" type="text" value={name} onChange={(e) => setName(e.target.value)} disabled={loading} />
             {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
           </FormGroup>
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="table_rate">Hourly rate (VND)</FormLabel>
+            <FormLabel htmlFor="table_rate">{t("input.hourly_rate.label")}</FormLabel>
             <FormInput
               id="table_rate"
               type="text"

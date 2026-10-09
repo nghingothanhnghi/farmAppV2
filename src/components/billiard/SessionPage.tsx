@@ -38,7 +38,7 @@ const SessionPage: React.FC = () => {
 
   const backButton = (
     <Button
-      label="Tables"
+      label={t("btn.back_to_tables")}
       variant="secondary"
       icon={<IconArrowLeft size={16} />}
       iconPosition="left"
@@ -92,7 +92,7 @@ const SessionPage: React.FC = () => {
           </div>
           <div className="flex items-center gap-2">
             <Button
-              label="Add item"
+              label={t("btn.add_items_billard")}
               variant="secondary"
               icon={<IconPlus size={16} className="text-gray-500" />}
               iconPosition="left"
@@ -164,7 +164,7 @@ const SessionPage: React.FC = () => {
         content={
           <div className="text-sm px-10 pt-6 pb-10 text-center">
             <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-            Stop this session? The timer ends and the bill is finalised.
+            {t("billiard_tables.modals.confirm.stop_session.message")}
           </div>
         }
         actions={

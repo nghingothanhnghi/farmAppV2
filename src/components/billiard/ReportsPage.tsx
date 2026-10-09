@@ -7,7 +7,7 @@ import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
 import EmptyState from '../common/EmptyState';
-import { FormGroup, FormInput, FormLabel } from '../common/Form';
+import { FloatingLabelInput } from '../common/Form';
 import { useAlert } from '../../contexts/alertContext';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useUsageReport } from '../../hooks/useUsageReport';
@@ -59,7 +59,7 @@ const ReportsPage: React.FC = () => {
         subtitle={t('billiard_tables.table_usage_report_description')}
         actions={
           <Button
-            label="Tables"
+            label={t("btn.back_to_tables")}
             variant="secondary"
             icon={<IconArrowLeft size={16} />}
             iconPosition="left"
@@ -69,15 +69,26 @@ const ReportsPage: React.FC = () => {
         }
       />
 
-      <div className="flex flex-wrap items-end gap-4">
-        <FormGroup className="space-y-1">
-          <FormLabel htmlFor="report_start">From</FormLabel>
-          <FormInput id="report_start" type="date" value={start} onChange={(e) => setStart(e.target.value)} />
-        </FormGroup>
-        <FormGroup className="space-y-1">
-          <FormLabel htmlFor="report_end">To</FormLabel>
-          <FormInput id="report_end" type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
-        </FormGroup>
+      <div className="flex flex-wrap items-center gap-4">
+        <FloatingLabelInput
+          id="report_start"
+          name="report_start"
+          type="date"
+          label="From"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          className="min-w-[180px]"
+        />
+
+        <FloatingLabelInput
+          id="report_end"
+          name="report_end"
+          type="date"
+          label="To"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+          className="min-w-[180px]"
+        />
         <Button label={loading ? 'Loading...' : 'Apply'} rounded="lg" disabled={loading} onClick={apply} />
       </div>
 

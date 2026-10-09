@@ -150,7 +150,7 @@ const HydroponicDevicePage: React.FC = () => {
     };
 
     return (
-        <div className='flex flex-col h-full'>
+        <div className='flex flex-col h-full min-h-0'>
             {!isRootPage && (
                 <PageTitle
                     title={isEdit ? 'Edit Device' : 'Create Device'}
@@ -191,7 +191,9 @@ const HydroponicDevicePage: React.FC = () => {
                             />
                         }
                     />
-                    <DeviceList onSelect={(device) => navigate(`/hydro-devices/${device.id}`)} />
+                    <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                        <DeviceList onSelect={(device) => navigate(`/hydro-devices/${device.id}`)} />
+                    </div>
                 </>
             )}
 

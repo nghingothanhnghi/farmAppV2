@@ -92,7 +92,7 @@ const CmsTagManagementPage: React.FC = () => {
     }
 
     return (
-        <div className="">
+        <div className="flex flex-col h-full min-h-0">
             <PageTitle
                 title="Tag Management"
                 actions={
@@ -107,22 +107,22 @@ const CmsTagManagementPage: React.FC = () => {
                     />
                 }
             />
-
-            {tags.length === 0 ? (
-                <EmptyState
-                    icon={<IconMoodEmpty size={48} />}
-                    message="No tags found."
-                />
-            ) : (
-                <DataGrid
-                    rowData={tags}
-                    columnDefs={columnDefs}
-                    pagination
-                    paginationPageSize={10}
-                    height="500px"
-                />
-            )}
-
+            <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                {tags.length === 0 ? (
+                    <EmptyState
+                        icon={<IconMoodEmpty size={48} />}
+                        message="No tags found."
+                    />
+                ) : (
+                    <DataGrid
+                        rowData={tags}
+                        columnDefs={columnDefs}
+                        pagination
+                        paginationPageSize={10}
+                        height="auto"
+                    />
+                )}
+            </div>
             <TagFormModal
                 isOpen={formOpen}
                 onClose={() => setFormOpen(false)}

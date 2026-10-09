@@ -36,10 +36,14 @@ const Modal: React.FC<ModalProps> = ({
 
   // Set a dynamic class for the modal size
   const modalSizeClasses = {
-    xsmall: 'sm:w-1/2 md:w-1/2 lg:w-1/4 w-full mx-5',
-    small: 'sm:w-1/3 w-full mx-5',   // 100% on mobile, 1/3 on small screens
-    medium: 'sm:w-3/6 w-full mx-5',  // 100% on mobile, 3/6 on small screens
-    large: 'sm:w-4/5 w-full',   // 100% on mobile, 4/5 on small screens
+    // xsmall: 'sm:w-1/2 md:w-1/2 lg:w-1/4 w-full mx-5',
+    // small: 'sm:w-1/3 w-full mx-5',   // 100% on mobile, 1/3 on small screens
+    // medium: 'sm:w-3/6 w-full mx-5',  // 100% on mobile, 3/6 on small screens
+    // large: 'sm:w-4/5 w-full',   // 100% on mobile, 4/5 on small screens
+    xsmall: 'w-full mx-5 sm:w-3/4 md:w-2/3 lg:w-1/4',
+    small: 'w-full mx-5 sm:w-4/5 md:w-3/4 lg:w-1/3',
+    medium: 'w-full mx-5 sm:w-5/6 md:w-4/5 lg:w-1/2',
+    large: 'w-full sm:w-11/12 lg:w-4/5',
   };
 
   // Positioning logic
@@ -168,7 +172,7 @@ ${isOpen
               </div>
             )}
 
-            <div className="flex-grow overflow-y-auto mt-4 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
+            <div className="flex-grow overflow-y-auto py-4 [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
               {content}
             </div>
             <div className="py-4 px-10 flex justify-center">

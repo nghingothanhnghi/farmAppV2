@@ -1,5 +1,6 @@
 // src/components/billiard/components/UsageReportTable.tsx
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import DataGrid from '../../common/dataGrid/dataGrid';
 import { addDecimalStrings, DEFAULT_CURRENCY, formatDuration, formatMoneyString } from '../../../utils/billiard';
 import type { UsageReport, UsageTotals } from '../../../models/interfaces/Billiard';
@@ -10,6 +11,7 @@ interface Props {
 }
 
 const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY }) => {
+  const {t} = useTranslation();
   const { rows } = report;
 
   // Prefer server totals; otherwise sum exactly (decimal strings via BigInt).
@@ -26,24 +28,24 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
 
   const columnDefs = useMemo(
     () => [
-      { headerName: 'Table', field: 'table_name', flex: 1 },
-      { headerName: 'Times played', field: 'times_played', width: 140, filter: false },
+      { headerName: t("dataGrid.headerName.table_name"), field: 'table_name', flex: 1 },
+      { headerName: t("dataGrid.headerName.time_played"), field: 'times_played', width: 140, filter: false },
       {
-        headerName: 'Total time',
+        headerName: t("dataGrid.headerName.total_time_played"),
         field: 'total_minutes',
         width: 140,
         filter: false,
         valueFormatter: (p: any) => formatDuration(Number(p.value ?? 0)),
       },
       {
-        headerName: 'Revenue',
+        headerName: t("dataGrid.headerName.revenue"),
         field: 'total_revenue',
         flex: 1,
         filter: false,
         valueFormatter: (p: any) => formatMoneyString(p.value, currency),
       },
       {
-        headerName: 'Unpaid',
+        headerName: t("dataGrid.headerName.unPaid"),
         field: 'unpaid_total',
         flex: 1,
         filter: false,
@@ -63,10 +65,10 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {stat('Times played', String(totals.times_played))}
-        {stat('Total time', formatDuration(totals.total_minutes))}
-        {stat('Total revenue', formatMoneyString(totals.total_revenue, currency))}
-        {stat('Unpaid total', formatMoneyString(totals.unpaid_total, currency))}
+        {stat(t("billiard_tables.cards.times_played_billiard.label"), String(totals.times_played))}
+        {stat(t("billiard_tables.cards.total_time_billiard.label"), formatDuration(totals.total_minutes))}
+        {stat(t("billiard_tables.cards.total_revenue_billiard.label"), formatMoneyString(totals.total_revenue, currency))}
+        {stat(t("billiard_tables.cards.total_unPaid_billiard.label"), formatMoneyString(totals.unpaid_total, currency))}
       </div>
       <DataGrid rowData={rows} columnDefs={columnDefs} pagination paginationPageSize={10} height="auto" />
     </div>

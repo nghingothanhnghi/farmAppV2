@@ -70,7 +70,11 @@
         "start": "Start",
         "stop": "Stop",
         "pause": "Pause",
-        "restart": "Restart"
+        "restart": "Restart",
+        "add_items_billard": "Add Items",
+        "back_to_tables": "Back to Tables",
+        "add_table": "Add Table",
+        "table_report": "Báo cáo"        
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -238,6 +242,18 @@
         "dayEnd": {
             "label": "Day End",
             "placeholder": ""
+        },
+        "quantity": {
+            "label": "Quantity",
+            "placeholder": ""
+        },
+        "hourly_rate":{
+            "label": "Hourly rate (VND)",
+            "placeholder":""
+        },
+        "table_name":{
+            "label": "Table name",
+            "placeholder":""
         }
     },
     "toggle":{
@@ -297,7 +313,12 @@
             "batch": "batch",
             "reference": "Reference",
             "provider": "Provider",
-            "amount": "Amount"
+            "amount": "Amount",
+            "table_name": "Table",
+            "time_played": "Time Played",
+            "total_time_played": "Total Time",
+            "revenue": "Revenue",
+            "unPaid": "Unpaid"            
         },
         "bodyName":{
             "no_matching_results": "No matching results"
@@ -510,10 +531,40 @@
                 "label": "Session",
                 "table": "Table"
             },
+            "times_played_billiard":{
+                "label": "Times Played"
+            },
+            "total_time_billiard":{
+                "label": "Tổng thời gian chơi"
+            },
+            "total_revenue_billiard":{
+                "label": "Tổng doanh thu"
+            },
+            "total_unPaid_billiard":{
+                "label": "Chưa thanh toán"
+            },             
             "items": "Items",
             "fee_table": "Table Fee",
             "fee_product": "Foods/Drinks",
-            "fee_total": "Total"
+            "fee_total": "Total",
+            "items_content":{
+                "noData": "No recent alerts"
+            }
+        },
+        "modals": {
+            "items": {
+                "title": "Add Item",
+                "description": "Add drinks or snacks to the bill for this table."
+            },
+            "table": {
+                "title": "New Table",
+                "description": ""
+            },
+            "confirm":{
+                "stop_session":{
+                    "message": "Stop this session? The timer ends and the bill is finalised."
+                }  
+            }  
         }
     },
     "payment": {

@@ -319,18 +319,22 @@ const UserManagementPage: React.FC = () => {
   }
 
   return (
-    <div className="">
+    <div className="flex flex-col h-full min-h-0">
       <PageTitle
         title="User Management"
         subtitle="Manage user accounts, assign roles, control role status, and review permissions to ensure each user has the appropriate level of access.  
 "
       />
-      <DataGrid
-        rowData={users}
-        columnDefs={columnDefs}
-        pagination
-        paginationPageSize={10}
-      />
+      <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+        <DataGrid
+          rowData={users}
+          columnDefs={columnDefs}
+          pagination
+          paginationPageSize={10}
+          height="auto"
+        />
+      </div>
+
       <Modal
         showCloseButton={false}
         size='xsmall'

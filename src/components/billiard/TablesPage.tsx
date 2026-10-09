@@ -53,7 +53,7 @@ const TablesPage: React.FC = () => {
           canManage ? (
             <>
               <Button
-                label="Reports"
+                label={t("btn.table_report")}
                 variant="secondary"
                 icon={<IconChartBar size={16} className="text-gray-500" />}
                 iconPosition="left"
@@ -61,7 +61,7 @@ const TablesPage: React.FC = () => {
                 onClick={() => navigate('/billiard/reports')}
               />
               <Button
-                label="Add table"
+                label={t("btn.add_table")}
                 variant="secondary"
                 icon={<IconPlus size={16} className="text-gray-500" />}
                 iconPosition="left"
