@@ -8,6 +8,10 @@ import type {
   BillResponse,
   PayResponse,
   PaymentMethod,
+  PricingQuote,
+  PricingQuoteParams,
+  PricingRule,
+  PricingRulePayload,
   SessionStart,
   TableCreate,
   UsageReport,
@@ -75,5 +79,34 @@ export const billiardService = {
     const d = res.data;
     if (Array.isArray(d)) return { rows: d };
     return { rows: d?.rows ?? d?.items ?? d?.results ?? [], totals: d?.totals ?? null };
+  },
+
+  // --- Pricing rules ---
+  async getPricingRules(): Promise<PricingRule[]> {
+    const res = await apiClient.get('/billiard/pricing-rules');
+    const d = res.data;
+    return Array.isArray(d) ? d : d?.items ?? d?.rules ?? d?.results ?? [];
+  },
+
+  async createPricingRule(data: PricingRulePayload): Promise<PricingRule> {
+    const res = await apiClient.post('/billiard/pricing-rules', data);
+    return res.data;
+  },
+
+  async updatePricingRule(id: number, data: PricingRulePayload): Promise<PricingRule> {
+    const res = await apiClient.put(`/billiard/pricing-rules/${id}`, data);
+    return res.data;
+  },
+
+  async deletePricingRule(id: number): Promise<void> {
+    await apiClient.delete(`/billiard/pricing-rules/${id}`);
+  },
+
+  /** Preview only - writes nothing. `at` without a timezone is club-local time. */
+  async getPricingQuote({ table_id, minutes, at }: PricingQuoteParams): Promise<PricingQuote> {
+    const res = await apiClient.get('/billiard/pricing-rules/quote', {
+      params: { table_id, minutes, ...(at ? { at } : {}) },
+    });
+    return res.data;
   },
 };

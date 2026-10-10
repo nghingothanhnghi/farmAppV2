@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {useTranslation} from 'react-i18next';
-import { IconChartBar, IconMoodEmpty, IconPlus } from '@tabler/icons-react';
+import { IconChartBar, IconMoodEmpty, IconPlus, IconTag } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -59,6 +59,14 @@ const TablesPage: React.FC = () => {
                 iconPosition="left"
                 rounded="lg"
                 onClick={() => navigate('/billiard/reports')}
+              />
+              <Button
+                label="Pricing rules"
+                variant="secondary"
+                icon={<IconTag size={16} className="text-gray-500" />}
+                iconPosition="left"
+                rounded="lg"
+                onClick={() => navigate('/billiard/pricing-rules')}
               />
               <Button
                 label={t("btn.add_table")}

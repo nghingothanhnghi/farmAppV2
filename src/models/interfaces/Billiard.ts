@@ -31,6 +31,10 @@ export interface ActiveTable {
   session_id: number;
   start_time: string; // UTC ISO
   elapsed_minutes: number;
+  /** Rate of the pricing rule frozen at session start (may differ from the table's own rate). */
+  hourly_rate?: string;
+  /** Not exposed by the backend yet - rendered only when present. */
+  pricing_rule_name?: string | null;
   current_table_fee: string;
   current_product_fee: string;
   current_total: string;
@@ -54,6 +58,16 @@ export interface BillItem {
   total_price: string;
 }
 
+/** Known billing policies. Old bills may carry `rounded_hour`; unknown values must still render. */
+export type BillingPolicy = 'per_minute' | 'hourly' | 'block' | 'minimum_hour' | 'rounded_hour';
+
+/** Params frozen with the session. Both keys are optional; the object may be empty or null. */
+export type PricingParams = {
+  block_minutes?: number;
+  min_minutes?: number;
+  [key: string]: unknown;
+};
+
 export type BillState = 'active' | 'stopped' | 'pending' | 'paid';
 
 export interface BillResponse {
@@ -63,8 +77,14 @@ export interface BillResponse {
   start_time: string;
   end_time?: string | null; // null/absent => still running
   duration_minutes?: number;
+  /** Rate of the rule picked at session start - NOT necessarily the table's own rate. */
   hourly_rate?: string;
-  billing_policy?: string;
+  /** BillingPolicy, but typed loosely so an unexpected value never breaks the UI. */
+  billing_policy?: BillingPolicy | (string & {});
+  /** e.g. "Happy hour". null = no rule matched, or session older than pricing rules. */
+  pricing_rule_name?: string | null;
+  /** e.g. {"block_minutes": 30}. {} or null when none. */
+  pricing_params?: PricingParams | null;
   total_table_fee: string;
   total_product_fee: string;
   items: BillItem[];
@@ -109,4 +129,59 @@ export interface UsageTotals {
 export interface UsageReport {
   rows: UsageRow[];
   totals?: UsageTotals | null;
+}
+
+// --- Pricing rules (/billiard/pricing-rules) ---------------------------------
+// Shapes follow the written backend spec; NOT yet verified against /docs.
+
+export type PricingRuleType = 'per_minute' | 'hourly' | 'block' | 'minimum_hour';
+
+export const PRICING_RULE_TYPES: PricingRuleType[] = ['per_minute', 'hourly', 'block', 'minimum_hour'];
+
+export type DayOfWeek = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
+
+export const DAYS_OF_WEEK: DayOfWeek[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
+
+export interface PricingRuleParams {
+  block_minutes?: number; // rule_type = block, 1..1440
+  min_minutes?: number;   // rule_type = minimum_hour, 1..1440
+}
+
+export interface PricingRule {
+  id: number;
+  name: string;
+  rule_type: PricingRuleType;
+  hourly_rate?: string | null;   // overrides the table's rate when set
+  params?: PricingRuleParams | null;
+  table_id?: number | null;      // null/empty = all tables
+  days_of_week?: string | null;  // "mon,tue" or empty = every day
+  start_time?: string | null;    // club-local; sent together with end_time
+  end_time?: string | null;      // end < start = overnight window
+  priority: number;              // 0..1000, higher wins
+  is_active: boolean;
+}
+
+export type PricingRulePayload = Omit<PricingRule, 'id'>;
+
+export interface PricingQuoteParams {
+  table_id: number;
+  minutes: number;
+  /** Optional. No timezone = club-local time. */
+  at?: string;
+}
+
+/**
+ * Quote response. The exact field names are unconfirmed, so everything is optional
+ * and the UI falls back to listing whatever came back.
+ */
+export interface PricingQuote {
+  table_id?: number;
+  minutes?: number;
+  hourly_rate?: string;
+  billing_policy?: string;
+  pricing_rule_name?: string | null;
+  pricing_params?: PricingParams | null;
+  total_table_fee?: string;
+  currency?: string;
+  [key: string]: unknown;
 }
