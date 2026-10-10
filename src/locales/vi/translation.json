@@ -136,6 +136,10 @@
         "ward":{
             "label": "Phường/Xã",
             "placeholder": "chọn phường/xã..."
+        },
+        "select_products_billiard":{
+            "label": "Gọi món thêm",
+            "placeholder": "Chọn đồ uống/đồ ăn"
         }
     },
     "input":{

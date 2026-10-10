@@ -136,6 +136,10 @@
         "ward":{
             "label": "",
             "placeholder": ""
+        },
+        "select_products_billiard":{
+            "label": "Product",
+            "placeholder": "Choose foods/drinks"
         }
     },
     "input":{

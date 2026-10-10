@@ -66,7 +66,7 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
       <div className="space-y-4">
         <p className="text-sm text-gray-700 dark:text-gray-100">{t('billiard_tables.modals.items.description')}</p>
         <FormGroup className="space-y-1">
-          <FormLabel htmlFor="item_product">Product</FormLabel>
+          <FormLabel htmlFor="item_product">{t("select.select_products_billiard.label")}</FormLabel>
           <FormSelect
             id="item_product"
             value={productId}
@@ -76,7 +76,7 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
             }}
             className="w-full"
           >
-            <option value="">Select a product</option>
+            <option value="">{t("select.select_products_billiard.placeholder")}</option>
             {activeProducts.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name} — {formatMoney(p.base_price)}
