@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import Badge from '../../common/Badge';
 import EmptyState from '../../common/EmptyState';
 import { formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
+import { getPricingSummary } from '../../../utils/pricing';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 
 interface Props {
@@ -26,6 +27,9 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
   const b = { ...bill, ...overrides };
   const c = b.currency;
   const state = getBillState(bill);
+  // The rate is the one frozen at session start, not the table's own rate. Any part may be missing.
+  const pricing = getPricingSummary(bill);
+  const hasPricing = pricing.rate !== null || pricing.ruleName || pricing.policyLabel || pricing.paramsText;
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
@@ -55,6 +59,22 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
           size="xsmall"
         />
       </div>
+
+      {hasPricing && (
+        <div className="space-y-1.5">
+          <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Pricing</p>
+          {pricing.rate !== null && (
+            <Line label="Rate" value={`${formatMoneyString(pricing.rate, c)} / h`} />
+          )}
+          {pricing.ruleName && <Line label="Rule" value={pricing.ruleName} />}
+          {(pricing.policyLabel || pricing.paramsText) && (
+            <Line
+              label="Billing"
+              value={[pricing.policyLabel, pricing.paramsText].filter(Boolean).join(' · ')}
+            />
+          )}
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('billiard_tables.cards.items')}</p>

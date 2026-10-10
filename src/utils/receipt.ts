@@ -2,6 +2,7 @@
 import {
   formatDateTime, formatDuration, formatMoneyString, getBillState,
 } from './billiard';
+import { getPricingSummary } from './pricing';
 import type { BillResponse } from '../models/interfaces/Billiard';
 
 const esc = (v: unknown) =>
@@ -14,10 +15,20 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
   const title = state === 'paid' ? 'RECEIPT' : 'BILL — NOT PAID';
 //   const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
 
+  const pricing = getPricingSummary(bill);
+  const billing = [pricing.policyLabel, pricing.paramsText].filter(Boolean).join(' · ');
+  const pricingHtml =
+    pricing.rate !== null || pricing.ruleName || billing
+      ? `<hr><div class="muted">
+    ${pricing.rate !== null ? `Rate: ${esc(formatMoneyString(pricing.rate, c))} / h${pricing.ruleName ? ` (${esc(pricing.ruleName)})` : ''}<br>` : pricing.ruleName ? `Rule: ${esc(pricing.ruleName)}<br>` : ''}
+    ${billing ? `Billing: ${esc(billing)}` : ''}
+  </div>`
+      : '';
+
   const rows = bill.items
     .map(
       (it) => `
-      <tr><td colspan="2">${esc(it.product_name)}: ''}</td></tr>
+      <tr><td colspan="2">${esc(it.product_name)}</td></tr>
       <tr class="sub"><td>${it.quantity} × ${esc(formatMoneyString(it.unit_price, c))}</td>
           <td class="r">${esc(formatMoneyString(it.total_price, c))}</td></tr>`
     )
@@ -45,6 +56,7 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
     Out: ${esc(formatDateTime(bill.end_time))}<br>
     ${bill.duration_minutes != null ? `Time: ${esc(formatDuration(bill.duration_minutes))}` : ''}
   </div>
+  ${pricingHtml}
   <hr>
   <table>
     <tr><td>Table fee</td><td class="r">${esc(formatMoneyString(bill.total_table_fee, c))}</td></tr>

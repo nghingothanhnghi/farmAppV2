@@ -64,6 +64,7 @@ const CmsMediaManagementPage = lazy(() => import("./components/CMS").then(m => (
 const BilliardTablesPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardTablesPage })));
 const BilliardSessionPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardSessionPage })));
 const BilliardReportsPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardReportsPage })));
+const BilliardPricingRulesPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardPricingRulesPage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -279,6 +280,7 @@ function App() {
             <Route path="/billiard" element={<PrivateRoute><BilliardTablesPage /></PrivateRoute>} />
             <Route path="/billiard/sessions/:sessionId" element={<PrivateRoute><BilliardSessionPage /></PrivateRoute>} />
             <Route path="/billiard/reports" element={<PrivateRoute><BilliardReportsPage /></PrivateRoute>} />
+            <Route path="/billiard/pricing-rules" element={<PrivateRoute><BilliardPricingRulesPage /></PrivateRoute>} />
 
           </Route>
 

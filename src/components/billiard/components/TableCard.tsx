@@ -38,6 +38,8 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
   const { t } = useTranslation();
   const currency = live?.currency ?? DEFAULT_CURRENCY;
   const elapsed = live ? Math.max(0, Math.floor((now - parseUtc(live.start_time)) / 1000)) : 0;
+  // While playing, show the rate of the rule frozen at start (may differ from the table's own rate).
+  const rate = table.status === 'playing' && live?.hourly_rate ? live.hourly_rate : table.hourly_rate;
   const variant = STATUS_VARIANT[table.status as keyof typeof STATUS_VARIANT] ?? 'gray';
 
   return (
@@ -46,7 +48,8 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
         <div className="min-w-0">
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{table.name}</h3>
           <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-            {formatMoneyString(table.hourly_rate)} / h
+            {formatMoneyString(rate, currency)} / h
+            {live?.pricing_rule_name ? ` · ${live.pricing_rule_name}` : ''}
           </p>
         </div>
         <Badge label={getTableStatusLabel(table.status)} variant={variant} size="xsmall" className="capitalize" />
