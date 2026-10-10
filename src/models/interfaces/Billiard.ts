@@ -159,9 +159,10 @@ export interface PricingRule {
   end_time?: string | null;      // end < start = overnight window
   priority: number;              // 0..1000, higher wins
   is_active: boolean;
+  created_at?: string;           // read-only
 }
 
-export type PricingRulePayload = Omit<PricingRule, 'id'>;
+export type PricingRulePayload = Omit<PricingRule, 'id' | 'created_at'>;
 
 export interface PricingQuoteParams {
   table_id: number;
@@ -170,18 +171,19 @@ export interface PricingQuoteParams {
   at?: string;
 }
 
-/**
- * Quote response. The exact field names are unconfirmed, so everything is optional
- * and the UI falls back to listing whatever came back.
- */
+/** GET /billiard/pricing-rules/quote - confirmed against a real response. */
 export interface PricingQuote {
-  table_id?: number;
-  minutes?: number;
-  hourly_rate?: string;
-  billing_policy?: string;
-  pricing_rule_name?: string | null;
-  pricing_params?: PricingParams | null;
-  total_table_fee?: string;
-  currency?: string;
-  [key: string]: unknown;
+  table_id: number;
+  minutes: number;
+  /** Moment priced, with a UTC offset, e.g. "2026-10-10T14:35:08+07:00". */
+  at: string;
+  /** Winning rule; null/absent when nothing matched and the table's own rate applies. */
+  rule_id?: number | null;
+  rule_name?: string | null;
+  rule_type?: string | null;
+  hourly_rate?: string | null;
+  params?: PricingRuleParams | null;
+  /** Table fee for `minutes` (decimal string). */
+  fee: string;
+  currency?: string; // not sent today; falls back to DEFAULT_CURRENCY
 }
