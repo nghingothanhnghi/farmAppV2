@@ -4,20 +4,13 @@ import React, { useState } from 'react';
 import Button from '../../common/Button';
 import { FormGroup, FormInput, FormLabel, FormSelect } from '../../common/Form';
 import { billiardService } from '../../../services/billiard_service';
-import { DEFAULT_CURRENCY, billiardErrorMessage, formatMoneyString } from '../../../utils/billiard';
+import { DEFAULT_CURRENCY, billiardErrorMessage, formatDateTime, formatMoneyString } from '../../../utils/billiard';
 import { describePricingParams, getBillingPolicyLabel } from '../../../utils/pricing';
 import type { BilliardTable, PricingQuote } from '../../../models/interfaces/Billiard';
 
 interface Props {
   tables: BilliardTable[];
 }
-
-// Field names for the quoted amount are not confirmed yet - first match wins.
-const AMOUNT_KEYS = ['total_table_fee', 'table_fee', 'fee', 'total', 'amount', 'price'] as const;
-const KNOWN_KEYS = new Set([
-  'table_id', 'minutes', 'hourly_rate', 'billing_policy', 'pricing_rule_name', 'pricing_params', 'currency',
-  ...AMOUNT_KEYS,
-]);
 
 const Row: React.FC<{ label: string; value: React.ReactNode; bold?: boolean }> = ({ label, value, bold }) => (
   <div className="flex items-center justify-between gap-3 text-sm">
@@ -52,10 +45,8 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
     }
   };
 
-  const amountKey = quote ? AMOUNT_KEYS.find((k) => quote[k] != null) : undefined;
-  const currency = (quote?.currency as string | undefined) ?? DEFAULT_CURRENCY;
-  const paramsText = describePricingParams(quote?.pricing_params);
-  const extras = quote ? Object.entries(quote).filter(([k, v]) => !KNOWN_KEYS.has(k) && v != null && typeof v !== 'object') : [];
+  const currency = quote?.currency ?? DEFAULT_CURRENCY;
+  const paramsText = describePricingParams(quote?.params);
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 p-4 space-y-4">
@@ -94,18 +85,15 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
 
       {quote && (
         <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-          <Row label="Rule" value={quote.pricing_rule_name || 'No rule matched (table rate)'} />
-          {quote.billing_policy && (
-            <Row label="Billing" value={`${getBillingPolicyLabel(quote.billing_policy)}${paramsText ? ` · ${paramsText}` : ''}`} />
+          <Row label="Priced for" value={formatDateTime(quote.at)} />
+          <Row label="Rule" value={quote.rule_name || 'No rule matched (table rate)'} />
+          {quote.rule_type && (
+            <Row label="Billing" value={`${getBillingPolicyLabel(quote.rule_type)}${paramsText ? ` · ${paramsText}` : ''}`} />
           )}
-          {quote.hourly_rate != null && <Row label="Rate" value={`${formatMoneyString(quote.hourly_rate, currency)} / h`} />}
-          {amountKey && <Row label="Table fee" value={formatMoneyString(quote[amountKey] as string, currency)} bold />}
-          {extras.map(([k, v]) => <Row key={k} label={k.replace(/_/g, ' ')} value={String(v)} />)}
-          {!amountKey && (
-            <p className="text-[0.625rem] text-amber-600 dark:text-amber-400">
-              The quote response has no recognised amount field - check /docs and update PricingQuotePanel.
-            </p>
+          {quote.hourly_rate != null && quote.hourly_rate !== '' && (
+            <Row label="Rate" value={`${formatMoneyString(quote.hourly_rate, currency)} / h`} />
           )}
+          <Row label={`Table fee (${quote.minutes} min)`} value={formatMoneyString(quote.fee, currency)} bold />
         </div>
       )}
     </div>
