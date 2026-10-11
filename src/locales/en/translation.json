@@ -530,6 +530,27 @@
         "billiard_tables_description": "Start a table, track play time and add drinks or snacks to the bill.",
         "table_usage_report_title": "Table Usage Report",
         "table_usage_report_description": "Play count, time and revenue per table.",
+        "games": {
+            "title": "Games",
+            "start_first": "Start game 1",
+            "start_next": "Start next game",
+            "finish": "Finish game",
+            "new": "New game",
+            "reset": "Reset",
+            "game": "Game",
+            "status_active": "Active",
+            "status_completed": "Completed",
+            "status_cancelled": "Cancelled",
+            "player_a": "Player A",
+            "player_b": "Player B",
+            "plus": "Score +1",
+            "minus": "Score -1",
+            "started": "Game started.",
+            "finished": "Game finished.",
+            "new_started": "New game started.",
+            "reset_done": "Score reset.",
+            "empty": "No games yet."
+        },
         "cards": {
             "session_billiard": {
                 "label": "Session",

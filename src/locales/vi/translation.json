@@ -530,6 +530,27 @@
         "billiard_tables_description": "Mở bàn, theo dõi thời gian chơi và thêm đồ uống hoặc đồ ăn vào hóa đơn",
         "table_usage_report_title": "Báo cáo sử dụng bàn",
         "table_usage_report_description": "Số lượt chơi, thời gian và doanh thu theo từng bàn.",
+        "games": {
+            "title": "Ván đấu",
+            "start_first": "Bắt đầu ván 1",
+            "start_next": "Bắt đầu ván tiếp theo",
+            "finish": "Kết thúc ván",
+            "new": "Ván mới",
+            "reset": "Đặt lại",
+            "game": "Ván",
+            "status_active": "Đang chơi",
+            "status_completed": "Đã xong",
+            "status_cancelled": "Đã huỷ",
+            "player_a": "Người chơi A",
+            "player_b": "Người chơi B",
+            "plus": "Cộng 1 điểm",
+            "minus": "Trừ 1 điểm",
+            "started": "Đã bắt đầu ván.",
+            "finished": "Đã kết thúc ván.",
+            "new_started": "Đã bắt đầu ván mới.",
+            "reset_done": "Đã đặt lại điểm.",
+            "empty": "Chưa có ván nào."
+        },
         "cards": {
             "session_billiard": {
                 "label": "Lượt chơi",

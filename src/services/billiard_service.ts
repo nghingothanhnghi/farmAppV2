@@ -6,12 +6,15 @@ import type {
   AddItemPayload,
   BilliardTable,
   BillResponse,
+  Game,
+  NewGameResponse,
   PayResponse,
   PaymentMethod,
   PricingQuote,
   PricingQuoteParams,
   PricingRule,
   PricingRulePayload,
+  ScorePayload,
   SessionStart,
   TableCreate,
   UsageReport,
@@ -68,6 +71,37 @@ export const billiardService = {
 
   async confirmPayment(sessionId: number): Promise<BillResponse> {
     const res = await apiClient.post(`/sessions/${sessionId}/pay/confirm`);
+    return res.data;
+  },
+
+  // --- Games (scoring) ---
+  async getGames(sessionId: number): Promise<Game[]> {
+    const res = await apiClient.get(`/sessions/${sessionId}/games`);
+    return Array.isArray(res.data) ? res.data : [];
+  },
+
+  async startGame(sessionId: number): Promise<Game> {
+    const res = await apiClient.post(`/sessions/${sessionId}/games`);
+    return res.data;
+  },
+
+  async scoreGame(gameId: number, payload: ScorePayload): Promise<Game> {
+    const res = await apiClient.post(`/games/${gameId}/score`, payload);
+    return res.data;
+  },
+
+  async resetGame(gameId: number): Promise<Game> {
+    const res = await apiClient.post(`/games/${gameId}/reset`);
+    return res.data;
+  },
+
+  async finishGame(gameId: number): Promise<Game> {
+    const res = await apiClient.post(`/games/${gameId}/finish`);
+    return res.data;
+  },
+
+  async newGame(gameId: number): Promise<NewGameResponse> {
+    const res = await apiClient.post(`/games/${gameId}/new`);
     return res.data;
   },
 

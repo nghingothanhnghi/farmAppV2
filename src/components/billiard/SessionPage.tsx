@@ -9,10 +9,12 @@ import Modal from '../common/Modal';
 import LinearProgress from '../common/LinearProgress';
 import { useAlert } from '../../contexts/alertContext';
 import { useSession } from '../../hooks/useSession';
+import { useGames } from '../../hooks/useGames';
 import { useActiveTables } from '../../hooks/useActiveTables';
 import { useNow } from '../../hooks/useNow';
 import StartStopButtons from './components/StartStopButtons';
 import AddItemModal from './components/AddItemModal';
+import GamesPanel from './components/GamesPanel';
 import BillView from './components/BillView';
 import PayModal from './components/PayModal';
 import ReceiptPreviewModal from './components/ReceiptPreviewModal';
@@ -29,6 +31,7 @@ const SessionPage: React.FC = () => {
   const { bySessionId, refetch: refetchLive } = useActiveTables(30000);
 
   const state = bill ? getBillState(bill) : null;
+  const gamesApi = useGames(id, { enabled: state === 'active' });
   const now = useNow(1000, state === 'active');
 
   const [addOpen, setAddOpen] = useState(false);
@@ -75,7 +78,10 @@ const SessionPage: React.FC = () => {
   const handleStop = async () => {
     const ok = await actions.stop();
     setConfirmStopOpen(false);
-    if (ok) refetchLive();
+    if (ok) {
+      refetchLive();
+      gamesApi.actions.fetchGames(); // stop auto-completes the active game
+    }
   };
 
   return (
@@ -108,6 +114,19 @@ const SessionPage: React.FC = () => {
             />
           </div>
         </div>
+      )}
+
+      {state === 'active' && (
+        <GamesPanel
+          games={gamesApi.games}
+          activeGame={gamesApi.activeGame}
+          busy={gamesApi.busy}
+          onStart={gamesApi.actions.start}
+          onScore={gamesApi.actions.score}
+          onReset={gamesApi.actions.reset}
+          onFinish={gamesApi.actions.finish}
+          onNewGame={gamesApi.actions.newGame}
+        />
       )}
 
       <BillView

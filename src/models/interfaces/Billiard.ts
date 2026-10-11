@@ -187,3 +187,33 @@ export interface PricingQuote {
   fee: string;
   currency?: string; // not sent today; falls back to DEFAULT_CURRENCY
 }
+
+// --- Game scoring (/sessions/{id}/games, /games/{id}/...) --------------------
+// Scoring never touches billing or the session timer.
+
+/** `cancelled` is read-only in the UI. Unknown values must still render. */
+export type GameStatus = 'active' | 'completed' | 'cancelled';
+
+export type ScorePlayer = 'A' | 'B';
+
+export interface Game {
+  id: number;
+  session_id: number;
+  game_number: number;
+  start_time: string;            // naive UTC (see parseUtc)
+  end_time: string | null;
+  player_a_score: number;
+  player_b_score: number;
+  status: GameStatus;
+}
+
+export interface ScorePayload {
+  player: ScorePlayer;
+  delta: number; // -10..10, never 0
+}
+
+/** POST /games/{id}/new = finish the current game + start the next one at 0:0. */
+export interface NewGameResponse {
+  finished: Game;
+  started: Game;
+}
