@@ -1,10 +1,10 @@
 // src/components/billiard/PricingRulesPage.tsx
 import React, { useState } from 'react';
+// import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconPlus } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
-import Badge from '../common/Badge';
 import Modal from '../common/Modal';
 import LinearProgress from '../common/LinearProgress';
 import EmptyState from '../common/EmptyState';
@@ -13,11 +13,11 @@ import { usePricingRules } from '../../hooks/usePricingRules';
 import { useTables } from '../../hooks/useTables';
 import PricingRuleFormModal from './components/PricingRuleFormModal';
 import PricingQuotePanel from './components/PricingQuotePanel';
-import { DEFAULT_CURRENCY, formatMoneyString } from '../../utils/billiard';
-import { describeDays, describePricingParams, describeWindow, getBillingPolicyLabel } from '../../utils/pricing';
+import PricingRulesTable from './components/PricingRulesTable';
 import type { PricingRule } from '../../models/interfaces/Billiard';
 
 const PricingRulesPage: React.FC = () => {
+  // const { t } = useTranslation()
   const navigate = useNavigate();
   // The server enforces ADMIN/MANAGER on writes; the list itself is open to any logged-in user.
   const canManage = useHasAnyRole(['admin', 'super_admin', 'manager']);
@@ -40,9 +40,6 @@ const PricingRulesPage: React.FC = () => {
     const ok = await actions.deleteRule(deleting.id);
     if (ok) setDeleting(null);
   };
-
-  // Highest priority first, then newest, so the list reads in the same order the server picks a winner.
-  const sorted = [...rules].sort((a, b) => b.priority - a.priority || b.id - a.id);
 
   return (
     <div className="space-y-6">
@@ -77,57 +74,16 @@ const PricingRulesPage: React.FC = () => {
       ) : rules.length === 0 ? (
         <EmptyState icon={<IconMoodEmpty size={48} />} message="No pricing rules yet. Tables use their own hourly rate." />
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/10">
-          <table className="min-w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-800 text-left text-xs text-gray-500 dark:text-gray-400">
-              <tr>
-                <th className="px-3 py-2 font-medium">Rule</th>
-                <th className="px-3 py-2 font-medium">Billing</th>
-                <th className="px-3 py-2 font-medium">Rate</th>
-                <th className="px-3 py-2 font-medium">When</th>
-                <th className="px-3 py-2 font-medium">Applies to</th>
-                <th className="px-3 py-2 font-medium text-right">Priority</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-                {canManage && <th className="px-3 py-2 font-medium text-right">Actions</th>}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-white/5 text-gray-800 dark:text-gray-100">
-              {sorted.map((r) => {
-                const paramsText = describePricingParams(r.params);
-                return (
-                  <tr key={r.id} className={r.is_active ? '' : 'opacity-60'}>
-                    <td className="px-3 py-2 font-medium">{r.name}</td>
-                    <td className="px-3 py-2">
-                      {getBillingPolicyLabel(r.rule_type)}
-                      {paramsText && <span className="block text-[0.625rem] text-gray-500 dark:text-gray-400">{paramsText}</span>}
-                    </td>
-                    <td className="px-3 py-2 whitespace-nowrap">
-                      {r.hourly_rate ? `${formatMoneyString(r.hourly_rate, DEFAULT_CURRENCY)} / h` : <span className="text-gray-400">Table rate</span>}
-                    </td>
-                    <td className="px-3 py-2">
-                      {describeDays(r.days_of_week)}
-                      <span className="block text-[0.625rem] text-gray-500 dark:text-gray-400">{describeWindow(r)}</span>
-                    </td>
-                    <td className="px-3 py-2">{tableName(r.table_id)}</td>
-                    <td className="px-3 py-2 text-right">{r.priority}</td>
-                    <td className="px-3 py-2">
-                      <Badge label={r.is_active ? 'Active' : 'Inactive'} variant={r.is_active ? 'success' : 'gray'} size="xsmall" />
-                    </td>
-                    {canManage && (
-                      <td className="px-3 py-2">
-                        <div className="flex justify-end gap-2">
-                          <Button label="Edit" size="xs" variant="secondary" rounded="lg" disabled={saving} onClick={() => openEdit(r)} />
-                          <Button label={r.is_active ? 'Deactivate' : 'Activate'} size="xs" variant="secondary" rounded="lg"
-                            disabled={saving} onClick={() => actions.toggleActive(r)} />
-                          <Button label="Delete" size="xs" variant="danger" rounded="lg" disabled={saving} onClick={() => setDeleting(r)} />
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+          <PricingRulesTable
+            rules={rules}
+            canManage={canManage}
+            saving={saving}
+            tableName={tableName}
+            onEdit={openEdit}
+            onToggleActive={actions.toggleActive}
+            onDelete={setDeleting}
+          />
         </div>
       )}
 

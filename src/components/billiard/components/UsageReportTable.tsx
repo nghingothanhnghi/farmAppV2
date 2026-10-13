@@ -11,7 +11,7 @@ interface Props {
 }
 
 const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const { rows } = report;
 
   // Prefer server totals; otherwise sum exactly (decimal strings via BigInt).
@@ -70,7 +70,13 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
         {stat(t("billiard_tables.cards.total_revenue_billiard.label"), formatMoneyString(totals.total_revenue, currency))}
         {stat(t("billiard_tables.cards.total_unPaid_billiard.label"), formatMoneyString(totals.unpaid_total, currency))}
       </div>
-      <DataGrid rowData={rows} columnDefs={columnDefs} pagination paginationPageSize={10} height="auto" />
+      <DataGrid
+        rowData={rows}
+        columnDefs={columnDefs}
+        pagination
+        paginationPageSize={10}
+        height="auto"
+      />
     </div>
   );
 };
