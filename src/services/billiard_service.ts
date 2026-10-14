@@ -5,6 +5,7 @@ import type {
   ActiveTable,
   AddItemPayload,
   BilliardTable,
+  BilliardController,
   BillResponse,
   Game,
   NewGameResponse,
@@ -113,6 +114,12 @@ export const billiardService = {
     const d = res.data;
     if (Array.isArray(d)) return { rows: d };
     return { rows: d?.rows ?? d?.items ?? d?.results ?? [], totals: d?.totals ?? null };
+  },
+
+  // --- Controller health (manager/admin) ---
+  async getControllerStatus(): Promise<BilliardController[]> {
+    const res = await apiClient.get('/billiard/controller/status');
+    return Array.isArray(res.data) ? res.data : [];
   },
 
   // --- Pricing rules ---

@@ -131,6 +131,22 @@ export interface UsageReport {
   totals?: UsageTotals | null;
 }
 
+// --- Controller status (/billiard/controller/status) ------------------------
+
+/** Status reported for the central controller that accepts table button events. */
+export type BilliardControllerStatus = 'online' | 'offline' | 'syncing' | 'error';
+
+/** Manager/admin-only controller health snapshot. Device credentials are never exposed. */
+export interface BilliardController {
+  device_id: string;
+  name: string;
+  status: BilliardControllerStatus;
+  firmware_version?: string | null;
+  last_seen?: string | null;
+  /** Highest controller event sequence already applied by the server. */
+  last_applied_seq: number;
+}
+
 // --- Pricing rules (/billiard/pricing-rules) ---------------------------------
 // Shapes follow the written backend spec; NOT yet verified against /docs.
 

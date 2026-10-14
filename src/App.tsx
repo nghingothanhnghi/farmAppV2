@@ -65,6 +65,7 @@ const BilliardTablesPage = lazy(() => import("./components/billiard").then(m => 
 const BilliardSessionPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardSessionPage })));
 const BilliardReportsPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardReportsPage })));
 const BilliardPricingRulesPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardPricingRulesPage })));
+const BilliardControllersPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardControllersPage })));
 
 function App() {
   const { showLoginModal, setShowLoginModal } = useAuth();
@@ -281,6 +282,7 @@ function App() {
             <Route path="/billiard/sessions/:sessionId" element={<PrivateRoute><BilliardSessionPage /></PrivateRoute>} />
             <Route path="/billiard/reports" element={<PrivateRoute><BilliardReportsPage /></PrivateRoute>} />
             <Route path="/billiard/pricing-rules" element={<PrivateRoute><BilliardPricingRulesPage /></PrivateRoute>} />
+            <Route path="/billiard/controllers" element={<PrivateRoute><BilliardControllersPage /></PrivateRoute>} />
 
           </Route>
 
