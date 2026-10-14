@@ -50,19 +50,19 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
   }, [location]);
 
   // Handle processing a detection result (simulated)
-  const handleProcessDetection = async (detectionResultId: number) => {
-    try {
-      await actions.processDetectionResult(
-        detectionResultId,
-        location,
-        'camera_1', // camera source
-        0.7 // confidence threshold
-      );
-      console.log('Detection processed successfully');
-    } catch (error) {
-      console.error('Failed to process detection:', error);
-    }
-  };
+  // const handleProcessDetection = async (detectionResultId: number) => {
+  //   try {
+  //     await actions.processDetectionResult(
+  //       detectionResultId,
+  //       location,
+  //       'camera_1', // camera source
+  //       0.7 // confidence threshold
+  //     );
+  //     console.log('Detection processed successfully');
+  //   } catch (error) {
+  //     console.error('Failed to process detection:', error);
+  //   }
+  // };
 
   // Handle validating a detection
   const handleValidateDetection = async (detectionId: number, isValid: boolean) => {
@@ -90,23 +90,6 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
 
   const currentLocationStatus = locationStatus[location];
   const locationDetections = hardwareDetections.filter(d => d.location === location);
-
-  {/* Debug log for condition statuses */ }
-  { console.log("ConditionStatuses Debug:", conditionStatuses) }
-
-  // Debug information
-  console.log('HardwareDetection Debug:', {
-    location,
-    hardwareDetections: hardwareDetections.length,
-    locationDetections: locationDetections.length,
-    currentLocationStatus,
-    detectionSummaries: detectionSummaries.length,
-    availableLocations: availableLocations.length,
-    hardwareTypes: hardwareTypes.length,
-    conditionStatuses: conditionStatuses.length,
-    isWebSocketConnected,
-    loading
-  });
 
   return (
     <div className="space-y-10 mx-auto max-w-4xl">
@@ -161,14 +144,14 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
               size='sm'
             />
 
-            <Button
+            {/* <Button
               label="Process Sample Detection"
               onClick={() => handleProcessDetection(1)} // Sample detection result ID
               disabled={loading}
               variant="primary"
               rounded='lg'
               size='sm'
-            />
+            /> */}
           </div>
         </div>
       </div>
@@ -296,7 +279,6 @@ const HardwareDetection: React.FC<HardwareDetectionProps> = ({ location }) => {
             <div className="text-sm text-gray-400 space-y-1">
               <p>• Make sure the camera detection system is running</p>
               <p>• Verify the location parameter is correct</p>
-              <p>• Try clicking "Process Sample Detection" to test</p>
               <p>• Check WebSocket connection status above</p>
             </div>
             <div className="mt-4">

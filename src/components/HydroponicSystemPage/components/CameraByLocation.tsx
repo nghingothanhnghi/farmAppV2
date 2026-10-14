@@ -9,6 +9,7 @@ import RealtimeDetections from './RealtimeDetections';
 import StoredDetections from './StoredDetections';
 import LocationStatusOverview from './LocationStatusOverview';
 import { useHydroCameraDetection } from '../../../hooks/useHydroCameraDetection';
+import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import CameraControls from '../../common/CameraControls';
 import type { Direction } from '../../../models/interfaces/Camera';
 import { useHoverSlide } from '../../../hooks/useHoverSlide';
@@ -20,6 +21,7 @@ interface CameraByLocationProps {
 }
 
 const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
+  const hydroSystem = useHydroSystem();
 
   const {
     videoRef,
@@ -32,7 +34,7 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
     isCameraEnabled,
     initializeCamera,
     stopCamera,
-  } = useHydroCameraDetection(location);
+  } = useHydroCameraDetection(hydroSystem,location);
 
   const { isHovered, bind } = useHoverSlide();
   // TODO: Replace with actual service call to move camera by direction/step

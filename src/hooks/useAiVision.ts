@@ -33,7 +33,7 @@ export function useAiVision(hydroBatchId?: number) {
   const [growthHistory, setGrowthHistory] = useState<PlantGrowthRecord[]>([]);
   const [growthPredictions, setGrowthPredictions] = useState<GrowthPrediction[]>([]);
   const [latestGrowthPrediction, setLatestGrowthPrediction] =
-  useState<GrowthPrediction | null>(null);
+    useState<GrowthPrediction | null>(null);
   const [anomalies, setAnomalies] = useState<PlantAnomaly[]>([]);
   const [recommendations, setRecommendations] = useState<AIRecommendation[]>([]);
   const [lastImage, setLastImage] = useState<VisionImage | null>(null);
@@ -106,21 +106,21 @@ export function useAiVision(hydroBatchId?: number) {
     }
   }, []);
 
-const fetchGrowthPredictions = useCallback(async (id: number) => {
-  try {
-    const [predictions, latest] = await Promise.all([
-      aiVisionService.getGrowthPredictions(id),
-      aiVisionService.getLatestGrowthPrediction(id),
-    ]);
+  const fetchGrowthPredictions = useCallback(async (id: number) => {
+    try {
+      const [predictions, latest] = await Promise.all([
+        aiVisionService.getGrowthPredictions(id),
+        aiVisionService.getLatestGrowthPrediction(id),
+      ]);
 
-    setGrowthPredictions(predictions);
-    setLatestGrowthPrediction(latest);
-  } catch (err) {
-    console.error("Failed to fetch growth predictions", err);
-    setGrowthPredictions([]);
-    setLatestGrowthPrediction(null);
-  }
-}, []);
+      setGrowthPredictions(predictions);
+      setLatestGrowthPrediction(latest);
+    } catch (err) {
+      console.error("Failed to fetch growth predictions", err);
+      setGrowthPredictions([]);
+      setLatestGrowthPrediction(null);
+    }
+  }, []);
 
   const fetchAnomalies = useCallback(async (id: number) => {
     try {
@@ -137,6 +137,20 @@ const fetchGrowthPredictions = useCallback(async (id: number) => {
       console.error("Failed to fetch recommendations", err);
     }
   }, []);
+
+
+  const resolveAnomaly = useCallback(async (anomalyId: number) => {
+    if (!plant) return;
+    const updated = await aiVisionService.resolveAnomaly(plant.id, anomalyId);
+    setAnomalies((prev) => prev.map((a) => (a.id === anomalyId ? { ...a, ...updated, is_resolved: true } : a)));
+  }, [plant]);
+
+  const setRecommendationStatus = useCallback(
+    async (id: number, status: AIRecommendation["status"]) => {
+      if (!plant) return;
+      const updated = await aiVisionService.updateRecommendationStatus(plant.id, id, status);
+      setRecommendations((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated, status } : r)));
+    }, [plant]);
 
   const refreshPlantData = useCallback(
     async (id: number) => {
@@ -299,6 +313,8 @@ const fetchGrowthPredictions = useCallback(async (id: number) => {
       refreshPlantData,
       uploadAndAnalyze,
       checkJobStatus,
+      resolveAnomaly,
+      setRecommendationStatus,
     },
   };
 }

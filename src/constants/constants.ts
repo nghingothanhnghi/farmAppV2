@@ -9,3 +9,5 @@ export const ERROR_AVATAR = defaultAvatar;
 
 export const BRAND_LOGO_IMAGE = brandLogoImage;
 
+export const AI_VISION_ACTIONS_ENABLED = import.meta.env.VITE_AI_VISION_ACTIONS === "true";
+

@@ -357,7 +357,10 @@ export const useHydroSystemStore = (enabled = true) => {
                 cameraSource,
                 confidenceThreshold
             );
-            setHardwareDetections(prev => [...prev, ...result]);
+            setHardwareDetections(prev => {
+                const seen = new Set(prev.map(d => d.id));
+                return [...prev, ...result.filter(r => !seen.has(r.id))];
+            });
             appendAction(createControlAction('Process Detection', true, `Processed ${result.length} detections`));
 
             // Refresh location status after processing

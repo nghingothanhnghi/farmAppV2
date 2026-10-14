@@ -103,10 +103,10 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
                     health={health}
                     latestGrowth={growthHistory[0]}
                 />
-                    <GrowthPredictionCard
-        prediction={latestGrowthPrediction}
-    />
-                <AnomaliesCard anomalies={anomalies} />
+                <GrowthPredictionCard
+                    prediction={latestGrowthPrediction}
+                />
+                <AnomaliesCard anomalies={anomalies} onResolve={actions.resolveAnomaly} />
                 <RecommendationsCard recommendations={recommendations} />
             </div>
         </div>

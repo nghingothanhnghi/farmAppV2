@@ -136,31 +136,16 @@ export const aiVisionService = {
         return res.data;
     },
 
-    // GET API: /{plant_id}/growth-predictions and GET Latest growth-predictions: /{plant_id}/growth-predictions/latest
-    // Schema     
-    // id: int
-    // plant_id: int
-    // growth_record_id: Optional[int] = None
-
-    // horizon_days: int
-    // target_date: datetime
-
-    // basis_growth_rate_pct_per_day: Optional[float] = None
-    // basis_sample_count: int
-    // basis_variance: Optional[float] = None
-
-    // predicted_canopy_area_px: Optional[float] = None
-    // predicted_growth_pct: Optional[float] = None
-    // confidence: Optional[float] = None
-
-    // current_stage_id: Optional[int] = None
-    // current_stage_name: Optional[str] = None
-    // scheduled_stage_transition_date: Optional[datetime] = None
-    // projected_stage_transition_date: Optional[datetime] = None
-    // stage_transition_delta_days: Optional[float] = None
-
-    // reasons: List[str]
-    // created_at: datetime
+    async resolveAnomaly(plantId: number, anomalyId: number): Promise<PlantAnomaly> {
+        const res = await apiClient.patch(`/api/v1/plants/${plantId}/anomalies/${anomalyId}/resolve`);
+        return res.data;
+    },
+    async updateRecommendationStatus(
+        plantId: number, id: number, status: AIRecommendation["status"]
+    ): Promise<AIRecommendation> {
+        const res = await apiClient.patch(`/api/v1/plants/${plantId}/recommendations/${id}/status`, { status });
+        return res.data;
+    },
 
 
 };
