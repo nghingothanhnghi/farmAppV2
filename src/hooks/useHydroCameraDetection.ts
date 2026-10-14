@@ -7,7 +7,10 @@ import type { DetectionResult, Detection } from '../models/interfaces/Camera';
 import { classToHardwareType, hardwareColors } from '../utils/hardwareMappings';
 import { OBJECT_DETECTION_STREAM_MODE, OBJECT_DETECTION_CAPTURE_INTERVAL, OBJECT_DETECTION_MODEL_NAME } from '../config/constants';
 
-export const useHydroCameraDetection = (location?: string) => {
+export const useHydroCameraDetection = (
+  hydroSystem: ReturnType<typeof useHydroSystem>,
+  location?: string
+) => {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [alert, setAlert] = useState<{ message: string; type: string } | null>(null);
@@ -16,7 +19,13 @@ export const useHydroCameraDetection = (location?: string) => {
   const hasSyncedRef = useRef<string | null>(null);
 
   const { isStreaming, startCamera, stopCamera } = useCamera({ videoRef, location, facingMode: 'environment',  autoStart: false });
-  const { actions, hardwareDetections, locationStatus, loading, error } = useHydroSystem();
+  const { hardwareDetections, locationStatus, loading, error } = hydroSystem;
+  const {
+    processDetectionResult,
+    syncLocationInventory,
+    fetchLocationStatus,
+    fetchHardwareDetections,
+  } = hydroSystem.actions;
 
     // derive the current location status (or undefined if not yet loaded)
   const currentLocationStatus = location ? locationStatus[location] : undefined;
@@ -69,15 +78,18 @@ export const useHydroCameraDetection = (location?: string) => {
     const raw = (res as any)?.detections || [];
     return raw.map((d: any) => {
       const cls = d.class ?? d.class_name ?? d.original_class ?? 'unknown';
-      let bbox = d.bbox;
+      let bbox: Detection['bbox'];
       if (Array.isArray(bbox) && bbox.length === 4) {
-        const [x, y, w, h] = bbox.map(Number);
-        bbox = [x, y, x + w, y + h];
+        // The object-detection contract uses [x1, y1, x2, y2].
+        bbox = bbox.map(Number) as Detection['bbox'];
       } else if (d.bbox_x1 != null && d.bbox_y1 != null && d.bbox_x2 != null && d.bbox_y2 != null) {
         bbox = [Number(d.bbox_x1), Number(d.bbox_y1), Number(d.bbox_x2), Number(d.bbox_y2)];
+      } else {
+        // Ignore malformed backend payloads instead of drawing invalid boxes.
+        return null;
       }
       return { class: String(cls), confidence: Number(d.confidence ?? d.score ?? 0), bbox };
-    });
+    }).filter((d): d is Detection => d !== null);
   };
 
   const processDetectionResults = useCallback((result: DetectionResult) => {
@@ -90,14 +102,14 @@ export const useHydroCameraDetection = (location?: string) => {
     if (detectionId && location) {
       (async () => {
         try {
-          await actions.processDetectionResult(detectionId, location, 'camera_by_location', 0.6);
+          await processDetectionResult(detectionId, location, 'camera_by_location', 0.6);
           const now = Date.now();
           if (now - lastSyncRef.current > 10000) {
             lastSyncRef.current = now;
-            await actions.syncLocationInventory(location);
+            await syncLocationInventory(location);
             await Promise.all([
-              actions.fetchLocationStatus(location),
-              actions.fetchHardwareDetections(location),
+              fetchLocationStatus(location),
+              fetchHardwareDetections(location),
             ]);
           }
         } catch (e) {
@@ -105,7 +117,7 @@ export const useHydroCameraDetection = (location?: string) => {
         }
       })();
     }
-  }, [actions, location, drawBoundingBoxes]);
+  }, [location, drawBoundingBoxes, fetchHardwareDetections, fetchLocationStatus, processDetectionResult, syncLocationInventory]);
 
   useStreaming({
     streamMode: OBJECT_DETECTION_STREAM_MODE,
@@ -141,10 +153,10 @@ export const useHydroCameraDetection = (location?: string) => {
     if (hasSyncedRef.current === location) return;
     (async () => {
       try {
-        await actions.syncLocationInventory(location);
+        await syncLocationInventory(location);
         await Promise.all([
-          actions.fetchLocationStatus(location),
-          actions.fetchHardwareDetections(location),
+          fetchLocationStatus(location),
+          fetchHardwareDetections(location),
         ]);
       } catch (e) {
         console.warn('Initial sync failed:', e);
@@ -152,7 +164,7 @@ export const useHydroCameraDetection = (location?: string) => {
         hasSyncedRef.current = location;
       }
     })();
-  }, [location, actions]);
+  }, [location, fetchHardwareDetections, fetchLocationStatus, syncLocationInventory]);
 
   return {
     videoRef,
