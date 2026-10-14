@@ -13,6 +13,7 @@ import { ProductProvider } from './contexts/productContext.tsx'
 import { PostProvider } from './contexts/postContext.tsx'
 import { ThemeProvider } from './contexts/themeContext.tsx'
 import { PlantBatchProvider } from './contexts/plantBatchContext.tsx'
+import { HydroSystemProvider } from './contexts/hydroSystemContext.tsx'
 import Alert from './components/alert/alert.tsx'
 import "./i18n";
 
@@ -23,21 +24,23 @@ createRoot(document.getElementById('root')!).render(
         <AuthProvider>
           <AlertProvider>
             <Alert />
-            <PlantBatchProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <JackpotProvider>
-                    <CheckoutDialogProvider>
-                      <ProductProvider>
-                        <PostProvider>
-                          <App />
-                        </PostProvider>
-                      </ProductProvider>
-                    </CheckoutDialogProvider>
-                  </JackpotProvider>
-                </WishlistProvider>
-              </CartProvider>
-            </PlantBatchProvider>
+            <HydroSystemProvider>
+              <PlantBatchProvider>
+                <CartProvider>
+                  <WishlistProvider>
+                    <JackpotProvider>
+                      <CheckoutDialogProvider>
+                        <ProductProvider>
+                          <PostProvider>
+                            <App />
+                          </PostProvider>
+                        </ProductProvider>
+                      </CheckoutDialogProvider>
+                    </JackpotProvider>
+                  </WishlistProvider>
+                </CartProvider>
+              </PlantBatchProvider>
+            </HydroSystemProvider>
           </AlertProvider>
         </AuthProvider>
       </ThemeProvider>

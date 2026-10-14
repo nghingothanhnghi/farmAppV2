@@ -2,10 +2,35 @@
 import { useRef, useState, useEffect, useCallback } from 'react';
 import { useCamera } from './useCamera';
 import { useStreaming } from './useStreaming';
-import { useHydroSystem } from './useHydroSystem';
+import type { useHydroSystem } from './useHydroSystem';
 import type { DetectionResult, Detection } from '../models/interfaces/Camera';
 import { classToHardwareType, hardwareColors } from '../utils/hardwareMappings';
 import { OBJECT_DETECTION_STREAM_MODE, OBJECT_DETECTION_CAPTURE_INTERVAL, OBJECT_DETECTION_MODEL_NAME } from '../config/constants';
+
+// Contract: bbox is [x1, y1, x2, y2]. Malformed boxes are dropped, never drawn.
+const normalizeBBox = (d: any): Detection['bbox'] | null => {
+  const raw =
+    Array.isArray(d.bbox) && d.bbox.length === 4
+      ? d.bbox
+      : d.bbox_x1 != null && d.bbox_y1 != null && d.bbox_x2 != null && d.bbox_y2 != null
+        ? [d.bbox_x1, d.bbox_y1, d.bbox_x2, d.bbox_y2]
+        : null;
+  if (!raw) return null;
+  const [x1, y1, x2, y2] = raw.map(Number);
+  if ([x1, y1, x2, y2].some((n) => !Number.isFinite(n)) || x2 <= x1 || y2 <= y1) return null;
+  return [x1, y1, x2, y2];
+};
+
+const normalizeDetections = (res: DetectionResult): Detection[] =>
+  ((res as any)?.detections ?? []).flatMap((d: any) => {
+    const bbox = normalizeBBox(d);
+    if (!bbox) return [];
+    return [{
+      class: String(d.class ?? d.class_name ?? d.original_class ?? 'unknown'),
+      confidence: Number(d.confidence ?? d.score ?? 0),
+      bbox,
+    }];
+  });
 
 export const useHydroCameraDetection = (
   hydroSystem: ReturnType<typeof useHydroSystem>,
@@ -18,7 +43,7 @@ export const useHydroCameraDetection = (
   const lastSyncRef = useRef<number>(0);
   const hasSyncedRef = useRef<string | null>(null);
 
-  const { isStreaming, startCamera, stopCamera } = useCamera({ videoRef, location, facingMode: 'environment',  autoStart: false });
+  const { isStreaming, startCamera, stopCamera } = useCamera({ videoRef, location, facingMode: 'environment', autoStart: false });
   const { hardwareDetections, locationStatus, loading, error } = hydroSystem;
   const {
     processDetectionResult,
@@ -27,7 +52,6 @@ export const useHydroCameraDetection = (
     fetchHardwareDetections,
   } = hydroSystem.actions;
 
-    // derive the current location status (or undefined if not yet loaded)
   const currentLocationStatus = location ? locationStatus[location] : undefined;
 
   const captureFrame = useCallback(() => {
@@ -54,43 +78,24 @@ export const useHydroCameraDetection = (
 
     detections.forEach((det) => {
       const [x1, y1, x2, y2] = det.bbox;
-      const w = x2 - x1;
-      const h = y2 - y1;
       const hwType = classToHardwareType[det.class] ?? 'other';
       const color = (hardwareColors.canvas as any)[hwType] || hardwareColors.canvas.other;
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 3;
-      ctx.strokeRect(x1, y1, w, h);
+      ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
 
       const label = `${det.class} (${Math.round(det.confidence * 100)}%)`;
       ctx.font = '14px Arial';
       const textWidth = ctx.measureText(label).width;
       const textHeight = 20;
+      const labelY = Math.max(y1, textHeight + 4); // keep label inside the canvas
       ctx.fillStyle = color;
-      ctx.fillRect(x1, y1 - textHeight - 4, textWidth + 8, textHeight + 4);
+      ctx.fillRect(x1, labelY - textHeight - 4, textWidth + 8, textHeight + 4);
       ctx.fillStyle = 'white';
-      ctx.fillText(label, x1 + 4, y1 - 8);
+      ctx.fillText(label, x1 + 4, labelY - 8);
     });
   }, []);
-
-  const normalizeDetections = (res: DetectionResult): Detection[] => {
-    const raw = (res as any)?.detections || [];
-    return raw.map((d: any) => {
-      const cls = d.class ?? d.class_name ?? d.original_class ?? 'unknown';
-      let bbox: Detection['bbox'];
-      if (Array.isArray(bbox) && bbox.length === 4) {
-        // The object-detection contract uses [x1, y1, x2, y2].
-        bbox = bbox.map(Number) as Detection['bbox'];
-      } else if (d.bbox_x1 != null && d.bbox_y1 != null && d.bbox_x2 != null && d.bbox_y2 != null) {
-        bbox = [Number(d.bbox_x1), Number(d.bbox_y1), Number(d.bbox_x2), Number(d.bbox_y2)];
-      } else {
-        // Ignore malformed backend payloads instead of drawing invalid boxes.
-        return null;
-      }
-      return { class: String(cls), confidence: Number(d.confidence ?? d.score ?? 0), bbox };
-    }).filter((d): d is Detection => d !== null);
-  };
 
   const processDetectionResults = useCallback((result: DetectionResult) => {
     if (!result) return;
@@ -175,7 +180,6 @@ export const useHydroCameraDetection = (
     currentDetections,
     storedDetections: hardwareDetections,
     currentLocationStatus,
-    // 👇 controls
     isCameraEnabled: isStreaming,
     initializeCamera: startCamera,
     stopCamera,
