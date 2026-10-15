@@ -119,8 +119,6 @@ const AiMediaDetectionCard: React.FC<Props> = ({
     };
 
     return (
-
-
         <>
             <AddCameraModal
                 isOpen={showAddCameraModal}

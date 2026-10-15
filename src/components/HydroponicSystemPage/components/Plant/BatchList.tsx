@@ -166,6 +166,7 @@ const BatchList: React.FC<Props> = ({ onSelect }) => {
             <DataGrid
                 rowData={batches}
                 columnDefs={columns}
+                height="auto"
             />
 
             <Modal

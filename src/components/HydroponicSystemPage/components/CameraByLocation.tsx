@@ -15,6 +15,8 @@ import type { Direction } from '../../../models/interfaces/Camera';
 import { useHoverSlide } from '../../../hooks/useHoverSlide';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 import HydroFarmMapPanel from './HydroFarmMapPanel';
+import { cameraControlService } from '../../../services/cameraControlService';
+import { useAlert } from '../../../contexts/alertContext';
 
 interface CameraByLocationProps {
   location?: string;
@@ -34,18 +36,23 @@ const CameraByLocation: React.FC<CameraByLocationProps> = ({ location }) => {
     isCameraEnabled,
     initializeCamera,
     stopCamera,
-  } = useHydroCameraDetection(hydroSystem,location);
+  } = useHydroCameraDetection(hydroSystem, location);
 
   const { isHovered, bind } = useHoverSlide();
-  // TODO: Replace with actual service call to move camera by direction/step
-  const handleMove = React.useCallback(
-    async (direction: Direction, step: number) => {
-      // Example: call a PTZ endpoint or device service
-      // await deviceService.moveCamera({ location, direction, step });
-      console.log('Move camera:', { location, direction, step });
-    },
-    [location]
-  );
+  const { setAlert } = useAlert();
+  const movingRef = React.useRef(false);
+
+  const handleMove = React.useCallback(async (direction: Direction, step: number) => {
+    if (!location || movingRef.current) return;   // one request in flight
+    movingRef.current = true;
+    try {
+      await cameraControlService.move(location, direction, step);
+    } catch (err: any) {
+      setAlert({ type: "error", message: err?.response?.data?.detail ?? "Camera move failed." });
+    } finally {
+      movingRef.current = false;
+    }
+  }, [location, setAlert]);
 
 
 

@@ -171,7 +171,7 @@ const PlantBatchPage: React.FC = () => {
 
 
     return (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full min-h-0">
             {!isRoot && (
                 <PageTitle
                     title={isEdit ? 'Chi tiết vụ trồng' : 'Tạo vụ trồng'}
@@ -218,7 +218,10 @@ const PlantBatchPage: React.FC = () => {
                             />
                         }
                     />
-                    <BatchList onSelect={(b) => navigate(`/dashboard/batches/${b.id}`)} />
+                    <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                        <BatchList onSelect={(b) => navigate(`/dashboard/batches/${b.id}`)} />
+
+                    </div>
                 </>
             )}
 
