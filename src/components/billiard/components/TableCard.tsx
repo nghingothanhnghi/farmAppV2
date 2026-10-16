@@ -86,7 +86,7 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
         )}
         {table.status === 'playing' && (
           <Button
-            label="Open session"
+            label={t("btn.open_session")}
             variant="secondary"
             size="sm"
             rounded="lg"

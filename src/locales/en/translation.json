@@ -74,7 +74,11 @@
         "add_items_billard": "Add Items",
         "back_to_tables": "Back to Tables",
         "add_table": "Add Table",
-        "table_report": "Báo cáo"        
+        "table_report": "Báo cáo",
+        "start_session": "Start",
+        "open_session": "Open Session",
+        "stop_session": "Stop Session",
+        "print": "Print"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -551,6 +555,12 @@
             "reset_done": "Score reset.",
             "empty": "No games yet."
         },
+        "billing":{
+            "pricing": "Pricing",
+            "rate": "Rate",
+            "rule": "Rule",
+            "billing_rule": "Billing"
+        },        
         "cards": {
             "session_billiard": {
                 "label": "Session",
@@ -589,7 +599,10 @@
                 "stop_session":{
                     "message": "Stop this session? The timer ends and the bill is finalised."
                 }  
-            }  
+            },
+            "print":{
+                "preview": "Print Preview"
+            }    
         }
     },
     "payment": {

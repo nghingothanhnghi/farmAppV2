@@ -3,6 +3,7 @@ import React from 'react';
 import { IconPlayerPlay, IconPlayerStop } from '@tabler/icons-react';
 import Button from '../../common/Button';
 import type { TableStatus } from '../../../models/interfaces/Billiard';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
   status: TableStatus | 'stopped';
@@ -24,10 +25,13 @@ const StartStopButtons: React.FC<Props> = ({
   size = 'sm',
   fullWidth = false,
 }) => {
+
+const {t} = useTranslation(); 
+
   if (status === 'available' && onStart) {
     return (
       <Button
-        label={busy ? 'Starting...' : 'Start'}
+        label={busy ? 'Starting...' : t("btn.start_session")}
         icon={<IconPlayerPlay size={16} />}
         iconPosition="left"
         onClick={onStart}
@@ -41,7 +45,7 @@ const StartStopButtons: React.FC<Props> = ({
   if (status === 'playing' && onStop) {
     return (
       <Button
-        label={busy ? 'Stopping...' : 'Stop'}
+        label={busy ? 'Stopping...' : t("btn.stop_session")}
         icon={<IconPlayerStop size={16} />}
         iconPosition="left"
         variant="danger"

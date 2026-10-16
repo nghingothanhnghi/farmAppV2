@@ -74,7 +74,11 @@
         "add_items_billard": "Thêm món",
         "back_to_tables": "Quay lại bàn",
         "add_table": "Thêm bàn",
-        "table_report": "Báo cáo"
+        "table_report": "Báo cáo",
+        "start_session": "Bắt đầu lượt chơi",
+        "open_session": "Mở lượt chơi",
+        "stop_session": "Kết thúc lượt chơi",
+        "print": "In"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -551,6 +555,12 @@
             "reset_done": "Đã đặt lại điểm.",
             "empty": "Chưa có ván nào."
         },
+        "billing":{
+            "pricing": "Thiết lập giá",
+            "rate": "Đơn giá",
+            "rule": "Cách tính giá",
+            "billing_rule": "Chu kỳ tính tiền"
+        },
         "cards": {
             "session_billiard": {
                 "label": "Lượt chơi",
@@ -589,7 +599,10 @@
                 "stop_session":{
                     "message": "Kết thúc lượt chơi? Thời gian chơi sẽ dừng và hóa đơn sẽ được chốt. Bạn không thể tiếp tục lượt chơi này sau khi xác nhận."
                 }  
-            }            
+            },
+            "print":{
+                "preview": "Xem trước khi in"
+            }    
         }    
     },
     "payment": {

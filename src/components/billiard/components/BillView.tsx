@@ -62,14 +62,14 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
 
       {hasPricing && (
         <div className="space-y-1.5">
-          <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Pricing</p>
+          <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t("billiard_tables.billing.pricing")}</p>
           {pricing.rate !== null && (
-            <Line label="Rate" value={`${formatMoneyString(pricing.rate, c)} / h`} />
+            <Line label={t("billiard_tables.billing.rate")} value={`${formatMoneyString(pricing.rate, c)} / h`} />
           )}
-          {pricing.ruleName && <Line label="Rule" value={pricing.ruleName} />}
+          {pricing.ruleName && <Line label={t("billiard_tables.billing.rule")} value={pricing.ruleName} />}
           {(pricing.policyLabel || pricing.paramsText) && (
             <Line
-              label="Billing"
+              label={t("billiard_tables.billing.billing_rule")}
               value={[pricing.policyLabel, pricing.paramsText].filter(Boolean).join(' · ')}
             />
           )}
