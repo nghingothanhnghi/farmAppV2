@@ -11,6 +11,7 @@ import type {
   GrowthPrediction,
   PlantAnomaly,
   AIRecommendation,
+  AIRecommendationStatusUpdate,
 } from "../models/interfaces/AiVision";
 
 // module-level cache so switching tabs / remounting doesn't re-link the
@@ -142,14 +143,15 @@ export function useAiVision(hydroBatchId?: number) {
   const resolveAnomaly = useCallback(async (anomalyId: number) => {
     if (!plant) return;
     const updated = await aiVisionService.resolveAnomaly(plant.id, anomalyId);
-    setAnomalies((prev) => prev.map((a) => (a.id === anomalyId ? { ...a, ...updated, is_resolved: true } : a)));
+    // Idempotent on the backend: resolving twice returns the record unchanged.
+    setAnomalies((prev) => prev.map((a) => (a.id === anomalyId ? { ...a, ...updated } : a)));
   }, [plant]);
 
   const setRecommendationStatus = useCallback(
-    async (id: number, status: AIRecommendation["status"]) => {
+    async (id: number, status: AIRecommendationStatusUpdate) => {
       if (!plant) return;
       const updated = await aiVisionService.updateRecommendationStatus(plant.id, id, status);
-      setRecommendations((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated, status } : r)));
+      setRecommendations((prev) => prev.map((r) => (r.id === id ? { ...r, ...updated } : r)));
     }, [plant]);
 
   const refreshPlantData = useCallback(
