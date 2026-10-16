@@ -562,7 +562,26 @@
             "rate": "Rate",
             "rule": "Rule",
             "billing_rule": "Billing"
-        },        
+        },
+        "receipt": {
+            "title": "RECEIPT",
+            "unpaidTitle": "BILL — NOT PAID",
+            "rate": "Rate",
+            "hourShort": "h",
+            "rule": "Rule",
+            "billing": "Billing",
+            "tableNumber": "Table #{{id}}",
+            "session": "Session #{{id}}",
+            "start": "In",
+            "end": "Out",
+            "duration": "Time",
+            "tableFee": "Table fee",
+            "products": "Products",
+            "total": "TOTAL",
+            "paidBy": "Paid by",
+            "thankYou": "Thank you!",
+            "checkBillBeforePaying": "Please check your bill before paying."
+        },            
         "cards": {
             "session_billiard": {
                 "label": "Session",

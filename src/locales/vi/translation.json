@@ -563,6 +563,25 @@
             "rule": "Cách tính giá",
             "billing_rule": "Chu kỳ tính tiền"
         },
+        "receipt": {
+            "title": "HÓA ĐƠN THANH TOÁN",
+            "unpaidTitle": "HÓA ĐƠN CHƯA THANH TOÁN",
+            "rate": "Đơn giá",
+            "hourShort": "giờ",
+            "rule": "Cách tính giá",
+            "billing": "Chu kỳ tính tiền",
+            "tableNumber": "Bàn {{id}}",
+            "session": "Lượt chơi #{{id}}",
+            "start": "Bắt đầu",
+            "end": "Kết thúc",
+            "duration": "Thời gian chơi",
+            "tableFee": "Tiền bàn",
+            "products": "Món đã gọi",
+            "total": "TỔNG CỘNG",
+            "paidBy": "Thanh toán bằng",
+            "thankYou": "Cảm ơn quý khách!",
+            "checkBillBeforePaying": "Vui lòng kiểm tra hóa đơn trước khi thanh toán."
+        },        
         "cards": {
             "session_billiard": {
                 "label": "Lượt chơi",

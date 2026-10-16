@@ -15,7 +15,11 @@ interface Props {
 
 const ReceiptPreviewModal: React.FC<Props> = ({ isOpen, onClose, bill }) => {
   const {t} = useTranslation();
-  const html = useMemo(() => buildReceiptHtml(bill), [bill]);
+  // const html = useMemo(() => buildReceiptHtml(bill), [bill]);
+    const html = useMemo(
+    () => buildReceiptHtml(bill, t),
+    [bill, t],
+  );
 
   return (
     <Modal

@@ -1,4 +1,5 @@
 // src/utils/receipt.ts
+import type { TFunction } from 'i18next';
 import {
   formatDateTime, formatDuration, formatMoneyString, getBillState,
 } from './billiard';
@@ -9,21 +10,42 @@ const esc = (v: unknown) =>
   String(v ?? '').replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]!));
 
-export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club'): string {
+export function buildReceiptHtml(bill: BillResponse, t: TFunction, shopName = 'Billiard Club'): string {
   const c = bill.currency;
   const state = getBillState(bill);
-  const title = state === 'paid' ? 'RECEIPT' : 'BILL — NOT PAID';
-//   const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
+
+  //   const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
+  const title =
+    state === 'paid'
+      ? t('billiard_tables.receipt.title')
+      : t('billiard_tables.receipt.unpaidTitle');
 
   const pricing = getPricingSummary(bill);
   const billing = [pricing.policyLabel, pricing.paramsText].filter(Boolean).join(' · ');
+  // const pricingHtml =
+  //   pricing.rate !== null || pricing.ruleName || billing
+  //     ? `<hr><div class="muted">
+  //   ${pricing.rate !== null ? `Rate: ${esc(formatMoneyString(pricing.rate, c))} / h${pricing.ruleName ? ` (${esc(pricing.ruleName)})` : ''}<br>` : pricing.ruleName ? `Rule: ${esc(pricing.ruleName)}<br>` : ''}
+  //   ${billing ? `Billing: ${esc(billing)}` : ''}
+  // </div>`
+  //     : '';
+
   const pricingHtml =
     pricing.rate !== null || pricing.ruleName || billing
       ? `<hr><div class="muted">
-    ${pricing.rate !== null ? `Rate: ${esc(formatMoneyString(pricing.rate, c))} / h${pricing.ruleName ? ` (${esc(pricing.ruleName)})` : ''}<br>` : pricing.ruleName ? `Rule: ${esc(pricing.ruleName)}<br>` : ''}
-    ${billing ? `Billing: ${esc(billing)}` : ''}
-  </div>`
+          ${pricing.rate !== null
+        ? `${esc(t('billiard_tables.receipt.rate'))}: ${esc(formatMoneyString(pricing.rate, c))} / ${esc(t('billiard_tables.receipt.hourShort'))}${pricing.ruleName
+          ? ` (${esc(pricing.ruleName)})`
+          : ''
+        }<br>`
+        : pricing.ruleName
+          ? `${esc(t('billiard_tables.receipt.rule'))}: ${esc(pricing.ruleName)}<br>`
+          : ''
+      }
+          ${billing ? `${esc(t('billiard_tables.receipt.billing'))}: ${esc(billing)}` : ''}
+        </div>`
       : '';
+
 
   const rows = bill.items
     .map(
@@ -33,6 +55,10 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
           <td class="r">${esc(formatMoneyString(it.total_price, c))}</td></tr>`
     )
     .join('');
+
+  const tableName =
+    bill.table_name ??
+    t('billiard_tables.receipt.tableNumber', { id: bill.table_id });
 
   return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(title)}</title>
 <style>
@@ -51,26 +77,35 @@ export function buildReceiptHtml(bill: BillResponse, shopName = 'Billiard Club')
   <div class="c">${esc(title)}</div>
   <hr>
   <div class="muted">
-    ${esc(bill.table_name ?? `Table #${bill.table_id}`)} · Session #${bill.session_id}<br>
-    In:  ${esc(formatDateTime(bill.start_time))}<br>
-    Out: ${esc(formatDateTime(bill.end_time))}<br>
-    ${bill.duration_minutes != null ? `Time: ${esc(formatDuration(bill.duration_minutes))}` : ''}
+    ${esc(tableName)} · ${esc(t('billiard_tables.receipt.session', { id: bill.session_id }))}<br>
+    ${esc(t('billiard_tables.receipt.start'))}:  ${esc(formatDateTime(bill.start_time))}<br>
+    ${esc(t('billiard_tables.receipt.end'))}: ${esc(formatDateTime(bill.end_time))}<br>
+    ${bill.duration_minutes != null
+      ? `${esc(t('billiard_tables.receipt.duration'))}: ${esc(formatDuration(bill.duration_minutes))}`
+      : ''
+    }
   </div>
   ${pricingHtml}
   <hr>
   <table>
-    <tr><td>Table fee</td><td class="r">${esc(formatMoneyString(bill.total_table_fee, c))}</td></tr>
+    <tr><td>${esc(t('billiard_tables.receipt.tableFee'))}</td><td class="r">${esc(formatMoneyString(bill.total_table_fee, c))}</td></tr>
     ${rows}
   </table>
   <hr>
   <table>
-    <tr><td>Products</td><td class="r">${esc(formatMoneyString(bill.total_product_fee, c))}</td></tr>
-    <tr class="total"><td>TOTAL</td><td class="r">${esc(formatMoneyString(bill.grand_total, c))}</td></tr>
+    <tr><td>${esc(t('billiard_tables.receipt.products'))}</td><td class="r">${esc(formatMoneyString(bill.total_product_fee, c))}</td></tr>
+    <tr class="total"><td>${esc(t('billiard_tables.receipt.total'))}</td><td class="r">${esc(formatMoneyString(bill.grand_total, c))}</td></tr>
     ${state === 'paid' && bill.payment_method
-      ? `<tr><td>Paid by</td><td class="r">${esc(bill.payment_method.replace('_', ' '))}</td></tr>` : ''}
+      ? `<tr><td>${esc(t('billiard_tables.receipt.paidBy'))}</td><td class="r">${esc(bill.payment_method.replace('_', ' '))}</td></tr>` : ''}
   </table>
   <hr>
-  <div class="c muted">${state === 'paid' ? 'Thank you!' : 'Please check your bill before paying.'}</div>
+  <div class="c muted">
+      ${esc(
+        state === 'paid'
+          ? t('billiard_tables.receipt.thankYou')
+          : t('billiard_tables.receipt.checkBillBeforePaying'),
+      )}
+  </div>
 </body></html>`;
 }
 
