@@ -2,6 +2,7 @@
 export const CLOSE_SIDEBAR_ROUTES = [
   '/billiard',
   '/dashboard/products',
+  '/billiard/controllers'
 ];
 
 export const FULL_WIDTH_ROUTES = [
