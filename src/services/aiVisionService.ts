@@ -1,8 +1,6 @@
 // src/services/aiVisionService.ts
-// Mirrors app/ai_vision/routes/*.py exactly. Do not add endpoints that
-// aren't defined on the backend — several capabilities (per-image
-// predictions, listing images by plant, resolving anomalies, updating
-// recommendation status) simply aren't exposed yet.
+// Mirrors app/ai_vision/routes/*.py. Do not add endpoints that aren't
+// defined on the backend.
 
 import apiClient from "../api/client";
 import type {
@@ -18,6 +16,7 @@ import type {
     GrowthPrediction,
     PlantAnomaly,
     AIRecommendation,
+    AIRecommendationStatusUpdate,
 } from "../models/interfaces/AiVision";
 
 export const aiVisionService = {
@@ -94,9 +93,15 @@ export const aiVisionService = {
     },
 
     // --- Health / Growth / Anomalies / Recommendations: /api/v1/plants/{id}/... ---
-    async getLatestHealth(plantId: number): Promise<PlantHealthRecord> {
-        const res = await apiClient.get(`/api/v1/plants/${plantId}/health`);
-        return res.data;
+    // Returns null when the plant has no health record yet (404 or null body).
+    async getLatestHealth(plantId: number): Promise<PlantHealthRecord | null> {
+        try {
+            const res = await apiClient.get(`/api/v1/plants/${plantId}/health`);
+            return res.data ?? null;
+        } catch (err: any) {
+            if (err?.response?.status === 404) return null;
+            throw err;
+        }
     },
 
     async getGrowthHistory(plantId: number, limit = 50): Promise<PlantGrowthRecord[]> {
@@ -119,11 +124,16 @@ export const aiVisionService = {
     async getLatestGrowthPrediction(
         plantId: number
     ): Promise<GrowthPrediction | null> {
-        const res = await apiClient.get(
-            `/api/v1/plants/${plantId}/growth-predictions/latest`
-        );
-
-        return res.data ?? null;
+        try {
+            const res = await apiClient.get(
+                `/api/v1/plants/${plantId}/growth-predictions/latest`
+            );
+            return res.data ?? null;
+        } catch (err: any) {
+            // No prediction yet is a normal state, not an error.
+            if (err?.response?.status === 404) return null;
+            throw err;
+        }
     },
 
     async getAnomalies(plantId: number): Promise<PlantAnomaly[]> {
@@ -140,8 +150,10 @@ export const aiVisionService = {
         const res = await apiClient.patch(`/api/v1/plants/${plantId}/anomalies/${anomalyId}/resolve`);
         return res.data;
     },
+    // Backend accepts only "acknowledged" | "dismissed". This never triggers
+    // actuators, schedules or irrigation.
     async updateRecommendationStatus(
-        plantId: number, id: number, status: AIRecommendation["status"]
+        plantId: number, id: number, status: AIRecommendationStatusUpdate
     ): Promise<AIRecommendation> {
         const res = await apiClient.patch(`/api/v1/plants/${plantId}/recommendations/${id}/status`, { status });
         return res.data;

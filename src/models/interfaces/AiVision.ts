@@ -144,7 +144,15 @@ export interface PlantAnomaly {
   annotated_url?: string | null; 
   detected_at: string;
   is_resolved: boolean;
+  resolved_at?: string | null;
 }
+
+// Backend has no approved/applied state: recommendations are advisory only and
+// never touch actuators, schedules or irrigation (AI Vision safety rule).
+export type AIRecommendationStatus = "pending_review" | "acknowledged" | "dismissed";
+
+// Values the PATCH .../recommendations/{id}/status endpoint accepts.
+export type AIRecommendationStatusUpdate = Exclude<AIRecommendationStatus, "pending_review">;
 
 export interface AIRecommendation {
   id: number;
@@ -154,7 +162,7 @@ export interface AIRecommendation {
   reasons?: string[];
   severity?: "low" | "medium" | "high" | "critical";
   confidence?: number;
-  status: "pending_review" | "approved" | "rejected" | "applied";
+  status: AIRecommendationStatus;
   annotated_url?: string | null;
   created_at: string;
 }
