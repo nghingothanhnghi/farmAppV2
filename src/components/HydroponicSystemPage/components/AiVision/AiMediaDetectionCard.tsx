@@ -1,6 +1,9 @@
 // src/components/HydroponicSystemPage/components/AiMediaDetectionCard.tsx
 import React, { useRef, useState } from "react";
 import type { RefObject } from "react";
+import { IconPlus } from "@tabler/icons-react";
+import Button from "../../../common/Button";
+import { FormSelect } from "../../../common/Form";
 import { useCamera } from "../../../../hooks/useCamera";
 import {
     IconCamera,
@@ -40,6 +43,8 @@ const AiMediaDetectionCard: React.FC<Props> = ({
     selectedCameraId,
     onCreateCamera,
     onAnalyze,
+    cameras,
+    onSelectCamera,
 
     inputRef,
     uploading,
@@ -129,6 +134,26 @@ const AiMediaDetectionCard: React.FC<Props> = ({
             <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_500px] auto-rows-fr gap-6">
                     <div className="left-media-button flex flex-col items-center justify-center">
+                        <div className="w-full max-w-xs mb-4 flex items-center gap-2">
+                            <FormSelect
+                                id="ai-vision-camera"
+                                value={selectedCameraId ?? ""}
+                                onChange={(e) => onSelectCamera(e.target.value ? Number(e.target.value) : undefined)}
+                                className="flex-1 min-w-0"
+                            >
+                                <option value="">No camera tag</option>
+                                {cameras.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {c.name}{c.location ? ` — ${c.location}` : ""}
+                                    </option>
+                                ))}
+                            </FormSelect>
+                            <Button
+                                variant="secondary" iconOnly rounded="full" label="Add camera"
+                                icon={<IconPlus size={16} />}
+                                onClick={() => setShowAddCameraModal(true)}
+                            />
+                        </div>
                         <div className="flex flex-col items-center align-middle">
                             <div className="text-gray-400 mb-2">
                                 <IconCamera size={64} />

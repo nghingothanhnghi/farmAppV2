@@ -368,7 +368,7 @@ const BatchForm: React.FC<Props> = ({
                 }
                 actions={
                     <Button
-                        label="Đóng"
+                        label={t("btn.cancel")}
                         variant="secondary"
                         rounded="lg"
                         className="min-w-[150px]"

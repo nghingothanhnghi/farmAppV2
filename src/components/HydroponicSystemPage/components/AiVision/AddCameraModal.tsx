@@ -96,24 +96,21 @@ const AddCameraModal: React.FC<Props> = ({
             actions={
                 <div className="flex justify-end gap-2">
                     <Button
-                        label="Cancel"
-                        variant="secondary"
-                        size="sm"
-                        rounded="lg"
-                        disabled={saving}
-                        onClick={handleClose}
-                    />
-
-                    <Button
                         label={saving ? "Saving..." : "Add camera"}
                         icon={<IconPlus size={14} />}
                         iconPosition="left"
-                        size="sm"
                         rounded="lg"
                         disabled={
                             saving || !name.trim()
                         }
                         onClick={handleSubmit}
+                    />
+                    <Button
+                        label="Cancel"
+                        variant="secondary"
+                        rounded="lg"
+                        disabled={saving}
+                        onClick={handleClose}
                     />
                 </div>
             }
