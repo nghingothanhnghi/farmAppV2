@@ -1,6 +1,6 @@
 /* components/layout/MainLayout.tsx*/
 import React, { useEffect } from 'react';
-import { Outlet, useLocation } from "react-router";
+import { Outlet, useLocation, matchPath } from "react-router";
 import SideMenu from './SideMenu';
 import MobileTopBar from './MobileTopBar';
 import DesktopSidebarToggleButton from './DesktopSidebarToggleButton';
@@ -11,7 +11,9 @@ const MainLayout: React.FC = () => {
   const { menuOpen, setMenuOpen, handleMenuClose } = useSidebar();
 
   const location = useLocation();
-  const closeSidebar = CLOSE_SIDEBAR_ROUTES.includes(location.pathname);
+  const closeSidebar = CLOSE_SIDEBAR_ROUTES.some((route) =>
+    matchPath({ path: route, end: true }, location.pathname)
+  );
 
   useEffect(() => {
     if (closeSidebar) {
@@ -31,9 +33,8 @@ const MainLayout: React.FC = () => {
         )}
 
         <div
-          className={`flex flex-1 flex-col pb-2 lg:min-w-0 lg:pt-2 lg:pr-2 transition-all duration-300 ${
-            menuOpen ? "lg:pl-64" : "lg:pl-18"
-          }`}
+          className={`flex flex-1 flex-col pb-2 lg:min-w-0 lg:pt-2 lg:pr-2 transition-all duration-300 ${menuOpen ? "lg:pl-64" : "lg:pl-18"
+            }`}
         >
           <div className="grow p-6 lg:rounded-3xl lg:bg-white border border-gray-200 lg:p-10 lg:shadow-xs lg:dark:bg-gray-900 lg:dark:text-gray-100 dark:border dark:border-white/5">
             {/* Router children go here */}

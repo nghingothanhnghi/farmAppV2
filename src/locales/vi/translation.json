@@ -78,7 +78,9 @@
         "start_session": "Bắt đầu lượt chơi",
         "open_session": "Mở lượt chơi",
         "stop_session": "Kết thúc lượt chơi",
-        "print": "In"
+        "print": "In",
+        "print_preview_bill": "In hóa đơn",
+        "print_receipt": "In biên lai"
     },
     "badge_status":{
         "inStock": "Còn hàng",

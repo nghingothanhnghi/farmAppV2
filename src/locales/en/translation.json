@@ -78,7 +78,9 @@
         "start_session": "Start",
         "open_session": "Open Session",
         "stop_session": "Stop Session",
-        "print": "Print"
+        "print": "Print",
+        "print_preview_bill": "Print Bill (Ack)",
+        "print_receipt": "Print Receipt"
     },
     "badge_status":{
         "inStock": "In Stock",

@@ -1,6 +1,9 @@
 // src/config/layout.ts
 export const CLOSE_SIDEBAR_ROUTES = [
+  '/hydroponic-system',
   '/billiard',
+  '/billiard/sessions',
+  '/billiard/sessions/:id',
   '/dashboard/products',
   '/billiard/controllers'
 ];

@@ -144,7 +144,7 @@ const SessionPage: React.FC = () => {
       {/*  "stopped" = awaiting payment → print the bill for the customer to acknowledge */}
       {state === 'stopped' && (
         <div className="flex justify-end gap-2">
-          <Button label="Print bill" variant="secondary" rounded="lg"
+          <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
           <Button label="Pay" rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
@@ -152,7 +152,7 @@ const SessionPage: React.FC = () => {
       )}
       {state === 'pending' && (
         <div className="flex justify-end gap-2">
-          <Button label="Print bill" variant="secondary" rounded="lg"
+          <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
           <Button label={busy ? 'Confirming...' : 'Confirm payment'} rounded="lg"
@@ -166,7 +166,7 @@ const SessionPage: React.FC = () => {
       {/* "paid" → print the receipt */}
       {state === 'paid' && (
         <div className="flex justify-end gap-2">
-          <Button label="Print receipt" variant="secondary" rounded="lg"
+          <Button label={t("btn.print_receipt")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
           <Button label="Back to tables" variant="secondary" rounded="lg" onClick={() => navigate('/billiard')} />
