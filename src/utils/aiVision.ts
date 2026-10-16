@@ -26,13 +26,11 @@ export const getJobVariant = (status: string): BadgeVariant =>
 export const getRecommendationVariant = (
     status: string
 ): BadgeVariant =>
-    status === "approved"
+    status === "acknowledged"
         ? "success"
-        : status === "rejected"
-            ? "danger"
-            : status === "applied"
-                ? "info"
-                : "gray";
+        : status === "dismissed"
+            ? "gray"
+            : "warning";
 
 export const formatLabel = (value: string) =>
     value.replace(/_/g, " ");
