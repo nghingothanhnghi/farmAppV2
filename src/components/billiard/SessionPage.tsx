@@ -147,7 +147,7 @@ const SessionPage: React.FC = () => {
           <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
-          <Button label="Pay" rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
+          <Button label={t("btn.pay")} rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
         </div>
       )}
       {state === 'pending' && (
@@ -169,7 +169,7 @@ const SessionPage: React.FC = () => {
           <Button label={t("btn.print_receipt")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
-          <Button label="Back to tables" variant="secondary" rounded="lg" onClick={() => navigate('/billiard')} />
+          <Button label={t("btn.back_to_tables")} variant="secondary" rounded="lg" onClick={() => navigate('/billiard')} />
         </div>
       )}
 

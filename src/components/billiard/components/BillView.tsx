@@ -2,6 +2,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import Badge from '../../common/Badge';
+import FoodDrinkImg from '../../../assets/icons/food_drink-icon.png'
 import EmptyState from '../../common/EmptyState';
 import { formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import { getPricingSummary } from '../../../utils/pricing';
@@ -79,7 +80,12 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       <div className="space-y-1.5">
         <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('billiard_tables.cards.items')}</p>
         {b.items.length === 0 ? (
-          <EmptyState message={t('billiard_tables.cards.items_content.noData')} />
+          <EmptyState
+            imageSrc={FoodDrinkImg}
+            width={100}
+            height={100}
+            message={t('billiard_tables.cards.items_content.noData')}
+          />
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-white/5">
             {b.items.map((it, idx) => (
@@ -104,7 +110,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
         <Line label={t('billiard_tables.cards.fee_product')} value={formatMoneyString(b.total_product_fee, c)} />
         <Line label={t('billiard_tables.cards.fee_total')} value={formatMoneyString(b.grand_total, c)} bold />
         {bill.payment_method && state === 'paid' && (
-          <Line label="Paid by" value={bill.payment_method.replace('_', ' ')} />
+          <Line label={t('billiard_tables.receipt.paidBy')} value={bill.payment_method.replace('_', ' ')} />
         )}
       </div>
     </div>

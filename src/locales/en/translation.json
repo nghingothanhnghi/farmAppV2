@@ -75,12 +75,14 @@
         "back_to_tables": "Back to Tables",
         "add_table": "Add Table",
         "table_report": "Báo cáo",
+        "starting_state": "Starting...",
         "start_session": "Start",
         "open_session": "Open Session",
         "stop_session": "Stop Session",
         "print": "Print",
         "print_preview_bill": "Print Bill (Ack)",
-        "print_receipt": "Print Receipt"
+        "print_receipt": "Print Receipt",
+        "pay": "Pay"
     },
     "badge_status":{
         "inStock": "In Stock",

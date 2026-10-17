@@ -75,12 +75,14 @@
         "back_to_tables": "Quay lại bàn",
         "add_table": "Thêm bàn",
         "table_report": "Báo cáo",
+        "starting_state": "Đang bắt đầu...",
         "start_session": "Bắt đầu lượt chơi",
         "open_session": "Mở lượt chơi",
         "stop_session": "Kết thúc lượt chơi",
         "print": "In",
         "print_preview_bill": "In hóa đơn",
-        "print_receipt": "In biên lai"
+        "print_receipt": "In biên lai",
+        "pay": "Thanh toán"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -600,8 +602,8 @@
                 "label": "Chưa thanh toán"
             },                                             
             "items": "Món gọi thêm",
-            "fee_table": "Phí bàn",
-            "fee_product": "Phí món gọi thêm",
+            "fee_table": "Tiền bàn",
+            "fee_product": "Món gọi thêm",
             "fee_total": "Tổng cộng",
             "items_content":{
                 "noData": "Chưa có món gọi thêm."
