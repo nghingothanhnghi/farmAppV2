@@ -14,7 +14,6 @@ export function buildReceiptHtml(bill: BillResponse, t: TFunction, shopName = 'B
   const c = bill.currency;
   const state = getBillState(bill);
 
-  //   const productFee = bill.product_fee ?? addDecimalStrings(bill.items.map((i) => i.line_total));
   const title =
     state === 'paid'
       ? t('billiard_tables.receipt.title')
