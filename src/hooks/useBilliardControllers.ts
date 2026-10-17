@@ -3,7 +3,7 @@ import { billiardService } from '../services/billiard_service';
 import { billiardErrorMessage } from '../utils/billiard';
 import type { BilliardController } from '../models/interfaces/Billiard';
 
-/** Polls controller health so staff can spot an offline or stalled controller. */
+/** Polls GET /billiard/controller/status (every 30s by default; keep it within 30-60s). */
 export function useBilliardControllers(pollMs = 30000) {
   const [controllers, setControllers] = useState<BilliardController[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,8 +22,16 @@ export function useBilliardControllers(pollMs = 30000) {
 
   useEffect(() => {
     refetch();
-    const timer = setInterval(refetch, pollMs);
-    return () => clearInterval(timer);
+    // Skip ticks while the tab is hidden; catch up as soon as it is visible again.
+    const timer = setInterval(() => {
+      if (document.visibilityState === 'visible') refetch();
+    }, pollMs);
+    const onVisible = () => document.visibilityState === 'visible' && refetch();
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
   }, [pollMs, refetch]);
 
   return { controllers, loading, error, refetch };

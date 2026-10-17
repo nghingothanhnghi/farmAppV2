@@ -147,6 +147,27 @@ export interface BilliardController {
   last_applied_seq: number;
 }
 
+/**
+ * Controller registration. Shapes follow the written backend spec;
+ * NOT yet verified against /docs (candidate fields beyond device_id are optional).
+ */
+export interface HydroCandidate {
+  device_id: string;
+  name?: string | null;
+}
+
+export interface ControllerRegisterPayload {
+  device_id: string;
+  name?: string;
+}
+
+/** `api_key` is returned only by register. Show it once; it is never exposed again. */
+export interface ControllerRegisterResponse {
+  device_id: string;
+  name?: string | null;
+  api_key: string;
+}
+
 // --- Pricing rules (/billiard/pricing-rules) ---------------------------------
 // Shapes follow the written backend spec; NOT yet verified against /docs.
 
