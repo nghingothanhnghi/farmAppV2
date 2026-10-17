@@ -22,13 +22,6 @@ export function buildReceiptHtml(bill: BillResponse, t: TFunction, shopName = 'B
 
   const pricing = getPricingSummary(bill);
   const billing = [pricing.policyLabel, pricing.paramsText].filter(Boolean).join(' · ');
-  // const pricingHtml =
-  //   pricing.rate !== null || pricing.ruleName || billing
-  //     ? `<hr><div class="muted">
-  //   ${pricing.rate !== null ? `Rate: ${esc(formatMoneyString(pricing.rate, c))} / h${pricing.ruleName ? ` (${esc(pricing.ruleName)})` : ''}<br>` : pricing.ruleName ? `Rule: ${esc(pricing.ruleName)}<br>` : ''}
-  //   ${billing ? `Billing: ${esc(billing)}` : ''}
-  // </div>`
-  //     : '';
 
   const pricingHtml =
     pricing.rate !== null || pricing.ruleName || billing
