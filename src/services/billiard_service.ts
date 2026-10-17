@@ -7,7 +7,10 @@ import type {
   BilliardTable,
   BilliardController,
   BillResponse,
+  ControllerRegisterPayload,
+  ControllerRegisterResponse,
   Game,
+  HydroCandidate,
   NewGameResponse,
   PayResponse,
   PaymentMethod,
@@ -120,6 +123,21 @@ export const billiardService = {
   async getControllerStatus(): Promise<BilliardController[]> {
     const res = await apiClient.get('/billiard/controller/status');
     return Array.isArray(res.data) ? res.data : [];
+  },
+
+  async getControllerCandidates(): Promise<HydroCandidate[]> {
+    const res = await apiClient.get('/billiard/controller/hydro-candidates');
+    const d = res.data;
+    const list: unknown[] = Array.isArray(d) ? d : d?.items ?? d?.candidates ?? [];
+    // Tolerate plain string ids as well as objects.
+    return list
+      .map((c) => (typeof c === 'string' ? { device_id: c } : (c as HydroCandidate)))
+      .filter((c) => !!c?.device_id);
+  },
+
+  async registerController(data: ControllerRegisterPayload): Promise<ControllerRegisterResponse> {
+    const res = await apiClient.post('/billiard/controller/register', data);
+    return res.data;
   },
 
   // --- Pricing rules ---

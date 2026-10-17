@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { IconArrowLeft, IconRefresh, IconServer } from '@tabler/icons-react';
+import { IconArrowLeft, IconPlus, IconRefresh, IconServer } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Badge from '../common/Badge';
@@ -9,7 +9,9 @@ import LinearProgress from '../common/LinearProgress';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useBilliardControllers } from '../../hooks/useBilliardControllers';
 import { formatDateTime } from '../../utils/billiard';
-import type { BilliardControllerStatus } from '../../models/interfaces/Billiard';
+import RegisterControllerModal from './components/RegisterControllerModal';
+import ControllerApiKeyModal from './components/ControllerApiKeyModal';
+import type { BilliardControllerStatus, ControllerRegisterResponse } from '../../models/interfaces/Billiard';
 
 const STATUS_VARIANT: Record<BilliardControllerStatus, 'success' | 'gray' | 'warning' | 'danger'> = {
   online: 'success',
@@ -22,6 +24,19 @@ const ControllersPage: React.FC = () => {
   const navigate = useNavigate();
   const canView = useHasAnyRole(['admin', 'super_admin', 'manager']);
   const { controllers, loading, error, refetch } = useBilliardControllers();
+  const [registerOpen, setRegisterOpen] = useState(false);
+  // Holds the one-time api_key; cleared on Done so it can never be shown again.
+  const [registered, setRegistered] = useState<ControllerRegisterResponse | null>(null);
+
+  const handleRegistered = (res: ControllerRegisterResponse) => {
+    setRegisterOpen(false);
+    setRegistered(res);
+  };
+
+  const handleKeyDone = () => {
+    setRegistered(null);
+    refetch();
+  };
 
   if (!canView) {
     return <div className="mt-10 text-center font-semibold text-red-500">Unauthorized: You do not have access to view this page.</div>;
@@ -34,6 +49,9 @@ const ControllersPage: React.FC = () => {
         subtitle="Monitor the billiard controllers that send table and scoring events. Refreshes every 30 seconds."
         actions={
           <>
+            {(controllers.length > 0 || !!error) && (
+              <Button label="Register" icon={<IconPlus size={16} />} iconPosition="left" rounded="lg" onClick={() => setRegisterOpen(true)} />
+            )}
             <Button label="Refresh" variant="secondary" icon={<IconRefresh size={16} />} iconPosition="left" rounded="lg" onClick={refetch} disabled={loading} />
             <Button label="Back to tables" variant="secondary" icon={<IconArrowLeft size={16} />} iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
           </>
@@ -48,7 +66,10 @@ const ControllersPage: React.FC = () => {
           <Button label="Retry" variant="secondary" rounded="lg" onClick={refetch} />
         </div>
       ) : !loading && controllers.length === 0 ? (
-        <EmptyState icon={<IconServer size={48} />} message="No billiard controllers are registered." />
+        <div className="flex flex-col items-center gap-2">
+          <EmptyState icon={<IconServer size={48} />} message="No controller registered" />
+          <Button label="Register" icon={<IconPlus size={16} />} iconPosition="left" rounded="lg" onClick={() => setRegisterOpen(true)} />
+        </div>
       ) : (
         <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))]">
           {controllers.map((controller) => (
@@ -69,6 +90,9 @@ const ControllersPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      <RegisterControllerModal isOpen={registerOpen} onClose={() => setRegisterOpen(false)} onRegistered={handleRegistered} />
+      <ControllerApiKeyModal result={registered} onDone={handleKeyDone} />
     </div>
   );
 };
