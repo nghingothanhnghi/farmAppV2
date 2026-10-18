@@ -40,7 +40,7 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
 
   // ✅ SAFE DERIVED VALUES
   const draftId = (variant as any)?._draftId;
-  const isSaved = (variant as any)?.saved === true;
+  const isSaved = (variant as any)?.saved !== false;
   const variantId = variant?.id;
 
   // 🔹 Auto-generate SKU for NEW (draft) variants
