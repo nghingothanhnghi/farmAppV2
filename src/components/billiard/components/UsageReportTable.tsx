@@ -56,9 +56,9 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
   );
 
   const stat = (label: string, value: string) => (
-    <div className=" bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] px-3 py-2">
-      <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">{label}</p>
-      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{value}</p>
+    <div className=" bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
+      <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 tracking-wide">{label}</h3>
+      <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
     </div>
   );
 

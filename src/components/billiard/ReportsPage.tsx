@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { IconArrowLeft, IconMoodEmpty } from '@tabler/icons-react';
+import { IconArrowLeft, IconMoodEmpty, IconSearch } from '@tabler/icons-react';
+import Spinner from '../common/Spinner';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -74,7 +75,7 @@ const ReportsPage: React.FC = () => {
           id="report_start"
           name="report_start"
           type="date"
-          label="From"
+          label={t("input.from.label")}
           value={start}
           onChange={(e) => setStart(e.target.value)}
           className="min-w-[180px]"
@@ -84,12 +85,25 @@ const ReportsPage: React.FC = () => {
           id="report_end"
           name="report_end"
           type="date"
-          label="To"
+          label={t("input.to.label")}
           value={end}
           onChange={(e) => setEnd(e.target.value)}
           className="min-w-[180px]"
         />
-        <Button label={loading ? 'Loading...' : 'Apply'} rounded="lg" disabled={loading} onClick={apply} />
+        <Button
+          label={loading ? 'Loading...' : 'Apply'}
+          icon={
+            loading ? (
+              <Spinner size={18} colorClass="border-white" />
+            ) : (
+              <IconSearch size={18} />
+            )
+          }
+          iconOnly
+          rounded="lg"
+          disabled={loading}
+          onClick={apply}
+        />
       </div>
 
       {loading ? (

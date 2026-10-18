@@ -4,6 +4,7 @@ export const CLOSE_SIDEBAR_ROUTES = [
   '/billiard',
   '/billiard/sessions',
   '/billiard/sessions/:id',
+  '/billiard/reports',
   '/dashboard/products',
   '/billiard/controllers'
 ];
