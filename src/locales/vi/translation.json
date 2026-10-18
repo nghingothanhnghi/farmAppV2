@@ -82,7 +82,9 @@
         "print": "In",
         "print_preview_bill": "In hóa đơn",
         "print_receipt": "In biên lai",
-        "pay": "Thanh toán"
+        "pay": "Thanh toán",
+        "pricing_rules": "Quy tắc tính giá",
+        "controllers": "Thiết bị điều khiển"
     },
     "badge_status":{
         "inStock": "Còn hàng",

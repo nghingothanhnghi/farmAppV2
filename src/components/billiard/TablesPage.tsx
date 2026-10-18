@@ -61,7 +61,7 @@ const TablesPage: React.FC = () => {
                 onClick={() => navigate('/billiard/reports')}
               />
               <Button
-                label="Pricing rules"
+                label={t("btn.pricing_rules")}
                 variant="secondary"
                 icon={<IconTag size={16} className="text-gray-500" />}
                 iconPosition="left"
@@ -69,7 +69,7 @@ const TablesPage: React.FC = () => {
                 onClick={() => navigate('/billiard/pricing-rules')}
               />
               <Button
-                label="Controllers"
+                label={t("btn.controllers")}
                 variant="secondary"
                 icon={<IconDeviceDesktopAnalytics size={16} className="text-gray-500" />}
                 iconPosition="left"

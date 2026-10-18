@@ -82,7 +82,9 @@
         "print": "Print",
         "print_preview_bill": "Print Bill (Ack)",
         "print_receipt": "Print Receipt",
-        "pay": "Pay"
+        "pay": "Pay",
+        "pricing_rules": "Pricing Rules",
+        "controllers": "Controllers"
     },
     "badge_status":{
         "inStock": "In Stock",
