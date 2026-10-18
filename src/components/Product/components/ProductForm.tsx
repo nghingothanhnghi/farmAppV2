@@ -40,6 +40,28 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
 
     const isViewMode = mode === "view";
 
+    // Guards against double-submit, and remembers the product created in "add" mode
+    // so a retry after a partial failure updates it instead of creating it again.
+    const [submitting, setSubmitting] = useState(false);
+    const [createdProductId, setCreatedProductId] = useState<number | null>(null);
+
+    // SKUs of the variants that already belong to the product being edited.
+    const ownSKUs = useMemo(
+        () =>
+            new Set(
+                mode === "add"
+                    ? []
+                    : (selectedProduct?.variants || []).map((v) => v.sku).filter(Boolean) as string[]
+            ),
+        [selectedProduct, mode]
+    );
+
+    // SKUs used by OTHER products' variants (own variants excluded so editing never flags them).
+    const takenElsewhere = useMemo(
+        () => variantSKUs.filter((s) => !ownSKUs.has(s)),
+        [variantSKUs, ownSKUs]
+    );
+
     /* -------------------------------------------------- */
     /* Load + sync product                                 */
     /* -------------------------------------------------- */
@@ -188,9 +210,35 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
     };
 
     // Strip UI-only fields before sending a variant to the API
+    // (blob: preview URLs are local only; the image is uploaded separately)
     const cleanVariant = (v: DraftVariant): ProductVariant => {
-        const { _draftId, saved, _file, ...rest } = v;
+        const { _draftId, saved, _file, id, ...rest } = v;
+        if (rest.image_url?.startsWith("blob:")) delete rest.image_url;
         return rest;
+    };
+
+    // Record the server id on the draft so a retry never POSTs it again
+    const markVariantSaved = (draft: DraftVariant, created?: ProductVariant) => {
+        setFormData((prev) => ({
+            ...prev,
+            variants: (prev.variants || []).map((x: any) =>
+                (draft._draftId && x._draftId === draft._draftId) || (draft.id && x.id === draft.id)
+                    ? { ...x, ...(created || {}), id: created?.id ?? x.id, saved: true, _file: undefined }
+                    : x
+            ),
+        }));
+    };
+
+    const isVariantChanged = (v: DraftVariant, original?: ProductVariant) => {
+        if (!original) return true;
+        if (v._file) return true;
+        return (
+            v.name !== original.name ||
+            (v.sku ?? "") !== (original.sku ?? "") ||
+            Number(v.price) !== Number(original.price) ||
+            Number(v.stock ?? 0) !== Number(original.stock ?? 0) ||
+            JSON.stringify(v.attributes ?? {}) !== JSON.stringify(original.attributes ?? {})
+        );
     };
 
     // Find the variant we just created in the product returned by the API
@@ -203,6 +251,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (submitting) return;
 
         if (hasUnsavedVariants) {
             setAlert({
@@ -212,76 +261,85 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
             return;
         }
 
+        const draftVariants = ((formData.variants || []) as DraftVariant[]).filter((v) => v.name?.trim());
+
+        // Pre-flight SKU check: duplicates inside the form, or used by another product
+        const seen = new Set<string>();
+        for (const v of draftVariants) {
+            const sku = v.sku?.trim();
+            if (!sku) continue;
+            if (seen.has(sku) || takenElsewhere.includes(sku)) {
+                setAlert({ type: "error", message: `Variant SKU "${sku}" is already in use.` });
+                return;
+            }
+            seen.add(sku);
+        }
+
+        setSubmitting(true);
         try {
-            // Variants and the preview blob URL are handled separately, never sent with the product
+            // Variants and the preview blob URL are never sent with the product.
+            // Variants are saved ONLY through the variant endpoints below, once each.
             const { image_url: _img, variants: _variants, ...productPayload } = formData;
-            const draftVariants = (formData.variants || []) as DraftVariant[];
 
             let product: Product;
+            let targetId: number | undefined = productId ?? createdProductId ?? undefined;
 
-            if (mode === "add") {
-                // 1) create the product WITHOUT variants
+            if (mode === "add" && !targetId) {
                 product = await actions.createProduct(productPayload as ProductCreate);
-
-                // 2) create each variant exactly once
-                const usedSKUs = [...variantSKUs];
-                for (const v of draftVariants) {
-                    if (!v.name?.trim()) continue;
-
-                    const sku = v.sku || generateVariantSKU(product.sku!, v.name, usedSKUs);
-                    usedSKUs.push(sku);
-
-                    const updatedProduct = await actions.createVariant(
-                        product.id,
-                        cleanVariant({ ...v, sku })
-                    );
-
-                    const createdVariant = findBySku(updatedProduct, sku);
-                    if (v._file && createdVariant?.id) {
-                        await actions.uploadVariantImage(createdVariant.id, v._file);
-                    }
-                }
-
-                setAlert({ type: "success", message: "Product created successfully!" });
-
-            } else if (mode === "edit" && productId) {
-                // 1) update the product WITHOUT variants
-                product = await actions.updateProduct(productId, productPayload);
-
-                // 2) update existing variants, create new ones
-                for (const v of draftVariants) {
-                    if (v.id) {
-                        await actions.updateVariant(v.id, cleanVariant(v));
-                        if (v._file) await actions.uploadVariantImage(v.id, v._file);
-                    } else {
-                        const updatedProduct = await actions.createVariant(productId, cleanVariant(v));
-                        const createdVariant = findBySku(updatedProduct, v.sku);
-                        if (v._file && createdVariant?.id) {
-                            await actions.uploadVariantImage(createdVariant.id, v._file);
-                        }
-                    }
-                }
-
-                setAlert({ type: "success", message: "Product updated successfully!" });
+                targetId = product.id;
+                setCreatedProductId(product.id);
+            } else if (targetId && mode !== "view") {
+                product = await actions.updateProduct(targetId, productPayload);
             } else {
                 return;
             }
 
-            if (imageFile && product.id) {
-                await actions.uploadProductImage(product.id, imageFile);
+            const originals = new Map((selectedProduct?.variants || []).map((x) => [x.id, x]));
+            const usedSKUs = [...variantSKUs, ...draftVariants.map((x) => x.sku || "")];
+
+            // Pass 1: update existing variants (only the ones that changed)
+            for (const v of draftVariants.filter((x) => x.id)) {
+                if (!isVariantChanged(v, originals.get(v.id))) continue;
+                await actions.updateVariant(v.id!, cleanVariant(v));
+                if (v._file) await actions.uploadVariantImage(v.id!, v._file);
+                markVariantSaved(v);
             }
+
+            // Pass 2: create new variants exactly once, recording the id as soon as it exists
+            for (const v of draftVariants.filter((x) => !x.id)) {
+                const sku = v.sku || generateVariantSKU(product.sku!, v.name, usedSKUs);
+                usedSKUs.push(sku);
+
+                const updatedProduct = await actions.createVariant(targetId!, cleanVariant({ ...v, sku }));
+                const created = findBySku(updatedProduct, sku);
+                markVariantSaved(v, created);
+
+                if (v._file && created?.id) {
+                    await actions.uploadVariantImage(created.id, v._file);
+                }
+            }
+
+            if (imageFile) {
+                await actions.uploadProductImage(targetId!, imageFile);
+            }
+
+            setAlert({
+                type: "success",
+                message: mode === "add" ? "Product created successfully!" : "Product updated successfully!",
+            });
 
             await actions.fetchProducts();
             await actions.fetchAllVariantSKUs();
 
             onSuccess?.(product);
-
         } catch (err: any) {
             console.error("Error saving product:", err);
             setAlert({
                 type: "error",
                 message: err?.response?.data?.detail || "Failed to save product.",
             });
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -309,7 +367,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                             .filter((_, i) => i !== idx)
                             .map(v => v.sku || "")
                             .filter(Boolean)}
-                        variantSKUs={variantSKUs}
+                        variantSKUs={takenElsewhere}
                         onSave={(v, file) => {
                             if (file) (v as any)._file = file;
                             upsertVariant(v as DraftVariant);
@@ -361,7 +419,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                         type="submit"
                         label={mode === "add" ? "Create Product" : "Update Product"}
                         variant="primary"
-                        disabled={loading || hasUnsavedVariants}
+                        disabled={loading || submitting || hasUnsavedVariants}
                         rounded="lg"
                     />
                 )}

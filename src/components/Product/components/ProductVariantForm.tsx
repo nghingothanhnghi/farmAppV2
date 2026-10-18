@@ -58,6 +58,16 @@ const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
     setFormData(prev => ({ ...prev, sku }));
   }, [formData.name, productSKU, existingSKUs, variantSKUs, variantId]);
 
+  // SKU already used by a sibling variant in this form, or by another product's variant.
+  // (variantSKUs is passed in with this product's own variants already excluded.)
+  const skuError = (() => {
+    const sku = formData.sku?.trim();
+    if (!sku) return null;
+    return [...existingSKUs, ...variantSKUs].includes(sku)
+      ? "SKU already used by another variant"
+      : null;
+  })();
+
   const handleChange = (field: string, value: any) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
@@ -91,6 +101,8 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       alert("Variant SKU cannot be empty.");
       return;
     }
+
+    if (skuError) return;
 
     onSave(
       {
@@ -147,6 +159,7 @@ const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
           />
         )}
       </div>
+      {skuError && <p className="text-xs text-red-500">{skuError}</p>}
       {/* 🔶 Unsaved changes warning */}
       {!isSaved && !disabled && (
         <p className="text-xs text-orange-500">
