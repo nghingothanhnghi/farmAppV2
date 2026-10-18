@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 // import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconPlus } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconPlus, IconCalculator } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -15,10 +15,19 @@ import PricingRuleFormModal from './components/PricingRuleFormModal';
 import PricingQuotePanel from './components/PricingQuotePanel';
 import PricingRulesTable from './components/PricingRulesTable';
 import type { PricingRule } from '../../models/interfaces/Billiard';
+import SideContentPanel from '../common/SideContentPanel';
+import { useSideContent } from '../../hooks/useSideContent';
 
 const PricingRulesPage: React.FC = () => {
   // const { t } = useTranslation()
   const navigate = useNavigate();
+
+  const sideContent = useSideContent();
+
+  const openPricingPreview = () => {
+    sideContent.openSide();
+  };
+
   // The server enforces ADMIN/MANAGER on writes; the list itself is open to any logged-in user.
   const canManage = useHasAnyRole(['admin', 'super_admin', 'manager']);
 
@@ -48,12 +57,21 @@ const PricingRulesPage: React.FC = () => {
         subtitle="Happy hours, peak rates, block and minimum billing. A session keeps the rule that matched when it started."
         actions={
           <>
+            <Button
+              label="Preview price"
+              variant="secondary"
+              icon={<IconCalculator size={16} />}
+              iconPosition="left"
+              rounded="lg"
+              onClick={openPricingPreview}
+            />
             <Button label="Back to tables" variant="secondary" icon={<IconArrowLeft size={16} />}
               iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
             {canManage && (
               <Button label="Add rule" variant="secondary" icon={<IconPlus size={16} className="text-gray-500" />}
                 iconPosition="left" rounded="lg" onClick={openCreate} />
             )}
+
           </>
         }
       />
@@ -91,7 +109,13 @@ const PricingRulesPage: React.FC = () => {
         When several rules match, the highest priority wins, then a table-specific rule over an all-tables rule, then the newest.
       </p>
 
-      <PricingQuotePanel tables={tables} />
+      <SideContentPanel
+        open={sideContent.sideOpen}
+        onClose={sideContent.closeSide}
+      >
+        <PricingQuotePanel tables={tables} />
+
+      </SideContentPanel>
 
       {canManage && (
         <PricingRuleFormModal
