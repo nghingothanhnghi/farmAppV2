@@ -12,6 +12,7 @@ export interface DataGridProps {
     theme?: string;
     lottieSrc?: string; // ✅ New: Lottie animation URL (optional)
     image?: string; // ✅ New: Image URL (optional)
+    containerClassName?: string;
 }
 
 export interface ActionButtonsProps {

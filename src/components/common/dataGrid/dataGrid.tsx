@@ -23,6 +23,7 @@ const DataGrid: React.FC<DataGridProps> = ({
   theme = 'ag-theme-alpine',
   lottieSrc, // Lottie animation URL
   image, // Fallback image URL
+  containerClassName = '',
 }) => {
 
   const isAutoHeight = height === 'auto';
@@ -86,7 +87,7 @@ const DataGrid: React.FC<DataGridProps> = ({
       // className={`${appliedTheme} w-full`} 
       // style={{ height }}
       ref={isAutoHeight ? gridContainerRef : undefined}
-      className={`${appliedTheme} w-full`}
+      className={`${appliedTheme} w-full ${containerClassName}`}
       style={{
         height: isAutoHeight ? calculatedHeight : height,
       }}

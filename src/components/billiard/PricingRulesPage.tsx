@@ -51,7 +51,7 @@ const PricingRulesPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-full min-h-0 space-y-6">
       <PageTitle
         title="Pricing rules"
         subtitle="Happy hours, peak rates, block and minimum billing. A session keeps the rule that matched when it started."
@@ -75,6 +75,14 @@ const PricingRulesPage: React.FC = () => {
           </>
         }
       />
+
+      <SideContentPanel
+        open={sideContent.sideOpen}
+        onClose={sideContent.closeSide}
+      >
+        <PricingQuotePanel tables={tables} />
+
+      </SideContentPanel>
 
       {!canManage && (
         <p className="text-xs text-amber-600 dark:text-amber-400">
@@ -104,18 +112,6 @@ const PricingRulesPage: React.FC = () => {
           />
         </div>
       )}
-
-      <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-        When several rules match, the highest priority wins, then a table-specific rule over an all-tables rule, then the newest.
-      </p>
-
-      <SideContentPanel
-        open={sideContent.sideOpen}
-        onClose={sideContent.closeSide}
-      >
-        <PricingQuotePanel tables={tables} />
-
-      </SideContentPanel>
 
       {canManage && (
         <PricingRuleFormModal

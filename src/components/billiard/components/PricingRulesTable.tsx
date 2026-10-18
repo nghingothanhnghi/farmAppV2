@@ -164,38 +164,6 @@ const PricingRulesTable: React.FC<Props> = ({
                         </div>
                     );
                 },
-                // cellRenderer: (p: any) => {
-                //     const rule: PricingRule = p.data;
-
-                //     return (
-                //         <div className="flex items-center gap-2 h-full">
-                //             <Button
-                //                 label="Edit"
-                //                 size="xs"
-                //                 variant="secondary"
-                //                 rounded="lg"
-                //                 disabled={saving}
-                //                 onClick={() => onEdit(rule)}
-                //             />
-                //             <Button
-                //                 label={rule.is_active ? 'Deactivate' : 'Activate'}
-                //                 size="xs"
-                //                 variant="secondary"
-                //                 rounded="lg"
-                //                 disabled={saving}
-                //                 onClick={() => onToggleActive(rule)}
-                //             />
-                //             <Button
-                //                 label="Delete"
-                //                 size="xs"
-                //                 variant="danger"
-                //                 rounded="lg"
-                //                 disabled={saving}
-                //                 onClick={() => onDelete(rule)}
-                //             />
-                //         </div>
-                //     );
-                // },
             });
         }
 
@@ -210,13 +178,18 @@ const PricingRulesTable: React.FC<Props> = ({
     ]);
 
     return (
-        <DataGrid
-            rowData={sorted}
-            columnDefs={columnDefs}
-            pagination
-            paginationPageSize={10}
-            height="auto"
-        />
+        <div className="space-y-4 flex flex-col h-full min-h-0">
+            <DataGrid
+                rowData={sorted}
+                columnDefs={columnDefs}
+                pagination
+                paginationPageSize={10}
+                height="auto"
+            />
+            <div className="shrink-0 pt-2 text-[0.625rem] text-gray-500 dark:text-gray-400">
+                When several rules match, the highest priority wins, then a table-specific rule over an all-tables rule, then the newest.
+            </div>
+        </div>
     );
 };
 
