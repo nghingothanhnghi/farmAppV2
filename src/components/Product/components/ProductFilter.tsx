@@ -53,18 +53,23 @@ export const ProductFilter: React.FC<ProductFilterProps> = ({ filters, setFilter
             onChange={(e) => setFilters((f) => ({ ...f, name: e.target.value }))}
             className="w-full"
           />
-
-          <IconSearch size={18} className="absolute inset-y-0 right-2 top-1/2 -translate-y-1/2" />
-
-          {filters.name && (
+          {!filters.name ? (
+            <IconSearch
+              size={18}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+          ) : (
             <Button
+              type="button"
               variant="secondary"
-              icon={<IconX size={18} />}
+              icon={<IconX size={16} />}
               iconOnly
               label="Clear name filter"
-              className='bg-transparent absolute right-3 top-1/2 -translate-y-1/2'
-              onClick={() => setFilters((f) => ({ ...f, name: "" }))}
-              rounded='full'
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-transparent"
+              onClick={() =>
+                setFilters((f) => ({ ...f, name: "" }))
+              }
+              rounded="full"
               size="xxs"
             />
           )}
