@@ -120,33 +120,48 @@ export const useProduct = () => {
     }
   }, []);
 
+  // Variant endpoints return a single variant (not the whole product),
+  // so merge it into local state instead of replacing the product.
+  const mergeVariant = useCallback((productId: number | undefined, variant: ProductVariant) => {
+    const merge = (p: Product): Product => {
+      const variants = p.variants || [];
+      const exists = variants.some((v) => v.id === variant.id);
+      return {
+        ...p,
+        variants: exists
+          ? variants.map((v) => (v.id === variant.id ? variant : v))
+          : [...variants, variant],
+      };
+    };
+    const owns = (p: Product) =>
+      (productId !== undefined && p.id === productId) ||
+      (p.variants || []).some((v) => v.id === variant.id);
+
+    setProducts((prev) => prev.map((p) => (owns(p) ? merge(p) : p)));
+    setSelectedProduct((prev) => (prev && owns(prev) ? merge(prev) : prev));
+  }, []);
+
   const createVariant = useCallback(async (productId: number, variant: ProductVariant) => {
     try {
-      const updatedProduct = await productService.createVariant(productId, variant);
-      setProducts((prev) => prev.map((p) => (p.id === productId ? updatedProduct : p)));
-      if (selectedProduct?.id === productId) setSelectedProduct(updatedProduct);
-      return updatedProduct;
+      const created = await productService.createVariant(productId, variant);
+      mergeVariant(productId, created);
+      return created;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to create variant");
       throw err;
     }
-  }, [selectedProduct]);
+  }, [mergeVariant]);
 
   const updateVariant = useCallback(async (variantId: number, data: Partial<ProductVariant>) => {
     try {
-      const updatedProduct = await productService.updateVariant(variantId, data);
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.variants.some((v) => v.id === variantId) ? updatedProduct : p
-        )
-      );
-      if (selectedProduct?.variants.some((v) => v.id === variantId)) setSelectedProduct(updatedProduct);
-      return updatedProduct;
+      const updated = await productService.updateVariant(variantId, data);
+      mergeVariant(undefined, updated);
+      return updated;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to update variant");
       throw err;
     }
-  }, [selectedProduct]);
+  }, [mergeVariant]);
 
   const deleteVariant = useCallback(async (variantId: number) => {
     try {
@@ -163,19 +178,14 @@ export const useProduct = () => {
 
   const uploadVariantImage = useCallback(async (variantId: number, file: File) => {
     try {
-      const updatedProduct = await productService.uploadVariantImage(variantId, file);
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.variants.some((v) => v.id === variantId) ? updatedProduct : p
-        )
-      );
-      if (selectedProduct?.variants.some((v) => v.id === variantId)) setSelectedProduct(updatedProduct);
-      return updatedProduct;
+      const updated = await productService.uploadVariantImage(variantId, file);
+      mergeVariant(undefined, updated);
+      return updated;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to upload variant image");
       throw err;
     }
-  }, [selectedProduct]);
+  }, [mergeVariant]);
 
   // Auto load products, variants on mount
   useEffect(() => {

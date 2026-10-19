@@ -27,9 +27,9 @@ export const useProductVariant = (productId: number) => {
     async (variant: ProductVariant) => {
       setLoading(true);
       try {
-        const updated = await productService.createVariant(productId, variant);
-        setProduct(updated);
-        return updated;
+        const created = await productService.createVariant(productId, variant);
+        await refreshProduct();
+        return created;
       } catch (err: any) {
         setError(err.response?.data?.detail || "Failed to create variant");
         throw err;
@@ -37,7 +37,7 @@ export const useProductVariant = (productId: number) => {
         setLoading(false);
       }
     },
-    [productId]
+    [productId, refreshProduct]
   );
 
   // ✅ Update variant
@@ -45,7 +45,7 @@ export const useProductVariant = (productId: number) => {
     setLoading(true);
     try {
       const updated = await productService.updateVariant(variantId, data);
-      setProduct(updated);
+      await refreshProduct();
       return updated;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to update variant");
@@ -53,7 +53,7 @@ export const useProductVariant = (productId: number) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [refreshProduct]);
 
   // ✅ Delete variant
   const deleteVariant = useCallback(async (variantId: number) => {
@@ -74,7 +74,7 @@ export const useProductVariant = (productId: number) => {
     setLoading(true);
     try {
       const updated = await productService.uploadVariantImage(variantId, file);
-      setProduct(updated);
+      await refreshProduct();
       return updated;
     } catch (err: any) {
       setError(err.response?.data?.detail || "Failed to upload variant image");
@@ -82,7 +82,7 @@ export const useProductVariant = (productId: number) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [refreshProduct]);
 
   return {
     product,

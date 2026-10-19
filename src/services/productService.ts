@@ -53,12 +53,12 @@ export const productService = {
     return res.data;
   },
 
-  async createVariant(productId: number, variant: ProductVariant): Promise<Product> {
+  async createVariant(productId: number, variant: ProductVariant): Promise<ProductVariant> {
     const res = await apiClient.post(`/products/${productId}/variants`, variant);
     return res.data;
   },
 
-  async updateVariant(variantId: number, data: Partial<ProductVariant>): Promise<Product> {
+  async updateVariant(variantId: number, data: Partial<ProductVariant>): Promise<ProductVariant> {
     const res = await apiClient.put(`/products/variants/${variantId}`, data);
     return res.data;
   },
@@ -67,7 +67,7 @@ export const productService = {
     await apiClient.delete(`/products/variants/${variantId}`);
   },
 
-  async uploadVariantImage(variantId: number, file: File): Promise<Product> {
+  async uploadVariantImage(variantId: number, file: File): Promise<ProductVariant> {
     const formData = new FormData();
     formData.append("file", file);
     const res = await apiClient.post(`/products/variants/${variantId}/upload-image`, formData, {

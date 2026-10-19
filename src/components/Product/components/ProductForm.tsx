@@ -241,10 +241,6 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
         );
     };
 
-    // Find the variant we just created in the product returned by the API
-    const findBySku = (p: Product, sku?: string) =>
-        p.variants.find((x) => x.sku === sku);
-
     /* ---------------------------------- */
     /* Submit                             */
     /* ---------------------------------- */
@@ -310,12 +306,13 @@ const ProductForm: React.FC<ProductFormProps> = ({ mode, productId, onSuccess, o
                 const sku = v.sku || generateVariantSKU(product.sku!, v.name, usedSKUs);
                 usedSKUs.push(sku);
 
-                const updatedProduct = await actions.createVariant(targetId!, cleanVariant({ ...v, sku }));
-                const created = findBySku(updatedProduct, sku);
+                // The API returns the created variant itself
+                const created = await actions.createVariant(targetId!, cleanVariant({ ...v, sku }));
                 markVariantSaved(v, created);
 
                 if (v._file && created?.id) {
-                    await actions.uploadVariantImage(created.id, v._file);
+                    const withImage = await actions.uploadVariantImage(created.id, v._file);
+                    markVariantSaved(v, withImage);
                 }
             }
 
