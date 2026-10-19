@@ -84,7 +84,10 @@
         "print_receipt": "Print Receipt",
         "pay": "Pay",
         "pricing_rules": "Pricing Rules",
-        "controllers": "Controllers"
+        "controllers": "Controllers",
+        "deleting": "Deleting...",
+        "ok_delete": "Yes, Delete",
+        "add_rule": "Add rule"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -548,6 +551,8 @@
         "billiard_tables_description": "Start a table, track play time and add drinks or snacks to the bill.",
         "table_usage_report_title": "Table Usage Report",
         "table_usage_report_description": "Play count, time and revenue per table.",
+        "pricing_rules_title": "Pricing rules",
+        "pricing_rules_description": "Happy hours, peak rates, block and minimum billing. A session keeps the rule that matched when it started.",        
         "games": {
             "title": "Games",
             "start_first": "Start game 1",
@@ -631,7 +636,10 @@
             "confirm":{
                 "stop_session":{
                     "message": "Stop this session? The timer ends and the bill is finalised."
-                }  
+                },
+                "delete_price_rule":{
+                    "message": "Delete the rule \"{{name}}\"? Running and finished bills are not affected, but new sessions will no longer use it."
+                }
             },
             "print":{
                 "preview": "Print Preview"

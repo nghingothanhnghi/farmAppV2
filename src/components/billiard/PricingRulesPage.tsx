@@ -1,6 +1,6 @@
 // src/components/billiard/PricingRulesPage.tsx
 import React, { useState } from 'react';
-// import { useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconPlus, IconCalculator } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
@@ -19,7 +19,7 @@ import SideContentPanel from '../common/SideContentPanel';
 import { useSideContent } from '../../hooks/useSideContent';
 
 const PricingRulesPage: React.FC = () => {
-  // const { t } = useTranslation()
+  const { t } = useTranslation()
   const navigate = useNavigate();
 
   const sideContent = useSideContent();
@@ -53,8 +53,8 @@ const PricingRulesPage: React.FC = () => {
   return (
     <div className="flex flex-col h-full min-h-0 space-y-6">
       <PageTitle
-        title="Pricing rules"
-        subtitle="Happy hours, peak rates, block and minimum billing. A session keeps the rule that matched when it started."
+        title={t("billiard_tables.pricing_rules_title")}
+        subtitle={t("billiard_tables.pricing_rules_description")}
         actions={
           <>
             <Button
@@ -65,10 +65,10 @@ const PricingRulesPage: React.FC = () => {
               rounded="lg"
               onClick={openPricingPreview}
             />
-            <Button label="Back to tables" variant="secondary" icon={<IconArrowLeft size={16} />}
+            <Button label={t("btn.back_to_tables")} variant="secondary" icon={<IconArrowLeft size={16} />}
               iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
             {canManage && (
-              <Button label="Add rule" variant="secondary" icon={<IconPlus size={16} className="text-gray-500" />}
+              <Button label={t("btn.add_rule")} variant="secondary" icon={<IconPlus size={16} className="text-gray-500" />}
                 iconPosition="left" rounded="lg" onClick={openCreate} />
             )}
 
@@ -81,7 +81,6 @@ const PricingRulesPage: React.FC = () => {
         onClose={sideContent.closeSide}
       >
         <PricingQuotePanel tables={tables} />
-
       </SideContentPanel>
 
       {!canManage && (
@@ -132,14 +131,16 @@ const PricingRulesPage: React.FC = () => {
         content={
           <div className="text-sm px-10 pt-6 pb-10 text-center">
             <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-            Delete the rule “{deleting?.name}”? Running and finished bills are not affected, but new sessions will no longer use it.
+            {t("billiard_tables.modals.confirm.delete_price_rule.message", {
+              name: deleting?.name ?? '',
+            })}
           </div>
         }
         actions={
           <div className="flex gap-4">
-            <Button label={saving ? 'Deleting...' : 'Yes, Delete'} variant="danger" onClick={confirmDelete}
+            <Button label={saving ? t("btn.deleting") : t("btn.ok_delete")} variant="danger" onClick={confirmDelete}
               disabled={saving} className="min-w-[150px]" rounded="lg" />
-            <Button label="Cancel" variant="secondary" onClick={() => setDeleting(null)} disabled={saving}
+            <Button label={t("btn.cancel")} variant="secondary" onClick={() => setDeleting(null)} disabled={saving}
               className="min-w-[150px]" rounded="lg" />
           </div>
         }

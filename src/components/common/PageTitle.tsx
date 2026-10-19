@@ -28,8 +28,8 @@ const PageTitle: React.FC<PageTitleProps> = ({
     evenly: 'justify-evenly',
   }[justify];
   return (
-    <div className={`hidden lg:flex flex-col sm:flex-row justify-between gap-4 mb-5 ${alignClasses} ${justifyClasses}`}>
-      <div className={`lg:w-[${width}]`}>
+    <div className={`hidden lg:flex flex-col sm:flex-row lg:gap-10 justify-between gap-4 mb-5 ${alignClasses} ${justifyClasses}`}>
+      <div className={`flex-1 min-w-0 lg:w-[${width}]`}>
         <h1 className="text-xl font-semibold text-zinc-950 sm:text-xl/8 dark:text-white">
           {title}
         </h1>

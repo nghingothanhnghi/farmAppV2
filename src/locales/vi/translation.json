@@ -84,7 +84,10 @@
         "print_receipt": "In biên lai",
         "pay": "Thanh toán",
         "pricing_rules": "Quy tắc tính giá",
-        "controllers": "Thiết bị điều khiển"
+        "controllers": "Thiết bị điều khiển",
+        "deleting": "Đang xóa...",
+        "ok_delete": "Ok, Xóa",
+        "add_rule": "Thêm quy tắc"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -548,6 +551,8 @@
         "billiard_tables_description": "Mở bàn, theo dõi thời gian chơi và thêm đồ uống hoặc đồ ăn vào hóa đơn",
         "table_usage_report_title": "Báo cáo sử dụng bàn",
         "table_usage_report_description": "Số lượt chơi, thời gian và doanh thu theo từng bàn.",
+        "pricing_rules_title": "Quy tắc tính giá",
+        "pricing_rules_description": "Thiết lập giờ ưu đãi, giá giờ cao điểm, tính phí theo block và mức phí tối thiểu. Mỗi phiên chơi giữ nguyên quy tắc giá được áp dụng khi bắt đầu.",           
         "games": {
             "title": "Ván đấu",
             "start_first": "Bắt đầu ván 1",
@@ -631,7 +636,10 @@
             "confirm":{
                 "stop_session":{
                     "message": "Kết thúc lượt chơi? Thời gian chơi sẽ dừng và hóa đơn sẽ được chốt. Bạn không thể tiếp tục lượt chơi này sau khi xác nhận."
-                }  
+                },
+                "delete_price_rule":{
+                    "message": "Bạn có chắc chắn muốn xóa quy tắc \"{{name}}\"? Các hóa đơn đang diễn ra hoặc đã hoàn tất sẽ không bị ảnh hưởng, nhưng các phiên chơi mới sẽ không còn áp dụng quy tắc này."
+                }
             },
             "print":{
                 "preview": "Xem trước khi in"

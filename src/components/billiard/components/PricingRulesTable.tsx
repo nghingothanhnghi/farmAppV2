@@ -186,7 +186,7 @@ const PricingRulesTable: React.FC<Props> = ({
                 paginationPageSize={10}
                 height="auto"
             />
-            <div className="shrink-0 pt-2 text-[0.625rem] text-gray-500 dark:text-gray-400">
+            <div className="shrink-0 pt-2 text-xs text-gray-500 dark:text-gray-400">
                 When several rules match, the highest priority wins, then a table-specific rule over an all-tables rule, then the newest.
             </div>
         </div>
