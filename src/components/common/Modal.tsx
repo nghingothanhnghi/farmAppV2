@@ -36,20 +36,20 @@ const Modal: React.FC<ModalProps> = ({
 
   // Set a dynamic class for the modal size
   const modalSizeClasses = {
-    // xsmall: 'sm:w-1/2 md:w-1/2 lg:w-1/4 w-full mx-5',
-    // small: 'sm:w-1/3 w-full mx-5',   // 100% on mobile, 1/3 on small screens
-    // medium: 'sm:w-3/6 w-full mx-5',  // 100% on mobile, 3/6 on small screens
-    // large: 'sm:w-4/5 w-full',   // 100% on mobile, 4/5 on small screens
-    xsmall: 'w-full mx-5 sm:w-3/4 md:w-2/3 lg:w-1/4',
-    small: 'w-full mx-5 sm:w-4/5 md:w-3/4 lg:w-1/3',
-    medium: 'w-full mx-5 sm:w-5/6 md:w-4/5 lg:w-1/2',
+    // xsmall: 'w-full mx-5 sm:w-3/4 md:w-2/3 lg:w-1/4',
+    // small: 'w-full mx-5 sm:w-4/5 md:w-3/4 lg:w-1/3',
+    // medium: 'w-full mx-5 sm:w-5/6 md:w-4/5 lg:w-1/2',
+    // large: 'w-full sm:w-11/12 lg:w-4/5',
+    xsmall: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-3/4 md:w-2/3 lg:w-1/4`,
+    small: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-4/5 md:w-3/4 lg:w-1/3`,
+    medium: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-5/6 md:w-4/5 lg:w-1/2`,
     large: 'w-full sm:w-11/12 lg:w-4/5',
   };
 
   // Positioning logic
   const positionClasses = {
     center: 'items-center', // Center vertically
-    bottom: 'items-end sm:items-center', // Stick to bottom with padding
+    bottom: 'items-end', // Stick to bottom with padding
   };
 
   return ReactDOM.createPortal(
