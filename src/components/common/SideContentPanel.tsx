@@ -8,9 +8,17 @@ interface SideContentPanelProps {
   open: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  title?: React.ReactNode;
+  headerActions?: React.ReactNode;
 }
 
-const SideContentPanel: React.FC<SideContentPanelProps> = ({ open, onClose, children }) => {
+const SideContentPanel: React.FC<SideContentPanelProps> = ({ 
+  open, 
+  onClose, 
+  children,
+  title,
+  headerActions,
+}) => {
   return (
     <AnimatePresence>
       {open && (
@@ -32,16 +40,34 @@ const SideContentPanel: React.FC<SideContentPanelProps> = ({ open, onClose, chil
             transition={{ type: "spring", stiffness: 200, damping: 30 }}
             className="fixed top-0 right-0 h-full w-full max-w-xl bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-white/5 shadow-2xl z-50 flex flex-col"
           >
-            <div className="p-4">
+            <div className="flex items-center gap-3 border-b border-gray-200 p-4 dark:border-white/10">
               <Button
                 variant="secondary"
                 icon={<IconArrowLeft size={18} stroke={1.5} />}
                 iconOnly
                 label="Close"
-                className='bg-transparent'
+                className='shrink-0 bg-transparent'
                 onClick={onClose}
                 rounded='full'
               />
+              {title && (
+                <div className="min-w-0 flex-1">
+                  {typeof title === "string" ? (
+                    <h2 className="truncate text-lg font-semibold text-gray-900 dark:text-white">
+                      {title}
+                    </h2>
+                  ) : (
+                    title
+                  )}
+                </div>
+              )}
+
+              {headerActions && (
+                <div className="flex shrink-0 items-center gap-2">
+                  {headerActions}
+                </div>
+              )}
+
             </div>
             <div
               className="flex-1 overflow-y-auto overscroll-contain touch-pan-y"

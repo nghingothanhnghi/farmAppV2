@@ -232,7 +232,11 @@ const PaymentManagementPage: React.FC = () => {
                 )}
             />
 
-            <SideContentPanel open={sideContent.sideOpen} onClose={sideContent.closeSide}>
+            <SideContentPanel
+                title="Payment Detail"
+                open={sideContent.sideOpen}
+                onClose={sideContent.closeSide}
+            >
                 <PaymentTabs
                     onPaymentCreated={handlePaymentCreated}
                     initialPayment={initialPayment}
