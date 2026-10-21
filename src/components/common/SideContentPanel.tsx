@@ -9,14 +9,16 @@ interface SideContentPanelProps {
   onClose: () => void;
   children: React.ReactNode;
   title?: React.ReactNode;
+  description?: React.ReactNode;
   headerActions?: React.ReactNode;
 }
 
-const SideContentPanel: React.FC<SideContentPanelProps> = ({ 
-  open, 
-  onClose, 
+const SideContentPanel: React.FC<SideContentPanelProps> = ({
+  open,
+  onClose,
   children,
   title,
+  description,
   headerActions,
 }) => {
   return (
@@ -50,17 +52,28 @@ const SideContentPanel: React.FC<SideContentPanelProps> = ({
                 onClick={onClose}
                 rounded='full'
               />
-              {title && (
-                <div className="min-w-0 flex-1">
-                  {typeof title === "string" ? (
-                    <h2 className="truncate text-lg font-semibold text-gray-900 dark:text-white">
-                      {title}
-                    </h2>
-                  ) : (
-                    title
+
+
+              {(title || description) && (
+                <div className="min-w-0 flex-1 space-y-1">
+                  {title && (
+                    typeof title === "string" ? (
+                      <h3 className="truncate font-medium text-sm text-gray-900 dark:text-white">
+                        {title}
+                      </h3>
+                    ) : (
+                      title
+                    )
+                  )}
+
+                  {description && (
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      {description}
+                    </div>
                   )}
                 </div>
               )}
+
 
               {headerActions && (
                 <div className="flex shrink-0 items-center gap-2">

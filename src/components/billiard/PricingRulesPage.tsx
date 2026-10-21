@@ -77,6 +77,8 @@ const PricingRulesPage: React.FC = () => {
       />
 
       <SideContentPanel
+        title="Preview price"
+        description="Shows what a session would cost with the current rules. Nothing is saved."
         open={sideContent.sideOpen}
         onClose={sideContent.closeSide}
       >

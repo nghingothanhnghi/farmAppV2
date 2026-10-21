@@ -2,7 +2,7 @@
 // "Preview price": calls GET /billiard/pricing-rules/quote. Writes nothing.
 import React, { useState } from 'react';
 import Button from '../../common/Button';
-import { FormGroup, FormInput, FormLabel, FormSelect } from '../../common/Form';
+import { FormGroup, FormInput, FormLabel, FormSelect, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import { billiardService } from '../../../services/billiard_service';
 import { DEFAULT_CURRENCY, billiardErrorMessage, formatDateTime, formatMoneyString } from '../../../utils/billiard';
 import { describePricingParams, getBillingPolicyLabel } from '../../../utils/pricing';
@@ -49,30 +49,52 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
   const paramsText = describePricingParams(quote?.params);
 
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 p-4 space-y-4">
-      <div>
-        <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Preview price</h3>
-        <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-          Shows what a session would cost with the current rules. Nothing is saved.
-        </p>
-      </div>
-
+    <div className="p-4 space-y-4">
       <div className="grid gap-4 sm:grid-cols-3">
+        <FormGroup>
+          <FloatingLabelSelect
+            id="quote_table"
+            name="quote_table"
+            label="Table"
+            value={tableId}
+            className="w-full"
+            onChange={(e) => setTableId(e.target.value)}
+            required
+          >
+            <option value="" disabled>
+              Select a table
+            </option>
+            {tables.map((t) => (
+              <option key={t.id} value={t.id}>
+                {t.name}
+              </option>
+            ))}
+          </FloatingLabelSelect>
+        </FormGroup>
+
         <FormGroup className="space-y-1">
-          <FormLabel htmlFor="quote_table">Table</FormLabel>
-          <FormSelect id="quote_table" value={tableId} className="w-full" onChange={(e) => setTableId(e.target.value)}>
-            <option value="">Select…</option>
-            {tables.map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}
-          </FormSelect>
+          <FloatingLabelInput
+            id="quote_minutes"
+            name="quote_minutes"
+            type="text"
+            label="Minutes played"
+            inputMode="numeric"
+            value={minutes}
+            onChange={(e) => setMinutes(e.target.value)}
+            className="min-w-[180px]"
+          />
         </FormGroup>
         <FormGroup className="space-y-1">
-          <FormLabel htmlFor="quote_minutes">Minutes played</FormLabel>
-          <FormInput id="quote_minutes" type="text" inputMode="numeric" value={minutes}
-            onChange={(e) => setMinutes(e.target.value)} />
-        </FormGroup>
-        <FormGroup className="space-y-1">
-          <FormLabel htmlFor="quote_at">Start at (optional)</FormLabel>
-          <FormInput id="quote_at" type="datetime-local" value={at} onChange={(e) => setAt(e.target.value)} />
+          <FloatingLabelInput
+            id="quote_at"
+            name="quote_at"
+            type="datetime-local"
+            label="Start at (optional)"
+            inputMode="numeric"
+            value={at}
+            onChange={(e) => setAt(e.target.value)}
+            className="min-w-[180px]"
+          />
           <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">Club-local time. Empty = now.</p>
         </FormGroup>
       </div>
