@@ -134,6 +134,16 @@
                 "lowest_price": "Lowest price"
             }
         },
+        "theme":{
+            "label": "Theme",
+            "placeholder": "Chọn giao diện...",
+            "options": {
+                "system_default": "System Default",
+                "light": "Light",
+                "dark": "Dark"
+            },
+            "message": "Choose how the interface looks."
+        },        
         "country":{
             "label": "Country",
             "placeholder": "Select your country"

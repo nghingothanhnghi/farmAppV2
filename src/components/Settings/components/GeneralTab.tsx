@@ -18,9 +18,9 @@ const GeneralTab: React.FC = () => {
     ];
 
     const themeItems = [
-        { label: 'Light', value: 'light' },
-        { label: 'Dark', value: 'dark' },
-        { label: 'System Default', value: 'system' },
+        { label: t('select.theme.options.light'), value: 'light' },
+        { label: t('select.theme.options.dark'), value: 'dark' },
+        { label: t('select.theme.options.system_default'), value: 'system' },
     ];
     return (
         <div className="space-y-4">
@@ -43,8 +43,8 @@ const GeneralTab: React.FC = () => {
             <hr role="presentation" className="my-5 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
             <FormGroup className='grid gap-x-8 gap-y-6 sm:grid-cols-2'>
                 <div className='space-y-1'>
-                    <FormLabel htmlFor="theme">Theme</FormLabel>
-                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400"> Choose how the interface looks.</p>
+                    <FormLabel htmlFor="theme">{t("select.theme.label")}</FormLabel>
+                    <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">{t("select.theme.message")}</p>
                 </div>
                 <div className="flex justify-end">
                     <DropdownButton

@@ -1,0 +1,62 @@
+{
+    "session_id": 26,
+    "table_id": 2,
+    "table_name": "Table 2",
+    "currency": "VND",
+    "start_time": "2026-10-21T04:10:54.879986",
+    "end_time": "2026-10-21T04:11:11.046599",
+    "duration_minutes": 1,
+    "hourly_rate": "70000.00",
+    "billing_policy": "hourly",
+    "pricing_rule_name": "Hourly Bill",
+    "pricing_params": {},
+    "total_table_fee": "70000.00",
+    "total_product_fee": "15000.00",
+    "grand_total": "85000.00",
+    "items": [
+        {
+            "id": 20,
+            "product_id": 1,
+            "variant_id": null,
+            "product_name": "Coca",
+            "quantity": 1,
+            "unit_price": "15000.00",
+            "total_price": "15000.00"
+        }
+    ],
+    "payment_state": "pending",
+    "payment_method": "bank_transfer",
+    "payment_reference": null,
+    "paid_at": null,
+    "amount_paid": "0",
+    "balance_due": "85000.00",
+    "payments": [
+        {
+            "id": 2,
+            "method": "bank_transfer",
+            "amount": "85000.00",
+            "status": "pending",
+            "cash_tendered": null,
+            "change_given": null,
+            "payment_reference": "manual-1-aa28aad5-1188-4cec-b03e-d4c175e822d2-2f92b6b0",
+            "note": null,
+            "confirmed_at": null,
+            "voided_at": null,
+            "void_reason": null,
+            "transfer": {
+                "bank_code": null,
+                "account_no": null,
+                "account_name": null,
+                "amount": "85000.00",
+                "memo": "PAY2L2",
+                "qr_payload": null,
+                "qr_image_url": null,
+                "expires_at": "2026-10-21T04:26:20.274606"
+            }
+        }
+    ],
+    "opened_by": "admin",
+    "stopped_by": "admin",
+    "paid_by": null,
+    "gateway": null
+}

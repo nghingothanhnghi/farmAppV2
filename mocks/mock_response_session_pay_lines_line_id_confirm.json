@@ -1,0 +1,63 @@
+{
+  "session_id": 0,
+  "table_id": 0,
+  "table_name": "string",
+  "currency": "string",
+  "start_time": "2026-10-21T04:07:45.421Z",
+  "end_time": "2026-10-21T04:07:45.421Z",
+  "duration_minutes": 0,
+  "hourly_rate": "string",
+  "billing_policy": "string",
+  "pricing_rule_name": "string",
+  "pricing_params": {
+    "additionalProp1": {}
+  },
+  "total_table_fee": "string",
+  "total_product_fee": "string",
+  "grand_total": "string",
+  "items": [
+    {
+      "id": 0,
+      "product_id": 0,
+      "variant_id": 0,
+      "product_name": "string",
+      "quantity": 0,
+      "unit_price": "string",
+      "total_price": "string"
+    }
+  ],
+  "payment_state": "string",
+  "payment_method": "string",
+  "payment_reference": "string",
+  "paid_at": "2026-10-21T04:07:45.422Z",
+  "amount_paid": "0",
+  "balance_due": "0",
+  "payments": [
+    {
+      "id": 0,
+      "method": "string",
+      "amount": "string",
+      "status": "string",
+      "cash_tendered": "string",
+      "change_given": "string",
+      "payment_reference": "string",
+      "note": "string",
+      "confirmed_at": "2026-10-21T04:07:45.422Z",
+      "voided_at": "2026-10-21T04:07:45.422Z",
+      "void_reason": "string",
+      "transfer": {
+        "bank_code": "string",
+        "account_no": "string",
+        "account_name": "string",
+        "amount": "string",
+        "memo": "string",
+        "qr_payload": "string",
+        "qr_image_url": "string",
+        "expires_at": "2026-10-21T04:07:45.422Z"
+      }
+    }
+  ],
+  "opened_by": "string",
+  "stopped_by": "string",
+  "paid_by": "string"
+}

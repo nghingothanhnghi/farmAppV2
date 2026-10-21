@@ -1,0 +1,52 @@
+{
+  "session_id": 25,
+  "table_id": 1,
+  "table_name": "Table 1",
+  "currency": "VND",
+  "start_time": "2026-10-21T03:44:16.941398",
+  "end_time": "2026-10-21T03:44:46.014815",
+  "duration_minutes": 1,
+  "hourly_rate": "70000.00",
+  "billing_policy": "hourly",
+  "pricing_rule_name": "Hourly Bill",
+  "pricing_params": {},
+  "total_table_fee": "70000.00",
+  "total_product_fee": "15000.00",
+  "grand_total": "85000.00",
+  "items": [
+    {
+      "id": 19,
+      "product_id": 3,
+      "variant_id": 3,
+      "product_name": "pepsi 350ml - Pepsi 200ml",
+      "quantity": 1,
+      "unit_price": "15000.00",
+      "total_price": "15000.00"
+    }
+  ],
+  "payment_state": "paid",
+  "payment_method": "cash",
+  "payment_reference": "manual-1-aa28aad5-1188-4cec-b03e-d4c175e822d2-9b849c09",
+  "paid_at": "2026-10-21T03:45:24.821237",
+  "amount_paid": "85000.00",
+  "balance_due": "0.00",
+  "payments": [
+    {
+      "id": 1,
+      "method": "cash",
+      "amount": "85000.00",
+      "status": "completed",
+      "cash_tendered": "85000.00",
+      "change_given": "0.00",
+      "payment_reference": "manual-1-aa28aad5-1188-4cec-b03e-d4c175e822d2-9b849c09",
+      "note": null,
+      "confirmed_at": "2026-10-21T03:45:24.802002",
+      "voided_at": null,
+      "void_reason": null,
+      "transfer": null
+    }
+  ],
+  "opened_by": "admin",
+  "stopped_by": "admin",
+  "paid_by": "admin"
+}

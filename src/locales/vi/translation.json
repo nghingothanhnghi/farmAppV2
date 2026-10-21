@@ -134,6 +134,16 @@
                 "lowest_price": "Giá thấp nhất"
             }
         },
+        "theme":{
+            "label": "Giao diện",
+            "placeholder": "Chọn giao diện...",
+            "options": {
+                "system_default": "Mặc định",
+                "light": "Sáng",
+                "dark": "Tối"
+            },
+            "message": "Chọn giao diện hiển thị."
+        },         
         "country":{
             "label": "Quốc gia",
             "placeholder": "Chọn quốc gia..."
