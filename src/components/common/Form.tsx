@@ -130,6 +130,7 @@ interface FloatingLabelInputProps {
   step?: string | number;
   className?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  alwaysFloat?: boolean;
 }
 
 export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
@@ -146,6 +147,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   step,
   className = 'w-full min-w-0',
   inputMode,
+  alwaysFloat = false,
 }) => {
   const hasValue = String(value ?? '').length > 0;
 
@@ -182,7 +184,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         className={`
           pointer-events-none absolute left-3 z-10
           origin-left transition-all duration-200
-          ${hasValue || type === 'date'
+          ${hasValue || type === 'date' || alwaysFloat
             ? 'top-1 text-xs'
             : 'top-1/2 -translate-y-1/2 text-sm peer-focus:top-1 peer-focus:translate-y-0 peer-focus:text-xs'}
           ${disabled

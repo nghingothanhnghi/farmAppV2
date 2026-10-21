@@ -50,41 +50,36 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
 
   return (
     <div className="p-4 space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <FormGroup>
-          <FloatingLabelSelect
-            id="quote_table"
-            name="quote_table"
-            label="Table"
-            value={tableId}
-            className="w-full"
-            onChange={(e) => setTableId(e.target.value)}
-            required
-          >
-            <option value="" disabled>
-              Select a table
+      <div className="grid gap-4 sm:grid-cols-2">
+        <FloatingLabelSelect
+          id="quote_table"
+          name="quote_table"
+          label="Table"
+          value={tableId}
+          className="w-full"
+          onChange={(e) => setTableId(e.target.value)}
+          required
+        >
+          <option value="" disabled>
+            Select a table
+          </option>
+          {tables.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
             </option>
-            {tables.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.name}
-              </option>
-            ))}
-          </FloatingLabelSelect>
-        </FormGroup>
+          ))}
+        </FloatingLabelSelect>
 
-        <FormGroup className="space-y-1">
-          <FloatingLabelInput
-            id="quote_minutes"
-            name="quote_minutes"
-            type="text"
-            label="Minutes played"
-            inputMode="numeric"
-            value={minutes}
-            onChange={(e) => setMinutes(e.target.value)}
-            className="min-w-[180px]"
-          />
-        </FormGroup>
-        <FormGroup className="space-y-1">
+        <FloatingLabelInput
+          id="quote_minutes"
+          name="quote_minutes"
+          type="text"
+          label="Minutes played"
+          inputMode="numeric"
+          value={minutes}
+          onChange={(e) => setMinutes(e.target.value)}
+        />
+        <FormGroup className="space-y-1 sm:col-span-2">
           <FloatingLabelInput
             id="quote_at"
             name="quote_at"
@@ -93,13 +88,12 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
             inputMode="numeric"
             value={at}
             onChange={(e) => setAt(e.target.value)}
-            className="min-w-[180px]"
+            alwaysFloat
           />
           <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">Club-local time. Empty = now.</p>
         </FormGroup>
       </div>
-
-      <div className="flex justify-end">
+      <div className="flex">
         <Button label={loading ? 'Calculating...' : 'Preview price'} rounded="lg" disabled={loading} onClick={run} />
       </div>
 

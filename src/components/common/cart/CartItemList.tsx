@@ -1,11 +1,13 @@
 // src/components/common/cart/CartItemList.tsx
 import React from "react";
 import { IconTrash } from "@tabler/icons-react";
+import CartEmptyImg from '../../../assets/icons/cart_empty.png'
 import { useCart } from "../../../contexts/cartContext";
 import { formatMoney } from "../../../utils/currency";
 import ProductImage from "../ProductImage";
 import NumberInput from "../../common/NumberInput";
 import Button from "../Button";
+import EmptyState from "../EmptyState";
 
 interface CartItemListProps {
     showControls?: boolean; // Show + and – buttons, and Remove button
@@ -15,7 +17,10 @@ const CartItemList: React.FC<CartItemListProps> = ({ showControls = false }) => 
     const { items, increaseQuantity, decreaseQuantity, removeFromCart } = useCart();
 
     if (items.length === 0) {
-        return <p className="text-gray-500 text-sm">Cart is empty</p>;
+        return <EmptyState
+            imageSrc={CartEmptyImg}
+            width={150}
+            height={150} message="Nothing in your cart yet. Browse our products and add your favorites!" />
     }
 
     return (
