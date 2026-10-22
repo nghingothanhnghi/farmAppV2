@@ -1,7 +1,7 @@
 // src/components/billiard/utils.ts
 import { CurrencyConfig } from "../constants/currency";
 import { parseApiErrors } from '../utils/errorUtils';
-import type { BillResponse, BillState } from '../models/interfaces/Billiard';
+import type { BillResponse, BillState, PaymentLine } from '../models/interfaces/Billiard';
 
 export const DEFAULT_CURRENCY = 'VND';
 
@@ -92,4 +92,36 @@ export const billiardErrorMessage = (err: unknown, fallback = 'Something went wr
       return msg === 'An unexpected error occurred' ? fallback : msg;
     }
   }
+};
+
+// --- Payments ---------------------------------------------------------------
+
+/** VND has no decimals; amounts arrive as strings like "310000.00". */
+export const toAmount = (value: string | number | null | undefined): number => {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : 0;
+};
+
+/** A bank-transfer line that is waiting for the money (shows the QR). */
+export const getWaitingTransferLine = (bill: BillResponse): PaymentLine | null =>
+  bill.payments?.find((p) => p.method === 'bank_transfer' && p.status === 'pending') ?? null;
+
+/** What is still owed: balance_due, or grand_total for backends that do not send it yet. */
+export const getBalanceDue = (bill: BillResponse): number =>
+  toAmount(bill.balance_due ?? bill.grand_total);
+
+/** `pending`, nothing waiting, part already paid -> pay the rest. */
+export const isPartPaid = (bill: BillResponse): boolean =>
+  bill.payment_state === 'pending' && !getWaitingTransferLine(bill) && toAmount(bill.amount_paid) > 0;
+
+/** `pending` card payment with no lines -> card form, then the confirm call. */
+export const isAwaitingCard = (bill: BillResponse): boolean =>
+  bill.payment_state === 'pending' && bill.payment_method === 'stripe' && !(bill.payments?.length);
+
+/** Milliseconds until `iso` (negative once passed). Offset-less timestamps are UTC. */
+export const msUntil = (iso: string, now: number = Date.now()): number => parseUtc(iso) - now;
+
+export const formatCountdown = (ms: number): string => {
+  const s = Math.max(0, Math.floor(ms / 1000));
+  return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
 };

@@ -13,6 +13,65 @@ export const TABLE_STATUSES: TableStatus[] = [
 
 export type PaymentMethod = 'cash' | 'bank_transfer' | 'stripe';
 
+/** Method shown on a bill: a single method, or `split` when several lines were used. */
+export type BillPaymentMethod = PaymentMethod | 'split';
+/** Method of one payment line (Stripe cannot be part of a split). */
+export type LineMethod = 'cash' | 'bank_transfer';
+export type LineStatus = 'pending' | 'completed' | 'cancelled' | 'voided' | 'failed';
+
+/** Present only on a pending bank_transfer line. */
+export interface TransferInstruction {
+  bank_code: string | null;
+  account_no: string | null;
+  account_name: string | null;
+  amount: string;
+  /** e.g. "PAY7L2" - the bank feed matches the payment by this memo. */
+  memo: string;
+  /** Draw as a QR code; null when no bank account is configured. */
+  qr_payload: string | null;
+  /** Hosted QR image fallback. */
+  qr_image_url: string | null;
+  /** Timestamp without offset = UTC. */
+  expires_at: string | null;
+}
+
+export interface PaymentLine {
+  id: number;
+  method: LineMethod;
+  amount: string;
+  status: LineStatus;
+  cash_tendered: string | null;
+  change_given: string | null;
+  payment_reference: string | null;
+  note: string | null;
+  confirmed_at: string | null;
+  voided_at: string | null;
+  void_reason: string | null;
+  transfer: TransferInstruction | null;
+}
+
+/** Body of POST /sessions/{id}/pay for a single method. */
+export interface PayOnePayload {
+  payment_method: PaymentMethod;
+  /** Only with payment_method "cash". Leave out for an exact payment. */
+  cash_tendered?: number;
+}
+
+export interface SplitLinePayload {
+  method: LineMethod;
+  amount: number;
+  cash_tendered?: number;
+  note?: string;
+}
+
+/** Body of POST /sessions/{id}/pay for a split: 1-6 lines that add up to balance_due. */
+export interface PaySplitPayload {
+  payments: SplitLinePayload[];
+}
+
+/** Never both shapes at once. */
+export type PayPayload = PayOnePayload | PaySplitPayload;
+
 export interface BilliardTable {
   id: number;
   name: string;
@@ -90,10 +149,16 @@ export interface BillResponse {
   items: BillItem[];
   grand_total: string;
   currency: string;
-  payment_state?: string; // "unpaid" | "paid" | ...
-  payment_method?: PaymentMethod | null;
+  payment_state?: string; // "unpaid" | "pending" | "paid"
+  payment_method?: BillPaymentMethod | null;
   payment_reference?: string | null;
   paid_at?: string | null;
+  /** Sum of completed payment lines. Absent on responses from older backends. */
+  amount_paid?: string;
+  /** grand_total - amount_paid. */
+  balance_due?: string;
+  /** Empty on bills paid before the payment module. */
+  payments?: PaymentLine[];
   opened_by?: string | null;
   stopped_by?: string | null;
   paid_by?: string | null;

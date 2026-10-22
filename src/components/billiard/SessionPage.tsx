@@ -18,7 +18,8 @@ import GamesPanel from './components/GamesPanel';
 import BillView from './components/BillView';
 import PayModal from './components/PayModal';
 import ReceiptPreviewModal from './components/ReceiptPreviewModal';
-import { formatElapsed, getBillState, parseUtc } from '../../utils/billiard';
+import TransferWaiting from './components/TransferWaiting';
+import { formatElapsed, getBillState, getWaitingTransferLine, isAwaitingCard, parseUtc } from '../../utils/billiard';
 
 const SessionPage: React.FC = () => {
   const { t } = useTranslation();
@@ -31,6 +32,7 @@ const SessionPage: React.FC = () => {
   const { bySessionId, refetch: refetchLive } = useActiveTables(30000);
 
   const state = bill ? getBillState(bill) : null;
+  const waitingLine = bill ? getWaitingTransferLine(bill) : null;
   const gamesApi = useGames(id, { enabled: state === 'active' });
   const now = useNow(1000, state === 'active');
 
@@ -150,17 +152,43 @@ const SessionPage: React.FC = () => {
           <Button label={t("btn.pay")} rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
         </div>
       )}
-      {state === 'pending' && (
+      {/* pending + waiting transfer line -> screen 2 (polled by useSession) */}
+      {state === 'pending' && waitingLine && (
+        <>
+          <TransferWaiting
+            line={waitingLine}
+            currency={bill.currency}
+            busy={busy}
+            amountPaid={bill.amount_paid}
+            onReceived={async (lineId) => {
+              const res = await actions.confirmLine(lineId);
+              if (res && getBillState(res) === 'paid') setAlert({ type: 'success', message: 'Payment recorded.' });
+            }}
+            onCancel={(lineId, reason) => actions.cancelLine(lineId, reason)}
+          />
+          <div className="flex justify-end">
+            <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
+              icon={<IconPrinter size={16} />} iconPosition="left"
+              onClick={() => setPrintOpen(true)} />
+          </div>
+        </>
+      )}
+      {/* pending, nothing waiting: card payment awaiting confirmation, or part paid -> pay the rest */}
+      {state === 'pending' && !waitingLine && (
         <div className="flex justify-end gap-2">
           <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
-          <Button label={busy ? 'Confirming...' : 'Confirm payment'} rounded="lg"
-            disabled={busy}
-            onClick={async () => {
-              const res = await actions.confirmPay();
-              if (res) setAlert({ type: 'success', message: 'Payment recorded.' });
-            }} />
+          {isAwaitingCard(bill) ? (
+            <Button label={busy ? 'Confirming...' : 'Confirm payment'} rounded="lg"
+              disabled={busy}
+              onClick={async () => {
+                const res = await actions.confirmPay();
+                if (res) setAlert({ type: 'success', message: 'Payment recorded.' });
+              }} />
+          ) : (
+            <Button label={t("btn.pay")} rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
+          )}
         </div>
       )}
       {/* "paid" → print the receipt */}
