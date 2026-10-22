@@ -2,7 +2,7 @@
 // "Preview price": calls GET /billiard/pricing-rules/quote. Writes nothing.
 import React, { useState } from 'react';
 import Button from '../../common/Button';
-import { FormGroup, FormInput, FormLabel, FormSelect, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
+import { FormGroup, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import { billiardService } from '../../../services/billiard_service';
 import { DEFAULT_CURRENCY, billiardErrorMessage, formatDateTime, formatMoneyString } from '../../../utils/billiard';
 import { describePricingParams, getBillingPolicyLabel } from '../../../utils/pricing';
