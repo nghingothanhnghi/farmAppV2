@@ -33,6 +33,9 @@ interface Props {
   onPay: (payload: PayPayload) => Promise<PayResponse | null>;
   onConfirm: () => Promise<BillResponse | null>;
   onSettled: (bill: BillResponse) => void;
+  /** True when no cash shift is open. Some clubs refuse payment (409) until a shift is opened. */
+  noShiftOpen?: boolean;
+  onOpenShift?: () => void;
   /** Card is offered only when Stripe is enabled for the club. */
   stripeEnabled?: boolean;
   /** Plug in the app's existing Stripe component here; it must call onSuccess once paid. */
@@ -74,6 +77,8 @@ const PayModal: React.FC<Props> = ({
   onPay,
   onConfirm,
   onSettled,
+  noShiftOpen = false,
+  onOpenShift,
   stripeEnabled = true,
   StripeCheckout,
 }) => {
@@ -209,6 +214,15 @@ const PayModal: React.FC<Props> = ({
                   </div>
                 ))}
               </div>
+
+              {noShiftOpen && onOpenShift && (mode === 'cash' || mode === 'split') && (
+                <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-2 text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
+                  <p>No cash shift is open. If this club requires one, payment will be refused.</p>
+                  <button type="button" className="underline font-medium" onClick={onOpenShift}>
+                    Open a shift
+                  </button>
+                </div>
+              )}
 
               {mode === 'cash' && (
                 <div className="space-y-2 border-t border-gray-200 dark:border-white/5 pt-3">

@@ -19,6 +19,9 @@ import BillView from './components/BillView';
 import PayModal from './components/PayModal';
 import ReceiptPreviewModal from './components/ReceiptPreviewModal';
 import TransferWaiting from './components/TransferWaiting';
+import PaymentLines from './components/PaymentLines';
+import useHasAnyRole from '../../hooks/useHasAnyRole';
+import { useCurrentShift } from '../../hooks/useShifts';
 import { formatElapsed, getBillState, getWaitingTransferLine, isAwaitingCard, parseUtc } from '../../utils/billiard';
 
 const SessionPage: React.FC = () => {
@@ -33,6 +36,7 @@ const SessionPage: React.FC = () => {
 
   const state = bill ? getBillState(bill) : null;
   const waitingLine = bill ? getWaitingTransferLine(bill) : null;
+  const canVoid = useHasAnyRole(['admin', 'super_admin', 'manager']);
   const gamesApi = useGames(id, { enabled: state === 'active' });
   const now = useNow(1000, state === 'active');
 
@@ -40,6 +44,7 @@ const SessionPage: React.FC = () => {
   const [confirmStopOpen, setConfirmStopOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [printOpen, setPrintOpen] = useState(false);
+  const { current: openShift, checked: shiftChecked } = useCurrentShift(payOpen);
 
   const backButton = (
     <Button
@@ -143,6 +148,8 @@ const SessionPage: React.FC = () => {
             : undefined
         }
       />
+      {/* receipt (paid) or the history of lines (part paid, voided, cancelled) */}
+      <PaymentLines bill={bill} canVoid={canVoid} busy={busy} onVoid={actions.voidLine} />
       {/*  "stopped" = awaiting payment → print the bill for the customer to acknowledge */}
       {state === 'stopped' && (
         <div className="flex justify-end gap-2">
@@ -243,6 +250,8 @@ const SessionPage: React.FC = () => {
         busy={busy}
         onPay={actions.pay}
         onConfirm={actions.confirmPay}
+        noShiftOpen={shiftChecked && !openShift}
+        onOpenShift={() => navigate('/billiard/shifts')}
         onSettled={() => setAlert({ type: 'success', message: 'Payment recorded.' })}
       // StripeCheckout={YourExistingStripeComponent}  // see notes
       />

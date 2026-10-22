@@ -91,6 +91,12 @@ export const billiardService = {
     return res.data;
   },
 
+  /** Manager only. A paid bill can go back to pending/unpaid afterwards. */
+  async voidLine(sessionId: number, lineId: number, reason: string): Promise<BillResponse> {
+    const res = await apiClient.post(`/sessions/${sessionId}/pay/lines/${lineId}/void`, { reason });
+    return res.data;
+  },
+
   async confirmPayment(sessionId: number): Promise<BillResponse> {
     const res = await apiClient.post(`/sessions/${sessionId}/pay/confirm`);
     return res.data;
