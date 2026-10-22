@@ -2,8 +2,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { billiardService } from '../services/billiard_service';
 import { useAlert } from '../contexts/alertContext';
-import { billiardErrorMessage, getStatus } from '../utils/billiard';
-import type { AddItemPayload, BillResponse, PayResponse, PaymentMethod } from '../models/interfaces/Billiard';
+import { billiardErrorMessage, getStatus, getWaitingTransferLine } from '../utils/billiard';
+import type { AddItemPayload, BillResponse, PayPayload, PayResponse } from '../models/interfaces/Billiard';
+
+const POLL_MS = 4000;
 
 export function useSession(sessionId: number) {
   const { setAlert } = useAlert();
@@ -33,6 +35,27 @@ export function useSession(sessionId: number) {
     setLoading(true);
     fetchBill();
   }, [fetchBill]);
+
+  // A transfer can be confirmed by the bank feed at any moment: while a transfer line is
+  // waiting, refresh the bill every few seconds (visible tab only, never during a mutation).
+  const waiting = bill ? getWaitingTransferLine(bill) !== null : false;
+  useEffect(() => {
+    if (!waiting || !Number.isFinite(sessionId)) return;
+    let stopped = false;
+    const timer = setInterval(async () => {
+      if (stopped || inflight.current || document.visibilityState !== 'visible') return;
+      try {
+        const fresh = await billiardService.getSession(sessionId);
+        if (!stopped && !inflight.current) setBill(fresh);
+      } catch (err) {
+        if (getStatus(err) === 401 || getStatus(err) === 404) stopped = true; // stop on auth / gone
+      }
+    }, POLL_MS);
+    return () => {
+      stopped = true;
+      clearInterval(timer);
+    };
+  }, [waiting, sessionId]);
 
   // One in-flight mutation at a time: prevents double start/stop/pay.
   async function run<T>(fn: () => Promise<T>, okMessage?: string): Promise<T | null> {
@@ -67,9 +90,9 @@ export function useSession(sessionId: number) {
       return true;
     }, 'Session stopped.')) === true;
 
-  const pay = (method: PaymentMethod): Promise<PayResponse | null> =>
+  const pay = (payload: PayPayload): Promise<PayResponse | null> =>
     run(async () => {
-      const res = await billiardService.paySession(sessionId, method);
+      const res = await billiardService.paySession(sessionId, payload);
       setBill(res);
       return res;
     });
@@ -81,5 +104,26 @@ export function useSession(sessionId: number) {
       return res;
     });
 
-  return { bill, loading, error, busy, actions: { fetchBill, addItem, stop, pay, confirmPay } };
+  // "Received" / "Cancel" on a waiting transfer line. The response is the whole bill: redraw from it.
+  const confirmLine = (lineId: number): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.confirmLine(sessionId, lineId);
+      setBill(res);
+      return res;
+    });
+
+  const cancelLine = (lineId: number, reason?: string): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.cancelLine(sessionId, lineId, reason);
+      setBill(res);
+      return res;
+    }, 'Transfer cancelled.');
+
+  return {
+    bill,
+    loading,
+    error,
+    busy,
+    actions: { fetchBill, addItem, stop, pay, confirmPay, confirmLine, cancelLine },
+  };
 }

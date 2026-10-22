@@ -1,10 +1,24 @@
 // src/components/billiard/components/PayModal.tsx
-import React, { useEffect, useState } from 'react';
+// Screen 1 of the payments guide: choose how to pay (cash, bank transfer, split or card).
+// Only the method (and the tendered / split amounts) are sent - never the bill total.
+import React, { useEffect, useMemo, useState } from 'react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
-import { FormRadio } from '../../common/Form';
-import { formatMoneyString, getBillState } from '../../../utils/billiard';
-import type { BillResponse, PayResponse, PaymentMethod } from '../../../models/interfaces/Billiard';
+import { FormInput, FormRadio } from '../../common/Form';
+import {
+  formatMoneyString,
+  getBalanceDue,
+  getBillState,
+  getWaitingTransferLine,
+} from '../../../utils/billiard';
+import type {
+  BillResponse,
+  LineMethod,
+  PayPayload,
+  PayResponse,
+  SplitLinePayload,
+} from '../../../models/interfaces/Billiard';
 
 interface StripeCheckoutProps {
   clientSecret: string;
@@ -16,39 +30,138 @@ interface Props {
   onClose: () => void;
   bill: BillResponse;
   busy: boolean;
-  onPay: (method: PaymentMethod) => Promise<PayResponse | null>;
+  onPay: (payload: PayPayload) => Promise<PayResponse | null>;
   onConfirm: () => Promise<BillResponse | null>;
   onSettled: (bill: BillResponse) => void;
+  /** Card is offered only when Stripe is enabled for the club. */
+  stripeEnabled?: boolean;
   /** Plug in the app's existing Stripe component here; it must call onSuccess once paid. */
   StripeCheckout?: React.ComponentType<StripeCheckoutProps>;
 }
 
-const METHODS: { value: PaymentMethod; label: string; hint: string }[] = [
+type Mode = 'cash' | 'bank_transfer' | 'split' | 'stripe';
+
+const MODES: { value: Mode; label: string; hint: string }[] = [
   { value: 'cash', label: 'Cash', hint: 'Collected at the counter' },
-  { value: 'bank_transfer', label: 'Bank transfer', hint: 'Customer transfers to the shop account' },
+  { value: 'bank_transfer', label: 'Bank transfer', hint: 'Customer scans a QR and transfers' },
+  { value: 'split', label: 'Split', hint: 'Cash and bank transfer together' },
   { value: 'stripe', label: 'Card (Stripe)', hint: 'Pay online by card' },
 ];
 
-const PayModal: React.FC<Props> = ({ isOpen, onClose, bill, busy, onPay, onConfirm, onSettled, StripeCheckout }) => {
-  const [method, setMethod] = useState<PaymentMethod>('cash');
+const QUICK_AMOUNTS = [50000, 100000, 200000, 500000];
+const MAX_SPLIT_LINES = 6;
+
+interface SplitRow {
+  key: number;
+  method: LineMethod;
+  amount: string;
+  tendered: string;
+}
+
+/** Digits only -> number; empty -> null. VND has no decimals. */
+const parseAmount = (raw: string): number | null => {
+  const digits = raw.replace(/\D/g, '');
+  return digits === '' ? null : Number(digits);
+};
+
+const fmtNumber = (n: number) => new Intl.NumberFormat('vi-VN').format(n);
+
+const PayModal: React.FC<Props> = ({
+  isOpen,
+  onClose,
+  bill,
+  busy,
+  onPay,
+  onConfirm,
+  onSettled,
+  stripeEnabled = true,
+  StripeCheckout,
+}) => {
+  const due = getBalanceDue(bill);
+  const [mode, setMode] = useState<Mode>('cash');
+  const [tendered, setTendered] = useState<string>(''); // empty = exact payment
+  const [rows, setRows] = useState<SplitRow[]>([]);
+  const [nextKey, setNextKey] = useState(1);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
-      setMethod('cash');
+      setMode('cash');
+      setTendered('');
+      setRows([{ key: 0, method: 'cash', amount: '', tendered: '' }]);
+      setNextKey(1);
       setClientSecret(null);
     }
   }, [isOpen]);
 
+  const modes = MODES.filter((m) => m.value !== 'stripe' || stripeEnabled);
+
+  // ---- cash ---------------------------------------------------------------
+  const tenderedNum = parseAmount(tendered);
+  const change = tenderedNum !== null ? tenderedNum - due : 0;
+  const cashInvalid = tenderedNum !== null && tenderedNum < due;
+
+  // ---- split --------------------------------------------------------------
+  const splitSum = useMemo(
+    () => rows.reduce((sum, r) => sum + (parseAmount(r.amount) ?? 0), 0),
+    [rows]
+  );
+  const remaining = due - splitSum;
+  const rowError = (r: SplitRow): string | null => {
+    const amount = parseAmount(r.amount);
+    if (amount === null || amount <= 0) return 'Enter an amount';
+    const t = parseAmount(r.tendered);
+    if (r.method === 'cash' && t !== null && t < amount) return 'Tendered is below the amount';
+    return null;
+  };
+  const splitInvalid = rows.length === 0 || remaining !== 0 || rows.some((r) => rowError(r) !== null);
+
+  const updateRow = (key: number, patch: Partial<SplitRow>) =>
+    setRows((rs) => rs.map((r) => (r.key === key ? { ...r, ...patch } : r)));
+  const addRow = () => {
+    if (rows.length >= MAX_SPLIT_LINES) return;
+    setRows((rs) => [
+      ...rs,
+      { key: nextKey, method: 'bank_transfer', amount: remaining > 0 ? String(remaining) : '', tendered: '' },
+    ]);
+    setNextKey((k) => k + 1);
+  };
+  const removeRow = (key: number) => setRows((rs) => rs.filter((r) => r.key !== key));
+
+  // ---- submit -------------------------------------------------------------
+  const canPay =
+    !busy && (mode === 'cash' ? !cashInvalid : mode === 'split' ? !splitInvalid : true);
+
+  const buildPayload = (): PayPayload => {
+    if (mode === 'split') {
+      return {
+        payments: rows.map<SplitLinePayload>((r) => {
+          const line: SplitLinePayload = { method: r.method, amount: parseAmount(r.amount) ?? 0 };
+          const t = parseAmount(r.tendered);
+          if (r.method === 'cash' && t !== null) line.cash_tendered = t;
+          return line;
+        }),
+      };
+    }
+    if (mode === 'cash') {
+      return tenderedNum !== null
+        ? { payment_method: 'cash', cash_tendered: tenderedNum }
+        : { payment_method: 'cash' };
+    }
+    return { payment_method: mode };
+  };
+
   const handlePay = async () => {
-    const res = await onPay(method); // only the method is sent; backend uses grand_total
+    if (!canPay) return;
+    const res = await onPay(buildPayload());
     if (!res) return;
     const secret = res.gateway?.client_secret;
-    if (method === 'stripe' && secret && getBillState(res) !== 'paid') {
+    if (mode === 'stripe' && secret && getBillState(res) !== 'paid') {
       setClientSecret(secret);
       return;
     }
-    onSettled(res);
+    // A waiting transfer line is shown by the transfer-waiting panel on the session page.
+    if (getBillState(res) === 'paid' || getWaitingTransferLine(res)) onSettled(res);
     onClose();
   };
 
@@ -61,37 +174,171 @@ const PayModal: React.FC<Props> = ({ isOpen, onClose, bill, busy, onPay, onConfi
   };
 
   const inStripeStep = clientSecret !== null;
+  const money = (n: number) => formatMoneyString(n, bill.currency);
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={busy ? () => {} : onClose}
-      title={`Pay ${formatMoneyString(bill.grand_total, bill.currency)}`}
+      title={`Pay ${money(due)}`}
       size="small"
       content={
         <div className="px-10 pb-4 space-y-4">
-          {!inStripeStep ? (
-            <div className="space-y-3">
-              {METHODS.map((m) => (
-                <div key={m.value} className="space-y-0.5">
-                  <FormRadio
-                    id={`pay-${m.value}`}
-                    name="payment_method"
-                    label={m.label}
-                    checked={method === m.value}
-                    onChange={() => setMethod(m.value)}
-                    disabled={busy}
-                  />
-                  <p className="pl-7 text-[0.625rem] text-gray-500 dark:text-gray-400">{m.hint}</p>
-                </div>
-              ))}
-            </div>
-          ) : StripeCheckout ? (
-            <StripeCheckout clientSecret={clientSecret} onSuccess={handleConfirm} />
+          {inStripeStep ? (
+            StripeCheckout ? (
+              <StripeCheckout clientSecret={clientSecret} onSuccess={handleConfirm} />
+            ) : (
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Complete the card payment, then confirm to settle the bill.
+              </p>
+            )
           ) : (
-            <p className="text-sm text-gray-600 dark:text-gray-300">
-              Complete the card payment, then confirm to settle the bill.
-            </p>
+            <>
+              <div className="space-y-3">
+                {modes.map((m) => (
+                  <div key={m.value} className="space-y-0.5">
+                    <FormRadio
+                      id={`pay-${m.value}`}
+                      name="payment_method"
+                      label={m.label}
+                      checked={mode === m.value}
+                      onChange={() => setMode(m.value)}
+                      disabled={busy}
+                    />
+                    <p className="pl-7 text-[0.625rem] text-gray-500 dark:text-gray-400">{m.hint}</p>
+                  </div>
+                ))}
+              </div>
+
+              {mode === 'cash' && (
+                <div className="space-y-2 border-t border-gray-200 dark:border-white/5 pt-3">
+                  <label htmlFor="cash-tendered" className="text-xs text-gray-600 dark:text-gray-300">
+                    Amount handed over
+                  </label>
+                  <FormInput
+                    id="cash-tendered"
+                    type="text"
+                    inputMode="numeric"
+                    value={tenderedNum === null ? '' : fmtNumber(tenderedNum)}
+                    placeholder={`${fmtNumber(due)} (exact)`}
+                    onChange={(e) => setTendered(e.target.value)}
+                    disabled={busy}
+                    className="w-full"
+                  />
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      label="Exact"
+                      size="xs"
+                      variant={tenderedNum === null ? 'primary' : 'secondary'}
+                      rounded="lg"
+                      disabled={busy}
+                      onClick={() => setTendered('')}
+                    />
+                    {QUICK_AMOUNTS.map((a) => (
+                      <Button
+                        key={a}
+                        label={fmtNumber(a)}
+                        size="xs"
+                        variant="secondary"
+                        rounded="lg"
+                        disabled={busy}
+                        onClick={() => setTendered(String(a))}
+                      />
+                    ))}
+                  </div>
+                  {cashInvalid ? (
+                    <p className="text-xs text-red-600">
+                      Short by {money(due - (tenderedNum ?? 0))}.
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-800 dark:text-gray-100">
+                      Change: <span className="font-semibold">{money(Math.max(0, change))}</span>
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {mode === 'split' && (
+                <div className="space-y-3 border-t border-gray-200 dark:border-white/5 pt-3">
+                  {rows.map((r, i) => {
+                    const err = rowError(r);
+                    return (
+                      <div key={r.key} className="space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs text-gray-500 w-4">{i + 1}</span>
+                          <select
+                            aria-label={`Line ${i + 1} method`}
+                            value={r.method}
+                            disabled={busy}
+                            onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
+                            className="text-sm rounded-md border border-slate-200 dark:border-gray-700 bg-transparent dark:bg-gray-800 dark:text-gray-100 px-2 py-2"
+                          >
+                            <option value="cash">Cash</option>
+                            <option value="bank_transfer">Bank transfer</option>
+                          </select>
+                          <FormInput
+                            id={`split-amount-${r.key}`}
+                            type="text"
+                            inputMode="numeric"
+                            value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
+                            placeholder="Amount"
+                            onChange={(e) => updateRow(r.key, { amount: e.target.value })}
+                            disabled={busy}
+                            className="flex-1 min-w-0"
+                          />
+                          {rows.length > 1 && (
+                            <button
+                              type="button"
+                              aria-label={`Remove line ${i + 1}`}
+                              disabled={busy}
+                              onClick={() => removeRow(r.key)}
+                              className="text-gray-400 hover:text-red-500"
+                            >
+                              <IconTrash size={16} />
+                            </button>
+                          )}
+                        </div>
+                        {r.method === 'cash' && (
+                          <FormInput
+                            id={`split-tendered-${r.key}`}
+                            type="text"
+                            inputMode="numeric"
+                            value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
+                            placeholder="Handed over (optional)"
+                            onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
+                            disabled={busy}
+                            className="w-full pl-6"
+                          />
+                        )}
+                        {err && parseAmount(r.amount) !== null && (
+                          <p className="pl-6 text-xs text-red-600">{err}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                  <div className="flex items-center justify-between">
+                    <Button
+                      label="Add line"
+                      size="xs"
+                      variant="secondary"
+                      rounded="lg"
+                      icon={<IconPlus size={14} />}
+                      iconPosition="left"
+                      disabled={busy || rows.length >= MAX_SPLIT_LINES}
+                      onClick={addRow}
+                    />
+                    <p
+                      className={`text-sm font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'}`}
+                    >
+                      Remaining: {money(remaining)}
+                    </p>
+                  </div>
+                  <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
+                    Lines must add up exactly to {money(due)}. Card cannot be mixed into a split.
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </div>
       }
@@ -101,7 +348,7 @@ const PayModal: React.FC<Props> = ({ isOpen, onClose, bill, busy, onPay, onConfi
             <Button
               label={busy ? 'Processing...' : 'Pay'}
               onClick={handlePay}
-              disabled={busy}
+              disabled={!canPay}
               className="min-w-[150px]"
               rounded="lg"
             />

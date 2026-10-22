@@ -13,7 +13,7 @@ import type {
   HydroCandidate,
   NewGameResponse,
   PayResponse,
-  PaymentMethod,
+  PayPayload,
   PricingQuote,
   PricingQuoteParams,
   PricingRule,
@@ -67,9 +67,27 @@ export const billiardService = {
     return res.data;
   },
 
-  // Only the method is sent - the backend always charges its own grand_total.
-  async paySession(sessionId: number, method: PaymentMethod): Promise<PayResponse> {
-    const res = await apiClient.post(`/sessions/${sessionId}/pay`, { payment_method: method });
+  // Never send the bill total: a single payment charges the server's grand_total/balance_due;
+  // a split sends lines that must add up exactly to balance_due.
+  async paySession(sessionId: number, payload: PayPayload): Promise<PayResponse> {
+    const res = await apiClient.post(`/sessions/${sessionId}/pay`, payload);
+    return res.data;
+  },
+
+  /** "Received": the cashier confirms a waiting bank-transfer line. */
+  async confirmLine(sessionId: number, lineId: number, note?: string): Promise<BillResponse> {
+    const res = await apiClient.post(
+      `/sessions/${sessionId}/pay/lines/${lineId}/confirm`,
+      note ? { note } : undefined
+    );
+    return res.data;
+  },
+
+  async cancelLine(sessionId: number, lineId: number, reason?: string): Promise<BillResponse> {
+    const res = await apiClient.post(
+      `/sessions/${sessionId}/pay/lines/${lineId}/cancel`,
+      reason ? { reason } : undefined
+    );
     return res.data;
   },
 
