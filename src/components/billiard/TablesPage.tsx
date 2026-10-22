@@ -1,8 +1,8 @@
 // src/components/billiard/TablesPage.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import {useTranslation} from 'react-i18next';
-import { IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus, IconCashRegister, IconBuildingBank } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import {IconDots, IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus, IconCashRegister, IconBuildingBank } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -14,6 +14,7 @@ import { useNow } from '../../hooks/useNow';
 import TableCard from './components/TableCard';
 import TableFormModal from './components/TableFormModal';
 import type { BilliardTable, TableStatus } from '../../models/interfaces/Billiard';
+import DropdownButton from '../common/DropdownButton';
 
 const GROUPS: { status: TableStatus; label: string }[] = [
   { status: 'available', label: 'Available' },
@@ -59,50 +60,66 @@ const TablesPage: React.FC = () => {
               rounded="lg"
               onClick={() => navigate('/billiard/shifts')}
             />
+            <Button
+              label={t('btn.add_table')}
+              variant="secondary"
+              icon={<IconCirclePlus size={16} className="text-gray-500" />}
+              iconPosition="left"
+              rounded="lg"
+              onClick={() => setFormOpen(true)}
+            />
             {canManage && (
-            <>
-              <Button
-                label="Bank inbox"
-                variant="secondary"
-                icon={<IconBuildingBank size={16} className="text-gray-500" />}
-                iconPosition="left"
-                rounded="lg"
-                onClick={() => navigate('/billiard/bank-inbox')}
-              />
-              <Button
-                label={t("btn.table_report")}
-                variant="secondary"
-                icon={<IconChartBar size={16} className="text-gray-500" />}
-                iconPosition="left"
-                rounded="lg"
-                onClick={() => navigate('/billiard/reports')}
-              />
-              <Button
-                label={t("btn.pricing_rules")}
-                variant="secondary"
-                icon={<IconTag size={16} className="text-gray-500" />}
-                iconPosition="left"
-                rounded="lg"
-                onClick={() => navigate('/billiard/pricing-rules')}
-              />
-              <Button
-                label={t("btn.controllers")}
-                variant="secondary"
-                icon={<IconDeviceDesktopAnalytics size={16} className="text-gray-500" />}
-                iconPosition="left"
-                rounded="lg"
-                onClick={() => navigate('/billiard/controllers')}
-              />
-              <Button
-                label={t("btn.add_table")}
-                variant="secondary"
-                icon={<IconCirclePlus size={16} className="text-gray-500" />}
-                iconPosition="left"
-                rounded="lg"
-                onClick={() => setFormOpen(true)}
-              />
-            </>
+              <>
+                <DropdownButton
+                  label={<IconDots/>}
+                  variant="secondary"
+                  size="md"
+                  direction="auto"
+                  items={[
+                    {
+                      label: 'Bank inbox',
+                      value: 'bank-inbox',
+                      icon: <IconBuildingBank size={16} />,
+                    },
+                    {
+                      label: t('btn.table_report'),
+                      value: 'reports',
+                      icon: <IconChartBar size={16} />,
+                    },
+                    {
+                      label: t('btn.pricing_rules'),
+                      value: 'pricing-rules',
+                      icon: <IconTag size={16} />,
+                    },
+                    {
+                      label: "Controllers",
+                      value: 'controllers',
+                      icon: <IconDeviceDesktopAnalytics size={16} />,
+                    },
+                  ]}
+                  onSelect={(item) => {
+                    switch (item.value) {
+                      case 'bank-inbox':
+                        navigate('/billiard/bank-inbox');
+                        break;
+                      case 'reports':
+                        navigate('/billiard/reports');
+                        break;
+                      case 'pricing-rules':
+                        navigate('/billiard/pricing-rules');
+                        break;
+                      case 'controllers':
+                        navigate('/billiard/controllers');
+                        break;
+                    }
+                  }}
+                />
+
+
+              </>
             )}
+
+
           </>
         }
       />
