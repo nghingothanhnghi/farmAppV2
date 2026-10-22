@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconPlus, IconCalculator } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowLeft, IconMoodEmpty, IconCirclePlus, IconCalculator } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -68,7 +68,7 @@ const PricingRulesPage: React.FC = () => {
             <Button label={t("btn.back_to_tables")} variant="secondary" icon={<IconArrowLeft size={16} />}
               iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
             {canManage && (
-              <Button label={t("btn.add_rule")} variant="secondary" icon={<IconPlus size={16} className="text-gray-500" />}
+              <Button label={t("btn.add_rule")} variant="secondary" icon={<IconCirclePlus size={16} className="text-gray-500" />}
                 iconPosition="left" rounded="lg" onClick={openCreate} />
             )}
 

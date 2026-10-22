@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {useTranslation} from 'react-i18next';
-import { IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconPlus, IconTag } from '@tabler/icons-react';
+import { IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -79,7 +79,7 @@ const TablesPage: React.FC = () => {
               <Button
                 label={t("btn.add_table")}
                 variant="secondary"
-                icon={<IconPlus size={16} className="text-gray-500" />}
+                icon={<IconCirclePlus size={16} className="text-gray-500" />}
                 iconPosition="left"
                 rounded="lg"
                 onClick={() => setFormOpen(true)}

@@ -11,7 +11,7 @@ import Badge from "../common/Badge";
 import DropdownButton from "../common/DropdownButton";
 import Modal from "../common/Modal";
 import LinearProgress from "../common/LinearProgress";
-import { IconAlertCircle, IconEye, IconReceiptRefund, IconPlus } from "@tabler/icons-react";
+import { IconAlertCircle, IconEye, IconReceiptRefund, IconCirclePlus } from "@tabler/icons-react";
 import { useAuth } from '../../contexts/authContext';
 import PaymentTabs from "./components/PaymentTabs";
 import useHasAnyRole from "../../hooks/useHasAnyRole";
@@ -225,7 +225,7 @@ const PaymentManagementPage: React.FC = () => {
                         label="New Payment"
                         onClick={() => openPaymentTabs()}
                         variant="secondary"
-                        icon={<IconPlus size={16} className="text-gray-500" />}
+                        icon={<IconCirclePlus size={16} className="text-gray-500" />}
                         iconPosition='left'
                         rounded='lg'
                     />

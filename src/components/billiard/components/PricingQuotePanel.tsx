@@ -13,11 +13,11 @@ interface Props {
 }
 
 const Row: React.FC<{ label: string; value: React.ReactNode; bold?: boolean }> = ({ label, value, bold }) => (
-  <div className="flex items-center justify-between gap-3 text-sm">
-    <span className="text-gray-600 dark:text-gray-300">{label}</span>
-    <span className={bold ? 'text-base font-bold text-gray-900 dark:text-white' : 'text-gray-800 dark:text-gray-100'}>
+  <div className="grid grid-cols-1 gap-1 p-3 sm:grid-cols-3 sm:gap-4">
+    <dt className="font-medium text-gray-900 dark:text-white">{label}</dt>
+    <dd className={bold ? 'text-base font-bold text-gray-900 dark:text-white' : 'text-gray-800 dark:text-gray-100'}>
       {value}
-    </span>
+    </dd>
   </div>
 );
 
@@ -100,7 +100,7 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
       {error && <p className="text-red-500 text-xs">{error}</p>}
 
       {quote && (
-        <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
+        <dl className="-my-3 divide-y divide-gray-200 text-sm dark:divide-gray-700">
           <Row label="Priced for" value={formatDateTime(quote.at)} />
           <Row label="Rule" value={quote.rule_name || 'No rule matched (table rate)'} />
           {quote.rule_type && (
@@ -110,7 +110,7 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
             <Row label="Rate" value={`${formatMoneyString(quote.hourly_rate, currency)} / h`} />
           )}
           <Row label={`Table fee (${quote.minutes} min)`} value={formatMoneyString(quote.fee, currency)} bold />
-        </div>
+        </dl>
       )}
     </div>
   );

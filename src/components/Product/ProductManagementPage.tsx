@@ -1,6 +1,6 @@
 // src/components/Product/ProductManagementPage.tsx
 import React, { useState } from "react";
-import { IconPlus } from "@tabler/icons-react";
+import { IconCirclePlus } from "@tabler/icons-react";
 import { ProductList } from "./components/ProductList";
 import PageTitle from "../common/PageTitle";
 import Button from "../common/Button";
@@ -47,7 +47,7 @@ const ProductManagementPage: React.FC = () => {
                         label="Add Product"
                         onClick={handleAddProduct}
                         variant="secondary"
-                        icon={<IconPlus size={16} className="text-gray-500" />}
+                        icon={<IconCirclePlus size={16} className="text-gray-500" />}
                         iconPosition='left'
                         rounded='lg'
                     />
