@@ -2,10 +2,11 @@
 // Screen 1 of the payments guide: choose how to pay (cash, bank transfer, split or card).
 // Only the method (and the tendered / split amounts) are sent - never the bill total.
 import React, { useEffect, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
-import { FormInput, FormRadio } from '../../common/Form';
+import { FormInput, FormRadio, FloatingLabelInput } from '../../common/Form';
 import {
   formatMoneyString,
   getBalanceDue,
@@ -82,6 +83,7 @@ const PayModal: React.FC<Props> = ({
   stripeEnabled = true,
   StripeCheckout,
 }) => {
+  const {t} = useTranslation();
   const due = getBalanceDue(bill);
   const [mode, setMode] = useState<Mode>('cash');
   const [tendered, setTendered] = useState<string>(''); // empty = exact payment
@@ -184,7 +186,7 @@ const PayModal: React.FC<Props> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={busy ? () => {} : onClose}
+      onClose={busy ? () => { } : onClose}
       title={`Pay ${money(due)}`}
       size="small"
       content={
@@ -225,21 +227,20 @@ const PayModal: React.FC<Props> = ({
               )}
 
               {mode === 'cash' && (
-                <div className="space-y-2 border-t border-gray-200 dark:border-white/5 pt-3">
-                  <label htmlFor="cash-tendered" className="text-xs text-gray-600 dark:text-gray-300">
-                    Amount handed over
-                  </label>
-                  <FormInput
+                <div className="space-y-4 pt-3">
+                  <FloatingLabelInput
                     id="cash-tendered"
+                    name="cash-tendered"
                     type="text"
+                    label={t('input.amount_handed_over.label')}
                     inputMode="numeric"
                     value={tenderedNum === null ? '' : fmtNumber(tenderedNum)}
                     placeholder={`${fmtNumber(due)} (exact)`}
+                    alwaysFloat
                     onChange={(e) => setTendered(e.target.value)}
                     disabled={busy}
-                    className="w-full"
                   />
-                  <div className="flex flex-wrap gap-2">
+                  <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
                     <Button
                       label="Exact"
                       size="xs"
@@ -266,7 +267,7 @@ const PayModal: React.FC<Props> = ({
                     </p>
                   ) : (
                     <p className="text-sm text-gray-800 dark:text-gray-100">
-                      Change: <span className="font-semibold">{money(Math.max(0, change))}</span>
+                      {t('input.change_due.label')}: <span className="font-semibold">{money(Math.max(0, change))}</span>
                     </p>
                   )}
                 </div>
@@ -348,7 +349,7 @@ const PayModal: React.FC<Props> = ({
                     </p>
                   </div>
                   <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-                    Lines must add up exactly to {money(due)}. Card cannot be mixed into a split.
+                    {t('warning.split_method.split_total_warning', { amount: money(due) })}
                   </p>
                 </div>
               )}

@@ -87,7 +87,9 @@
         "controllers": "Thiết bị điều khiển",
         "deleting": "Đang xóa...",
         "ok_delete": "Ok, Xóa",
-        "add_rule": "Thêm quy tắc"
+        "add_rule": "Thêm quy tắc",
+        "cash_drawer": "Quản lý ca thu ngân",
+        "bank_inbox": "Đối soát chuyển khoản"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -289,7 +291,15 @@
         "to":{
             "label": "Đến",
             "placeholder":""
-        }
+        },
+        "amount_handed_over":{
+            "label": "Số tiền khách đưa",
+            "placeholder":""
+        },
+        "change_due":{
+            "label": "Tiền thối lại",
+            "placeholder":""
+        }   
     },
     "toggle":{
         "actuator_linked": {
@@ -711,7 +721,10 @@
     "warning": {
         "cart":{
             "message_01": "{{name}} đã bị xóa khỏi giỏ hàng."
-        }
+        },
+        "split_method":{
+            "split_total_warning": "Tổng thanh toán phải đúng bằng {{amount}}. Không hỗ trợ kết hợp thẻ khi chia nhỏ thanh toán."
+        }        
     },
     "error": {
         "cart": {

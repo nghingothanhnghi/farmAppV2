@@ -87,7 +87,9 @@
         "controllers": "Controllers",
         "deleting": "Deleting...",
         "ok_delete": "Yes, Delete",
-        "add_rule": "Add rule"
+        "add_rule": "Add rule",
+        "cash_drawer": "Cash Drawer",
+        "bank_inbox": "Bank Inbox"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -288,6 +290,14 @@
         },
         "to":{
             "label": "To",
+            "placeholder":""
+        },
+        "amount_handed_over":{
+            "label": "Amount handed over",
+            "placeholder":""
+        },
+        "change_due":{
+            "label": "Change due",
             "placeholder":""
         }
     },
@@ -711,6 +721,9 @@
     "warning": {
         "cart":{
             "message_01": "{{name}} removed from the cart."
+        },
+        "split_method":{
+            "split_total_warning": "Lines must add up exactly to {{amount}}. Card cannot be mixed into a split."
         }
     },
     "error": {

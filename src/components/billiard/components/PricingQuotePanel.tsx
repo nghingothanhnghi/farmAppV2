@@ -69,7 +69,6 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
             </option>
           ))}
         </FloatingLabelSelect>
-
         <FloatingLabelInput
           id="quote_minutes"
           name="quote_minutes"

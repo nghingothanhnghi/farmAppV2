@@ -53,7 +53,7 @@ const TablesPage: React.FC = () => {
         actions={
           <>
             <Button
-              label="Cash drawer"
+              label={t("btn.cash_drawer")}
               variant="secondary"
               icon={<IconCashRegister size={16} className="text-gray-500" />}
               iconPosition="left"
@@ -77,7 +77,7 @@ const TablesPage: React.FC = () => {
                   direction="auto"
                   items={[
                     {
-                      label: 'Bank inbox',
+                      label: t('btn.bank_inbox'),
                       value: 'bank-inbox',
                       icon: <IconBuildingBank size={16} />,
                     },

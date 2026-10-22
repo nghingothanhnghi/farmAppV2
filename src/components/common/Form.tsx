@@ -119,6 +119,7 @@ export const FormInput: React.FC<FormInputProps> = ({
 interface FloatingLabelInputProps {
   id: string;
   label: string;
+  placeholder?: string;
   type?: string;
   name?: string;
   value: string | number;
@@ -136,6 +137,7 @@ interface FloatingLabelInputProps {
 export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   id,
   label,
+  placeholder,
   type = 'text',
   name,
   value,
@@ -165,7 +167,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         max={max}
         step={step}
         inputMode={inputMode}
-        placeholder={type === 'date' ? undefined : ' '}
+        placeholder={type === 'date' ? undefined : placeholder ?? ' '}
         className={`
           peer w-full rounded-md border border-slate-200
           bg-transparent px-3 pb-2 pt-5 text-sm text-slate-700
