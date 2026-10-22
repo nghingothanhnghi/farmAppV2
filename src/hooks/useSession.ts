@@ -119,11 +119,19 @@ export function useSession(sessionId: number) {
       return res;
     }, 'Transfer cancelled.');
 
+  // Manager only: the server answers 403 for anyone else (shown as "Only a manager can do this.").
+  const voidLine = (lineId: number, reason: string): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.voidLine(sessionId, lineId, reason);
+      setBill(res);
+      return res;
+    }, 'Payment voided.');
+
   return {
     bill,
     loading,
     error,
     busy,
-    actions: { fetchBill, addItem, stop, pay, confirmPay, confirmLine, cancelLine },
+    actions: { fetchBill, addItem, stop, pay, confirmPay, confirmLine, cancelLine, voidLine },
   };
 }

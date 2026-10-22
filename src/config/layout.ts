@@ -6,7 +6,9 @@ export const CLOSE_SIDEBAR_ROUTES = [
   '/billiard/sessions/:id',
   '/billiard/reports',
   '/dashboard/products',
-  '/billiard/controllers'
+  '/billiard/controllers',
+  '/billiard/shifts',
+  '/billiard/bank-inbox',
 ];
 
 export const FULL_WIDTH_ROUTES = [

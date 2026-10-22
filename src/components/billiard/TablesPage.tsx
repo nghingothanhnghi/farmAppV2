@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {useTranslation} from 'react-i18next';
-import { IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus } from '@tabler/icons-react';
+import { IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus, IconCashRegister, IconBuildingBank } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -50,8 +50,25 @@ const TablesPage: React.FC = () => {
         title={t('billiard_tables.billiard_tables_title')}
         subtitle={t('billiard_tables.billiard_tables_description')}
         actions={
-          canManage ? (
+          <>
+            <Button
+              label="Cash drawer"
+              variant="secondary"
+              icon={<IconCashRegister size={16} className="text-gray-500" />}
+              iconPosition="left"
+              rounded="lg"
+              onClick={() => navigate('/billiard/shifts')}
+            />
+            {canManage && (
             <>
+              <Button
+                label="Bank inbox"
+                variant="secondary"
+                icon={<IconBuildingBank size={16} className="text-gray-500" />}
+                iconPosition="left"
+                rounded="lg"
+                onClick={() => navigate('/billiard/bank-inbox')}
+              />
               <Button
                 label={t("btn.table_report")}
                 variant="secondary"
@@ -85,7 +102,8 @@ const TablesPage: React.FC = () => {
                 onClick={() => setFormOpen(true)}
               />
             </>
-          ) : undefined
+            )}
+          </>
         }
       />
 

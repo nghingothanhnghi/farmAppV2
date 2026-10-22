@@ -78,6 +78,7 @@ export const getStatus = (err: unknown): number | undefined =>
 
 /** Server `detail` when present (404/409/400 included); status-based text otherwise. */
 export const billiardErrorMessage = (err: unknown, fallback = 'Something went wrong'): string => {
+  if (getStatus(err) === 403) return 'Only a manager can do this.';
   const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
   if (typeof detail === 'string' || Array.isArray(detail)) return parseApiErrors(err).message;
   switch (getStatus(err)) {
@@ -125,3 +126,11 @@ export const formatCountdown = (ms: number): string => {
   const s = Math.max(0, Math.floor(ms / 1000));
   return `${pad(Math.floor(s / 60))}:${pad(s % 60)}`;
 };
+
+/** Digits only -> whole number; empty -> null. VND has no decimals. */
+export const parseWholeAmount = (raw: string): number | null => {
+  const digits = raw.replace(/\D/g, '');
+  return digits === '' ? null : Number(digits);
+};
+
+export const formatNumber = (n: number): string => new Intl.NumberFormat('vi-VN').format(n);

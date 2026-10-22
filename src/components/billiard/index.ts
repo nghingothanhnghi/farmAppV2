@@ -4,3 +4,5 @@ export { default as BilliardSessionPage } from './SessionPage';
 export { default as BilliardReportsPage } from './ReportsPage';
 export { default as BilliardPricingRulesPage } from './PricingRulesPage';
 export { default as BilliardControllersPage } from './ControllersPage';
+export { default as BilliardShiftsPage } from './ShiftsPage';
+export { default as BilliardBankInboxPage } from './BankInboxPage';
