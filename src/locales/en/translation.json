@@ -670,6 +670,9 @@
         "payment_title": "Payment Management",
         "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections."
     },
+    "cashier": {
+        "shift": "Shift"
+    },
     "placeholder_message":{
         "search":{
             "message_01": "No matching products found.",

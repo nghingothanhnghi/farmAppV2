@@ -19,6 +19,7 @@ interface MultiSelectDropdownProps {
     emptyMessage?: string;        // ✅ NEW — shown when there are no options
     onChange?: (selected: string[]) => void;
     size?: 'xs' | 'sm' | 'md' | 'lg';
+     width?: string | number;
 }
 
 const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
@@ -28,7 +29,8 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
     size = 'md',
     loading = false,
     emptyMessage = 'No options',
-    onChange
+    onChange,
+    width,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const buttonRef = useRef<HTMLDivElement>(null);
@@ -103,8 +105,12 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
 
     const dropdownContent = (
         <div
-            className="z-[9999] fixed w-64 max-h-72 min-h-10 overflow-y-auto rounded-md shadow bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border"
-            style={{ top: position.top, left: position.left }}
+            className="z-[9999] fixed max-w-[calc(100vw-2rem)] max-h-72 min-h-10 overflow-y-auto rounded-md shadow bg-white dark:bg-gray-700 dark:text-gray-100 dark:border-white/5 border-zinc-950/5 border"
+            style={{ 
+                top: position.top, 
+                left: position.left,
+                width: width ? buttonRef.current?.getBoundingClientRect().width : '16rem',
+            }}
             ref={dropdownRef}
         >
             {loading ? (
@@ -112,7 +118,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
                     <Spinner size={20} />
                 </div>
             ) : options.length === 0 ? (
-                <p className="px-4 py-3 text-sm text-gray-400 dark:text-gray-500 text-center">
+                <p className="p-4 text-sm text-center">
                     {emptyMessage}
                 </p>
             ) : (
@@ -147,6 +153,7 @@ const MultiSelectDropdown: React.FC<MultiSelectDropdownProps> = ({
         <div
             ref={buttonRef}
             className="relative inline-block text-left"
+            style={{ width: width ?? 'fit-content' }}
         >
             <Button
                 type="button"

@@ -30,6 +30,7 @@ interface DropdownButtonProps {
     direction?: DropdownDirection;
     iconOnly?: boolean;
     showArrow?: boolean;
+    width?: string | number;
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({
@@ -43,6 +44,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     direction = 'auto',
     iconOnly = false,
     showArrow = true,
+    width,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [focusedIndex, setFocusedIndex] = useState<number>(-1);
@@ -145,25 +147,6 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
         }
     };
 
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    //     if (!isOpen) return;
-
-    //     if (e.key === 'ArrowDown') {
-    //         e.preventDefault();
-    //         setFocusedIndex((prev) => (prev + 1) % items.length);
-    //     } else if (e.key === 'ArrowUp') {
-    //         e.preventDefault();
-    //         setFocusedIndex((prev) => (prev - 1 + items.length) % items.length);
-    //     } else if (e.key === 'Enter' && focusedIndex >= 0) {
-    //         e.preventDefault();
-    //         handleSelect(items[focusedIndex]);
-    //     } else if (e.key === 'Escape') {
-    //         e.preventDefault();
-    //         setIsOpen(false);
-    //         setFocusedIndex(-1);
-    //     }
-    // };
-
     // Auto-position logic
     useEffect(() => {
         if (isOpen && containerRef.current && dropdownRef.current) {
@@ -235,6 +218,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
         <div
             ref={containerRef}
             className={`relative`}
+            style={{ width: width ?? 'fit-content' }}
             onKeyDown={handleKeyDown}
             tabIndex={0}
         >
@@ -296,15 +280,16 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
                                         coords.width / 2 -
                                         (dropdownRef.current?.offsetWidth ?? 0) / 2,
 
-                            width: coords.width,
+                            width: width ? coords.width : undefined,
+                            maxWidth: 'calc(100vw - 2rem)',
                         }}
                     >
                         {items.map((item, index) => (
                             <li
                                 key={index}
                                 className={`flex items-center px-4 py-2 text-sm ${item.disabled
-                                        ? 'opacity-50 cursor-not-allowed'
-                                        : 'cursor-pointer dark:hover:bg-gray-900'
+                                    ? 'opacity-50 cursor-not-allowed'
+                                    : 'cursor-pointer dark:hover:bg-gray-900'
                                     }`}
                                 onClick={() => handleSelect(item)}
                                 onMouseEnter={() => {

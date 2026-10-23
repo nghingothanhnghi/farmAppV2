@@ -670,6 +670,9 @@
         "payment_title": "Quản lý Thanh toán",
         "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản."
     },
+    "cashier": {
+        "shift": "Ca"
+    },    
     "placeholder_message":{
         "search":{
             "message_01": "Không tìm thấy sản phẩm phù hợp.",

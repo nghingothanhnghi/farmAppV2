@@ -1,6 +1,7 @@
 // src/components/billiard/components/ShiftSummaryView.tsx
 import React from 'react';
 import Badge from '../../common/Badge';
+import { useTranslation } from 'react-i18next';
 import { formatDateTime, formatMoneyString, toAmount } from '../../../utils/billiard';
 import type { Shift, ShiftSummary } from '../../../models/interfaces/CashDrawer';
 
@@ -36,11 +37,14 @@ export const ShiftResult: React.FC<{ shift: Shift }> = ({ shift }) => (
   </div>
 );
 
-const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => (
+const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
+  const { t } = useTranslation();
+  
+  return (
   <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-4">
     <div className="flex items-start justify-between gap-2">
       <div>
-        <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Shift #{shift.id}</h3>
+        <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">{t('cashier.shift')} #{shift.id}</h3>
         <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
           Opened {formatDateTime(shift.opened_at)}
           {shift.opened_by ? ` by ${shift.opened_by}` : ''}
@@ -126,6 +130,6 @@ const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => (
       </div>
     )}
   </div>
-);
+)};
 
 export default ShiftSummaryView;
