@@ -200,7 +200,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
             </div>
 
             {/* Body — responsive card grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 xlg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xlg:grid-cols-4 gap-4">
                 {device.actuators.map((actuator) => {
                     const { Icon, color, animation } = getActuatorIcon(actuator.type);
                     const isSlidingDoor = actuator.type === 'sliding_door';
@@ -274,14 +274,14 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                             <Button
                                                 label="Auto"
                                                 variant="secondary"
-                                                size="xxs"
+                                                size="xs"
                                                 onClick={() => handleAuto(actuator)}
                                                 disabled={!actuator.is_active || modeManual === "AUTO"}
                                             />
                                             <Button
                                                 label={t('badge_status.on')}
                                                 variant="secondary"
-                                                size="xxs"
+                                                size="xs"
                                                 onClick={() => handleToggle(actuator, true)}
                                                 disabled={
                                                     !actuator.is_active ||
@@ -292,7 +292,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                             <Button
                                                 label={t('badge_status.off')}
                                                 variant="secondary"
-                                                size="xxs"
+                                                size="xs"
                                                 onClick={() => handleToggle(actuator, false)}
                                                 disabled={
                                                     !actuator.is_active ||
@@ -310,7 +310,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                                 iconOnly
                                                 label={t('badge_status.up')}
                                                 variant="secondary"
-                                                size="xxs"
+                                                size="xs"
                                                 disabled={!canControl}
                                                 onClick={() => handleSlidingDoor(actuator, 'up')}
                                             />
@@ -319,7 +319,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                                 iconOnly
                                                 label={t('badge_status.stop')}
                                                 variant="secondary"
-                                                size="xxs"
+                                                size="xs"
                                                 disabled={!canControl}
                                                 onClick={() => handleSlidingDoor(actuator, 'stop')}
                                             />
@@ -328,7 +328,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                                 iconOnly
                                                 label={t('badge_status.down')}
                                                 variant="secondary"
-                                               size="xxs"
+                                               size="xs"
                                                 disabled={!canControl}
                                                 onClick={() => handleSlidingDoor(actuator, 'down')}
                                             />
@@ -344,8 +344,6 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                         />
                                     )}
                                 </div>
-
-
                             </div>
 
                             <div className="mt-2 space-y-1">

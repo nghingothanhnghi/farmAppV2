@@ -87,6 +87,8 @@
         "controllers": "Controllers",
         "deleting": "Deleting...",
         "ok_delete": "Yes, Delete",
+        "yes_stop_session": "Yes, Stop",
+        "stopping": "Stopping...",
         "add_rule": "Add rule",
         "cash_drawer": "Cash Drawer",
         "bank_inbox": "Bank Inbox"

@@ -224,7 +224,7 @@ const SessionPage: React.FC = () => {
         actions={
           <div className="flex gap-4">
             <Button
-              label={busy ? 'Stopping...' : 'Yes, Stop'}
+              label={busy ? t('btn.stopping') : t('btn.yes_stop_session')}
               variant="danger"
               onClick={handleStop}
               disabled={busy}

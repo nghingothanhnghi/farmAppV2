@@ -87,6 +87,8 @@
         "controllers": "Thiết bị điều khiển",
         "deleting": "Đang xóa...",
         "ok_delete": "Ok, Xóa",
+        "yes_stop_session": "Ok, Dừng chơi",
+        "stopping": "Đang dừng...",
         "add_rule": "Thêm quy tắc",
         "cash_drawer": "Quản lý ca thu ngân",
         "bank_inbox": "Đối soát chuyển khoản"
