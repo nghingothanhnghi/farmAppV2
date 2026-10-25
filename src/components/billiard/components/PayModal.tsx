@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
-import { FormInput, FormRadio, FloatingLabelInput } from '../../common/Form';
+import { FormRadio, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import {
   formatMoneyString,
   getBalanceDue,
@@ -83,7 +83,7 @@ const PayModal: React.FC<Props> = ({
   stripeEnabled = true,
   StripeCheckout,
 }) => {
-  const {t} = useTranslation();
+  const { t } = useTranslation();
   const due = getBalanceDue(bill);
   const [mode, setMode] = useState<Mode>('cash');
   const [tendered, setTendered] = useState<string>(''); // empty = exact payment
@@ -284,48 +284,55 @@ const PayModal: React.FC<Props> = ({
                       <div key={r.key} className="space-y-1.5">
                         <div className="flex items-center gap-2">
                           <span className="text-xs text-gray-500 w-4">{i + 1}</span>
-                          <select
-                            aria-label={`Line ${i + 1} method`}
+                          <FloatingLabelSelect
+                            id={`split-method-${r.key}`}
+                            name={`split-method-${r.key}`}
+                            label={`Line ${i + 1} method`}
                             value={r.method}
                             disabled={busy}
                             onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
-                            className="text-sm rounded-md border border-slate-200 dark:border-gray-700 bg-transparent dark:bg-gray-800 dark:text-gray-100 px-2 py-2"
+                            className="min-w-0 flex-1"
                           >
                             <option value="cash">Cash</option>
                             <option value="bank_transfer">Bank transfer</option>
-                          </select>
-                          <FormInput
+                          </FloatingLabelSelect>
+                          <FloatingLabelInput
                             id={`split-amount-${r.key}`}
+                            name={`split-amount-${r.key}`}
                             type="text"
                             inputMode="numeric"
+                            label="Amount"
                             value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
-                            placeholder="Amount"
                             onChange={(e) => updateRow(r.key, { amount: e.target.value })}
                             disabled={busy}
+                            alwaysFloat
                             className="flex-1 min-w-0"
                           />
                           {rows.length > 1 && (
-                            <button
-                              type="button"
-                              aria-label={`Remove line ${i + 1}`}
+                            <Button
+                              label={`Remove line ${i + 1}`}
+                              size="xs"
+                              variant="secondary"
+                              rounded="lg"
+                              icon={<IconTrash size={16} />}
+                              iconPosition="left"
                               disabled={busy}
                               onClick={() => removeRow(r.key)}
-                              className="text-gray-400 hover:text-red-500"
-                            >
-                              <IconTrash size={16} />
-                            </button>
+                            />
                           )}
                         </div>
                         {r.method === 'cash' && (
-                          <FormInput
+                          <FloatingLabelInput
                             id={`split-tendered-${r.key}`}
+                            name={`split-tendered-${r.key}`}
                             type="text"
                             inputMode="numeric"
+                            label="Handed over (optional)"
                             value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
-                            placeholder="Handed over (optional)"
                             onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
                             disabled={busy}
-                            className="w-full pl-6"
+                            alwaysFloat
+                            className="w-full"
                           />
                         )}
                         {err && parseAmount(r.amount) !== null && (
