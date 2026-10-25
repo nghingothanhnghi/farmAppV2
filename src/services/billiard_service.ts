@@ -14,6 +14,7 @@ import type {
   NewGameResponse,
   PayResponse,
   PayPayload,
+  PaymentEvent,
   PricingQuote,
   PricingQuoteParams,
   PricingRule,
@@ -95,6 +96,12 @@ export const billiardService = {
   async voidLine(sessionId: number, lineId: number, reason: string): Promise<BillResponse> {
     const res = await apiClient.post(`/sessions/${sessionId}/pay/lines/${lineId}/void`, { reason });
     return res.data;
+  },
+
+  /** Audit trail of every payment action on a bill (for a "history" panel). */
+  async getPaymentEvents(sessionId: number): Promise<PaymentEvent[]> {
+    const res = await apiClient.get(`/sessions/${sessionId}/pay/events`);
+    return Array.isArray(res.data) ? res.data : [];
   },
 
   async confirmPayment(sessionId: number): Promise<BillResponse> {

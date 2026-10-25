@@ -95,7 +95,11 @@ const ShiftsPage: React.FC = () => {
   };
 
   const mvAmountNum = parseWholeAmount(mvAmount);
-  const mvValid = mvAmountNum !== null && mvAmountNum > 0 && mvReason.trim().length >= MIN_REASON;
+  // A pay-out larger than the cash in the drawer is refused by the server (409): check first.
+  const drawerCash = current ? Number(current.expected_cash ?? 0) : 0;
+  const payOutTooBig = movement === 'pay_out' && mvAmountNum !== null && mvAmountNum > drawerCash;
+  const mvValid =
+    mvAmountNum !== null && mvAmountNum > 0 && mvReason.trim().length >= MIN_REASON && !payOutTooBig;
   const closeMovement = () => {
     if (busy) return;
     setMovement(null);
@@ -270,7 +274,15 @@ const ShiftsPage: React.FC = () => {
         size="small"
         content={
           <div className="px-10 pb-4 space-y-3">
+            {movement === 'pay_out' && current && (
+              <p className="text-xs text-gray-600 dark:text-gray-300">
+                Cash in the drawer: <span className="font-medium">{formatMoneyString(drawerCash)}</span>
+              </p>
+            )}
             <MoneyInput id="mv-amount" value={mvAmount} onChange={setMvAmount} placeholder="Amount" disabled={busy} />
+            {payOutTooBig && (
+              <p className="text-xs text-red-600">A pay-out cannot be larger than the cash in the drawer.</p>
+            )}
             <FormInput
               id="mv-reason"
               type="text"
