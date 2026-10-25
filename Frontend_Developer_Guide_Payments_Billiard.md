@@ -2,6 +2,34 @@
 
 Oct 24, 2026 · @Someone
 
+## Implementation status (farmAppV2)
+
+Checked against the code on Oct 25, 2026. "Done" means the code exists and the project typechecks. Nothing has been run against a live backend yet, so the test checklist at the end is still to do.
+
+| Area | Guide section | Status | Where |
+| --- | --- | --- | --- |
+| Table board: list, live tiles, start | Steps 3-4 | Done | `TablesPage`, `useTables`, `useActiveTables` |
+| Menu and add item | Step 5 | Done | `AddItemModal` |
+| Variant required when a product has variants | Step 5 | Done (new) | `AddItemModal` |
+| Stop session, 409 reloads the bill | Step 6 | Done | `useSession` |
+| Pay screen: cash, change, quick amounts | Screen 1 | Done | `PayModal` |
+| Pay screen: bank transfer, split editor | Screens 1, 3 | Done | `PayModal` |
+| Card (Stripe): hidden once a cash or transfer line exists | Screen 1 | Done (new) | `PayModal` |
+| Card (Stripe): switched on by a frontend setting | Screen 1 | Done (new), off unless `VITE_STRIPE_ENABLED=true` | `config/constants.ts` |
+| Card (Stripe): the card form itself | Screen 1 | **Not done**: no Stripe SDK or component is plugged in | `SessionPage` (`StripeCheckout` prop) |
+| Transfer waiting: QR, memo, countdown, Received, Cancel, polling | Screen 2 | Done | `TransferWaiting`, `useSession` |
+| Receipt and payment lines, void for managers | Screen 4 | Done | `PaymentLines` |
+| Payment history (`GET /sessions/{id}/pay/events`) | Step 10 | Done (new) | `PaymentHistory`, `usePaymentEvents` |
+| Cash drawer: open, close, variance, history | Screen 5 | Done | `ShiftsPage`, `useShifts` |
+| Pay-out checked against the drawer's expected cash | Screen 5 | Done (new) | `ShiftsPage` |
+| Warning when paying cash with no shift open | Screen 5 | Done | `PayModal`, `useCurrentShift` |
+| Bank inbox: tabs, ignore, assign with amount check | Screen 6 | Done | `BankInboxPage`, `AssignTransactionModal` |
+| Manager-only buttons | Who sees which buttons | Done, from the roles endpoints (not `/auth/me`) | `useHasAnyRole` |
+| `/payments/orders/...` generic routes | Start here | Not needed for billiard, left out on purpose | n/a |
+| Test checklist (28 scenarios) | Test checklist | **Not done**: needs a dev backend | n/a |
+
+Items marked "(new)" were added on branch `feat/billiard-payments-guide-gaps`.
+
 ## Start here
 
 The frontend needs about 25 endpoints to run a billiard table from start to payment: open a table, add drinks, stop the session, take payment, run the cash drawer and review bank transfers. Generate types from the backend's OpenAPI file, and use this guide for the screens and rules the schema cannot tell you.
