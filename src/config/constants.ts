@@ -6,6 +6,10 @@ export const OBJECT_DETECTION_STREAM_MODE = (import.meta.env.VITE_OBJECT_DETECTI
 export const OBJECT_DETECTION_CAPTURE_INTERVAL = Number(import.meta.env.VITE_OBJECT_DETECTION_CAPTURE_INTERVAL || 1000);
 export const OBJECT_DETECTION_MODEL_NAME = import.meta.env.VITE_OBJECT_DETECTION_MODEL_NAME || 'hardware-detection-model';
 
+// Card payments (Stripe). No endpoint reports whether Stripe is configured for the club,
+// so the Card option in the billiard pay screen is switched on here. Off unless explicitly enabled.
+export const STRIPE_ENABLED = import.meta.env.VITE_STRIPE_ENABLED === 'true';
+
 // App Configuration
 export const APP_NAME = 'Device Controller';
 export const APP_VERSION = '1.0.0';

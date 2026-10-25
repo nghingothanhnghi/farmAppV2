@@ -20,6 +20,8 @@ import PayModal from './components/PayModal';
 import ReceiptPreviewModal from './components/ReceiptPreviewModal';
 import TransferWaiting from './components/TransferWaiting';
 import PaymentLines from './components/PaymentLines';
+import PaymentHistory from './components/PaymentHistory';
+import { STRIPE_ENABLED } from '../../config/constants';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useCurrentShift } from '../../hooks/useShifts';
 import { formatElapsed, getBillState, getWaitingTransferLine, isAwaitingCard, parseUtc } from '../../utils/billiard';
@@ -150,6 +152,7 @@ const SessionPage: React.FC = () => {
       />
       {/* receipt (paid) or the history of lines (part paid, voided, cancelled) */}
       <PaymentLines bill={bill} canVoid={canVoid} busy={busy} onVoid={actions.voidLine} />
+      <PaymentHistory bill={bill} />
       {/*  "stopped" = awaiting payment → print the bill for the customer to acknowledge */}
       {state === 'stopped' && (
         <div className="flex justify-end gap-2">
@@ -252,6 +255,7 @@ const SessionPage: React.FC = () => {
         onConfirm={actions.confirmPay}
         noShiftOpen={shiftChecked && !openShift}
         onOpenShift={() => navigate('/billiard/shifts')}
+        stripeEnabled={STRIPE_ENABLED}
         onSettled={() => setAlert({ type: 'success', message: 'Payment recorded.' })}
       // StripeCheckout={YourExistingStripeComponent}  // see notes
       />

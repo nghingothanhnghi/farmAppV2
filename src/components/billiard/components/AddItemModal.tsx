@@ -39,8 +39,12 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
   const product = activeProducts.find((p) => String(p.id) === productId);
   const variants = (product?.variants ?? []).filter((v) => v.id != null);
 
+  // A product with variants is sold by variant: the cashier must pick one.
+  const needsVariant = variants.length > 0 && !variantId;
+  const canSubmit = !!productId && quantity >= 1 && !needsVariant;
+
   const handleSubmit = async () => {
-    if (!productId || quantity < 1) return;
+    if (!canSubmit) return;
     const ok = await onSubmit({
       product_id: Number(productId),
       ...(variantId ? { variant_id: Number(variantId) } : {}),
@@ -87,9 +91,9 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
 
         {variants.length > 0 && (
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="item_variant">Variant (optional)</FormLabel>
+            <FormLabel htmlFor="item_variant">Variant</FormLabel>
             <FormSelect id="item_variant" value={variantId} onChange={(e) => setVariantId(e.target.value)} className="w-full">
-              <option value="">No variant</option>
+              <option value="">Select a variant</option>
               {variants.map((v) => (
                 <option key={v.id} value={v.id}>
                   {v.name} — {formatMoney(v.price)}
@@ -119,7 +123,7 @@ const AddItemModal: React.FC<Props> = ({ isOpen, onClose, busy, onSubmit }) => {
           <Button
             label={busy ? t('btn.saving') : t('btn.save')}
             onClick={handleSubmit}
-            disabled={busy || !productId || quantity < 1}
+            disabled={busy || !canSubmit}
             className="min-w-[150px]"
             rounded="lg"
           />
