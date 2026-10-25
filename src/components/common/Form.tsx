@@ -170,7 +170,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         placeholder={type === 'date' ? undefined : placeholder ?? ' '}
         className={`
           peer w-full rounded-md border border-slate-200
-          bg-transparent px-3 pb-2 pt-5 text-sm text-slate-700
+          bg-transparent px-3 pb-2 pt-6 text-sm text-slate-700
           shadow-sm transition duration-200
           hover:border-slate-300 focus:border-blue-500
           focus:outline-none focus:ring-1 focus:ring-blue-500
@@ -187,7 +187,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
           pointer-events-none absolute left-3 z-10
           origin-left transition-all duration-200
           ${hasValue || type === 'date' || alwaysFloat
-            ? 'top-1 text-xs'
+            ? 'top-2 text-xs'
             : 'top-1/2 -translate-y-1/2 text-sm peer-focus:top-1 peer-focus:translate-y-0 peer-focus:text-xs'}
           ${disabled
             ? 'text-slate-400 dark:text-gray-500'
@@ -237,7 +237,7 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
         disabled={disabled}
         className={`
           peer w-full appearance-none rounded-md border border-slate-200
-          bg-transparent px-3 pb-2 pt-5 pr-9 text-sm text-slate-700
+          bg-transparent px-3 pb-2 pt-6 pr-9 text-sm text-slate-700
           shadow-sm transition duration-200
           hover:border-slate-300
           focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
@@ -252,7 +252,7 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
       <label
         htmlFor={id}
         className={`
-          pointer-events-none absolute left-3 top-1 z-10
+          pointer-events-none absolute left-3 top-2 z-10
           origin-left text-xs transition-all duration-200
           ${disabled
             ? 'text-slate-400 dark:text-gray-500'

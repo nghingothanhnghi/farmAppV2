@@ -91,7 +91,9 @@
         "stopping": "Stopping...",
         "add_rule": "Add rule",
         "cash_drawer": "Cash Drawer",
-        "bank_inbox": "Bank Inbox"
+        "bank_inbox": "Bank Inbox",
+        "pay_in": "Pay in",
+        "pay_out": "Pay out"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -673,7 +675,19 @@
         "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections."
     },
     "cashier": {
-        "shift": "Shift"
+        "shift": "Shift",
+        "opening_float": "Opening float",
+        "cash_sales": "Cash sales",
+        "cash_voids": "Cash voids",
+        "pay_ins": "Pay-ins",
+        "pay_outs": "Pay-outs",
+        "shift_closed": "closed",
+        "expected_cash": "Expected cash",
+        "expected_cash_in_drawer": "Expected cash in drawer",
+        "counted_cash": "Counted cash",
+        "variance_cash": "Variance",
+        "no_open_shift": "No open shift",
+        "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
     "placeholder_message":{
         "search":{

@@ -91,7 +91,9 @@
         "stopping": "Đang dừng...",
         "add_rule": "Thêm quy tắc",
         "cash_drawer": "Quản lý ca thu ngân",
-        "bank_inbox": "Đối soát chuyển khoản"
+        "bank_inbox": "Đối soát chuyển khoản",
+        "pay_in": "Nộp tiền",
+        "pay_out": "Rút tiền"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -673,7 +675,19 @@
         "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản."
     },
     "cashier": {
-        "shift": "Ca"
+        "shift": "Ca thu ngân",
+        "opening_float": "Quỹ đầu ca",
+        "cash_sales": "Doanh thu tiền mặt",
+        "cash_voids": "Giao dịch tiền mặt đã hủy",
+        "pay_ins": "Tiền nộp thêm vào quỹ",
+        "pay_outs": "Tiền chi ra từ quỹ",        
+        "shift_closed": "đã đóng",
+        "expected_cash": "Tiền mặt dự kiến",
+        "expected_cash_in_drawer": "Expected cash in drawer",
+        "counted_cash": "Tiền mặt thực đếm",
+        "variance_cash": "Chênh lệch tiền mặt",
+        "no_open_shift": "Chưa có ca thu ngân nào đang mở",
+        "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },    
     "placeholder_message":{
         "search":{

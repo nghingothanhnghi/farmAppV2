@@ -2,6 +2,7 @@
 // Screen 5 of the payments guide: the cash drawer.
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { IconArrowLeft, IconCashPlus, IconCashMinus, IconLock, IconX } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
@@ -49,6 +50,7 @@ const MoneyInput: React.FC<{
 };
 
 const ShiftsPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { setAlert } = useAlert();
   const { current, lastClosed, history, hasMore, loading, error, busy, actions } = useShifts();
@@ -149,7 +151,7 @@ const ShiftsPage: React.FC = () => {
         {lastClosed && (
           <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Shift #{lastClosed.id} closed</h3>
+              <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">{t('cashier.shift')} #{lastClosed.id} {t('cashier.shift_closed')}</h3>
               <button type="button" aria-label="Dismiss" onClick={actions.dismissClosed} className="text-gray-400 hover:text-gray-600">
                 <IconX size={16} />
               </button>
@@ -160,9 +162,9 @@ const ShiftsPage: React.FC = () => {
 
         {current === null ? (
           <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-3">
-            <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">No open shift</h3>
+            <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">{t('cashier.no_open_shift')}</h3>
             <p className="text-xs text-gray-500 dark:text-gray-400">
-              Count the cash in the drawer and enter it as the opening float.
+              {t('cashier.help_message_count_drawer')}
             </p>
             <MoneyInput id="opening-float" value={float} onChange={setFloat} placeholder="Opening float (0 if empty)" disabled={busy} />
             <FormInput
@@ -183,7 +185,7 @@ const ShiftsPage: React.FC = () => {
             <ShiftSummaryView shift={current} />
             <div className="flex flex-wrap justify-end gap-2">
               <Button
-                label="Pay in"
+                label={t('btn.pay_in')}
                 variant="secondary"
                 rounded="lg"
                 icon={<IconCashPlus size={16} />}
@@ -192,7 +194,7 @@ const ShiftsPage: React.FC = () => {
                 onClick={() => setMovement('pay_in')}
               />
               <Button
-                label="Pay out"
+                label={t('btn.pay_out')}
                 variant="secondary"
                 rounded="lg"
                 icon={<IconCashMinus size={16} />}

@@ -29,13 +29,15 @@ export const Variance: React.FC<{ value: string | null }> = ({ value }) => {
 };
 
 /** Opening / expected / counted / variance of a shift (live for open ones, frozen once closed). */
-export const ShiftResult: React.FC<{ shift: Shift }> = ({ shift }) => (
+export const ShiftResult: React.FC<{ shift: Shift }> = ({ shift }) => {
+  const { t } = useTranslation();
+  return (
   <div className="space-y-1.5">
-    <Row label="Expected cash" value={formatMoneyString(shift.expected_cash)} />
-    <Row label="Counted cash" value={formatMoneyString(shift.counted_cash)} />
-    <Row label="Variance" value={<Variance value={shift.variance} />} bold />
+    <Row label={t('cashier.expected_cash')} value={formatMoneyString(shift.expected_cash)} />
+    <Row label={t('cashier.counted_cash')} value={formatMoneyString(shift.counted_cash)} />
+    <Row label={t('cashier.variance_cash')} value={<Variance value={shift.variance} />} bold />
   </div>
-);
+)};
 
 const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
   const { t } = useTranslation();
@@ -68,11 +70,11 @@ const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
     )}
 
     <div className="space-y-1.5">
-      <Row label="Opening float" value={formatMoneyString(shift.opening_float)} />
-      <Row label="Cash sales" value={formatMoneyString(shift.cash_sales)} />
-      <Row label="Cash voids" value={formatMoneyString(shift.cash_voids)} />
-      <Row label="Pay-ins" value={formatMoneyString(shift.pay_ins)} />
-      <Row label="Pay-outs" value={formatMoneyString(shift.pay_outs)} />
+      <Row label={t('cashier.opening_float')} value={formatMoneyString(shift.opening_float)} />
+      <Row label={t('cashier.cash_sales')} value={formatMoneyString(shift.cash_sales)} />
+      <Row label={t('cashier.cash_voids')} value={formatMoneyString(shift.cash_voids)} />
+      <Row label={t('cashier.pay_ins')} value={formatMoneyString(shift.pay_ins)} />
+      <Row label={t('cashier.pay_outs')} value={formatMoneyString(shift.pay_outs)} />
       <p className="text-[0.625rem] text-gray-500 dark:text-gray-400 text-right">
         Change given {formatMoneyString(shift.change_given)} is already netted out of cash sales.
       </p>
