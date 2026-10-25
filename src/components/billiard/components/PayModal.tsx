@@ -101,7 +101,10 @@ const PayModal: React.FC<Props> = ({
     }
   }, [isOpen]);
 
-  const modes = MODES.filter((m) => m.value !== 'stripe' || stripeEnabled);
+  // Card pays the whole bill at once: the server answers 409 once a cash or transfer line exists,
+  // so hide it as soon as the bill has one (a waiting or completed line).
+  const hasLine = (bill.payments ?? []).some((l) => l.status === 'pending' || l.status === 'completed');
+  const modes = MODES.filter((m) => m.value !== 'stripe' || (stripeEnabled && !hasLine));
 
   // ---- cash ---------------------------------------------------------------
   const tenderedNum = parseAmount(tendered);

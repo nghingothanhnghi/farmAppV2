@@ -169,6 +169,30 @@ export interface PayResponse extends BillResponse {
   gateway?: { client_secret?: string; [key: string]: unknown } | null;
 }
 
+/** One entry of the audit trail: GET /sessions/{id}/pay/events. */
+export type PaymentEventType =
+  | 'line_created'
+  | 'cash_received'
+  | 'transfer_awaiting'
+  | 'transfer_confirmed'
+  | 'transfer_auto_confirmed'
+  | 'transfer_assigned_from_bank'
+  | 'line_cancelled'
+  | 'line_failed'
+  | 'line_voided'
+  | 'order_paid';
+
+export interface PaymentEvent {
+  id: number;
+  line_id: number | null;
+  /** Typed loosely so an event the UI does not know yet still renders. */
+  event_type: PaymentEventType | (string & {});
+  /** null = the system (e.g. the bank feed). */
+  actor_id: number | null;
+  data: Record<string, unknown> | null;
+  created_at: string;
+}
+
 export interface AddItemPayload {
   product_id: number;
   variant_id?: number;
