@@ -12,7 +12,12 @@ export interface HydroActuator {
   port: number;
   is_active: boolean;
   default_state: boolean;
+  /** Desired state set by automation or a manual command. */
   current_state: boolean;
+  /** Last state confirmed by the ESP32 after it wrote GPIO/PWM. */
+  reported_state?: boolean | null;
+  reported_state_at?: string | null;
+  reported_state_error?: string | null;
   manual_state: boolean | null; // for manual override mode
   automation_reason?: string; // e.g., "Low moisture", "Scheduled ON", etc.
   linked_sensor_value?: number | null;

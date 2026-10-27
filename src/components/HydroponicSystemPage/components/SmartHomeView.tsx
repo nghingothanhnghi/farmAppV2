@@ -205,6 +205,21 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                     const { Icon, color, animation } = getActuatorIcon(actuator.type);
                     const isSlidingDoor = actuator.type === 'sliding_door';
                     const isActive = actuator.current_state;
+                    const hasReportedState = actuator.reported_state !== null && actuator.reported_state !== undefined;
+                    const reportFailed = Boolean(actuator.reported_state_error);
+                    const reportPending = !reportFailed && (!hasReportedState || actuator.reported_state !== isActive);
+                    const reportedLabel = reportFailed
+                        ? 'Apply failed'
+                        : reportPending
+                            ? 'Waiting for ESP32'
+                            : actuator.reported_state
+                                ? 'Applied ON'
+                                : 'Applied OFF';
+                    const reportedClass = reportFailed
+                        ? 'text-red-600 dark:text-red-400'
+                        : reportPending
+                            ? 'text-amber-600 dark:text-amber-400'
+                            : 'text-green-600 dark:text-green-300';
                     const scheduleCount = scheduleCounts[actuator.id] ?? 0;
                     // ✅ NEW — same mode derivation as ActuatorCard
                     const manualState = actuator.manual_state ?? null;
@@ -372,6 +387,15 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                         <span className={`ml-1 ${reasonMeta.color}`}>
                                             {t(reasonMeta.labelKey)}
                                         </span>
+                                    )}
+                                </p>
+                                <p
+                                    className={`text-[10px] ${reportedClass}`}
+                                    title={actuator.reported_state_error || undefined}
+                                >
+                                    {reportedLabel}
+                                    {actuator.reported_state_at && !reportPending && (
+                                        <> • {new Date(actuator.reported_state_at).toLocaleTimeString()}</>
                                     )}
                                 </p>
                             </div>

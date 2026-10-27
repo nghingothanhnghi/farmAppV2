@@ -39,13 +39,31 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     onUpdated,
 }) => {
 
-    const isActive = actuator.current_state; // real-time ON/OFF state
+    // current_state is requested by the backend; reported_state is the
+    // controller's acknowledgement after it applies that request.
+    const isActive = actuator.current_state;
+    const hasReportedState = actuator.reported_state !== null && actuator.reported_state !== undefined;
+    const reportFailed = Boolean(actuator.reported_state_error);
+    const reportPending = !reportFailed && (!hasReportedState || actuator.reported_state !== isActive);
+    const reportedLabel = reportFailed
+        ? 'Apply failed'
+        : reportPending
+            ? 'Waiting for ESP32'
+            : actuator.reported_state
+                ? 'Applied ON'
+                : 'Applied OFF';
+    const reportedClass = reportFailed
+        ? 'text-red-600 dark:text-red-400'
+        : reportPending
+            ? 'text-amber-600 dark:text-amber-400'
+            : 'text-green-600 dark:text-green-300';
 
     const { Icon, color } = getActuatorIcon(actuator.type);
 
     console.log('Rendering ActuatorCard State:', {
         variant,
         current_state: actuator.current_state,
+        reported_state: actuator.reported_state,
         is_active: actuator.is_active,
         isActive
     });
@@ -274,6 +292,20 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         <p className="text-[0.625rem] text-gray-500">
                             Pin {actuator.pin} • Port {actuator.port}
                         </p>
+                        <p
+                            className={`text-[0.625rem] ${reportedClass}`}
+                            title={actuator.reported_state_error || undefined}
+                        >
+                            {reportedLabel}
+                            {actuator.reported_state_at && !reportPending && (
+                                <> • {new Date(actuator.reported_state_at).toLocaleTimeString()}</>
+                            )}
+                        </p>
+                        {reportFailed && (
+                            <p className="text-[0.625rem] text-red-600 dark:text-red-400 break-words">
+                                {actuator.reported_state_error}
+                            </p>
+                        )}
                         {!actuator.is_active && (
                             <Badge label={t("toggle.actuator_unlinked.label")} variant='warning' size='xsmall' />
                         )}
