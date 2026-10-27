@@ -36,10 +36,6 @@ const Modal: React.FC<ModalProps> = ({
 
   // Set a dynamic class for the modal size
   const modalSizeClasses = {
-    // xsmall: 'w-full mx-5 sm:w-3/4 md:w-2/3 lg:w-1/4',
-    // small: 'w-full mx-5 sm:w-4/5 md:w-3/4 lg:w-1/3',
-    // medium: 'w-full mx-5 sm:w-5/6 md:w-4/5 lg:w-1/2',
-    // large: 'w-full sm:w-11/12 lg:w-4/5',
     xsmall: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-3/4 md:w-2/3 lg:w-1/4`,
     small: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-4/5 md:w-3/4 lg:w-1/3`,
     medium: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-5/6 md:w-4/5 lg:w-1/2`,
