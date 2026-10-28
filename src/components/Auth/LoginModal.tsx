@@ -3,10 +3,11 @@ import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import * as Yup from 'yup';
 import { Link } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/authContext';
 import { useAlert } from '../../contexts/alertContext';
 import useToggle from '../../hooks/useToggle';
-import Form, { FormGroup, FormInput } from '../common/Form';
+import Form, { FormGroup, FormInput, FloatingLabelInput } from '../common/Form';
 import LinearProgress from '../common/LinearProgress';
 import Button from '../common/Button';
 import { loginSchema } from '../../validation/authValidation';
@@ -14,6 +15,7 @@ import { IconEye, IconEyeOff } from '@tabler/icons-react';
 import OAuthButtons from './OAuthButtons';
 
 const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen, onClose }) => {
+    const { t } = useTranslation();
     const { setAlert } = useAlert();
     const { login, loading } = useAuth();
     const [username, setUsername] = useState('');
@@ -64,7 +66,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
             onClose={onClose}
             title={
                 <>
-                    <h2 className="text-lg font-semibold">Login</h2>
+                    <h2 className="text-lg font-semibold">{t('page_title.login')}</h2>
                     {loading && (
                         <LinearProgress
                             position="absolute"
@@ -77,31 +79,35 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
             content={
                 <Form onSubmit={handleSubmit} className="space-y-4 py-4 px-10 relative">
                     <FormGroup>
-                        <FormInput
+                        <FloatingLabelInput
                             id="username"
                             name="username"
                             type="text"
+                            label={t('input.username.label')}
                             value={username}
-                            placeholder="Username"
+                            placeholder={t('input.username.label')}
+                            alwaysFloat
                             onChange={(e) => setUsername(e.target.value)}
                             required
                         />
+
                         {fieldErrors.username && (
                             <p className="text-red-500 text-xs mt-1">{fieldErrors.username}</p>
                         )}
                     </FormGroup>
                     <FormGroup>
                         <div className='relative'>
-                            <FormInput
+                            <FloatingLabelInput
                                 id="password"
                                 name="password"
                                 type={showPassword ? 'text' : 'password'}
+                                label={t('input.password.label')}
                                 value={password}
-                                placeholder="Password"
+                                placeholder={t('input.password.label')}
+                                alwaysFloat
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
                             />
-
                             <Button
                                 onClick={togglePassword}
                                 variant="link"
