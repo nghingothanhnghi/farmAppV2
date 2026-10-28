@@ -40,7 +40,7 @@ const Badge: React.FC<BadgeProps> = ({
     <span
       className={`inline-flex items-center rounded-full font-medium ${variantClass} ${sizeClass} ${className}`}
     >
-      {children || label}
+      {children ?? label}
     </span>
   );
 };
