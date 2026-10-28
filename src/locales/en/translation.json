@@ -841,5 +841,10 @@
         "VN": "Việt Nam",
         "US": "Hoa Kỳ",
         "FR": "Pháp"
+    },
+    "schedule": {
+        "next": "Next",
+        "today": "Today",
+        "tomorrow": "Tomorrow"
     }
 }
