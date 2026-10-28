@@ -10,7 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { getActuatorIcon, getActuatorReason } from '../../../utils/actuator';
-
+import NextScheduleLabel from './NextScheduleLabel';
+import type { HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 import { HoverSlideIn } from "../../common/HoverSlideIn";
 
 import ScheduleManager from './ScheduleManager';
@@ -78,12 +79,13 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
     const [openScheduleManager, setOpenScheduleManager] = React.useState(false);
     const { actions: scheduleActions } = useSchedule();
 
-    const [scheduleCount, setScheduleCount] = React.useState<number>(0);
+    const [schedules, setSchedules] = React.useState<HydroScheduleOut[]>([]);
+    const scheduleCount = schedules.length;
 
     React.useEffect(() => {
         let mounted = true;
         scheduleActions.fetchByActuator(actuator.id).then((data) => {
-            if (mounted) setScheduleCount(data?.length ?? 0);
+            if (mounted) setSchedules(data ?? []);
         });
         return () => { mounted = false; };
     }, [actuator.id]);
@@ -292,6 +294,9 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         <p className="text-[0.625rem] text-gray-500">
                             Pin {actuator.pin} • Port {actuator.port}
                         </p>
+                        {modeManual === 'AUTO' && actuator.is_active && (
+                            <NextScheduleLabel schedules={schedules} />
+                        )}
                         <p
                             className={`text-[0.625rem] ${reportedClass}`}
                             title={actuator.reported_state_error || undefined}
@@ -328,9 +333,10 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 onClose={() => setOpenScheduleManager(false)}
                 actuatorId={actuator.id}
                 actuatorName={actuator.name}
-                onChanged={() => {
-                    scheduleActions.fetchByActuator(actuator.id).then((d) => setScheduleCount(d?.length ?? 0));
-                }}
+                // onChanged={() => {
+                //     scheduleActions.fetchByActuator(actuator.id).then((d) => setScheduleCount(d?.length ?? 0));
+                // }}
+                onChanged={() => scheduleActions.fetchByActuator(actuator.id).then((d) => setSchedules(d ?? []))}
             />
 
             <ActuatorModalConfig

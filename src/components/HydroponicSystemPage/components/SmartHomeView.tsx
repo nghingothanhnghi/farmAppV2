@@ -12,7 +12,9 @@ import DropdownButton from '../../common/DropdownButton';
 import Spinner from '../../common/Spinner';
 import ScheduleManager from './ScheduleManager';
 import type { HydroActuator, SystemStatusPerDevice } from '../../../models/interfaces/HydroSystem';
+import type { HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 import ButtonGroup from '../../common/ButtonGroup';
+import NextScheduleLabel from './NextScheduleLabel';
 
 interface SmartHomeViewProps {
     /** Optional — pick a specific device. Defaults to the first device found. */
@@ -103,6 +105,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     // ✅ Schedule counts per actuator — same fetch pattern as ActuatorCard
     const [scheduleCounts, setScheduleCounts] = useState<Record<number, number>>({});
     const [scheduleManagerActuator, setScheduleManagerActuator] = useState<HydroActuator | null>(null);
+    const [schedulesByActuator, setSchedulesByActuator] = useState<Record<number, HydroScheduleOut[]>>({});
 
     useEffect(() => {
         if (!device?.actuators?.length) return;
@@ -110,11 +113,13 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
 
         Promise.all(
             device.actuators.map((a) =>
-                scheduleActions.fetchByActuator(a.id).then((data) => [a.id, data?.length ?? 0] as const)
+                // scheduleActions.fetchByActuator(a.id).then((data) => [a.id, data?.length ?? 0] as const)
+                scheduleActions.fetchByActuator(a.id).then((data) => [a.id, data ?? []] as const)
             )
         ).then((results) => {
             if (!mounted) return;
-            setScheduleCounts(Object.fromEntries(results));
+            // setScheduleCounts(Object.fromEntries(results));
+            setSchedulesByActuator(Object.fromEntries(results));
         });
 
         return () => {
@@ -122,11 +127,14 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
         };
     }, [device?.actuators]);
 
-    const refreshScheduleCount = (actuatorId: number) => {
-        scheduleActions.fetchByActuator(actuatorId).then((data) => {
-            setScheduleCounts((prev) => ({ ...prev, [actuatorId]: data?.length ?? 0 }));
-        });
-    };
+    // const refreshScheduleCount = (actuatorId: number) => {
+    //     scheduleActions.fetchByActuator(actuatorId).then((data) => {
+    //         setScheduleCounts((prev) => ({ ...prev, [actuatorId]: data?.length ?? 0 }));
+    //     });
+    // };
+    const refreshScheduleCount = (id: number) =>
+        scheduleActions.fetchByActuator(id).then((data) =>
+            setSchedulesByActuator((prev) => ({ ...prev, [id]: data ?? [] })));
 
     if (loading && !device) {
         return (
@@ -220,7 +228,9 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                         : reportPending
                             ? 'text-amber-600 dark:text-amber-400'
                             : 'text-green-600 dark:text-green-300';
-                    const scheduleCount = scheduleCounts[actuator.id] ?? 0;
+                    // const scheduleCount = scheduleCounts[actuator.id] ?? 0;
+                    const actuatorSchedules = schedulesByActuator[actuator.id] ?? [];
+                    const scheduleCount = actuatorSchedules.length;
                     // ✅ NEW — same mode derivation as ActuatorCard
                     const manualState = actuator.manual_state ?? null;
                     const modeManual =
@@ -257,7 +267,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                         ${isActive ? color : 'text-gray-400'}
                                         transition-all duration-300
                                         ${isActive ? animation : ""}
-                                    `} 
+                                    `}
                                     />
                                 </div>
 
@@ -343,7 +353,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                                 iconOnly
                                                 label={t('badge_status.down')}
                                                 variant="secondary"
-                                               size="xs"
+                                                size="xs"
                                                 disabled={!canControl}
                                                 onClick={() => handleSlidingDoor(actuator, 'down')}
                                             />
@@ -389,6 +399,9 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                         </span>
                                     )}
                                 </p>
+                                {modeManual === 'AUTO' && actuator.is_active && (
+                                    <NextScheduleLabel schedules={actuatorSchedules} />
+                                )}
                                 <p
                                     className={`text-[10px] ${reportedClass}`}
                                     title={actuator.reported_state_error || undefined}
