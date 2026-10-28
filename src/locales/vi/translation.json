@@ -230,12 +230,16 @@
         },
         "username":{
             "label": "Tên đăng nhập",
-            "placeholder": ""  
+            "placeholder": "Nhập tên đăng nhập của bạn"  
         },
         "password":{
             "label": "Mật khẩu",
-            "placeholder": ""  
+            "placeholder": "Nhập mật khẩu của bạn"  
         },
+        "new_password":{
+            "label": "Mật khẩu mới",
+            "placeholder": "Nhập mật khẩu mới"
+        },        
         "searchByName":{
             "label": "Tìm theo tên",
             "placeholder": "Nhập tên sản phẩm..."
@@ -851,5 +855,10 @@
         "next": "Tiếp theo",
         "today": "Hôm nay",
         "tomorrow": "Ngày mai"
-    }
+    },
+    "auth_body": {
+        "forgot_password": "Quên mật khẩu?",
+        "or_continue_with": "Hoặc tiếp tục với",
+        "dont_have_an_account": "Bạn chưa có tài khoản?"
+    }    
 }

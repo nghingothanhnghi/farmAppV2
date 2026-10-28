@@ -132,6 +132,8 @@ interface FloatingLabelInputProps {
   className?: string;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
   alwaysFloat?: boolean;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
@@ -150,11 +152,30 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   className = 'w-full min-w-0',
   inputMode,
   alwaysFloat = false,
+  icon,
+  iconPosition = 'left',
 }) => {
   const hasValue = String(value ?? '').length > 0;
+  const hasIcon = Boolean(icon);
+  const iconOnLeft = hasIcon && iconPosition === 'left';
 
   return (
     <div className={`relative min-w-0 ${className}`}>
+            {hasIcon && (
+        <span
+          aria-hidden="true"
+          className={`
+            pointer-events-none absolute top-1/2 z-10
+            -translate-y-1/2
+            ${iconOnLeft ? 'left-3' : 'right-3'}
+            ${disabled
+              ? 'text-slate-400 dark:text-gray-500'
+              : 'text-slate-500 dark:text-gray-400'}
+          `}
+        >
+          {icon}
+        </span>
+      )}
       <input
         id={id}
         name={name}
@@ -170,8 +191,9 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
         placeholder={type === 'date' ? undefined : placeholder ?? ' '}
         className={`
           peer w-full rounded-md border border-slate-200
-          bg-transparent px-3 pb-2 pt-6 text-sm text-slate-700
+          bg-transparent py-2 pt-6 text-sm text-slate-700
           shadow-sm transition duration-200
+          ${iconOnLeft ? 'pl-10 pr-3' : hasIcon ? 'pl-3 pr-10' : 'px-3'}
           hover:border-slate-300 focus:border-blue-500
           focus:outline-none focus:ring-1 focus:ring-blue-500
           dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100
@@ -184,8 +206,9 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
       <label
         htmlFor={id}
         className={`
-          pointer-events-none absolute left-3 z-10
+          pointer-events-none absolute z-10
           origin-left transition-all duration-200
+          ${iconOnLeft ? 'left-10' : 'left-3'}
           ${hasValue || type === 'date' || alwaysFloat
             ? 'top-2 text-xs'
             : 'top-1/2 -translate-y-1/2 text-sm peer-focus:top-1 peer-focus:translate-y-0 peer-focus:text-xs'}

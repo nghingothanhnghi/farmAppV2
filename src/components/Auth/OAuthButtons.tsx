@@ -3,6 +3,7 @@ import React from 'react';
 import { IconBrandGoogleFilled, IconBrandFacebookFilled } from '@tabler/icons-react';
 import Button from '../common/Button';
 import { startOAuthLogin } from '../../utils/oauth';
+import { useTranslation } from 'react-i18next';
 
 interface OAuthButtonsProps {
   redirectAfter?: string;
@@ -10,12 +11,13 @@ interface OAuthButtonsProps {
 }
 
 const OAuthButtons: React.FC<OAuthButtonsProps> = ({ redirectAfter, className = '' }) => {
+  const { t } = useTranslation();
   return (
     <div className={`space-y-3 ${className}`}>
       <div className="relative flex items-center py-1">
         <div className="flex-grow border-t border-gray-200 dark:border-gray-700" />
         <span className="mx-3 text-xs text-gray-400 dark:text-gray-500">
-          or continue with
+          {t('auth_body.or_continue_with')}
         </span>
         <div className="flex-grow border-t border-gray-200 dark:border-gray-700" />
       </div>

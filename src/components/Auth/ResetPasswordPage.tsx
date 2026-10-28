@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import Form, { FormGroup, FormLabel, FormInput, FormCodeInput, FormActions } from '../common/Form';
-import { IconCheck, IconX, IconEye, IconEyeOff } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import Form, { FormGroup, FormLabel, FormCodeInput, FormActions, FloatingLabelInput } from '../common/Form';
+import { IconCheck, IconX, IconEye, IconEyeOff, IconMail } from '@tabler/icons-react';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
 import { useAlert } from '../../contexts/alertContext';
@@ -12,6 +13,7 @@ import { parseApiErrors } from '../../utils/errorUtils';
 import { resetPasswordEmailSchema, resetPasswordCodeSchema, resetPasswordNewPasswordSchema, getPasswordChecks } from '../../validation/authValidation';
 
 const ResetPasswordPage: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
 
     const { setAlert } = useAlert();
@@ -129,19 +131,22 @@ const ResetPasswordPage: React.FC = () => {
                                 <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Make sure it's the same email you used to register.</p>
                             </div>
                             <div className='flex flex-col items-center w-full space-y-2'>
-                                <FormInput
-                                    type="email"
-                                    name="email"
+                                <FloatingLabelInput
                                     id="email"
+                                    name="email"
+                                    label="Email"
+                                    type="email"
                                     value={email}
                                     onChange={e => {
                                         setEmail(e.target.value);
                                         setFieldErrors(prev => ({ ...prev, email: '' })); // clear on input
                                     }}
                                     required
+                                    icon={<IconMail />}
+                                    iconPosition="right"
                                 />
                                 {fieldErrors.email && (
-                                    <p className="text-red-500 text-xs text-center">{fieldErrors.email}</p>
+                                    <p className="text-red-500 text-xs">{fieldErrors.email}</p>
                                 )}
                             </div>
                         </FormGroup>
@@ -210,12 +215,14 @@ const ResetPasswordPage: React.FC = () => {
                             </div>
                             <div>
                                 <div className='relative mx-auto max-w-[300px]'>
-                                    <FormInput
-                                        type={showPassword ? "text" : "password"}
+                                    <FloatingLabelInput
                                         name="newPassword"
                                         id="newPassword"
+                                        type={showPassword ? 'text' : 'password'}
+                                        label={t('input.new_password.label')}
                                         value={newPassword}
-                                        // onChange={e => setNewPassword(e.target.value)}
+                                        placeholder={t('input.new_password.placeholder')}
+                                        alwaysFloat
                                         onChange={(e) => {
                                             const value = e.target.value;
                                             setNewPassword(value);
@@ -255,8 +262,6 @@ const ResetPasswordPage: React.FC = () => {
                                     </ul>
                                 )}
                             </div>
-
-
                         </FormGroup>
                         <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
                             <Button

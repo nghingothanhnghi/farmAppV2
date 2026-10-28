@@ -85,7 +85,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                             type="text"
                             label={t('input.username.label')}
                             value={username}
-                            placeholder={t('input.username.label')}
+                            placeholder={t('input.username.placeholder')}
                             alwaysFloat
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -103,7 +103,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                                 type={showPassword ? 'text' : 'password'}
                                 label={t('input.password.label')}
                                 value={password}
-                                placeholder={t('input.password.label')}
+                                placeholder={t('input.password.placeholder')}
                                 alwaysFloat
                                 onChange={(e) => setPassword(e.target.value)}
                                 required
@@ -128,7 +128,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                             className="text-sm text-gray-500 dark:text-gray-300 underline"
                             onClick={onClose}
                         >
-                            Forgot Password?
+                            {t('auth_body.forgot_password')}
                         </Link>
                     </div>
                 </Form>
@@ -137,7 +137,7 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                 <div className="space-y-3 w-full">
                     <Button
                         type="button"
-                        label={loading ? 'Logging in...' : 'Login'}
+                        label={loading ? 'Logging in...' : t('btn.login')}
                         onClick={() => handleSubmit(new Event('submit') as unknown as React.FormEvent)}
                         variant="primary"
                         disabled={loading}
@@ -148,13 +148,13 @@ const LoginModal: React.FC<{ isOpen: boolean; onClose: () => void }> = ({ isOpen
                     <OAuthButtons />
 
                     <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-5">
-                        Don’t have an account?{' '}
+                        {t('auth_body.dont_have_an_account')} {''}
                         <Link
                             to="/sign-up"
                             className="text-gray-500 dark:text-gray-300 underline"
                             onClick={onClose}
                         >
-                            Sign up
+                            {t('btn.sign_up')}
                         </Link>
                     </p>
                 </div>
