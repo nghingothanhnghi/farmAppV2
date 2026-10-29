@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import Form, { FormGroup, FormLabel, FormCodeInput, FormActions, FloatingLabelInput } from '../common/Form';
-import { IconCheck, IconX, IconEye, IconEyeOff, IconMail } from '@tabler/icons-react';
+import { IconCheck, IconX, IconEye, IconEyeOff, IconMail, IconArrowLeft } from '@tabler/icons-react';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
 import { useAlert } from '../../contexts/alertContext';
@@ -114,9 +114,44 @@ const ResetPasswordPage: React.FC = () => {
         }
     };
 
+    const handleBack = () => {
+        if (loading) return;
+
+        if (step === 'reset') {
+            setStep('verify');
+            setNewPassword('');
+            setPasswordChecks(getPasswordChecks(''));
+            setFieldErrors({});
+            return;
+        }
+
+        if (step === 'verify') {
+            setStep('email');
+            setCode('');
+            setExpirationTime(600);
+            setFieldErrors({});
+            return;
+        }
+
+        navigate(-1);
+    };
+
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-mesh transition-colors duration-300">
             <div className="w-full max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
+                <div className="mb-4 flex justify-start">
+                    <Button
+                        type="button"
+                        variant="link"
+                        label="Back"
+                        icon={<IconArrowLeft size={18} />}
+                        onClick={handleBack}
+                        disabled={loading}
+                        rounded="lg"
+                        className="text-gray-600 dark:text-gray-300"
+                    />
+                </div>
+
                 <PageTitle
                     title="Reset Password"
                     align="center"
@@ -142,8 +177,8 @@ const ResetPasswordPage: React.FC = () => {
                                         setFieldErrors(prev => ({ ...prev, email: '' })); // clear on input
                                     }}
                                     required
-                                    icon={<IconMail />}
-                                    iconPosition="right"
+                                    icon={<IconMail size={18} />}
+                                    iconPosition="left"
                                 />
                                 {fieldErrors.email && (
                                     <p className="text-red-500 text-xs">{fieldErrors.email}</p>
@@ -154,7 +189,7 @@ const ResetPasswordPage: React.FC = () => {
                             <Button
                                 type="submit"
                                 label={loading ? 'Sending...' : 'Send Code'}
-                                className='mx-auto'
+                                className='mx-auto min-w-[150px]'
                                 rounded='lg'
                             />
                         </FormActions>

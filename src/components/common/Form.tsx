@@ -161,7 +161,7 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
 
   return (
     <div className={`relative min-w-0 ${className}`}>
-            {hasIcon && (
+      {hasIcon && (
         <span
           aria-hidden="true"
           className={`
@@ -235,6 +235,8 @@ interface FloatingLabelSelectProps {
   required?: boolean;
   disabled?: boolean;
   className?: string;
+  icon?: React.ReactNode;
+  iconPosition?: 'left' | 'right';
 }
 
 export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
@@ -247,10 +249,28 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
   required = false,
   disabled = false,
   className = 'w-full min-w-0',
+  icon,
+  iconPosition = 'left',
 }) => {
-
+  const hasIcon = Boolean(icon);
+  const iconOnLeft = hasIcon && iconPosition === 'left';
   return (
     <div className={`relative min-w-0 ${className}`}>
+      {hasIcon && (
+        <span
+          aria-hidden="true"
+          className={`
+            pointer-events-none absolute left-3 top-1/2 z-10
+            -translate-y-1/2
+            ${iconPosition === 'right' ? 'left-auto right-9' : ''}
+            ${disabled
+              ? 'text-slate-400 dark:text-gray-500'
+              : 'text-slate-500 dark:text-gray-400'}
+          `}
+        >
+          {icon}
+        </span>
+      )}
       <select
         id={id}
         name={name}
@@ -260,8 +280,9 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
         disabled={disabled}
         className={`
           peer w-full appearance-none rounded-md border border-slate-200
-          bg-transparent px-3 pb-2 pt-6 pr-9 text-sm text-slate-700
+          bg-transparent pb-2 pt-6 text-sm text-slate-700
           shadow-sm transition duration-200
+          ${iconOnLeft ? 'pl-10 pr-9' : hasIcon ? 'pl-3 pr-16' : 'px-3 pr-9'}
           hover:border-slate-300
           focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500
           dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100
@@ -275,8 +296,9 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
       <label
         htmlFor={id}
         className={`
-          pointer-events-none absolute left-3 top-2 z-10
+       pointer-events-none absolute top-2 z-10
           origin-left text-xs transition-all duration-200
+          ${iconOnLeft ? 'left-10' : 'left-3'}
           ${disabled
             ? 'text-slate-400 dark:text-gray-500'
             : 'text-slate-500 dark:text-gray-400 peer-focus:text-blue-500'}
@@ -291,7 +313,10 @@ export const FloatingLabelSelect: React.FC<FloatingLabelSelectProps> = ({
         viewBox="0 0 24 24"
         strokeWidth="1.5"
         stroke="currentColor"
-        className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500 dark:text-gray-400"
+        className="
+        pointer-events-none absolute right-3 top-1/2 
+        h-4 w-4 -translate-y-1/2 
+        text-slate-500 dark:text-gray-400"
       >
         <path
           strokeLinecap="round"

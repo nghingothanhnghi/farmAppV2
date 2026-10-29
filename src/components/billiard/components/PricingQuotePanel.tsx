@@ -1,6 +1,7 @@
 // src/components/billiard/components/PricingQuotePanel.tsx
 // "Preview price": calls GET /billiard/pricing-rules/quote. Writes nothing.
 import React, { useState } from 'react';
+import { IconSportBillard, IconTimeDuration30 } from '@tabler/icons-react';
 import Button from '../../common/Button';
 import { FormGroup, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import { billiardService } from '../../../services/billiard_service';
@@ -58,6 +59,8 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
           value={tableId}
           className="w-full"
           onChange={(e) => setTableId(e.target.value)}
+          icon={<IconSportBillard size={18} />}
+          iconPosition="left"
           required
         >
           <option value="" disabled>
@@ -77,6 +80,8 @@ const PricingQuotePanel: React.FC<Props> = ({ tables }) => {
           inputMode="numeric"
           value={minutes}
           onChange={(e) => setMinutes(e.target.value)}
+          icon={<IconTimeDuration30 size={18} />}
+          iconPosition="left"
         />
         <FormGroup className="space-y-1 sm:col-span-2">
           <FloatingLabelInput
