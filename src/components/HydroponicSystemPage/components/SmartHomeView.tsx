@@ -102,8 +102,6 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
         }
     };
 
-    // ✅ Schedule counts per actuator — same fetch pattern as ActuatorCard
-    const [scheduleCounts, setScheduleCounts] = useState<Record<number, number>>({});
     const [scheduleManagerActuator, setScheduleManagerActuator] = useState<HydroActuator | null>(null);
     const [schedulesByActuator, setSchedulesByActuator] = useState<Record<number, HydroScheduleOut[]>>({});
 
