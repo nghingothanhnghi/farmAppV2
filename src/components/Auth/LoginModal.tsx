@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/authContext';
 import { useAlert } from '../../contexts/alertContext';
 import useToggle from '../../hooks/useToggle';
-import Form, { FormGroup, FormInput, FloatingLabelInput } from '../common/Form';
+import Form, { FormGroup, FloatingLabelInput } from '../common/Form';
 import LinearProgress from '../common/LinearProgress';
 import Button from '../common/Button';
 import { loginSchema } from '../../validation/authValidation';
