@@ -333,9 +333,6 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                 onClose={() => setOpenScheduleManager(false)}
                 actuatorId={actuator.id}
                 actuatorName={actuator.name}
-                // onChanged={() => {
-                //     scheduleActions.fetchByActuator(actuator.id).then((d) => setScheduleCount(d?.length ?? 0));
-                // }}
                 onChanged={() => scheduleActions.fetchByActuator(actuator.id).then((d) => setSchedules(d ?? []))}
             />
 

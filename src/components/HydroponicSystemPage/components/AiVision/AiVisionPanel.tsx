@@ -97,20 +97,28 @@ const AiVisionPanel: React.FC<Props> = ({ hydroBatchId }) => {
                     {error}
                 </div>
             )}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-[1fr_515px] auto-rows-fr gap-4">
-                <HealthGrowthCard
-                    plant={plant}
-                    health={health}
-                    latestGrowth={growthHistory[0]}
-                />
-                <GrowthPredictionCard
-                    prediction={latestGrowthPrediction}
-                />
-                <AnomaliesCard anomalies={anomalies} onResolve={actions.resolveAnomaly} />
-                <RecommendationsCard
-                    recommendations={recommendations}
-                    onUpdateStatus={actions.setRecommendationStatus}
-                />
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_515px] gap-4 items-stretch">
+                <div className="grid grid-rows-2 gap-4">
+                    <HealthGrowthCard
+                        plant={plant}
+                        health={health}
+                        latestGrowth={growthHistory[0]}
+                    />
+                    <RecommendationsCard
+                        recommendations={recommendations}
+                        onUpdateStatus={actions.setRecommendationStatus}
+                    />
+                </div>
+
+                <div className="grid grid-rows-2 gap-4">
+                    <GrowthPredictionCard
+                        prediction={latestGrowthPrediction}
+                    />
+                    <AnomaliesCard
+                        anomalies={anomalies}
+                        onResolve={actions.resolveAnomaly}
+                    />
+                </div>
             </div>
         </div>
     );

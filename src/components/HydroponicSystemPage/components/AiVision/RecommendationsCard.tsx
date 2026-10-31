@@ -1,6 +1,7 @@
 import React from "react";
 import { IconBulb } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
+import Button from "../../../common/Button";
 import EmptyState from "../../../common/EmptyState";
 import { getRecommendationVariant, severityVariant } from "../../../../utils/aiVision";
 import type {
@@ -68,9 +69,9 @@ const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus 
 
                         {r.confidence != null && (
                             <div className="flex items-center gap-2">
-                                <div className="flex-1 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                                <div className="flex-1 h-1.5 rounded-full bg-gray-200 dark:bg-gray-900 overflow-hidden">
                                     <div
-                                        className="h-full bg-indigo-500"
+                                        className="h-full bg-blue-500 dark:bg-blue-400"
                                         style={{
                                             width: `${Math.round(r.confidence * 100)}%`,
                                         }}
@@ -84,7 +85,7 @@ const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus 
                         )}
 
                         {r.reasons && r.reasons.length > 0 && (
-                            <div className="pt-1 border-t border-gray-200 dark:border-white/5">
+                            <div className="py-2 border-t border-gray-200 dark:border-white/5">
                                 <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
                                     Reasons
                                 </p>
@@ -105,21 +106,26 @@ const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus 
 
                         {onUpdateStatus && r.status === "pending_review" && (
                             <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-white/5">
-                                <button
+                                <Button
                                     type="button"
+                                    variant="link"
+                                    linkColor="gray"
+                                    size="xs"
+                                    label="Dismiss"
+                                    rounded="full"
                                     onClick={() => onUpdateStatus(r.id, "dismissed")}
-                                    className="text-xs font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                                >
-                                    Dismiss
-                                </button>
+                                />
                                 {/* Advisory only: marks it as seen. Never changes actuators, schedules or irrigation. */}
-                                <button
+                                <Button
                                     type="button"
+                                    variant="link"
+                                    linkColor="green"
+                                    size="xs"
+                                    className="bg-transparent"
+                                    label="Acknowledge"
+                                    rounded="full"
                                     onClick={() => onUpdateStatus(r.id, "acknowledged")}
-                                    className="text-xs font-medium text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-                                >
-                                    Acknowledge
-                                </button>
+                                />
                             </div>
                         )}
                     </div>

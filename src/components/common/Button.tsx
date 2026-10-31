@@ -14,7 +14,8 @@ interface ButtonProps {
   iconPosition?: 'left' | 'right';
   iconOnly?: boolean;
   size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
-  rounded?: 'full' | 'sm' | 'md' | 'lg'; 
+  rounded?: 'full' | 'sm' | 'md' | 'lg';
+  linkColor?: 'blue' | 'green' | 'red' | 'gray' | 'orange';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -32,6 +33,7 @@ const Button: React.FC<ButtonProps> = ({
   iconOnly = false,
   size = 'md',
   rounded,
+  linkColor = 'blue',
 }) => {
   const baseStyles =
     'inline-flex items-center justify-center font-medium focus:outline-none transition-colors gap-2';
@@ -44,7 +46,7 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'text-lg px-5 py-3',
   };
 
-    const iconOnlySizeStyles = {
+  const iconOnlySizeStyles = {
     xxs: 'w-5 h-5 text-[10px] px-1',
     xs: 'w-6 h-6 text-xs p-1',
     sm: 'w-8 h-8 text-sm p-1.5',
@@ -52,14 +54,21 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'w-12 h-12 text-lg p-3',
   };
 
+  const linkColorStyles = {
+    blue: 'text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300',
+    green: 'text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300',
+    red: 'text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300',
+    gray: 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200',
+    orange: 'text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300',
+  };
 
   const variantStyles = {
     primary: 'bg-orange-600 text-white hover:bg-orange-700',
     secondary: 'bg-gray-100 text-gray-800 hover:bg-gray-300 dark:bg-transparent dark:text-gray-100 dark:hover:bg-gray-600',
     danger: 'bg-red-600 text-white hover:bg-red-700',
-    link: 'bg-transparent text-blue-600 hover:underline p-0 dark:text-blue-400',
+    link: `bg-transparent text-blue-600 hover:underline p-0 ${linkColorStyles[linkColor]}`,
     dark: 'bg-gray-800 text-white hover:bg-black dark:bg-gray-900 dark:hover:bg-black',
-    outline:`bg-transparent border border-slate-200 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800`,
+    outline: `bg-transparent border border-slate-200 text-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800`,
   };
 
   const roundedStyles = {
@@ -70,22 +79,26 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   const shapeClass =
-  rounded !== undefined
-    ? roundedStyles[rounded]
-    : iconOnly
-    ? '' // Let ButtonGroup apply rounded if needed
-    : ''; // Also blank for normal buttons if no rounded specified
+    rounded !== undefined
+      ? roundedStyles[rounded]
+      : iconOnly
+        ? '' // Let ButtonGroup apply rounded if needed
+        : ''; // Also blank for normal buttons if no rounded specified
+
 
 
   const widthStyles = fullWidth ? 'w-full' : '';
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
   const iconOnlyStyles = iconOnly ? 'justify-center items-center gap-0' : '';
 
-    const sizeClass = iconOnly
-    ? iconOnlySizeStyles[size || 'md']
-    : variant === 'link'
-    ? 'text-sm'
-    : sizeStyles[size || 'md'];
+  // const sizeClass = iconOnly
+  // ? iconOnlySizeStyles[size || 'md']
+  // : variant === 'link'
+  // ? 'text-sm'
+  // : sizeStyles[size || 'md'];
+  const sizeClass = iconOnly
+    ? iconOnlySizeStyles[size]
+    : sizeStyles[size];
 
   return (
     <button
