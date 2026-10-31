@@ -22,6 +22,8 @@
         }
       },
     "btn":{
+        "verify_code": "Xác nhận mã",
+        "resend_code": "Gửi lại mã",        
         "add_to_cart": "Thêm vào giỏ",
         "buy_now": "Mua ngay",
         "clear_all": "Xóa tất cả",
@@ -32,6 +34,7 @@
         "login": "Đăng nhập",
         "loggingIn": "Đang đăng nhập...",
         "next": "Tiếp tục",
+        "back": "Quay lại",
         "previous": "Quay lại",
         "proceed_to_checkout": "Thanh toán ngay",
         "profile": "Tài khoản",
@@ -119,6 +122,9 @@
         "message_01": "Đang tải hình ảnh"
     },
     "select":{
+        "actuators_filter": {
+            "all": "Tất cả"
+        },        
         "category":{
             "label": "Danh mục",
             "placeholder": "Chọn danh mục...",
@@ -206,7 +212,8 @@
         },
         "email":{
             "label": "Email liên hệ",
-            "placeholder": ""
+            "placeholder": "abc@gmail.com",
+            "helper_email_reset_new_password_verify": "Nhập địa chỉ email của bạn để nhận mã xác thực gồm 6 chữ số. Vui lòng sử dụng đúng địa chỉ email bạn đã đăng ký tài khoản."
         },
         "phone":{
             "label": "Số di động",
@@ -238,7 +245,8 @@
         },
         "new_password":{
             "label": "Mật khẩu mới",
-            "placeholder": "Nhập mật khẩu mới"
+            "placeholder": "Nhập mật khẩu mới",
+            "helper": "Để bảo vệ tài khoản, vui lòng tạo mật khẩu mới. Mật khẩu cần có ít nhất 8 ký tự, bao gồm chữ cái, chữ số và ký tự đặc biệt."
         },        
         "searchByName":{
             "label": "Tìm theo tên",
@@ -307,7 +315,18 @@
         "change_due":{
             "label": "Tiền thối lại",
             "placeholder":""
-        }   
+        },
+        "reset_password":{
+            "label": "Đặt lại mật khẩu",
+            "placeholder":""
+        },
+        "digit_code":{
+            "label": "Đặt lại mật khẩu",
+            "placeholder":"",
+            "helper": "Vui lòng nhập mã xác thực gồm 6 chữ số mà chúng tôi đã gửi đến email của bạn. Chỉ được nhập chữ số.",
+            "helper_expired_code": "Mã xác thực sẽ hết hạn sau",
+            "helper_dont_received_code": "Bạn chưa nhận được mã?"
+        }
     },
     "toggle":{
         "actuator_linked": {
@@ -427,7 +446,8 @@
         "post": "Bài viết",
         "profile": "Tài khoản",
         "order_check": "Kiểm tra đơn hàng",
-        "login": "Đăng nhập"
+        "login": "Đăng nhập để tiếp tục",
+        "reset_password": "Đặt lại mật khẩu"
     },
     "section_title":{
         "view_by_another_auth": "hoặc đăng nhập bằng",

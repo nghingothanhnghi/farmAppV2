@@ -22,6 +22,8 @@
         }
       },
     "btn":{
+        "verify_code": "Verify Code",
+        "resend_code": "Resend Code",
         "add_to_cart": "Add to cart",
         "buy_now": "Buy now",
         "clear_all": "Clear all",
@@ -32,6 +34,7 @@
         "login": "Log In",
         "loggingIn": "Logging in...",
         "next": "Next",
+        "back": "Back",
         "previous": "Previous",
         "proceed_to_checkout": "Checkout",
         "profile": "Profile",
@@ -119,6 +122,9 @@
         "message_01": "Loading banner..."
     },
     "select":{
+        "actuators_filter": {
+            "all": "All"
+        },
         "category":{
             "label": "Danh mục",
             "placeholder": "Chọn danh mục...",
@@ -206,7 +212,8 @@
         },
         "email":{
             "label": "Email",
-            "placeholder": ""
+            "placeholder": "abc@gmail.com",
+            "helper_email_reset_new_password_verify": "Enter your email address to receive a 6-digit reset code. Make sure it's the same email you used to register."
         },
         "phone":{
             "label": "Phone Number",
@@ -238,7 +245,8 @@
         },
         "new_password":{
             "label": "New Password",
-            "placeholder": "Enter your new password"
+            "placeholder": "Enter your new password",
+            "helper": "To keep your account secure, please create a new password. Make sure it’s at least 8 characters long and includes a mix of letters, numbers, and symbols."
         },
         "searchByName":{
             "label": "Search by Name",
@@ -307,6 +315,17 @@
         "change_due":{
             "label": "Change due",
             "placeholder":""
+        },
+        "reset_password":{
+            "label": "Reset Password",
+            "placeholder":""
+        },        
+        "digit_code":{
+            "label": "",
+            "placeholder":"",
+            "helper": "Please enter the 6-digit code we sent to your email. Only numbers are allowed.",
+            "helper_expired_code": "This code will expire in",
+            "helper_dont_received_code": "Don't received code?"
         }
     },
     "toggle":{
@@ -427,7 +446,8 @@
         "post": "Post",
         "profile": "Account",
         "order_check": "Order Checking",
-        "login": "Login"
+        "login": "Sign in to continue",
+        "reset_password": "Reset Password"
     },
     "section_title":{
         "view_by_another_auth": "Login with",

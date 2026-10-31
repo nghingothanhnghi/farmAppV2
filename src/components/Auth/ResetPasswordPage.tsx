@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import Form, { FormGroup, FormLabel, FormCodeInput, FormActions, FloatingLabelInput } from '../common/Form';
+import Form, { FormGroup, FormCodeInput, FormActions, FloatingLabelInput } from '../common/Form';
 import { IconCheck, IconX, IconEye, IconEyeOff, IconMail, IconArrowLeft } from '@tabler/icons-react';
 import Button from '../common/Button';
 import PageTitle from '../common/PageTitle';
@@ -138,12 +138,23 @@ const ResetPasswordPage: React.FC = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8 bg-mesh transition-colors duration-300">
-            <div className="w-full max-w-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl rounded-2xl p-6 sm:p-10 transition-colors duration-300">
+            <div className="
+            w-full max-w-xl 
+            border border-white/60 dark:border-white/10
+            bg-gradient-to-br from-white/90 via-blue-50/80 to-indigo-100/70
+          dark:from-gray-900/95 dark:via-slate-900/95 dark:to-indigo-950/80
+            shadow-xl shadow-indigo-900/5 dark:shadow-black/20
+            backdrop-blur-xl 
+            rounded-2xl 
+            p-6 sm:p-10 
+            transition-colors duration-300
+            "
+            >
                 <div className="mb-4 flex justify-start">
                     <Button
                         type="button"
                         variant="link"
-                        label="Back"
+                        label={t('btn.back')}
                         icon={<IconArrowLeft size={18} />}
                         onClick={handleBack}
                         disabled={loading}
@@ -153,17 +164,16 @@ const ResetPasswordPage: React.FC = () => {
                 </div>
 
                 <PageTitle
-                    title="Reset Password"
+                    title={t("page_title.reset_password")}
                     align="center"
                     justify='center'
                     width="full"
                 />
                 {step === 'email' && (
-                    <Form onSubmit={handleEmailSubmit} className="space-y-10 max-w-xl mx-auto">
+                    <Form onSubmit={handleEmailSubmit} className="space-y-10 w-full max-w-full sm:max-w-[380px] mx-auto">
                         <FormGroup className='flex flex-col gap-y-6'>
                             <div className='space-y-1 text-center'>
-                                <FormLabel htmlFor="email">Enter your email address to receive a 6-digit reset code.</FormLabel>
-                                <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Make sure it's the same email you used to register.</p>
+                                <p className="text-base/6 sm:text-sm/6 text-zinc-600 dark:text-zinc-400">{t('input.email.helper_email_reset_new_password_verify')}</p>
                             </div>
                             <div className='flex flex-col items-center w-full space-y-2'>
                                 <FloatingLabelInput
@@ -172,6 +182,7 @@ const ResetPasswordPage: React.FC = () => {
                                     label="Email"
                                     type="email"
                                     value={email}
+                                    placeholder={t('input.email.placeholder')}
                                     onChange={e => {
                                         setEmail(e.target.value);
                                         setFieldErrors(prev => ({ ...prev, email: '' })); // clear on input
@@ -179,34 +190,34 @@ const ResetPasswordPage: React.FC = () => {
                                     required
                                     icon={<IconMail size={18} />}
                                     iconPosition="left"
+                                    alwaysFloat
                                 />
                                 {fieldErrors.email && (
                                     <p className="text-red-500 text-xs">{fieldErrors.email}</p>
                                 )}
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
+                        <FormActions className='grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
                                 label={loading ? 'Sending...' : 'Send Code'}
-                                className='mx-auto min-w-[150px]'
+                                className='!w-full lg:!w-auto lg:min-w-[150px] lg:mx-auto'
                                 rounded='lg'
+                                size='lg'
                             />
                         </FormActions>
                     </Form>
                 )}
-
                 {step === 'verify' && (
-                    <Form onSubmit={handleCodeSubmit} className="space-y-10 max-w-xl mx-auto">
+                    <Form onSubmit={handleCodeSubmit} className="space-y-10 w-full max-w-full sm:max-w-[380px] mx-auto">
                         <FormGroup className='flex flex-col gap-y-6'>
                             <div className='space-y-1 text-center'>
-                                <FormLabel htmlFor="code">Please enter the 6-digit code we sent to your email</FormLabel>
-                                <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Only numbers are allowed.</p>
+                                <p className="text-base/6  sm:text-sm/6 text-zinc-600 dark:text-zinc-400">{t('input.digit_code.helper')}</p>
                             </div>
                             <div className='flex justify-center'>
                                 <div className='flex flex-col space-y-2'>
-                                    <p className="text-sm text-zinc-600 text-center dark:text-zinc-400">
-                                        ⏳ This code will expire in <strong className='text-red-500'>{formatTimeCountDown(expirationTime)}</strong>.
+                                    <p className="text-sm text-zinc-500 dark:text-zinc-500 text-center">
+                                        ⏳ {t('input.digit_code.helper_expired_code')} <strong className='text-red-500'>{formatTimeCountDown(expirationTime)}</strong>.
                                     </p>
                                     <FormCodeInput
                                         id="code"
@@ -216,11 +227,11 @@ const ResetPasswordPage: React.FC = () => {
                                         disabled={loading || expirationTime <= 0}
                                     />
                                     <div className='flex align-middle justify-between'>
-                                        <span className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">Don't received code?</span>
+                                        <span className="text-base/6 text-zinc-500 dark:text-zinc-500 sm:text-sm/6">{t('input.digit_code.helper_dont_received_code')}</span>
                                         <Button
                                             type="button"
                                             variant="link"
-                                            label="Resend Code"
+                                            label={t('btn.resend_code')}
                                             onClick={() => handleResendCode()}
                                             disabled={loading || expirationTime <= 0}
                                             rounded='lg'
@@ -230,26 +241,26 @@ const ResetPasswordPage: React.FC = () => {
                                 </div>
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
+                        <FormActions className='grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
-                                label={loading ? 'Verifying...' : 'Verify Code'}
-                                className='mx-auto'
+                                label={loading ? 'Verifying...' : t('btn.verify_code')}
+                                className='!w-full lg:!w-auto lg:min-w-[150px] lg:mx-auto'
                                 rounded='lg'
+                                size='lg'
                             />
                         </FormActions>
                     </Form>
                 )}
 
                 {step === 'reset' && (
-                    <Form onSubmit={handleResetSubmit} className="space-y-10 max-w-xl mx-auto">
+                    <Form onSubmit={handleResetSubmit} className="space-y-10 w-full max-w-full sm:max-w-[380px] mx-auto">
                         <FormGroup className='flex flex-col gap-y-6'>
                             <div className='space-y-1 text-center'>
-                                <FormLabel htmlFor="newPassword">Create a New Password</FormLabel>
-                                <p className="text-base/6 text-zinc-500 sm:text-sm/6 dark:text-zinc-400">To keep your account secure, please create a new password. Make sure it’s at least 8 characters long and includes a mix of letters, numbers, and symbols.</p>
+                                <p className="text-base/6 sm:text-sm/6 text-zinc-600 dark:text-zinc-400">{t('input.new_password.helper')}</p>
                             </div>
                             <div>
-                                <div className='relative mx-auto max-w-[300px]'>
+                                <div className='relative'>
                                     <FloatingLabelInput
                                         name="newPassword"
                                         id="newPassword"
@@ -298,12 +309,13 @@ const ResetPasswordPage: React.FC = () => {
                                 )}
                             </div>
                         </FormGroup>
-                        <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 gap-4'>
+                        <FormActions className='grid grid-cols-1 gap-4'>
                             <Button
                                 type="submit"
                                 label={loading ? 'Resetting...' : 'Ok'}
-                                className='mx-auto'
+                                className='!w-full lg:!w-auto lg:min-w-[150px] lg:mx-auto'
                                 rounded='lg'
+                                size='lg'
                             />
                         </FormActions>
                     </Form>

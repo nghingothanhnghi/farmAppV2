@@ -66,7 +66,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
       label: (
         <div className="flex items-center gap-2">
           <span>🌐</span>
-          <span>All ({systemStatus?.actuators.length || 0})</span>
+          <span>{t('select.actuators_filter.all')} ({systemStatus?.actuators.length || 0})</span>
         </div>
       ),
     },
@@ -113,7 +113,7 @@ const MultiActuatorControlPanel: React.FC<MultiActuatorControlPanelProps> = ({
                     // 🌐 Show "All" label
                     <div className="flex items-center gap-2">
                       <span>🌐</span>
-                      <span>All ({systemStatus?.actuators.length || 0})</span>
+                      <span>{t('select.actuators_filter.all')} ({systemStatus?.actuators.length || 0})</span>
                     </div>
                   )
                   : (() => {
