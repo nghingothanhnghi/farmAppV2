@@ -26,6 +26,8 @@ interface SmartHomeViewProps {
 
 const DEFAULT_CONTROL_ROLES = ['admin', 'super_admin', 'moderator', 'user'];
 
+const ACTIVE_DEVICE_KEY = 'smartHome.activeDeviceId';
+
 const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     deviceId,
     allowedRoles = DEFAULT_CONTROL_ROLES,
@@ -38,16 +40,37 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
     // ✅ Reuse existing role/permission hook — no new permission system
     const canControl = useHasAnyRole(allowedRoles);
 
-    // Local selection state — starts from the prop/route param, falls back to first device
-    const [activeDeviceId, setActiveDeviceId] = useState<number | null>(deviceId ?? null);
+    const [activeDeviceId, setActiveDeviceId] = useState<number | null>(() => {
+        if (deviceId) return deviceId;
+
+        const savedId = localStorage.getItem(ACTIVE_DEVICE_KEY);
+        return savedId ? Number(savedId) : null;
+    });
 
     useEffect(() => {
         if (deviceId) {
             setActiveDeviceId(deviceId);
-        } else if (!activeDeviceId && deviceStatusList.length > 0) {
+            return;
+        }
+
+        if (deviceStatusList.length === 0) return;
+
+        // Keep the saved device if it still exists.
+        const savedDeviceExists = deviceStatusList.some(
+            (d) => d.device_id === activeDeviceId
+        );
+
+        if (!savedDeviceExists) {
             setActiveDeviceId(deviceStatusList[0].device_id);
         }
     }, [deviceId, deviceStatusList, activeDeviceId]);
+
+    // Persist selection whenever it changes.
+    useEffect(() => {
+        if (activeDeviceId !== null) {
+            localStorage.setItem(ACTIVE_DEVICE_KEY, String(activeDeviceId));
+        }
+    }, [activeDeviceId]);
 
     const device: SystemStatusPerDevice | null = useMemo(() => {
         if (!deviceStatusList.length) return null;
@@ -126,11 +149,6 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
         };
     }, [device?.actuators]);
 
-    // const refreshScheduleCount = (actuatorId: number) => {
-    //     scheduleActions.fetchByActuator(actuatorId).then((data) => {
-    //         setScheduleCounts((prev) => ({ ...prev, [actuatorId]: data?.length ?? 0 }));
-    //     });
-    // };
     const refreshScheduleCount = (id: number) =>
         scheduleActions.fetchByActuator(id).then((data) =>
             setSchedulesByActuator((prev) => ({ ...prev, [id]: data ?? [] })));
@@ -157,7 +175,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
             <div className="flex items-center justify-between px-1 gap-3">
                 <div className="flex items-center gap-2 min-w-0">
                     <IconHome2 size={22} className="text-gray-500 dark:text-gray-400 shrink-0" />
-                    <h1 className="text-xl font-semibold text-gray-900 dark:text-white truncate">
+                    <h1 className="text-sm lg:text-xl font-semibold text-gray-900 dark:text-white truncate">
                         {device.location || device.device_name}
                     </h1>
                 </div>
