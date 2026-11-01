@@ -99,7 +99,17 @@ const SettingsPanel: React.FC<SettingsPanelProps> = ({
   };
 
   return (
-    <Form onSubmit={handleSave} className="space-y-10 mx-auto max-w-4xl bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
+    <Form 
+    onSubmit={handleSave} 
+    className="
+    space-y-10 
+    mx-auto max-w-4xl 
+    bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 
+    border border-gray-100 dark:border-white/5
+    rounded-lg
+    shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] 
+    p-4
+    ">
       {/* Threshold Settings */}
       <h3 className="text-base font-medium text-gray-700 dark:text-gray-500 mb-6">Alert Thresholds</h3>
       {/* Moisture Minimum */}

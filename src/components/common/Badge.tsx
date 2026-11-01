@@ -1,10 +1,25 @@
 // src/components/common/Badge.tsx
 import React from 'react';
 
+export type BadgeVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'warning'
+  | 'info'
+  | 'gray';
+
+export type BadgeSize =
+  | 'xsmall'
+  | 'small'
+  | 'medium'
+  | 'large';  
+
 type BadgeProps = {
   label?: string;
-  variant?: 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'gray';
-  size?: 'xsmall' | 'small' | 'medium' | 'large';
+  variant?: BadgeVariant;
+  size?: BadgeSize;
   className?: string;
   children?: React.ReactNode;
 };
@@ -19,7 +34,7 @@ const variantClasses = {
   gray: 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200',
 };
 
-const sizeClasses = {
+const sizeClasses: Record<BadgeSize, string> = {
   xsmall: 'text-[10px] px-1.5 py-[1px]',
   small: 'text-xs px-2 py-0.5',
   medium: 'text-sm px-3 py-1',
@@ -33,12 +48,10 @@ const Badge: React.FC<BadgeProps> = ({
   className = '',
   children,
 }) => {
-  const variantClass = variantClasses[variant] || variantClasses.gray;
-  const sizeClass = sizeClasses[size] || sizeClasses.small;
 
   return (
     <span
-      className={`inline-flex items-center rounded-full font-medium ${variantClass} ${sizeClass} ${className}`}
+      className={`inline-flex items-center rounded-full font-medium ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
     >
       {children ?? label}
     </span>

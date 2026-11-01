@@ -5,6 +5,7 @@ import Badge from "../../../common/Badge";
 import EmptyState from "../../../common/EmptyState";
 import { formatLabel, severityVariant } from "../../../../utils/aiVision";
 import type { PlantAnomaly } from "../../../../models/interfaces/AiVision";
+import { useTranslation } from "react-i18next";
 
 interface Props {
     anomalies: PlantAnomaly[];
@@ -124,11 +125,13 @@ const renderEvidenceValue = (value: unknown) => {
     return formatValue(value);
 };
 
-const AnomaliesCard: React.FC<Props> = ({ onResolve, anomalies }) => (
+const AnomaliesCard: React.FC<Props> = ({ onResolve, anomalies }) => {
+    const {t} = useTranslation();
+    return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-3 flex items-center gap-2">
             <IconAlertTriangle size={16} />
-            Anomalies
+            {t('hydro_system.cards.growth_prediction.label')}
 
             {anomalies.length > 0 && (
                 <span className="text-xs text-gray-400 font-normal">
@@ -234,7 +237,7 @@ const AnomaliesCard: React.FC<Props> = ({ onResolve, anomalies }) => (
             </div>
         )}
     </div>
-);
+)};
 
 export default AnomaliesCard;
 

@@ -1,13 +1,6 @@
 // src/utils/aiVision.ts
+import type { BadgeVariant } from '../components/common/Badge';
 
-export type BadgeVariant =
-    | "primary"
-    | "secondary"
-    | "success"
-    | "danger"
-    | "warning"
-    | "info"
-    | "gray";
 
 export const severityVariant: Record<string, BadgeVariant> = {
     low: "info",
@@ -31,6 +24,12 @@ export const getRecommendationVariant = (
         : status === "dismissed"
             ? "gray"
             : "warning";
+
+export const getHealthVariant = (status?: string): BadgeVariant =>
+  status === 'healthy' || status === 'normal'
+    ? 'success'
+    : 'warning';            
+
 
 export const formatLabel = (value: string) =>
     value.replace(/_/g, " ");

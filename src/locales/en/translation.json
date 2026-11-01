@@ -587,6 +587,26 @@
                 "label": "System Scheduler",
                 "description": "Start/stop/restart the automation scheduler for this device",
                 "noData": "No scheduled tasks"
+            },
+            "growth_prediction": {
+                "label": "Growth Prediction",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No growth prediction detected."          
+            },
+            "health_growth": {
+                "label": "Health & Growth",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No health & growth detected."          
+            },
+            "anomalies": {
+                "label": "Anomalies",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No anomalies detected."          
+            },
+            "recommendations": {
+                "label": "Recommendations",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No recommendations detected."          
             }
         },
         "stages":{

@@ -587,7 +587,27 @@
                 "label": "Lịch trình hệ thống",
                 "description": "Lịch hoạt động & tự động hóa",
                 "noData": "Chưa có nhiệm vụ được lên lịch"
-            }            
+            },
+            "growth_prediction": {
+                "label": "Dự báo tăng trưởng",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No growth prediction detected."          
+            },
+            "health_growth": {
+                "label": "Sức khỏe & Sự phát triển",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No health & growth detected."          
+            },
+            "anomalies": {
+                "label": "Các điểm bất thường",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "Không phát hiện các điểm bất thường."          
+            },
+            "recommendations": {
+                "label": "Các khuyến nghị",
+                "description": "Start/stop/restart the automation scheduler for this device",
+                "noData": "No recommendations detected."          
+            }                    
         },        
         "stages":{
             "stages_title": "giai đoạn phát triển",

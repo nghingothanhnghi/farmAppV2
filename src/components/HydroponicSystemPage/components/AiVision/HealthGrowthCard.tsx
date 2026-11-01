@@ -2,6 +2,7 @@
 import React from "react";
 import { IconLeaf } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
+import { getHealthVariant } from "../../../../utils/aiVision";
 
 interface Props {
     plant: {
@@ -108,12 +109,7 @@ const HealthGrowthCard: React.FC<Props> = ({
 
                             <Badge
                                 label={health.status}
-                                variant={
-                                    health.status === "healthy" ||
-                                        health.status === "normal"
-                                        ? "success"
-                                        : "warning"
-                                }
+                                variant={getHealthVariant(health.status)}
                                 size="small"
                                 className="mt-1"
                             />
@@ -209,7 +205,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                                 </p>
                             </div>
 
-                            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                            <div className="grid grid-cols-3 sm:grid-cols-2 gap-2">
                                 {sensors.map((sensor) => (
                                     <div
                                         key={sensor.label}

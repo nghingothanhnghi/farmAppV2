@@ -1,30 +1,10 @@
 import React from "react";
 import type { GrowthPrediction } from "../../../../models/interfaces/AiVision";
+import { formatDate, formatNumber } from "../../../../utils/formatters";
 
 interface Props {
     prediction: GrowthPrediction | null;
 }
-
-const formatDate = (value?: string | null) => {
-    if (!value) return "—";
-
-    return new Date(value).toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-    });
-};
-
-const formatNumber = (
-    value?: number | null,
-    maximumFractionDigits = 1
-) => {
-    if (value == null || Number.isNaN(value)) return "—";
-
-    return value.toLocaleString(undefined, {
-        maximumFractionDigits,
-    });
-};
 
 const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
     if (!prediction) {
