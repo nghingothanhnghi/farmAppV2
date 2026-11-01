@@ -40,7 +40,7 @@ const NextScheduleLabel: React.FC<Props> = ({ schedules, className = '' }) => {
   return (
     <p className={`flex items-center gap-1 text-[0.625rem] text-gray-500 dark:text-gray-400 ${className}`}>
       <IconClock size={10} />
-      {t('schedule.next')}: {action} · {dayText} {time}
+      {dayText} {time} · {t('schedule.next')}: {action}
     </p>
   );
 };

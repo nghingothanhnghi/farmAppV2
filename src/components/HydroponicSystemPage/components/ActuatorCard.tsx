@@ -5,7 +5,7 @@ import ButtonGroup from '../../common/ButtonGroup';
 import Badge from '../../common/Badge';
 import Spinner from '../../common/Spinner';
 import { FormToggle } from '../../../components/common/Form';
-import { IconClock, IconTrash, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop, IconAlertCircle } from '@tabler/icons-react';
+import { IconClock, IconTrash, IconEdit, IconChevronUp, IconChevronDown, IconPlayerStop, IconAlertCircle, IconExclamationCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useSchedule } from '../../../hooks/useSchedule';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
@@ -292,16 +292,18 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
 
 
                         </div>
-                        <p className="text-[0.625rem] text-gray-500">
-                            Pin {actuator.pin} • Port {actuator.port}
-                        </p>
                         {modeManual === 'AUTO' && actuator.is_active && (
                             <NextScheduleLabel schedules={schedules} />
                         )}
+                        <p className="text-[0.625rem] text-gray-500">
+                            Pin {actuator.pin} • Port {actuator.port}
+                        </p>
+
                         <p
-                            className={`text-[0.625rem] ${reportedClass}`}
+                            className={`text-[0.625rem] ${reportedClass} flex gap-1 items-center`}
                             title={actuator.reported_state_error || undefined}
                         >
+                            <IconExclamationCircle size={10} />
                             {reportedLabel}
                             {actuator.reported_state_at && !reportPending && (
                                 <> • {formatDateTime(actuator.reported_state_at)}</>

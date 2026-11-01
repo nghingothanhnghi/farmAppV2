@@ -1,6 +1,6 @@
 // src/components/HydroponicSystemPage/components/SmartHomeView.tsx
 import React, { useMemo, useState, useEffect } from 'react';
-import { IconHome2, IconChevronUp, IconChevronDown, IconPlayerStop, IconArtboard, IconClock } from '@tabler/icons-react';
+import { IconHome2, IconChevronUp, IconChevronDown, IconPlayerStop, IconArtboard, IconClock, IconExclamationCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useHydroSystem } from '../../../hooks/useHydroSystem';
 import { useSchedule } from '../../../hooks/useSchedule';
@@ -420,13 +420,16 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                     <NextScheduleLabel schedules={actuatorSchedules} />
                                 )}
                                 <p
-                                    className={`text-[10px] ${reportedClass}`}
+                                    className={`text-[10px] flex items-center gap-1 ${reportedClass}`}
                                     title={actuator.reported_state_error || undefined}
                                 >
-                                    {reportedLabel}
+                                    <IconExclamationCircle size={10} />
+                                    
                                     {actuator.reported_state_at && !reportPending && (
-                                        <> • {formatDateTime(actuator.reported_state_at)}</>
+                                        <> {formatDateTime(actuator.reported_state_at)} · </>
                                     )}
+
+                                    {reportedLabel}
                                 </p>
                             </div>
                         </div>
