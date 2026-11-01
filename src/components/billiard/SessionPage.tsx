@@ -24,7 +24,8 @@ import PaymentHistory from './components/PaymentHistory';
 import { STRIPE_ENABLED } from '../../config/constants';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useCurrentShift } from '../../hooks/useShifts';
-import { formatElapsed, getBillState, getWaitingTransferLine, isAwaitingCard, parseUtc } from '../../utils/billiard';
+import { parseUtc } from '../../utils/formatters';
+import { formatElapsed, getBillState, getWaitingTransferLine, isAwaitingCard } from '../../utils/billiard';
 
 const SessionPage: React.FC = () => {
   const { t } = useTranslation();

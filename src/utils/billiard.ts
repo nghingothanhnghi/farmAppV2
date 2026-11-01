@@ -4,7 +4,6 @@ import { parseApiErrors } from '../utils/errorUtils';
 import { parseUtc } from "./formatters";
 import type { BillResponse, BillState, PaymentLine } from '../models/interfaces/Billiard';
 
-
 export const DEFAULT_CURRENCY = 'VND';
 
 const pad = (n: number) => String(n).padStart(2, '0');
