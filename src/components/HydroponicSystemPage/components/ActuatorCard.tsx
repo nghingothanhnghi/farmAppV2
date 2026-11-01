@@ -17,6 +17,7 @@ import { HoverSlideIn } from "../../common/HoverSlideIn";
 import ScheduleManager from './ScheduleManager';
 import ActuatorModalConfig from './ActuatorModalConfig';
 import Modal from '../../common/Modal';
+import { formatDateTime } from '../../../utils/formatters';
 
 interface ActuatorCardProps {
     actuator: HydroActuator;
@@ -303,7 +304,7 @@ const ActuatorCard: React.FC<ActuatorCardProps> = ({
                         >
                             {reportedLabel}
                             {actuator.reported_state_at && !reportPending && (
-                                <> • {new Date(actuator.reported_state_at).toLocaleTimeString()}</>
+                                <> • {formatDateTime(actuator.reported_state_at)}</>
                             )}
                         </p>
                         {reportFailed && (

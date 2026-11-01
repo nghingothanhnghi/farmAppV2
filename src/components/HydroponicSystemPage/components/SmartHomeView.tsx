@@ -15,6 +15,7 @@ import type { HydroActuator, SystemStatusPerDevice } from '../../../models/inter
 import type { HydroScheduleOut } from '../../../models/interfaces/HydroSchedule';
 import ButtonGroup from '../../common/ButtonGroup';
 import NextScheduleLabel from './NextScheduleLabel';
+import { formatDateTime } from '../../../utils/formatters';
 
 interface SmartHomeViewProps {
     /** Optional — pick a specific device. Defaults to the first device found. */
@@ -406,7 +407,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                 >
                                     {reportedLabel}
                                     {actuator.reported_state_at && !reportPending && (
-                                        <> • {new Date(actuator.reported_state_at).toLocaleTimeString()}</>
+                                        <> • {formatDateTime(actuator.reported_state_at)}</>
                                     )}
                                 </p>
                             </div>
