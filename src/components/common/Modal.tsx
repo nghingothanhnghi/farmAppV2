@@ -36,22 +36,25 @@ const Modal: React.FC<ModalProps> = ({
 
   // Set a dynamic class for the modal size
   const modalSizeClasses = {
-    xsmall: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-3/4 md:w-2/3 lg:w-1/4`,
-    small: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-4/5 md:w-3/4 lg:w-1/3`,
-    medium: `w-full ${position === 'bottom' ? '' : 'mx-5'} sm:w-5/6 md:w-4/5 lg:w-1/2`,
+    xsmall: 'w-full mx-0 sm:mx-5 sm:w-3/4 md:w-2/3 lg:w-1/4',
+    small: 'w-full mx-0 sm:mx-5 sm:w-4/5 md:w-3/4 lg:w-1/3',
+    medium: 'w-full mx-0 sm:mx-5 sm:w-5/6 md:w-4/5 lg:w-1/2',
     large: 'w-full sm:w-11/12 lg:w-4/5',
   };
 
   // Positioning logic
   const positionClasses = {
-    center: 'items-center', // Center vertically
-    bottom: 'items-end', // Stick to bottom with padding
+    center: 'items-center',
+    bottom: 'items-end sm:items-center',
   };
 
   return ReactDOM.createPortal(
-    <div className={`fixed inset-0 z-40 flex justify-center 
-    ${positionClasses[position] || positionClasses.center} bg-white/30 dark:bg-gray-900/30 backdrop-blur-xs
-    transition-opacity duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'
+    <div className={`
+      fixed inset-0 z-40 flex justify-center 
+      ${positionClasses[position] || positionClasses.center}
+    bg-white/30 dark:bg-gray-900/30 backdrop-blur-xs
+      transition-opacity duration-300 
+      ${isOpen ? 'opacity-100' : 'opacity-0'
       }
     `}
     >
@@ -71,7 +74,7 @@ const Modal: React.FC<ModalProps> = ({
 ${isOpen
             ? 'translate-y-0 opacity-100 scale-100'
             : position === 'bottom'
-              ? 'translate-y-full opacity-0'
+              ? 'translate-y-full sm:translate-y-0 sm:scale-95 opacity-0'
               : 'scale-95 opacity-0'
           }
 
@@ -81,7 +84,7 @@ ${isOpen
           }
 
     ${fullHeight
-            ? 'h-screen'
+            ? 'h-screen sm:h-screen'
             : 'max-h-[90vh]'
           }
 
