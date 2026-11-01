@@ -3,8 +3,9 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { IconLeaf } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
+import StatusCard from "../StatusCard";
 import { getHealthVariant } from "../../../../utils/aiVision";
-import { formatPercent } from "../../../../utils/formatters";
+import { formatPercent, formatDateTime } from "../../../../utils/formatters";
 
 interface Props {
     plant: {
@@ -23,7 +24,7 @@ const HealthGrowthCard: React.FC<Props> = ({
     latestGrowth,
 }) => {
 
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     const sensorSnapshot = health?.sensor_snapshot;
 
@@ -76,16 +77,17 @@ const HealthGrowthCard: React.FC<Props> = ({
 
     return (
         <div className="h-full row-span-2 bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
-            <h4 className="text-sm font-medium flex items-center gap-2">
-                <IconLeaf size={16} />
+            <div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                    <IconLeaf size={16} />
+                    {t('hydro_system.cards.health_growth.label')}
+                </h3>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    {plant.id && `(Plant ID: ${plant.id})`}
 
-                {t('hydro_system.cards.health_growth.label')}
-
-                {plant.id && `(Plant ID: ${plant.id})`}
-
-                {plant.species && ` - ${plant.species}`}
-            </h4>
-
+                    {plant.species && ` - ${plant.species}`}
+                </p>
+            </div>
             {!health ? (
                 <p className="text-xs text-gray-500">
                     No health record yet.
@@ -93,42 +95,43 @@ const HealthGrowthCard: React.FC<Props> = ({
             ) : (
                 <div className="space-y-4 ">
                     {/* Health summary */}
-                    <div className="grid grid-cols-3 gap-3">
-                        <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                Health Score
-                            </p>
-
-                            <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                {health.health_score}
-                                <span className="text-xs text-gray-400">
-                                    /100
-                                </span>
-                            </p>
-                        </div>
-
-                        <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                Status
-                            </p>
-
-                            <Badge
-                                label={health.status}
-                                variant={getHealthVariant(health.status)}
-                                size="small"
-                                className="mt-1"
+                    <div className="grid grid-cols-2 gap-3">
+                        {/* Left column: Health Score */}
+                        <StatusCard
+                            title="Health Score"
+                            value={health.health_score ?? '--'}
+                            unit="/100"
+                            status={
+                                health.health_score < 50
+                                    ? 'error'
+                                    : health.health_score < 75
+                                        ? 'warning'
+                                        : 'normal'
+                            }
+                            compact
+                            className="border"
+                        />
+                        {/* Right column: Status + Confidence */}
+                        <div className="grid grid-rows-2 gap-3">
+                            <StatusCard
+                                title="Status"
+                                value=""
+                                compact
+                            >
+                                <Badge
+                                    label={health.status}
+                                    variant={getHealthVariant(health.status)}
+                                    size="small"
+                                />
+                            </StatusCard>
+                            <StatusCard
+                                title="Confidence"
+                                value={formatPercent(health.confidence)}
+                                compact
+                                status="normal"
                             />
                         </div>
 
-                        <div className="rounded-lg bg-gray-50 dark:bg-gray-800/80 p-3 text-center">
-                            <p className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                                Confidence
-                            </p>
-
-                            <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                {formatPercent(health.confidence)}
-                            </p>
-                        </div>
                     </div>
 
                     {/* Visual indicators */}
@@ -263,9 +266,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                             </span>
 
                             <span>
-                                {new Date(
-                                    health.created_at
-                                ).toLocaleString()}
+                                {formatDateTime(health.created_at)}
                             </span>
                         </div>
                     )}

@@ -10,6 +10,7 @@ interface StatusCardProps {
   trend?: 'up' | 'down' | 'stable';
   className?: string;
   children?: React.ReactNode;
+  compact?: boolean;
 }
 
 const StatusCard: React.FC<StatusCardProps> = ({
@@ -20,7 +21,8 @@ const StatusCard: React.FC<StatusCardProps> = ({
   icon,
   trend,
   className,
-  children
+  children,
+  compact = false,
 }) => {
   const getStatusColor = () => {
     switch (status) {
@@ -47,14 +49,21 @@ const StatusCard: React.FC<StatusCardProps> = ({
   };
 
   return (
-    <div className={`p-4 rounded-lg border-2 ${getStatusColor()} transition-all duration-200 hover:shadow-md h-full flex flex-col ${className}`}>
+    <div className={`
+        ${compact ? 'p-3' : 'p-4'}
+        rounded-lg border-2 ${getStatusColor()}
+        transition-all duration-200 hover:shadow-md
+        h-full flex flex-col
+        ${className}
+      `}
+    >
       <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">{title}</h3>
         {icon && <div className="text-gray-600 dark:text-gray-300">{icon}</div>}
       </div>
       <div className="flex items-end justify-between">
         <div className="flex items-baseline">
-          <span className="text-2xl font-bold text-gray-900 dark:text-gray-100">{value}</span>
+          <span className={`${compact ? 'text-xl' : 'text-2xl'} font-bold text-gray-900 dark:text-gray-100`}>{value}</span>
           {unit && <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">{unit}</span>}
         </div>
         {getTrendIcon()}
