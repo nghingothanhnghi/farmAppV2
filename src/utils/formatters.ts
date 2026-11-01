@@ -96,6 +96,22 @@ export const formatDateVN = (dateString: string | Date): string => {
   });
 };
 
+
+/**
+ * Parses UTC ISO strings, treating timestamps without timezone
+ * information as UTC.
+ */
+export const parseUtc = (iso: string): number => {
+    const hasZone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(iso);
+    return new Date(hasZone ? iso : `${iso}Z`).getTime();
+};
+
+/**
+ * Formats a UTC ISO string into local date and time.
+ */
+export const formatDateTime = (iso?: string | null): string =>
+    iso ? new Date(parseUtc(iso)).toLocaleString() : "—";
+
 // ==============================
 // Date & Time - Conversion
 // ==============================
@@ -118,6 +134,26 @@ export const datetimeLocalToIso = (value: string): string | undefined => {
 };
 
 
+export const formatValue = (value: unknown): string => {
+    if (value === null || value === undefined) {
+        return "—";
+    }
 
+    if (typeof value === "number") {
+        return value.toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+        });
+    }
+
+    if (typeof value === "boolean") {
+        return value ? "Yes" : "No";
+    }
+
+    if (typeof value === "string") {
+        return value;
+    }
+
+    return String(value);
+};
 
 

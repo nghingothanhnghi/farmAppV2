@@ -1,19 +1,11 @@
-// src/components/billiard/utils.ts
+// src/utils/billiard.ts
 import { CurrencyConfig } from "../constants/currency";
 import { parseApiErrors } from '../utils/errorUtils';
+import { parseUtc } from "./formatters";
 import type { BillResponse, BillState, PaymentLine } from '../models/interfaces/Billiard';
 
+
 export const DEFAULT_CURRENCY = 'VND';
-
-/** UTC ISO string (with or without trailing "Z") -> epoch ms. */
-export const parseUtc = (iso: string): number => {
-  const hasZone = /([zZ]|[+-]\d{2}:?\d{2})$/.test(iso);
-  return new Date(hasZone ? iso : `${iso}Z`).getTime();
-};
-
-/** UTC ISO -> local, human readable. */
-export const formatDateTime = (iso?: string | null): string =>
-  iso ? new Date(parseUtc(iso)).toLocaleString() : '—';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 

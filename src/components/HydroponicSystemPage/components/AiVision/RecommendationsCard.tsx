@@ -1,8 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { IconBulb } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
 import Button from "../../../common/Button";
 import EmptyState from "../../../common/EmptyState";
+import { formatPercent } from "../../../../utils/formatters";
 import { getRecommendationVariant, severityVariant } from "../../../../utils/aiVision";
 import type {
     AIRecommendation,
@@ -17,11 +19,14 @@ interface Props {
     ) => void | Promise<void>;
 }
 
-const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus }) => (
+const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus }) => {
+    const {t} = useTranslation();
+    return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-3 flex items-center gap-2">
             <IconBulb size={16} />
-            Recommendations
+
+            {t('hydro_system.cards.recommendations.label')}
 
             {recommendations.length > 0 && (
                 <span className="text-xs text-gray-400 font-normal">
@@ -73,13 +78,13 @@ const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus 
                                     <div
                                         className="h-full bg-blue-500 dark:bg-blue-400"
                                         style={{
-                                            width: `${Math.round(r.confidence * 100)}%`,
+                                            width: formatPercent(r.confidence),
                                         }}
                                     />
                                 </div>
 
                                 <span className="text-[10px] text-gray-500 dark:text-gray-400 shrink-0">
-                                    {Math.round(r.confidence * 100)}% confidence
+                                    {formatPercent(r.confidence)} confidence
                                 </span>
                             </div>
                         )}
@@ -133,6 +138,6 @@ const RecommendationsCard: React.FC<Props> = ({ recommendations, onUpdateStatus 
             </div>
         )}
     </div>
-);
+)};
 
 export default RecommendationsCard;

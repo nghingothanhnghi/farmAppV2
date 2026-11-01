@@ -12,7 +12,8 @@ import LinearProgress from '../common/LinearProgress';
 import { FormInput } from '../common/Form';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useBankFeed } from '../../hooks/useBankFeed';
-import { formatDateTime, formatMoneyString } from '../../utils/billiard';
+import { formatDateTime } from '../../utils/formatters';
+import { formatMoneyString } from '../../utils/billiard';
 import AssignTransactionModal from './components/AssignTransactionModal';
 import type { BankTransaction, BankTxStatus } from '../../models/interfaces/BankFeed';
 

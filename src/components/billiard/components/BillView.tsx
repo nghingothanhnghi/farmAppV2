@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import Badge from '../../common/Badge';
 import FoodDrinkImg from '../../../assets/icons/food_drink-icon.png'
 import EmptyState from '../../common/EmptyState';
-import { formatDateTime, formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import { getPricingSummary } from '../../../utils/pricing';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 

@@ -5,7 +5,8 @@ import { IconSportBillard, IconTimeDuration30 } from '@tabler/icons-react';
 import Button from '../../common/Button';
 import { FormGroup, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import { billiardService } from '../../../services/billiard_service';
-import { DEFAULT_CURRENCY, billiardErrorMessage, formatDateTime, formatMoneyString } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { DEFAULT_CURRENCY, billiardErrorMessage, formatMoneyString } from '../../../utils/billiard';
 import { describePricingParams, getBillingPolicyLabel } from '../../../utils/pricing';
 import type { BilliardTable, PricingQuote } from '../../../models/interfaces/Billiard';
 

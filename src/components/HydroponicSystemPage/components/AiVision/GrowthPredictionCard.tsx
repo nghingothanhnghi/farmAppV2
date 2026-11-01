@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import type { GrowthPrediction } from "../../../../models/interfaces/AiVision";
 import { formatDate, formatNumber } from "../../../../utils/formatters";
 
@@ -7,11 +8,13 @@ interface Props {
 }
 
 const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
+    const {t} = useTranslation();
+
     if (!prediction) {
         return (
             <div className="rounded-xl border border-gray-200 bg-white p-5 dark:border-gray-700 dark:bg-gray-800">
                 <div className="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Growth Prediction
+                    {t('hydro_system.cards.growth_prediction.label')}
                 </div>
 
                 <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -26,7 +29,7 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
             <div className="mb-4 flex items-start justify-between gap-3">
                 <div>
                     <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        Growth Prediction
+                        {t('hydro_system.cards.growth_prediction.label')}
                     </h3>
 
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">

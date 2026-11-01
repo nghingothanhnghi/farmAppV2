@@ -1,6 +1,7 @@
 // src/components/HydroponicSystemPage/components/AnomaliesCard.tsx
 import React from "react";
 import { IconAlertTriangle } from "@tabler/icons-react";
+import { formatValue } from "../../../../utils/formatters";
 import Badge from "../../../common/Badge";
 import EmptyState from "../../../common/EmptyState";
 import { formatLabel, severityVariant } from "../../../../utils/aiVision";
@@ -11,28 +12,6 @@ interface Props {
     anomalies: PlantAnomaly[];
     onResolve?: (anomalyId: number) => void | Promise<void>;
 }
-
-const formatValue = (value: unknown): string => {
-    if (value === null || value === undefined) {
-        return "—";
-    }
-
-    if (typeof value === "number") {
-        return value.toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-        });
-    }
-
-    if (typeof value === "boolean") {
-        return value ? "Yes" : "No";
-    }
-
-    if (typeof value === "string") {
-        return value;
-    }
-
-    return String(value);
-};
 
 const renderEvidenceValue = (value: unknown) => {
     if (Array.isArray(value)) {
@@ -131,7 +110,7 @@ const AnomaliesCard: React.FC<Props> = ({ onResolve, anomalies }) => {
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
         <h3 className="text-sm font-medium text-gray-700 dark:text-gray-100 mb-3 flex items-center gap-2">
             <IconAlertTriangle size={16} />
-            {t('hydro_system.cards.growth_prediction.label')}
+            {t('hydro_system.cards.anomalies.label')}
 
             {anomalies.length > 0 && (
                 <span className="text-xs text-gray-400 font-normal">

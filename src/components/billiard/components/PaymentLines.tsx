@@ -6,7 +6,8 @@ import React, { useState } from 'react';
 import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
-import { formatDateTime, formatMoneyString, getBillState, toAmount } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { formatMoneyString, getBillState, toAmount } from '../../../utils/billiard';
 import type { BillResponse, LineStatus, PaymentLine } from '../../../models/interfaces/Billiard';
 
 interface Props {

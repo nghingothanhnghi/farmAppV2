@@ -2,7 +2,8 @@
 // "History" panel of the payments guide: every payment action on the bill, newest last.
 import React, { useState } from 'react';
 import { usePaymentEvents } from '../../../hooks/usePaymentEvents';
-import { formatDateTime, formatMoneyString } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { formatMoneyString } from '../../../utils/billiard';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 
 const EVENT_LABEL: Record<string, string> = {

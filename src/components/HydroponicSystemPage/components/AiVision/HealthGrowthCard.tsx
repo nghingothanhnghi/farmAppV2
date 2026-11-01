@@ -1,8 +1,10 @@
 // src/components/HydroponicSystemPage/components/HealthGrowthCard.tsx
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { IconLeaf } from "@tabler/icons-react";
 import Badge from "../../../common/Badge";
 import { getHealthVariant } from "../../../../utils/aiVision";
+import { formatPercent } from "../../../../utils/formatters";
 
 interface Props {
     plant: {
@@ -20,6 +22,9 @@ const HealthGrowthCard: React.FC<Props> = ({
     health,
     latestGrowth,
 }) => {
+
+    const {t} = useTranslation();
+
     const sensorSnapshot = health?.sensor_snapshot;
 
     const sensors = sensorSnapshot
@@ -74,7 +79,7 @@ const HealthGrowthCard: React.FC<Props> = ({
             <h4 className="text-sm font-medium flex items-center gap-2">
                 <IconLeaf size={16} />
 
-                Health & Growth
+                {t('hydro_system.cards.health_growth.label')}
 
                 {plant.id && `(Plant ID: ${plant.id})`}
 
@@ -121,11 +126,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                             </p>
 
                             <p className="text-lg font-bold text-gray-800 dark:text-gray-100">
-                                {health.confidence != null
-                                    ? `${Math.round(
-                                        health.confidence * 100
-                                    )}%`
-                                    : "N/A"}
+                                {formatPercent(health.confidence)}
                             </p>
                         </div>
                     </div>
@@ -174,10 +175,7 @@ const HealthGrowthCard: React.FC<Props> = ({
                                             </span>
 
                                             <span className="text-xs text-yellow-700 dark:text-yellow-400 font-medium">
-                                                {Math.round(
-                                                    issue.confidence * 100
-                                                )}
-                                                % confidence
+                                                {formatPercent(issue.confidence)} confidence
                                             </span>
                                         </div>
                                     )

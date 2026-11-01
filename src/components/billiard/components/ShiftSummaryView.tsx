@@ -2,7 +2,8 @@
 import React from 'react';
 import Badge from '../../common/Badge';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime, formatMoneyString, toAmount } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { formatMoneyString, toAmount } from '../../../utils/billiard';
 import type { Shift, ShiftSummary } from '../../../models/interfaces/CashDrawer';
 
 const Row: React.FC<{ label: string; value: React.ReactNode; bold?: boolean }> = ({ label, value, bold }) => (

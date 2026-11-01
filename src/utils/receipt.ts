@@ -1,7 +1,8 @@
 // src/utils/receipt.ts
 import type { TFunction } from 'i18next';
+import { formatDateTime } from './formatters';
 import {
-  formatDateTime, formatDuration, formatMoneyString, getBillState,
+  formatDuration, formatMoneyString, getBillState,
 } from './billiard';
 import { getPricingSummary } from './pricing';
 import type { BillResponse } from '../models/interfaces/Billiard';

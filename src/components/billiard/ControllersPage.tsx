@@ -8,7 +8,7 @@ import EmptyState from '../common/EmptyState';
 import LinearProgress from '../common/LinearProgress';
 import useHasAnyRole from '../../hooks/useHasAnyRole';
 import { useBilliardControllers } from '../../hooks/useBilliardControllers';
-import { formatDateTime } from '../../utils/billiard';
+import { formatDateTime } from '../../utils/formatters';
 import RegisterControllerModal from './components/RegisterControllerModal';
 import ControllerApiKeyModal from './components/ControllerApiKeyModal';
 import type { BilliardControllerStatus, ControllerRegisterResponse } from '../../models/interfaces/Billiard';

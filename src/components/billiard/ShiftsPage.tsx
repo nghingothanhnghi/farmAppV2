@@ -14,9 +14,9 @@ import { FormInput } from '../common/Form';
 import { useShifts } from '../../hooks/useShifts';
 import { shiftService } from '../../services/shiftService';
 import { useAlert } from '../../contexts/alertContext';
+import { formatDateTime } from '../../utils/formatters';
 import {
   billiardErrorMessage,
-  formatDateTime,
   formatMoneyString,
   formatNumber,
   parseWholeAmount,
