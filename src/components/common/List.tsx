@@ -17,17 +17,26 @@ const List: React.FC<ListProps> = ({
 }) => {
   const listClass =
     listStyle === 'disc'
-      ? 'list-disc list-inside'
+      ? 'list-disc list-outside pl-3.5'
       : listStyle === 'none'
-      ? 'list-none'
-      : '';
+        ? 'list-none'
+        : '';
 
   return (
     <ul className={`${listClass} ${className}`}>
       {items.map((item) => (
-        <li key={item.id} className="flex items-start gap-2 mb-1">
-          {showIcons && item.icon && <span className="mt-1">{item.icon}</span>}
-          <div>{item.content}</div>
+        <li
+          key={item.id}
+          className={showIcons ? 'mb-1' : 'mb-1'}
+        >
+          {showIcons && item.icon ? (
+            <span className="inline-flex items-center gap-2">
+              {item.icon}
+              <span>{item.content}</span>
+            </span>
+          ) : (
+            item.content
+          )}
         </li>
       ))}
     </ul>

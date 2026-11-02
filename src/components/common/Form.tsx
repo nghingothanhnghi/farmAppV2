@@ -223,7 +223,78 @@ export const FloatingLabelInput: React.FC<FloatingLabelInputProps> = ({
   );
 };
 
+interface FloatingLabelTextareaProps {
+  id: string;
+  label?: string;
+  placeholder?: string;
+  name?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  required?: boolean;
+  disabled?: boolean;
+  rows?: number;
+  className?: string;
+  alwaysFloat?: boolean;
+}
 
+export const FloatingLabelTextarea: React.FC<FloatingLabelTextareaProps> = ({
+  id,
+  label,
+  placeholder,
+  name,
+  value,
+  onChange,
+  required = false,
+  disabled = false,
+  rows = 3,
+  className = 'w-full min-w-0',
+  alwaysFloat = false,
+}) => {
+  const hasValue = String(value ?? '').length > 0;
+
+  return (
+    <div className={`relative min-w-0 ${className}`}>
+      <textarea
+        id={id}
+        name={name}
+        value={value}
+        onChange={onChange}
+        required={required}
+        disabled={disabled}
+        rows={rows}
+        placeholder={placeholder ?? ' '}
+        className={`
+          peer w-full resize-y rounded-md border border-slate-200
+          bg-transparent px-3 pb-2 pt-6 text-sm text-slate-700
+          shadow-sm transition duration-200
+          hover:border-slate-300 focus:border-blue-500
+          focus:outline-none focus:ring-1 focus:ring-blue-500
+          dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100
+          dark:hover:border-gray-600
+          dark:focus:border-blue-400
+          disabled:cursor-not-allowed disabled:opacity-50
+        `}
+      />
+      {label && (
+        <label
+          htmlFor={id}
+          className={`
+      pointer-events-none absolute left-3 z-10
+      origin-left transition-all duration-200
+      ${hasValue || alwaysFloat
+              ? 'top-2 text-xs'
+              : 'top-4 text-sm peer-focus:top-2 peer-focus:text-xs'}
+      ${disabled
+              ? 'text-slate-400 dark:text-gray-500'
+              : 'text-slate-500 dark:text-gray-400 peer-focus:text-blue-500'}
+    `}
+        >
+          {label}
+        </label>
+      )}
+    </div>
+  );
+};
 
 interface FloatingLabelSelectProps {
   id: string;

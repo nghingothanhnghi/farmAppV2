@@ -10,7 +10,7 @@ import Modal from '../common/Modal';
 import Badge from '../common/Badge';
 import LinearProgress from '../common/LinearProgress';
 import EmptyState from '../common/EmptyState';
-import { FormInput } from '../common/Form';
+import { FloatingLabelInput, FloatingLabelTextarea } from '../common/Form';
 import { useShifts } from '../../hooks/useShifts';
 import { shiftService } from '../../services/shiftService';
 import { useAlert } from '../../contexts/alertContext';
@@ -29,21 +29,24 @@ const MIN_REASON = 3;
 /** Whole-number VND input that shows thousands separators. */
 const MoneyInput: React.FC<{
   id: string;
+  label: string;
   value: string;
   onChange: (raw: string) => void;
   placeholder?: string;
   disabled?: boolean;
-}> = ({ id, value, onChange, placeholder, disabled }) => {
+}> = ({ id, label, value, onChange, placeholder, disabled }) => {
   const n = parseWholeAmount(value);
   return (
-    <FormInput
+    <FloatingLabelInput
       id={id}
       type="text"
       inputMode="numeric"
-      value={n === null ? '' : formatNumber(n)}
+      label={label}
       placeholder={placeholder}
+      value={n === null ? '' : formatNumber(n)}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
+      alwaysFloat
       className="w-full"
     />
   );
@@ -71,7 +74,7 @@ const ShiftsPage: React.FC = () => {
 
   const backButton = (
     <Button
-      label="Back to tables"
+      label={t("btn.back_to_tables")}
       variant="secondary"
       icon={<IconArrowLeft size={16} />}
       iconPosition="left"
@@ -170,18 +173,31 @@ const ShiftsPage: React.FC = () => {
             <p className="text-xs text-gray-500 dark:text-gray-400">
               {t('cashier.help_message_count_drawer')}
             </p>
-            <MoneyInput id="opening-float" value={float} onChange={setFloat} placeholder="Opening float (0 if empty)" disabled={busy} />
-            <FormInput
-              id="open-note"
-              type="text"
-              value={openNote}
-              placeholder="Note (optional)"
-              onChange={(e) => setOpenNote(e.target.value)}
+            <MoneyInput
+              id="opening-float"
+              label="Opening float (0 if empty)"
+              value={float}
+              onChange={setFloat}
+              placeholder="Enter starting cash amount"
               disabled={busy}
-              className="w-full"
+            />
+            <FloatingLabelTextarea
+              id="open-note"
+              label="Note (optional)"
+              placeholder="Enter additional notes..."
+              value={openNote}
+              onChange={(e) => setOpenNote(e.target.value)}
+              rows={3}
+              alwaysFloat
+              disabled={busy}
+              className='w-full'
             />
             <div className="flex justify-end">
-              <Button label={busy ? 'Opening...' : 'Open shift'} rounded="lg" disabled={busy} onClick={handleOpen} />
+              <Button
+                label={busy ? 'Opening...' : t('btn.open_shift')}
+                rounded="lg" disabled={busy}
+                onClick={handleOpen}
+              />
             </div>
           </div>
         ) : (
@@ -207,7 +223,7 @@ const ShiftsPage: React.FC = () => {
                 onClick={() => setMovement('pay_out')}
               />
               <Button
-                label="Close shift"
+                label={t('btn.close_shift')}
                 variant="danger"
                 rounded="lg"
                 icon={<IconLock size={16} />}
@@ -279,18 +295,28 @@ const ShiftsPage: React.FC = () => {
                 Cash in the drawer: <span className="font-medium">{formatMoneyString(drawerCash)}</span>
               </p>
             )}
-            <MoneyInput id="mv-amount" value={mvAmount} onChange={setMvAmount} placeholder="Amount" disabled={busy} />
+            <MoneyInput
+              id="mv-amount"
+              label='Amount'
+              value={mvAmount}
+              onChange={setMvAmount}
+              placeholder="Enter transaction amount"
+              disabled={busy}
+            />
             {payOutTooBig && (
               <p className="text-xs text-red-600">A pay-out cannot be larger than the cash in the drawer.</p>
             )}
-            <FormInput
+
+            <FloatingLabelTextarea
               id="mv-reason"
-              type="text"
+              label="Reason (at least 3 characters)"
+              placeholder="Enter additional notes..."
               value={mvReason}
-              placeholder="Reason (at least 3 characters)"
               onChange={(e) => setMvReason(e.target.value)}
+              rows={3}
+              alwaysFloat
               disabled={busy}
-              className="w-full"
+              className='w-full'
             />
             {mvReason.length > 0 && mvReason.trim().length < MIN_REASON && (
               <p className="text-xs text-red-600">Reason must be at least {MIN_REASON} characters.</p>
@@ -313,29 +339,39 @@ const ShiftsPage: React.FC = () => {
         content={
           <div className="px-10 pb-4 space-y-3">
             <p className="text-sm text-gray-600 dark:text-gray-300">Count the cash in the drawer and enter the total.</p>
-            <MoneyInput id="counted-cash" value={counted} onChange={setCounted} placeholder="Counted cash" disabled={busy} />
-            <FormInput
-              id="close-note"
-              type="text"
-              value={closeNote}
-              placeholder="Note (optional)"
-              onChange={(e) => setCloseNote(e.target.value)}
+            <MoneyInput
+              id="counted-cash"
+              label="Counted cash"
+              value={counted}
+              onChange={setCounted}
+              placeholder="Enter total cash counted"
               disabled={busy}
-              className="w-full"
+            />
+
+            <FloatingLabelTextarea
+              id="close-note"
+              label="Note (optional)"
+              placeholder="Enter additional notes..."
+              value={closeNote}
+              onChange={(e) => setCloseNote(e.target.value)}
+              rows={3}
+              alwaysFloat
+              disabled={busy}
+              className='w-full'
             />
           </div>
         }
         actions={
           <div className="flex gap-4">
             <Button
-              label={busy ? 'Closing...' : 'Close shift'}
-              variant="danger"
+              label={busy ? 'Closing...' : t('btn.close_shift')}
+              variant="primary"
               onClick={handleClose}
               disabled={busy || countedNum === null}
               className="min-w-[150px]"
               rounded="lg"
             />
-            <Button label="Cancel" variant="secondary" onClick={closeShiftModal} disabled={busy} className="min-w-[150px]" rounded="lg" />
+            <Button label={t('btn.cancel')} variant="secondary" onClick={closeShiftModal} disabled={busy} className="min-w-[150px]" rounded="lg" />
           </div>
         }
       />

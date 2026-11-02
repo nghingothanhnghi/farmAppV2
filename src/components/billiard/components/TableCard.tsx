@@ -4,7 +4,8 @@ import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
 import { useTranslation } from 'react-i18next';
-import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString, parseUtc } from '../../../utils/billiard';
+import { parseUtc } from '../../../utils/formatters';
+import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString } from '../../../utils/billiard';
 import type { ActiveTable, BilliardTable } from '../../../models/interfaces/Billiard';
 import { getTableStatusLabel } from '../../../utils/status';
 

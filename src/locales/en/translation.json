@@ -82,6 +82,8 @@
         "start_session": "Start",
         "open_session": "Open Session",
         "stop_session": "Stop Session",
+        "open_shift": "Open Shift",
+        "close_shift": "Close Shift",
         "print": "Print",
         "print_preview_bill": "Print Bill (Ack)",
         "print_receipt": "Print Receipt",

@@ -1,14 +1,17 @@
+// src/components/HydroponicSystemPage/components/AiVision/GrowthPredictionCard.tsx
 import React from "react";
 import { useTranslation } from "react-i18next";
 import type { GrowthPrediction } from "../../../../models/interfaces/AiVision";
 import { formatDate, formatNumber } from "../../../../utils/formatters";
+import List from "../../../common/List";
+import type { IListItem } from "../../../../models/interfaces/IListItem";
 
 interface Props {
     prediction: GrowthPrediction | null;
 }
 
 const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
-    const {t} = useTranslation();
+    const { t } = useTranslation();
 
     if (!prediction) {
         return (
@@ -91,8 +94,8 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
                     <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
                         {prediction.basis_growth_rate_pct_per_day != null
                             ? `${formatNumber(
-                                  prediction.basis_growth_rate_pct_per_day
-                              )}% / day`
+                                prediction.basis_growth_rate_pct_per_day
+                            )}% / day`
                             : "—"}
                     </div>
                 </div>
@@ -123,15 +126,20 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
                     <div className="mb-2 text-xs font-medium text-gray-500 dark:text-gray-400">
                         Prediction basis
                     </div>
-
-                    <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
-                        {prediction.reasons.map((reason, index) => (
-                            <li key={index} className="flex gap-2">
-                                <span>•</span>
-                                <span>{reason}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <List
+                        items={prediction.reasons.map(
+                            (reason, index): IListItem => ({
+                                id: `prediction-reason-${index}`,
+                                content: (
+                                    <span className="text-xs text-gray-600 dark:text-gray-300">
+                                        {reason}
+                                    </span>
+                                ),
+                            })
+                        )}
+                        listStyle="disc"
+                        className="space-y-1"
+                    />
                 </div>
             )}
         </div>
