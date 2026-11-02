@@ -236,7 +236,7 @@ const ShiftsPage: React.FC = () => {
         )}
 
         <div className="space-y-2">
-          <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">History</p>
+          <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">{t('cashier.history')}</p>
           {history.length === 0 ? (
             <EmptyState message="No shifts yet." />
           ) : (
@@ -253,7 +253,7 @@ const ShiftsPage: React.FC = () => {
                         #{h.id} · {formatDateTime(h.opened_at)}
                       </p>
                       <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-                        Float {formatMoneyString(h.opening_float)}
+                        {t('cashier.float')}: {formatMoneyString(h.opening_float)}
                         {h.opened_by ? ` · ${h.opened_by}` : ''}
                       </p>
                     </div>
