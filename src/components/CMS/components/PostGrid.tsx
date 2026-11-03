@@ -7,22 +7,15 @@ import ActionButtons from '../../common/dataGrid/actionButton';
 import Button from '../../common/Button';
 import { IconSend, IconArchive, IconClock } from '@tabler/icons-react';
 import Badge from '../../common/Badge';
-import PostStatusBadge from './PostStatusBadge';
+import PostStatusDisplay from './PostStatusDisplay';
 
 interface Props {
-
     posts: CmsPost[];
-
     loading: boolean;
-
     onEdit: (post: CmsPost) => void;
-
     onDelete: (post: CmsPost) => void;
-
     onPublish: (post: CmsPost) => void;
-
     onArchive: (post: CmsPost) => void;
-
     onSchedule: (post: CmsPost) => void;
 }
 
@@ -37,9 +30,7 @@ export default function PostGrid({
 }: Props) {
 
     if (loading) {
-
         return <div>Loading...</div>;
-
     }
 
     const columnDefs = useMemo(() => [
@@ -72,18 +63,15 @@ export default function PostGrid({
         },
         {
             headerName: "Status",
-            width: 120,
+            width: 170,
             filter: false,
             sortable: false,
+            cellStyle: { display: "flex", alignItems: "center" },
             cellRenderer: ({ data }: any) => (
-                <div className="gap-0.5">
-                    <PostStatusBadge status={data.status} />
-                    {data.status === "scheduled" && data.scheduled_at && (
-                        <span className="text-[10px] text-gray-500 dark:text-gray-400">
-                            {new Date(data.scheduled_at).toLocaleString()}
-                        </span>
-                    )}
-                </div>
+                <PostStatusDisplay
+                    status={data.status}
+                    scheduledAt={data.scheduled_at}
+                />
             )
         },
         {
@@ -157,13 +145,9 @@ export default function PostGrid({
                     />
 
                     <ActionButtons
-
                         row={data}
-
                         onEdit={onEdit}
-
                         onDelete={onDelete}
-
                     />
 
                 </div>
@@ -174,17 +158,11 @@ export default function PostGrid({
     return (
 
         <DataGrid
-
             rowData={posts}
-
             columnDefs={columnDefs}
-
             pagination
-
             paginationPageSize={10}
-
-            height="550px"
-
+            height="auto"
         />
 
     );

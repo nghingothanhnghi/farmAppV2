@@ -6,10 +6,27 @@ import { postService } from "../services/postService";
 import type {
     CmsPost,
     CmsPostCreate,
-    CmsPostUpdate
+    CmsPostUpdate,
+    PostStatus,
 } from "../models/interfaces/Post";
 
 import type { PostQuery } from "../services/postService";
+
+const normalizePostPayload = <
+    T extends {
+        status?: PostStatus;
+        scheduled_at?: string | null;
+    }
+>(data: T): T | Omit<T, "scheduled_at"> => {
+
+    // Only scheduled posts need scheduled_at.
+    if (data.status !== "scheduled" || !data.scheduled_at) {
+        const { scheduled_at, ...rest } = data;
+        return rest;
+    }
+
+    return data;
+};
 
 export const usePost = () => {
 
@@ -75,8 +92,9 @@ export const usePost = () => {
     }, []);
 
     const createPost = useCallback(async (data: CmsPostCreate) => {
+        const payload = normalizePostPayload(data);
 
-        const created = await postService.create(data);
+        const created = await postService.create(payload);
 
         setPosts(prev => [created, ...prev]);
 
@@ -85,7 +103,8 @@ export const usePost = () => {
     }, []);
 
     const updatePost = useCallback(async (id: number, data: CmsPostUpdate) => {
-        const updated = await postService.update(id, data);
+        const payload = normalizePostPayload(data);
+        const updated = await postService.update(id, payload);
         setPosts(prev => prev.map(p => p.id === id ? updated : p));
         setSelectedPost(prev => (prev?.id === id ? updated : prev));
         return updated;
@@ -127,7 +146,7 @@ export const usePost = () => {
         setPosts(prev => prev.map(p => p.id === id ? updated : p));
         setSelectedPost(prev => (prev?.id === id ? updated : prev));
         return updated;
-    }, []);    
+    }, []);
 
     useEffect(() => {
         fetchPosts();

@@ -97,9 +97,10 @@ const CmsPostManagementPage: React.FC = () => {
     />;
 
     return (
-        <div className="">
+        <div className="flex flex-col h-full min-h-0">
             <PageTitle
                 title="Post Management"
+                subtitle="Create, edit, and organize your posts with ease. Manage content, categories, and publishing status all in one place."
                 actions={
                     <Button
                         type="button"
@@ -112,18 +113,21 @@ const CmsPostManagementPage: React.FC = () => {
                     />
                 }
             />
-            <PostGrid
-                posts={posts}
-                loading={loading}
-                onEdit={(post) => navigate(`/dashboard/cms/${post.id}/edit`)}
-                onDelete={(post) => {
-                    setSelectedPost(post);
-                    setConfirmModalOpen(true);
-                }}
-                onPublish={handlePublish}
-                onArchive={handleArchive}
-                onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
-            />
+            <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                <PostGrid
+                    posts={posts}
+                    loading={loading}
+                    onEdit={(post) => navigate(`/dashboard/cms/${post.id}/edit`)}
+                    onDelete={(post) => {
+                        setSelectedPost(post);
+                        setConfirmModalOpen(true);
+                    }}
+                    onPublish={handlePublish}
+                    onArchive={handleArchive}
+                    onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
+                />
+            </div>
+
 
             <ScheduleModal
                 isOpen={scheduleModalOpen}
