@@ -31,7 +31,7 @@ const PlayerScore: React.FC<{
   return (
     <div className="flex-1 text-center space-y-2">
       <div className="text-xs text-gray-500 dark:text-gray-400">{label}</div>
-      <div className="text-5xl font-bold font-mono text-gray-900 dark:text-white">{value}</div>
+      <div className="number-digital text-5xl font-bold text-gray-900 dark:text-white">{value}</div>
       {editable && (
         <div className="flex justify-center gap-2">
           <button type="button" className={btn} aria-label={t('billiard_tables.games.minus')}

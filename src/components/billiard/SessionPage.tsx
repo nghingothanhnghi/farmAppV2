@@ -103,14 +103,21 @@ const SessionPage: React.FC = () => {
 
       {state === 'active' && (
         <div className="flex items-center justify-between gap-3 flex-wrap">
-          <div className="font-mono text-3xl font-semibold text-gray-900 dark:text-white">
+          <div className="
+            number-digital 
+            text-3xl 
+            font-semibold 
+            text-cyan-950 dark:text-cyan-100
+            [text-shadow:0_0_5px_#22d3ee,0_0_10px_#22d3ee,0_0_20px_#22d3ee,0_0_40px_#22d3ee]
+            dark:[text-shadow:0_0_5px_#22d3ee,0_0_10px_#22d3ee,0_0_20px_#22d3ee,0_0_40px_#22d3ee]
+          ">
             {formatElapsed(elapsed)}
           </div>
           <div className="flex items-center gap-2">
             <Button
               label={t("btn.add_items_billard")}
               variant="secondary"
-              icon={<IconPlus size={16} className="text-gray-500" />}
+              icon={<IconPlus size={16}/>}
               iconPosition="left"
               rounded="lg"
               disabled={busy}

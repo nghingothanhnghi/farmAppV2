@@ -11,7 +11,7 @@ interface Props {
   disabled?: boolean;
   onStart?: () => void;
   onStop?: () => void;
-  size?: 'xs' | 'sm' | 'md';
+  size?: 'xs' | 'sm' | 'md'| 'lg';
   fullWidth?: boolean;
 }
 
@@ -22,7 +22,7 @@ const StartStopButtons: React.FC<Props> = ({
   disabled = false,
   onStart,
   onStop,
-  size = 'sm',
+  size = 'md',
   fullWidth = false,
 }) => {
 
