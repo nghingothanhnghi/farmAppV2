@@ -16,6 +16,7 @@ interface ButtonProps {
   size?: 'xxs' | 'xs' | 'sm' | 'md' | 'lg';
   rounded?: 'full' | 'sm' | 'md' | 'lg';
   linkColor?: 'blue' | 'green' | 'red' | 'gray' | 'orange';
+  shadow?: 'none' | 'soft' | 'raised' | 'blue' | 'cyan' | 'colored';
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -34,6 +35,7 @@ const Button: React.FC<ButtonProps> = ({
   size = 'md',
   rounded,
   linkColor = 'blue',
+  shadow = 'none',
 }) => {
   const baseStyles =
     'inline-flex items-center justify-center font-medium focus:outline-none transition-colors gap-2';
@@ -78,6 +80,15 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'rounded-lg',
   };
 
+  const shadowStyles = {
+    none: '',
+    soft: 'shadow-[0_4px_10px_-3px_rgba(15,23,42,0.25)] hover:shadow-[0_6px_14px_-3px_rgba(15,23,42,0.3)] dark:shadow-[0_4px_10px_-3px_rgba(0,0,0,0.5)]',
+    raised: 'shadow-[0_5px_8px_-2px_rgba(15,23,42,0.3),0_10px_18px_-6px_rgba(15,23,42,0.25)] hover:shadow-[0_8px_12px_-2px_rgba(15,23,42,0.35),0_14px_24px_-6px_rgba(15,23,42,0.3)] hover:-translate-y-0.5 active:translate-y-0 dark:shadow-[0_5px_12px_-3px_rgba(0,0,0,0.7)]',
+    blue: 'shadow-[0_5px_12px_-3px_rgba(37,99,235,0.6),0_8px_20px_-5px_rgba(37,99,235,0.35)] hover:shadow-[0_8px_18px_-3px_rgba(37,99,235,0.7)]',
+    cyan: 'shadow-[0_5px_12px_-3px_rgba(6,182,212,0.55),0_8px_20px_-5px_rgba(6,182,212,0.35)] hover:shadow-[0_8px_18px_-3px_rgba(6,182,212,0.65)]',
+    colored: 'shadow-[0_5px_12px_-3px_rgba(0,0,0,0.3)] hover:shadow-[0_8px_16px_-3px_rgba(0,0,0,0.4)]',
+  };
+
   const shapeClass =
     rounded !== undefined
       ? roundedStyles[rounded]
@@ -85,17 +96,13 @@ const Button: React.FC<ButtonProps> = ({
         ? '' // Let ButtonGroup apply rounded if needed
         : ''; // Also blank for normal buttons if no rounded specified
 
-
+  // Links should remain flat.
+  const shadowClass = variant === 'link' ? '' : shadowStyles[shadow];
 
   const widthStyles = fullWidth ? 'w-full' : '';
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
   const iconOnlyStyles = iconOnly ? 'justify-center items-center gap-0' : '';
 
-  // const sizeClass = iconOnly
-  // ? iconOnlySizeStyles[size || 'md']
-  // : variant === 'link'
-  // ? 'text-sm'
-  // : sizeStyles[size || 'md'];
   const sizeClass = iconOnly
     ? iconOnlySizeStyles[size]
     : sizeStyles[size];
@@ -103,7 +110,17 @@ const Button: React.FC<ButtonProps> = ({
   return (
     <button
       type={type}
-      className={`${baseStyles} ${shapeClass} ${variantStyles[variant]} ${sizeClass} ${widthStyles} ${disabledStyles} ${iconOnlyStyles} ${className}`}
+      className={`
+        ${baseStyles} 
+        ${shapeClass} 
+        ${variantStyles[variant]} 
+        ${sizeClass} 
+        ${widthStyles} 
+        ${disabledStyles} 
+        ${iconOnlyStyles} 
+        ${shadowClass}
+        ${className}
+      `}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

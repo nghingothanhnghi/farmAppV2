@@ -266,6 +266,7 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                         <div
                             key={actuator.id}
                             className={`
+                                        relative group overflow-hidden
                                         rounded-2xl p-4 flex flex-col justify-between aspect-[4/3]
                                         border border-gray-100 dark:border-white/5 shadow-sm transition-colors
                                         ${isActive
@@ -273,165 +274,186 @@ const SmartHomeView: React.FC<SmartHomeViewProps> = ({
                                     : 'bg-white dark:bg-gray-900'}
                         `}
                         >
-                            <div className="flex items-start justify-between">
-                                <div
-                                    className={`
+                            <img
+                                src="https://images.unsplash.com/photo-1544264747-d8af8eb09999?q=80&w=1179&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D"
+                                className="
+                                    absolute inset-0 w-full h-full object-cover
+                                    opacity-30 dark:opacity-20
+                                    group-hover:scale-110 transition-transform duration-500"
+                            />
+                            {/* Blue gradient at bottom */}
+                            <div
+                                className="
+                                    absolute inset-0
+                                    bg-gradient-to-t
+                                  from-blue-800/10 via-blue-600/20 to-white/10
+                                  dark:from-slate-950/95 dark:via-slate-900/35 dark:to-slate-900/10
+                                    "
+                            />
+                            {/* Content */}
+                            <div className="relative z-10 flex flex-col justify-between h-full">
+                                <div className="flex items-start justify-between">
+                                    <div
+                                        className={`
                                         w-10 h-10 rounded-full flex items-center justify-center
                                         ${isActive ? 'bg-white/70 dark:bg-white/10' : 'bg-gray-100 dark:bg-gray-800'}
                                     `}
-                                >
-                                    <Icon size={20} className={`
+                                    >
+                                        <Icon size={20} className={`
                                         ${isActive ? color : 'text-gray-400'}
                                         transition-all duration-300
                                         ${isActive ? animation : ""}
                                     `}
-                                    />
-                                </div>
-
-                                <div className="flex gap-2">
-                                    {/* ✅ Schedule button — opens ScheduleManager, shows count badge */}
-                                    {canControl && (
-                                        <div className="relative">
-                                            <Button
-                                                variant="secondary"
-                                                icon={<IconClock size={14} />}
-                                                iconOnly
-                                                label="Schedules"
-                                                className="bg-transparent"
-                                                size="xs"
-                                                rounded="full"
-                                                onClick={() => setScheduleManagerActuator(actuator)}
-                                            />
-                                            {scheduleCount > 0 && (
-                                                <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-[0.55rem] rounded-full w-3.5 h-3.5 flex items-center justify-center">
-                                                    {scheduleCount}
-                                                </span>
-                                            )}
-                                        </div>
-                                    )}
-
-                                    {/* ✅ CHANGED — non-sliding-door actuators now get Auto/On/Off instead of a plain toggle */}
-                                    {!isSlidingDoor && canControl && (
-                                        <ButtonGroup>
-                                            <Button
-                                                label="Auto"
-                                                variant="secondary"
-                                                size="xs"
-                                                onClick={() => handleAuto(actuator)}
-                                                disabled={!actuator.is_active || modeManual === "AUTO"}
-                                            />
-                                            <Button
-                                                label={t('badge_status.on')}
-                                                variant="secondary"
-                                                size="xs"
-                                                onClick={() => handleToggle(actuator, true)}
-                                                disabled={
-                                                    !actuator.is_active ||
-                                                    modeManual === "MANUAL_ON" ||
-                                                    (modeManual === "AUTO" && isActive) // ✅ already on via auto — no need to press On
-                                                }
-                                            />
-                                            <Button
-                                                label={t('badge_status.off')}
-                                                variant="secondary"
-                                                size="xs"
-                                                onClick={() => handleToggle(actuator, false)}
-                                                disabled={
-                                                    !actuator.is_active ||
-                                                    modeManual === "MANUAL_OFF" ||
-                                                    (modeManual === "AUTO" && !isActive) // ✅ already off via auto — no need to press Off
-                                                }
-                                            />
-                                        </ButtonGroup>
-                                    )}
-                                    {/* sliding_door special control */}
-                                    {isSlidingDoor && (
-                                        <ButtonGroup vertical={true}>
-                                            <Button
-                                                icon={<IconChevronUp size={14} />}
-                                                iconOnly
-                                                label={t('badge_status.up')}
-                                                variant="secondary"
-                                                size="xs"
-                                                disabled={!canControl}
-                                                onClick={() => handleSlidingDoor(actuator, 'up')}
-                                            />
-                                            <Button
-                                                icon={<IconPlayerStop size={14} />}
-                                                iconOnly
-                                                label={t('badge_status.stop')}
-                                                variant="secondary"
-                                                size="xs"
-                                                disabled={!canControl}
-                                                onClick={() => handleSlidingDoor(actuator, 'stop')}
-                                            />
-                                            <Button
-                                                icon={<IconChevronDown size={14} />}
-                                                iconOnly
-                                                label={t('badge_status.down')}
-                                                variant="secondary"
-                                                size="xs"
-                                                disabled={!canControl}
-                                                onClick={() => handleSlidingDoor(actuator, 'down')}
-                                            />
-                                        </ButtonGroup>
-                                    )}
-                                    {/* Read-only fallback keeps a disabled toggle for quick visual state */}
-                                    {!isSlidingDoor && !canControl && (
-                                        <FormToggle
-                                            id={`toggle-${actuator.id}`}
-                                            checked={isActive}
-                                            onChange={() => { }}
-                                            className="opacity-50 pointer-events-none"
                                         />
+                                    </div>
+
+                                    <div className="flex gap-2">
+                                        {/* ✅ Schedule button — opens ScheduleManager, shows count badge */}
+                                        {canControl && (
+                                            <div className="relative">
+                                                <Button
+                                                    variant="secondary"
+                                                    icon={<IconClock size={14} />}
+                                                    iconOnly
+                                                    label="Schedules"
+                                                    className="bg-transparent"
+                                                    size="xs"
+                                                    rounded="full"
+                                                    shadow="raised"
+                                                    onClick={() => setScheduleManagerActuator(actuator)}
+                                                />
+                                                {scheduleCount > 0 && (
+                                                    <span className="absolute -top-1 -right-1 bg-blue-500 text-white text-[0.55rem] rounded-full w-3.5 h-3.5 flex items-center justify-center">
+                                                        {scheduleCount}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* ✅ CHANGED — non-sliding-door actuators now get Auto/On/Off instead of a plain toggle */}
+                                        {!isSlidingDoor && canControl && (
+                                            <ButtonGroup shadow="raised">
+                                                <Button
+                                                    label="Auto"
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    onClick={() => handleAuto(actuator)}
+                                                    disabled={!actuator.is_active || modeManual === "AUTO"}
+                                                />
+                                                <Button
+                                                    label={t('badge_status.on')}
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    onClick={() => handleToggle(actuator, true)}
+                                                    disabled={
+                                                        !actuator.is_active ||
+                                                        modeManual === "MANUAL_ON" ||
+                                                        (modeManual === "AUTO" && isActive) // ✅ already on via auto — no need to press On
+                                                    }
+                                                />
+                                                <Button
+                                                    label={t('badge_status.off')}
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    onClick={() => handleToggle(actuator, false)}
+                                                    disabled={
+                                                        !actuator.is_active ||
+                                                        modeManual === "MANUAL_OFF" ||
+                                                        (modeManual === "AUTO" && !isActive) // ✅ already off via auto — no need to press Off
+                                                    }
+                                                />
+                                            </ButtonGroup>
+                                        )}
+                                        {/* sliding_door special control */}
+                                        {isSlidingDoor && (
+                                            <ButtonGroup shadow='raised' vertical={true}>
+                                                <Button
+                                                    icon={<IconChevronUp size={14} />}
+                                                    iconOnly
+                                                    label={t('badge_status.up')}
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    disabled={!canControl}
+                                                    onClick={() => handleSlidingDoor(actuator, 'up')}
+                                                />
+                                                <Button
+                                                    icon={<IconPlayerStop size={14} />}
+                                                    iconOnly
+                                                    label={t('badge_status.stop')}
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    disabled={!canControl}
+                                                    onClick={() => handleSlidingDoor(actuator, 'stop')}
+                                                />
+                                                <Button
+                                                    icon={<IconChevronDown size={14} />}
+                                                    iconOnly
+                                                    label={t('badge_status.down')}
+                                                    variant="secondary"
+                                                    size="xs"
+                                                    disabled={!canControl}
+                                                    onClick={() => handleSlidingDoor(actuator, 'down')}
+                                                />
+                                            </ButtonGroup>
+                                        )}
+                                        {/* Read-only fallback keeps a disabled toggle for quick visual state */}
+                                        {!isSlidingDoor && !canControl && (
+                                            <FormToggle
+                                                id={`toggle-${actuator.id}`}
+                                                checked={isActive}
+                                                onChange={() => { }}
+                                                className="opacity-50 pointer-events-none"
+                                            />
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="mt-2 space-y-1">
+                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+                                        {actuator.name}
+                                    </p>
+                                    <p className={`text-[10px] ${isActive ? 'text-green-600 dark:text-green-300' : 'text-gray-400'}`}>
+                                        {statusLabel} <span className="border-l border-gray-300 dark:border-gray-700 h-2 mx-2"></span>
+                                        {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
+                                        <span
+                                            className={
+                                                modeManual === "AUTO"
+                                                    ? "text-gray-400 text-[0.625rem]"
+                                                    : modeManual === "MANUAL_ON"
+                                                        ? "text-gray-400 text-[0.625rem]"
+                                                        : "text-yellow-900 dark:text-yellow-300 text-[0.625rem]"
+                                            }
+                                        >
+                                            {modeManual === "AUTO"
+                                                ? t("badge_status.auto")
+                                                : modeManual === "MANUAL_ON"
+                                                    ? t("badge_status.manual")
+                                                    : t("badge_status.off")}
+                                        </span>
+                                        {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
+                                            <span className={`ml-1 ${reasonMeta.color}`}>
+                                                {t(reasonMeta.labelKey)}
+                                            </span>
+                                        )}
+                                    </p>
+                                    {modeManual === 'AUTO' && actuator.is_active && (
+                                        <NextScheduleLabel schedules={actuatorSchedules} />
                                     )}
+                                    <p
+                                        className={`text-[10px] flex items-center gap-1 ${reportedClass}`}
+                                        title={actuator.reported_state_error || undefined}
+                                    >
+                                        <IconExclamationCircle size={10} />
+
+                                        {actuator.reported_state_at && !reportPending && (
+                                            <> {formatDateTime(actuator.reported_state_at)} · </>
+                                        )}
+
+                                        {reportedLabel}
+                                    </p>
                                 </div>
                             </div>
 
-                            <div className="mt-2 space-y-1">
-                                <p className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
-                                    {actuator.name}
-                                </p>
-                                <p className={`text-[10px] ${isActive ? 'text-green-600 dark:text-green-300' : 'text-gray-400'}`}>
-                                    {statusLabel} <span className="border-l border-gray-300 dark:border-gray-700 h-2 mx-2"></span>
-                                    {/* ✅ NEW — mode line (Auto / Manual On / Manual Off), with reason when Auto + active */}
-                                    <span
-                                        className={
-                                            modeManual === "AUTO"
-                                                ? "text-gray-400 text-[0.625rem]"
-                                                : modeManual === "MANUAL_ON"
-                                                    ? "text-gray-400 text-[0.625rem]"
-                                                    : "text-yellow-900 dark:text-yellow-300 text-[0.625rem]"
-                                        }
-                                    >
-                                        {modeManual === "AUTO"
-                                            ? t("badge_status.auto")
-                                            : modeManual === "MANUAL_ON"
-                                                ? t("badge_status.manual")
-                                                : t("badge_status.off")}
-                                    </span>
-                                    {modeManual === "AUTO" && isActive && reasonMeta.labelKey && (
-                                        <span className={`ml-1 ${reasonMeta.color}`}>
-                                            {t(reasonMeta.labelKey)}
-                                        </span>
-                                    )}
-                                </p>
-                                {modeManual === 'AUTO' && actuator.is_active && (
-                                    <NextScheduleLabel schedules={actuatorSchedules} />
-                                )}
-                                <p
-                                    className={`text-[10px] flex items-center gap-1 ${reportedClass}`}
-                                    title={actuator.reported_state_error || undefined}
-                                >
-                                    <IconExclamationCircle size={10} />
-                                    
-                                    {actuator.reported_state_at && !reportPending && (
-                                        <> {formatDateTime(actuator.reported_state_at)} · </>
-                                    )}
-
-                                    {reportedLabel}
-                                </p>
-                            </div>
                         </div>
                     );
                 })}
