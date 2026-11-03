@@ -92,7 +92,7 @@ const TablesPage: React.FC = () => {
                       icon: <IconTag size={16} />,
                     },
                     {
-                      label: "Controllers",
+                      label: t('btn.billiard_controllers'),
                       value: 'controllers',
                       icon: <IconDeviceDesktopAnalytics size={16} />,
                     },

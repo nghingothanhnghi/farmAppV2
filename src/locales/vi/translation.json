@@ -98,7 +98,10 @@
         "cash_drawer": "Quản lý ca thu ngân",
         "bank_inbox": "Đối soát chuyển khoản",
         "pay_in": "Nộp tiền",
-        "pay_out": "Rút tiền"
+        "pay_out": "Rút tiền",
+        "billiard_controllers": "Bộ điều khiển",
+        "refresh": "Làm mới",
+        "register_controller": "Đăng ký bộ điều khiển"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -314,6 +317,26 @@
             "label": "Số tiền khách đưa",
             "placeholder":""
         },
+        "amount":{
+            "label": "Số tiền",
+            "placeholder":"Nhập số tiền giao dịch"
+        },
+        "reason_min_length":{
+            "label": "Lý do (ít nhất 3 ký tự)",
+            "placeholder":"Nhập ghi chú chi tiết..."
+        },      
+        "counted_cash":{
+            "label": "Tiền mặt thực đếm",
+            "placeholder":"Nhập tổng số tiền mặt đã kiểm đếm"
+        },
+        "note_optional":{
+            "label": "Ghi chú (không bắt buộc)",
+            "placeholder":"Nhập ghi chú..."
+        },
+        "opening_float":{
+            "label": "Tiền vốn đầu ca (nhập 0 nếu không có)",
+            "placeholder":"Nhập số tiền mặt ban đầu"
+        },             
         "change_due":{
             "label": "Tiền thối lại",
             "placeholder":""
@@ -644,6 +667,11 @@
             "reset_done": "Đã đặt lại điểm.",
             "empty": "Chưa có ván nào."
         },
+        "controller": {
+            "title": "Trạng thái bộ điều khiển",
+            "description": "Theo dõi trạng thái các bộ điều khiển bàn bida và cập nhật điểm số. Dữ liệu tự động làm mới mỗi 30 giây.",
+            "noData": "Không tìm thấy bộ điều khiển nào."
+        },        
         "billing":{
             "pricing": "Thiết lập giá",
             "rate": "Đơn giá",
@@ -713,14 +741,23 @@
             },
             "print":{
                 "preview": "Xem trước khi in"
-            }    
+            },
+            "close_shift": {
+                "title": "Đóng Ca",
+                "description": "Đóng ca và kiểm đếm tiền mặt. Số tiền dự kiến được tính từ doanh thu, các khoản thu và chi trong ca."
+            }                
         }    
     },
     "payment": {
         "payment_title": "Quản lý Thanh toán",
-        "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản."
+        "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản.",
+        "by_payment_method": "Theo phương thức thanh toán ({{count}} giao dịch)"
     },
     "cashier": {
+        "page_header": {
+            "title": "Ngăn kéo tiền mặt",
+            "description": "Mở ca làm việc, ghi nhận các khoản thu chi và kiểm đếm tiền mặt khi kết thúc ca."
+        },        
         "shift": "Ca thu ngân",
         "opening_float": "Quỹ đầu ca",
         "cash_sales": "Doanh thu tiền mặt",
@@ -733,6 +770,8 @@
         "change_given_note": "Tiền thừa đã trả ({{amount}}) đã được trừ khỏi doanh thu tiền mặt.",
         "opened_at": "Mở lúc {{date}} bởi {{user}}",
         "closed_at": "Đóng lúc {{date}}",
+        "cash_in_drawer": "Tiền mặt trong ngăn kéo: <amount>{{amount}}</amount>",
+        "payout_exceeds_drawer_cash": "Khoản chi ra không thể lớn hơn tiền mặt trong ngăn kéo.",
         "float": "Tiền vốn đầu ca",
         "history": "Lịch sử",
         "counted_cash": "Tiền mặt thực đếm",

@@ -99,7 +99,10 @@ const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
       {shift.methods.length > 0 && (
         <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
           <p className="text-[10px] font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-            By payment method ({shift.payments_count} payments)
+            {t('payment.by_payment_method', {
+              count: shift.payments_count,
+            })}
+
           </p>
           {shift.methods.map((m) => (
             <div key={m.method} className="flex items-center justify-between gap-3 text-sm">

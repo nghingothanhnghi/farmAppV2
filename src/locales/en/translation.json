@@ -98,7 +98,10 @@
         "cash_drawer": "Cash Drawer",
         "bank_inbox": "Bank Inbox",
         "pay_in": "Pay in",
-        "pay_out": "Pay out"
+        "pay_out": "Pay out",
+        "billiard_controllers": "Controllers",
+        "refresh": "Refresh",
+        "register_controller": "Register Controller"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -314,6 +317,26 @@
             "label": "Amount handed over",
             "placeholder":""
         },
+        "amount":{
+            "label": "Amount",
+            "placeholder":"Enter transaction amount"
+        },
+        "reason_min_length":{
+            "label": "Reason (at least 3 characters)",
+            "placeholder":"Enter reason for transaction..."
+        },
+        "counted_cash":{
+            "label": "Counted Cash",
+            "placeholder":"Enter total cash counted"
+        },
+        "note_optional":{
+            "label": "Note (optional)",
+            "placeholder":"Enter additional notes..."
+        }, 
+        "opening_float":{
+            "label": "Opening float (0 if empty)",
+            "placeholder":"Enter starting cash amount"
+        },                    
         "change_due":{
             "label": "Change due",
             "placeholder":""
@@ -644,6 +667,11 @@
             "reset_done": "Score reset.",
             "empty": "No games yet."
         },
+        "controller": {
+            "title": "Controller Status",
+            "description": "Monitor billiard controllers sending table and scoring updates. Automatically refreshes every 30 seconds.",
+            "noData": "No controllers found."
+        },
         "billing":{
             "pricing": "Pricing",
             "rate": "Rate",
@@ -713,14 +741,24 @@
             },
             "print":{
                 "preview": "Print Preview"
-            }    
+            },
+            "close_shift": {
+                "title": "Close Shift",
+                "description": "Close the current shift and count the cash in the drawer. The expected cash is calculated from cash sales, pay-ins and pay-outs."
+            }          
         }
     },
     "payment": {
         "payment_title": "Payment Management",
-        "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections."
+        "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections.",
+        "by_payment_method": "By payment method ({{count}} payments)"
     },
     "cashier": {
+        "page_header": {
+            "title": "Cash drawer",
+            "description": "Open a shift, record cash movements and count the drawer at close."
+        },
+        "noData": "No controllers found.",
         "shift": "Shift",
         "opening_float": "Opening float",
         "cash_sales": "Cash sales",
@@ -733,6 +771,8 @@
         "change_given_note": "Change given ({{amount}}) is already netted out of cash sales.",
         "opened_at": "Opened {{date}} by {{user}}",
         "closed_at": "Closed {{date}}",
+        "cash_in_drawer": "Cash in the drawer: <amount>{{amount}}</amount>",
+        "payout_exceeds_drawer_cash": "A pay-out cannot be larger than the cash in the drawer.",
         "float": "Float",
         "history": "History",
         "counted_cash": "Counted cash",

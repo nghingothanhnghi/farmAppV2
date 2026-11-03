@@ -2,7 +2,7 @@
 // Screen 5 of the payments guide: the cash drawer.
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { IconArrowLeft, IconCashPlus, IconCashMinus, IconLock, IconX } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
@@ -150,7 +150,11 @@ const ShiftsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <PageTitle title="Cash drawer" subtitle="Open a shift, record cash movements and count the drawer at close." actions={backButton} />
+      <PageTitle
+        title={t('cashier.page_header.title')}
+        subtitle={t('cashier.page_header.description')}
+        actions={backButton}
+      />
       <div className='space-y-6 mx-auto max-w-2xl'>
         {error && <p className="text-sm text-red-600 text-center">{error}</p>}
 
@@ -175,16 +179,16 @@ const ShiftsPage: React.FC = () => {
             </p>
             <MoneyInput
               id="opening-float"
-              label="Opening float (0 if empty)"
+              label={t('input.opening_float.label')}
+              placeholder={t('input.opening_float.placeholder')}
               value={float}
               onChange={setFloat}
-              placeholder="Enter starting cash amount"
               disabled={busy}
             />
             <FloatingLabelTextarea
               id="open-note"
-              label="Note (optional)"
-              placeholder="Enter additional notes..."
+              label={t('input.note_optional.label')}
+              placeholder={t('input.note_optional.placeholder')}
               value={openNote}
               onChange={(e) => setOpenNote(e.target.value)}
               rows={3}
@@ -292,25 +296,31 @@ const ShiftsPage: React.FC = () => {
           <div className="px-10 pb-4 space-y-3">
             {movement === 'pay_out' && current && (
               <p className="text-xs text-gray-600 dark:text-gray-300">
-                Cash in the drawer: <span className="font-medium">{formatMoneyString(drawerCash)}</span>
+                <Trans
+                  i18nKey="cashier.cash_in_drawer"
+                  values={{ amount: formatMoneyString(drawerCash) }}
+                  components={{ amount: <span className="font-semibold text-cyan-600 dark:text-cyan-400" /> }}
+                />
               </p>
             )}
             <MoneyInput
               id="mv-amount"
-              label='Amount'
+              label={t('input.amount.label')}
               value={mvAmount}
               onChange={setMvAmount}
-              placeholder="Enter transaction amount"
+              placeholder={t('input.amount.placeholder')}
               disabled={busy}
             />
             {payOutTooBig && (
-              <p className="text-xs text-red-600">A pay-out cannot be larger than the cash in the drawer.</p>
+              <p className="text-xs text-red-600">
+                {t('cashier.payout_exceeds_drawer_cash')}
+              </p>
             )}
 
             <FloatingLabelTextarea
               id="mv-reason"
-              label="Reason (at least 3 characters)"
-              placeholder="Enter additional notes..."
+              label={t('input.reason_min_length.label')}
+              placeholder={t('input.reason_min_length.placeholder')}
               value={mvReason}
               onChange={(e) => setMvReason(e.target.value)}
               rows={3}
@@ -325,8 +335,8 @@ const ShiftsPage: React.FC = () => {
         }
         actions={
           <div className="flex gap-4">
-            <Button label={busy ? 'Saving...' : 'Save'} onClick={handleMovement} disabled={busy || !mvValid} className="min-w-[150px]" rounded="lg" />
-            <Button label="Cancel" variant="secondary" onClick={closeMovement} disabled={busy} className="min-w-[150px]" rounded="lg" />
+            <Button label={busy ? 'Saving...' : t('btn.save')} onClick={handleMovement} disabled={busy || !mvValid} className="min-w-[150px]" rounded="lg" />
+            <Button label={t('btn.cancel')} variant="secondary" onClick={closeMovement} disabled={busy} className="min-w-[150px]" rounded="lg" />
           </div>
         }
       />
@@ -334,24 +344,24 @@ const ShiftsPage: React.FC = () => {
       <Modal
         isOpen={closeOpen}
         onClose={closeShiftModal}
-        title="Close shift"
+        title={t('billiard_tables.modals.close_shift.title')}
         size="small"
         content={
           <div className="px-10 pb-4 space-y-3">
-            <p className="text-sm text-gray-600 dark:text-gray-300">Count the cash in the drawer and enter the total.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{t('billiard_tables.modals.close_shift.description')}</p>
             <MoneyInput
               id="counted-cash"
-              label="Counted cash"
+              label={t('input.counted_cash.label')}
               value={counted}
               onChange={setCounted}
-              placeholder="Enter total cash counted"
+              placeholder={t('input.counted_cash.placeholder')}
               disabled={busy}
             />
 
             <FloatingLabelTextarea
               id="close-note"
-              label="Note (optional)"
-              placeholder="Enter additional notes..."
+              label={t('input.note_optional.label')}
+              placeholder={t('input.note_optional.placeholder')}
               value={closeNote}
               onChange={(e) => setCloseNote(e.target.value)}
               rows={3}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { IconArrowLeft, IconPlus, IconRefresh, IconServer } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
@@ -21,6 +22,7 @@ const STATUS_VARIANT: Record<BilliardControllerStatus, 'success' | 'gray' | 'war
 };
 
 const ControllersPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const canView = useHasAnyRole(['admin', 'super_admin', 'manager']);
   const { controllers, loading, error, refetch } = useBilliardControllers();
@@ -45,15 +47,15 @@ const ControllersPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <PageTitle
-        title="Controller status"
-        subtitle="Monitor the billiard controllers that send table and scoring events. Refreshes every 30 seconds."
+        title={t('billiard_tables.controller.title')}
+        subtitle={t('billiard_tables.controller.description')}
         actions={
           <>
             {(controllers.length > 0 || !!error) && (
-              <Button label="Register" icon={<IconPlus size={16} />} iconPosition="left" rounded="lg" onClick={() => setRegisterOpen(true)} />
+              <Button label={t('btn.register_controller')} icon={<IconPlus size={16} />} iconPosition="left" rounded="lg" onClick={() => setRegisterOpen(true)} />
             )}
-            <Button label="Refresh" variant="secondary" icon={<IconRefresh size={16} />} iconPosition="left" rounded="lg" onClick={refetch} disabled={loading} />
-            <Button label="Back to tables" variant="secondary" icon={<IconArrowLeft size={16} />} iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
+            <Button label={t('btn.refresh')} variant="secondary" icon={<IconRefresh size={16} />} iconPosition="left" rounded="lg" onClick={refetch} disabled={loading} />
+            <Button label={t('btn.back_to_tables')} variant="secondary" icon={<IconArrowLeft size={16} />} iconPosition="left" rounded="lg" onClick={() => navigate('/billiard')} />
           </>
         }
       />
