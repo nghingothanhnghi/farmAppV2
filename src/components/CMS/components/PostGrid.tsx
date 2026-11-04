@@ -8,6 +8,7 @@ import Button from '../../common/Button';
 import { IconSend, IconArchive, IconClock } from '@tabler/icons-react';
 import Badge from '../../common/Badge';
 import PostStatusDisplay from './PostStatusDisplay';
+import { formatDateTime } from '../../../utils/formatters';
 
 interface Props {
     posts: CmsPost[];
@@ -90,7 +91,7 @@ export default function PostGrid({
             width: 150,
             filter: false,
             sortable: false,
-            valueGetter: (p: any) => p.data.published_at || "-",
+            valueGetter: (p: any) => formatDateTime(p.data.published_at) || "-",
         },
         {
             headerName: "Author",

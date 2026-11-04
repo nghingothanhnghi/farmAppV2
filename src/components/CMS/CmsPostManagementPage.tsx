@@ -1,5 +1,6 @@
 // src/components/CMS/CmsPostManagementPage.tsx
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
 import { useAlert } from '../../contexts/alertContext';
@@ -13,6 +14,7 @@ import ScheduleModal from './components/ScheduleModal';
 import { IconAlertCircle, IconCirclePlus } from '@tabler/icons-react';
 
 const CmsPostManagementPage: React.FC = () => {
+    const { t } = useTranslation();
     const navigate = useNavigate();
     const { setAlert } = useAlert();
     const { posts, loading, actions } = usePostContext();
@@ -99,15 +101,16 @@ const CmsPostManagementPage: React.FC = () => {
     return (
         <div className="flex flex-col h-full min-h-0">
             <PageTitle
-                title="Post Management"
-                subtitle="Create, edit, and organize your posts with ease. Manage content, categories, and publishing status all in one place."
+                title={t('post.page_header.title')}
+                subtitle={t('post.page_header.description')}
                 actions={
                     <Button
                         type="button"
-                        label="New Post"
+                        label={t('btn.new_post')}
+
                         onClick={() => navigate('/dashboard/cms/new')}
                         variant="secondary"
-                        icon={<IconCirclePlus size={16} stroke={2} />}
+                        icon={<IconCirclePlus size={16} className="text-gray-500" />}
                         iconPosition='left'
                         rounded='lg'
                     />

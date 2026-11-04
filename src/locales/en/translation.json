@@ -101,7 +101,8 @@
         "pay_out": "Pay out",
         "billiard_controllers": "Controllers",
         "refresh": "Refresh",
-        "register_controller": "Register Controller"
+        "register_controller": "Register Controller",
+        "new_post": "New Post"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -780,6 +781,12 @@
         "no_open_shift": "No open shift",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
+    "post": {
+        "page_header": {
+            "title": "Post Management",
+            "description": "Create, edit, and organize your posts with ease. Manage content, categories, and publishing status all in one place."
+        }
+    },    
     "placeholder_message":{
         "search":{
             "message_01": "No matching products found.",
