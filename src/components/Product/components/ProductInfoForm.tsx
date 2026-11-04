@@ -5,6 +5,7 @@ import RichTextEditor from "../../common/RichTextEditor";
 import QRCodeImage from "../../common/QRCodeImage";
 import type { ProductCreate } from "../../../models/interfaces/Product";
 import Button from "../../common/Button";
+import { formatNumber } from "../../../utils/formatters";
 
 interface ProductInfoFormProps {
   data: ProductCreate;
@@ -69,14 +70,6 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
       {/* Description */}
       <FormGroup className="grid gap-x-8 gap-y-2 lg:gap-y-6 sm:grid-cols-2">
         <FormLabel htmlFor="description">Description</FormLabel>
-        {/* <FormInput
-          id="description"
-          type="text"
-          value={data.description ?? ""}
-          onChange={(e) => onChange("description", e.target.value)}
-          disabled={isViewMode}
-        /> */}
-
         <RichTextEditor
           value={data.description || ""}
           onChange={(html) => onChange("description", html)}
@@ -96,10 +89,12 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
         <FormLabel htmlFor="base_price">Base Price</FormLabel>
         <FormInput
           id="base_price"
-          type="number"
-          step="0.01"
-          value={data.base_price}
-          onChange={(e) => onChange("base_price", parseFloat(e.target.value) || 0)}
+          type="text"
+          inputMode="numeric"
+          value={formatNumber(data.base_price, "", 2, "vi-VN")}
+          onChange={(e) =>
+            onChange("base_price", Number(e.target.value.replace(/\D/g, "")) || 0)
+          }
           disabled={isViewMode}
           required
         />
@@ -151,12 +146,12 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
             />
 
             {!isViewMode && (
-            <Button
-              type="button"
-              label="Regenerate QR Code"
-              onClick={onRegenerateQr}
-              rounded='lg'
-            />
+              <Button
+                type="button"
+                label="Regenerate QR Code"
+                onClick={onRegenerateQr}
+                rounded='lg'
+              />
 
             )}
           </div>
