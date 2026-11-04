@@ -1,9 +1,16 @@
 // src/utils/formatters.ts
 
-export const formatNumber = (v?: number | null, unit = "", digits = 1) =>
-  v == null || Number.isNaN(v)
-    ? "—"
-    : `${v.toLocaleString(undefined, { maximumFractionDigits: digits })}${unit}`;
+export const formatNumber = (
+    value?: number | null,
+    unit = "",
+    digits = 1,
+    locale?: string
+): string =>
+    value == null || !Number.isFinite(value)
+        ? "—"
+        : `${value.toLocaleString(locale, {
+            maximumFractionDigits: digits,
+        })}${unit}`;    
 
 export const formatPercent = (ratio?: number | null) =>
   ratio == null ? "—" : `${Math.round(ratio * 100)}%`;

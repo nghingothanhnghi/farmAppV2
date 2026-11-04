@@ -123,5 +123,3 @@ export const parseWholeAmount = (raw: string): number | null => {
   const digits = raw.replace(/\D/g, '');
   return digits === '' ? null : Number(digits);
 };
-
-export const formatNumber = (n: number): string => new Intl.NumberFormat('vi-VN').format(n);

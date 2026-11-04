@@ -14,11 +14,10 @@ import { FloatingLabelInput, FloatingLabelTextarea } from '../common/Form';
 import { useShifts } from '../../hooks/useShifts';
 import { shiftService } from '../../services/shiftService';
 import { useAlert } from '../../contexts/alertContext';
-import { formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatNumber } from '../../utils/formatters';
 import {
   billiardErrorMessage,
   formatMoneyString,
-  formatNumber,
   parseWholeAmount,
 } from '../../utils/billiard';
 import ShiftSummaryView, { ShiftResult, Variance } from './components/ShiftSummaryView';
@@ -43,7 +42,7 @@ const MoneyInput: React.FC<{
       inputMode="numeric"
       label={label}
       placeholder={placeholder}
-      value={n === null ? '' : formatNumber(n)}
+      value={n === null ? '' : formatNumber(n, "", 0)}
       onChange={(e) => onChange(e.target.value)}
       disabled={disabled}
       alwaysFloat

@@ -43,7 +43,7 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
                 {prediction.confidence != null && (
                     <div className="text-right">
                         <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                            {formatNumber(prediction.confidence * 100)}%
+                            {formatNumber(prediction.confidence * 100, "%", 1)}
                         </div>
 
                         <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -61,7 +61,7 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
 
                     <div className="mt-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {prediction.predicted_growth_pct != null
-                            ? `${formatNumber(prediction.predicted_growth_pct)}%`
+                            ? `${formatNumber(prediction.predicted_growth_pct, "%", 1)}`
                             : "—"}
                     </div>
                 </div>
@@ -82,7 +82,7 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
                     </div>
 
                     <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
-                        {formatNumber(prediction.predicted_canopy_area_px)} px²
+                        {formatNumber(prediction.predicted_canopy_area_px, " px²", 0)}
                     </div>
                 </div>
 
@@ -93,9 +93,7 @@ const GrowthPredictionCard: React.FC<Props> = ({ prediction }) => {
 
                     <div className="mt-1 text-sm font-semibold text-gray-900 dark:text-gray-100">
                         {prediction.basis_growth_rate_pct_per_day != null
-                            ? `${formatNumber(
-                                prediction.basis_growth_rate_pct_per_day
-                            )}% / day`
+                            ? `${formatNumber(prediction.basis_growth_rate_pct_per_day, "% / day", 1)}`
                             : "—"}
                     </div>
                 </div>
