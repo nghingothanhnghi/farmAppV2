@@ -1,8 +1,9 @@
 // src/components/billiard/components/PricingRuleFormModal.tsx
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
-import { FormCheckbox, FormGroup, FormInput, FormLabel, FormSelect, FormToggle } from '../../common/Form';
+import { FormCheckbox, FormGroup, FormLabel, FormToggle, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import { PRICING_RULE_TYPES, DAYS_OF_WEEK } from '../../../models/interfaces/Billiard';
 import type {
   BilliardTable,
@@ -110,6 +111,7 @@ const FieldError: React.FC<{ msg?: string }> = ({ msg }) =>
   msg ? <p className="text-red-500 text-xs">{msg}</p> : null;
 
 const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, saving, onSubmit }) => {
+  const { t } = useTranslation();
   const [f, setF] = useState<FormState>(EMPTY);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -142,7 +144,7 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
       isOpen={isOpen}
       onClose={saving ? () => { } : onClose}
       title={rule ? 'Edit pricing rule' : 'New pricing rule'}
-      size="medium"
+      size="small"
       content={
         <div className="px-7 pb-4 space-y-4 max-h-[70vh] overflow-y-auto">
           <p className="text-[0.6875rem] text-gray-500 dark:text-gray-400">
@@ -151,36 +153,70 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
           </p>
 
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="rule_name">Name</FormLabel>
-            <FormInput id="rule_name" type="text" value={f.name} disabled={saving}
-              onChange={(e) => set('name', e.target.value)} placeholder="Happy hour" />
+            <FloatingLabelInput
+              id="rule_name"
+              name="name"
+              label="Name"
+              placeholder="Enter pricing rule name, e.g. Happy Hour"
+              value={f.name}
+              onChange={(e) => set('name', e.target.value)}
+              disabled={saving}
+              required
+              alwaysFloat
+            />
             <FieldError msg={errors.name} />
           </FormGroup>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_type">Billing type</FormLabel>
-              <FormSelect id="rule_type" value={f.rule_type} disabled={saving} className="w-full"
-                onChange={(e) => set('rule_type', e.target.value as PricingRuleType)}>
-                {PRICING_RULE_TYPES.map((t) => (
-                  <option key={t} value={t}>{getBillingPolicyLabel(t)}</option>
+              <FloatingLabelSelect
+                id="rule_type"
+                name="rule_type"
+                label="Billing type"
+                value={f.rule_type}
+                disabled={saving}
+                onChange={(e) => set('rule_type', e.target.value as PricingRuleType)}
+                className="w-full"
+              >
+                {PRICING_RULE_TYPES.map((type) => (
+                  <option key={type} value={type}>
+                    {getBillingPolicyLabel(type)}
+                  </option>
                 ))}
-              </FormSelect>
+              </FloatingLabelSelect>
             </FormGroup>
-
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_rate">Hourly rate (optional)</FormLabel>
-              <FormInput id="rule_rate" type="text" inputMode="decimal" value={f.hourly_rate} disabled={saving}
-                onChange={(e) => set('hourly_rate', e.target.value)} placeholder="Table's own rate" />
+              <FloatingLabelInput
+                id="rule_rate"
+                name="hourly_rate"
+                label="Hourly rate (optional)"
+                placeholder="Table's own rate"
+                type="text"
+                inputMode="decimal"
+                value={f.hourly_rate}
+                onChange={(e) => set('hourly_rate', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
               <FieldError msg={errors.hourly_rate} />
             </FormGroup>
           </div>
 
           {f.rule_type === 'block' && (
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_block">Block length (minutes)</FormLabel>
-              <FormInput id="rule_block" type="text" inputMode="numeric" value={f.block_minutes} disabled={saving}
-                onChange={(e) => set('block_minutes', e.target.value)} placeholder="30" />
+              <FloatingLabelInput
+                id="rule_block"
+                name="block_minutes"
+                label="Block length (minutes)"
+                placeholder="e.g. 30"
+                type="text"
+                inputMode="numeric"
+                value={f.block_minutes}
+                onChange={(e) => set('block_minutes', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
+
               <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">Time is charged in whole blocks of this length.</p>
               <FieldError msg={errors.block_minutes} />
             </FormGroup>
@@ -188,27 +224,44 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
 
           {f.rule_type === 'minimum_hour' && (
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_min">Minimum charged time (minutes)</FormLabel>
-              <FormInput id="rule_min" type="text" inputMode="numeric" value={f.min_minutes} disabled={saving}
-                onChange={(e) => set('min_minutes', e.target.value)} placeholder="60" />
+              <FloatingLabelInput
+                id="rule_min"
+                name="min_minutes"
+                label="Minimum charged time (minutes)"
+                placeholder="e.g. 60"
+                type="text"
+                inputMode="numeric"
+                value={f.min_minutes}
+                onChange={(e) => set('min_minutes', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
               <FieldError msg={errors.min_minutes} />
             </FormGroup>
           )}
 
           <FormGroup className="space-y-1">
-            <FormLabel htmlFor="rule_table">Applies to</FormLabel>
-            <FormSelect id="rule_table" value={f.table_id} disabled={saving} className="w-full"
-              onChange={(e) => set('table_id', e.target.value)}>
+            <FloatingLabelSelect
+              id="rule_table"
+              name="table_id"
+              label="Applies to"
+              value={f.table_id}
+              disabled={saving}
+              onChange={(e) => set('table_id', e.target.value)}
+              className="w-full"
+            >
               <option value="">All tables</option>
-              {tables.map((t) => (
-                <option key={t.id} value={t.id}>{t.name}</option>
+              {tables.map((table) => (
+                <option key={table.id} value={table.id}>
+                  {table.name}
+                </option>
               ))}
-            </FormSelect>
+            </FloatingLabelSelect>
           </FormGroup>
 
           <FormGroup className="space-y-1">
             <FormLabel htmlFor="rule_days">Days (none selected = every day)</FormLabel>
-            <div className="flex flex-wrap gap-x-4 gap-y-2" id="rule_days">
+            <div className="grid grid-cols-4 gap-x-4 gap-y-3" id="rule_days">
               {DAYS_OF_WEEK.map((d) => (
                 <FormCheckbox key={d} id={`rule_day_${d}`} label={dayLabel(d)} checked={f.days.includes(d)}
                   disabled={saving} onChange={() => toggleDay(d)} />
@@ -218,15 +271,29 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
 
           <div className="grid gap-4 sm:grid-cols-2">
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_start">Start time (club-local)</FormLabel>
-              <FormInput id="rule_start" type="time" value={f.start_time} disabled={saving}
-                onChange={(e) => set('start_time', e.target.value)} />
+              <FloatingLabelInput
+                id="rule_start"
+                name="start_time"
+                label="Start time (club-local)"
+                type="time"
+                value={f.start_time}
+                onChange={(e) => set('start_time', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
               <FieldError msg={errors.start_time} />
             </FormGroup>
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_end">End time (club-local)</FormLabel>
-              <FormInput id="rule_end" type="time" value={f.end_time} disabled={saving}
-                onChange={(e) => set('end_time', e.target.value)} />
+              <FloatingLabelInput
+                id="rule_end"
+                name="end_time"
+                label="End time (club-local)"
+                type="time"
+                value={f.end_time}
+                onChange={(e) => set('end_time', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
               <FieldError msg={errors.end_time} />
             </FormGroup>
           </div>
@@ -236,9 +303,17 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
 
           <div className="grid gap-4 sm:grid-cols-2 items-end">
             <FormGroup className="space-y-1">
-              <FormLabel htmlFor="rule_priority">Priority (0–1000, higher wins)</FormLabel>
-              <FormInput id="rule_priority" type="text" inputMode="numeric" value={f.priority} disabled={saving}
-                onChange={(e) => set('priority', e.target.value)} />
+              <FloatingLabelInput
+                id="rule_priority"
+                name="priority"
+                label="Priority (0–1000, higher wins)"
+                type="text"
+                inputMode="numeric"
+                value={f.priority}
+                onChange={(e) => set('priority', e.target.value)}
+                disabled={saving}
+                alwaysFloat
+              />
               <FieldError msg={errors.priority} />
             </FormGroup>
             <FormToggle id="rule_active" label="Active" checked={f.is_active}
@@ -250,9 +325,9 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
       }
       actions={
         <div className="flex gap-4">
-          <Button label={saving ? 'Saving...' : 'Save'} onClick={handleSubmit} disabled={saving}
+          <Button label={saving ? t('btn.saving') : t('btn.save')} onClick={handleSubmit} disabled={saving}
             className="min-w-[150px]" rounded="lg" />
-          <Button label="Cancel" variant="secondary" onClick={onClose} disabled={saving}
+          <Button label={t('btn.cancel')} variant="secondary" onClick={onClose} disabled={saving}
             className="min-w-[150px]" rounded="lg" />
         </div>
       }
