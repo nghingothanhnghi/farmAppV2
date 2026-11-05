@@ -88,6 +88,8 @@
         "print_preview_bill": "Print Bill (Ack)",
         "print_receipt": "Print Receipt",
         "pay": "Pay",
+        "confirming": "Confirming...",
+        "processing": "Processing...",
         "pricing_rules": "Pricing Rules",
         "controllers": "Controllers",
         "deleting": "Deleting...",

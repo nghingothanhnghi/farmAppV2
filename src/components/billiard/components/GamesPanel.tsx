@@ -69,7 +69,7 @@ const GamesPanel: React.FC<Props> = ({ games, activeGame, busy, onStart, onScore
             <PlayerScore label={t(`${g}.player_b`)} value={activeGame.player_b_score} editable busy={busy}
               onPlus={() => onScore(activeGame.id, 'B', 1)} onMinus={() => onScore(activeGame.id, 'B', -1)} />
           </div>
-          <div className="flex flex-wrap justify-end gap-2">
+          <div className="flex flex-wrap justify-center gap-2">
             <Button label={t(`${g}.reset`)} variant="secondary" rounded="lg" disabled={busy}
               onClick={() => onReset(activeGame.id)} />
             <Button label={t(`${g}.new`)} variant="secondary" rounded="lg" disabled={busy}

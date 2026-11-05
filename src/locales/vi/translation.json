@@ -88,6 +88,8 @@
         "print_preview_bill": "In hóa đơn",
         "print_receipt": "In biên lai",
         "pay": "Thanh toán",
+        "confirming": "Đang xác nhận...",
+        "processing": "Đang xử lý...",        
         "pricing_rules": "Quy tắc tính giá",
         "controllers": "Thiết bị điều khiển",
         "deleting": "Đang xóa...",

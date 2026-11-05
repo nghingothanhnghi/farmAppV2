@@ -379,7 +379,7 @@ const PayModal: React.FC<Props> = ({
         <div className="flex gap-4">
           {!inStripeStep ? (
             <Button
-              label={busy ? 'Processing...' : 'Pay'}
+              label={busy ? t('btn.processing') : t('btn.pay')}
               onClick={handlePay}
               disabled={!canPay}
               className="min-w-[150px]"
@@ -388,7 +388,7 @@ const PayModal: React.FC<Props> = ({
           ) : (
             !StripeCheckout && (
               <Button
-                label={busy ? 'Confirming...' : 'Confirm payment'}
+                label={busy ? t('btn.confirming') : t('btn.confirm_payment')}
                 onClick={handleConfirm}
                 disabled={busy}
                 className="min-w-[150px]"
