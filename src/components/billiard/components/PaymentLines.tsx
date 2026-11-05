@@ -3,6 +3,7 @@
 // Drawn from the bill alone. A bill can go from paid back to pending/unpaid when a manager
 // voids a line, so this never assumes "paid" is final.
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import Modal from '../../common/Modal';
@@ -50,6 +51,7 @@ const LineItem: React.FC<{
   busy: boolean;
   onVoid: (line: PaymentLine) => void;
 }> = ({ line, currency, canVoid, busy, onVoid }) => {
+  const { t } = useTranslation();
   const badge = STATUS_BADGE[line.status] ?? { label: line.status, variant: 'gray' as const };
   // cancelled / voided lines stay visible but greyed out
   const dimmed = line.status === 'cancelled' || line.status === 'voided';
@@ -70,8 +72,15 @@ const LineItem: React.FC<{
 
       {line.method === 'cash' && line.status === 'completed' && line.cash_tendered !== null && (
         <p className="text-[0.6875rem] text-gray-500 dark:text-gray-400">
-          Handed over {formatMoneyString(line.cash_tendered, currency)}
-          {line.change_given !== null && <> · Change {formatMoneyString(line.change_given, currency)}</>}
+          {t("cashier.handed_over", {
+            amount: formatMoneyString(line.cash_tendered, currency),
+          })}
+
+          {line.change_given !== null && (
+            <> · {t("cashier.change", {
+              amount: formatMoneyString(line.change_given, currency),
+            })}</>
+          )}
         </p>
       )}
       {line.status === 'completed' && line.confirmed_at && (
@@ -106,6 +115,7 @@ const LineItem: React.FC<{
 };
 
 const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
+  const { t } = useTranslation();
   const c = bill.currency;
   const state = getBillState(bill);
   const paid = state === 'paid';
@@ -140,7 +150,7 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-3">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">
-          {paid ? 'Receipt' : 'Payments'}
+          {paid ? t("cashier.receipt") : t("cashier.payment")}
         </h3>
         {bill.payment_method && paid && (
           <Badge label={METHOD_LABEL[bill.payment_method] ?? bill.payment_method} variant="info" size="xsmall" />
@@ -166,12 +176,12 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
       )}
 
       <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-        {lines.length > 0 && <Row label="Paid so far" value={formatMoneyString(bill.amount_paid ?? 0, c)} />}
-        {!paid && balance > 0 && <Row label="Balance due" value={<b>{formatMoneyString(balance, c)}</b>} />}
-        {paid && <Row label="Paid at" value={formatDateTime(bill.paid_at)} />}
+        {lines.length > 0 && <Row label={t("cashier.paid_so_far")} value={formatMoneyString(bill.amount_paid ?? 0, c)} />}
+        {!paid && balance > 0 && <Row label={t("cashier.balance_due")} value={<b>{formatMoneyString(balance, c)}</b>} />}
+        {paid && <Row label={t("cashier.paid_at")} value={formatDateTime(bill.paid_at)} />}
         {paid && (
           <Row
-            label="Received by"
+            label={t("cashier.received_by")}
             value={bill.paid_by ?? 'Confirmed automatically by the bank'}
           />
         )}
@@ -205,14 +215,14 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
         actions={
           <div className="flex gap-4">
             <Button
-              label={busy ? 'Voiding...' : 'Void payment'}
+              label={busy ? 'Voiding...' : t('btn.void_payment')}
               variant="danger"
               onClick={submitVoid}
               disabled={busy || !reasonOk}
               className="min-w-[150px]"
               rounded="lg"
             />
-            <Button label="Cancel" variant="secondary" onClick={closeVoid} disabled={busy} className="min-w-[150px]" rounded="lg" />
+            <Button label={t("btn.cancel")} variant="secondary" onClick={closeVoid} disabled={busy} className="min-w-[150px]" rounded="lg" />
           </div>
         }
       />

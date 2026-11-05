@@ -91,7 +91,7 @@ const ProductInfoForm: React.FC<ProductInfoFormProps> = ({
           id="base_price"
           type="text"
           inputMode="numeric"
-          value={formatNumber(data.base_price, "", 2, "vi-VN")}
+          value={formatNumber(data.base_price, "", 0, "vi-VN")}
           onChange={(e) =>
             onChange("base_price", Number(e.target.value.replace(/\D/g, "")) || 0)
           }

@@ -102,7 +102,8 @@
         "billiard_controllers": "Controllers",
         "refresh": "Refresh",
         "register_controller": "Register Controller",
-        "new_post": "New Post"
+        "new_post": "New Post",
+        "void_payment": "Void Payment"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -779,6 +780,14 @@
         "counted_cash": "Counted cash",
         "variance_cash": "Variance",
         "no_open_shift": "No open shift",
+        "handed_over": "Handed over {{amount}}",
+        "change": "Change {{amount}}",
+        "paid_so_far": "Paid so far",
+        "paid_at": "Paid at",
+        "balance_due": "Balance due",
+        "received_by": "Received by",
+        "receipt": "Receipt",
+        "payment": "Payment",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
     "post": {

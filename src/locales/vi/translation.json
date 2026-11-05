@@ -102,7 +102,8 @@
         "billiard_controllers": "Bộ điều khiển",
         "refresh": "Làm mới",
         "register_controller": "Đăng ký bộ điều khiển",
-        "new_post": "Bài viết mới"
+        "new_post": "Bài viết mới",
+        "void_payment": "Hủy thanh toán"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -778,6 +779,14 @@
         "counted_cash": "Tiền mặt thực đếm",
         "variance_cash": "Chênh lệch tiền mặt",
         "no_open_shift": "Chưa có ca thu ngân nào đang mở",
+        "handed_over": "Khách đưa {{amount}}",
+        "change": "Tiền thừa {{amount}}",
+        "paid_so_far": "Đã thanh toán",
+        "paid_at": "Vào lúc",
+        "balance_due": "Còn nợ",
+        "received_by": "Nhận bởi",
+        "receipt": "Biên lai",
+        "payment": "Thanh toán",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },    
     "post": {
