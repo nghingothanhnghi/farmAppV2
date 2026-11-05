@@ -146,12 +146,11 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
       title={rule ? 'Edit pricing rule' : 'New pricing rule'}
       size="small"
       content={
-        <div className="px-7 pb-4 space-y-4 max-h-[70vh] overflow-y-auto">
-          <p className="text-[0.6875rem] text-gray-500 dark:text-gray-400">
+        <div className="px-7 pb-4 min-h-[300px] space-y-3">
+          <p className="text-sm text-gray-600 dark:text-gray-300">
             Rules apply to sessions that start after the change. Running and finished bills keep the rule
             they started with.
           </p>
-
           <FormGroup className="space-y-1">
             <FloatingLabelInput
               id="rule_name"
