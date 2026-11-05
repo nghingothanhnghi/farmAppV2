@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { parseUtc } from '../../../utils/formatters';
 import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString } from '../../../utils/billiard';
 import type { ActiveTable, BilliardTable } from '../../../models/interfaces/Billiard';
-import { getTableStatusLabel } from '../../../utils/status';
+import { getTableStatusLabel, getTableStatusVariant } from '../../../utils/status';
 
 interface Props {
   table: BilliardTable;
@@ -18,13 +18,6 @@ interface Props {
   onStart: (table: BilliardTable) => void;
   onOpen: (sessionId: number) => void;
 }
-
-const STATUS_VARIANT = {
-  available: 'success',
-  playing: 'warning',
-  reserved: 'secondary',
-  maintenance: 'danger',
-} as const;
 
 const Row: React.FC<{ label: string; value: string; bold?: boolean }> = ({ label, value, bold }) => (
   <div className="flex items-center justify-between text-xs">
@@ -41,7 +34,7 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
   const elapsed = live ? Math.max(0, Math.floor((now - parseUtc(live.start_time)) / 1000)) : 0;
   // While playing, show the rate of the rule frozen at start (may differ from the table's own rate).
   const rate = table.status === 'playing' && live?.hourly_rate ? live.hourly_rate : table.hourly_rate;
-  const variant = STATUS_VARIANT[table.status as keyof typeof STATUS_VARIANT] ?? 'gray';
+  const variant = getTableStatusVariant(table.status);
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3 flex flex-col">
@@ -60,7 +53,7 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
         <div className="space-y-2 flex-1">
           {live ? (
             <>
-              <div className="font-mono text-2xl font-semibold text-gray-900 dark:text-white">
+              <div className="number-digital text-2xl font-semibold text-gray-900 dark:text-yellow-200">
                 {formatElapsed(elapsed)}
               </div>
               <div className="space-y-1 border-t border-gray-200 dark:border-white/5 pt-2">

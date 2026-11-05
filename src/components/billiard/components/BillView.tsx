@@ -46,6 +46,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
             {b.duration_minutes != null && ` · ${formatDuration(b.duration_minutes)}`}
           </p>
         </div>
+
         <Badge
           label={
             state === 'paid' ? 'Paid'
