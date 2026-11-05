@@ -114,12 +114,8 @@ const TablesPage: React.FC = () => {
                     }
                   }}
                 />
-
-
               </>
             )}
-
-
           </>
         }
       />

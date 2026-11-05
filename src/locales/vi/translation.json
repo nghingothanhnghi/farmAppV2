@@ -315,9 +315,13 @@
             "label": "Đến",
             "placeholder":""
         },
+        "handed_over_optional":{
+            "label": "Khách đưa (không bắt buộc)",
+            "placeholder":"Nhập số tiền khách đưa"
+        },        
         "amount_handed_over":{
             "label": "Số tiền khách đưa",
-            "placeholder":""
+            "placeholder":"Nhập số tiền khách đưa"
         },
         "amount":{
             "label": "Số tiền",
@@ -787,6 +791,7 @@
         "received_by": "Nhận bởi",
         "receipt": "Biên lai",
         "payment": "Thanh toán",
+        "cash_missing": " (thiếu tiền mặt)",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },    
     "post": {

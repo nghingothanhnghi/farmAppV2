@@ -17,6 +17,7 @@ const Row: React.FC<{ label: string; value: React.ReactNode; bold?: boolean }> =
 
 /** counted - expected. Negative = cash is missing: red. */
 export const Variance: React.FC<{ value: string | null }> = ({ value }) => {
+  const { t } = useTranslation();
   if (value === null) return <span>—</span>;
   const n = toAmount(value);
   const cls = n < 0 ? 'text-red-600 font-semibold' : n > 0 ? 'text-amber-600 font-semibold' : 'text-green-600 font-semibold';
@@ -24,7 +25,7 @@ export const Variance: React.FC<{ value: string | null }> = ({ value }) => {
     <span className={cls}>
       {n > 0 ? '+' : ''}
       {formatMoneyString(value)}
-      {n < 0 && ' (cash missing)'}
+      {n < 0 && ` ${t('cashier.cash_missing')}`}
     </span>
   );
 };
@@ -45,7 +46,7 @@ const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
   const { t } = useTranslation();
 
   return (
-    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-4">
+    <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-800 p-4 space-y-4">
       <div className="flex items-start justify-between gap-2">
         <div>
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">{t('cashier.shift')} #{shift.id}</h3>

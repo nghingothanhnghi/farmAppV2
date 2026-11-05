@@ -315,6 +315,10 @@
             "label": "To",
             "placeholder":""
         },
+        "handed_over_optional":{
+            "label": "Handed over (optional)",
+            "placeholder":""
+        },
         "amount_handed_over":{
             "label": "Amount handed over",
             "placeholder":""
@@ -788,6 +792,7 @@
         "received_by": "Received by",
         "receipt": "Receipt",
         "payment": "Payment",
+        "cash_missing": " (cash missing)",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
     "post": {

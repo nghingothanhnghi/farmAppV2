@@ -282,59 +282,68 @@ const PayModal: React.FC<Props> = ({
                     const err = rowError(r);
                     return (
                       <div key={r.key} className="space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500 w-4">{i + 1}</span>
-                          <FloatingLabelSelect
-                            id={`split-method-${r.key}`}
-                            name={`split-method-${r.key}`}
-                            label={`Line ${i + 1} method`}
-                            value={r.method}
-                            disabled={busy}
-                            onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
-                            className="min-w-0 flex-1"
-                          >
-                            <option value="cash">Cash</option>
-                            <option value="bank_transfer">Bank transfer</option>
-                          </FloatingLabelSelect>
-                          <FloatingLabelInput
-                            id={`split-amount-${r.key}`}
-                            name={`split-amount-${r.key}`}
-                            type="text"
-                            inputMode="numeric"
-                            label="Amount"
-                            value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
-                            onChange={(e) => updateRow(r.key, { amount: e.target.value })}
-                            disabled={busy}
-                            alwaysFloat
-                            className="flex-1 min-w-0"
-                          />
-                          {rows.length > 1 && (
-                            <Button
-                              label={`Remove line ${i + 1}`}
-                              size="xs"
-                              variant="secondary"
-                              rounded="lg"
-                              icon={<IconTrash size={16} />}
-                              iconPosition="left"
-                              disabled={busy}
-                              onClick={() => removeRow(r.key)}
-                            />
-                          )}
+                        <div className="flex items-start gap-2">
+                          <span className="w-4 shrink-0 pt-3 text-xs text-gray-500 text-center">
+                            {i + 1}
+                          </span>
+                          <div className="flex-1 min-w-0 space-y-2">
+                            <div className="flex items-center gap-2">
+                              <FloatingLabelSelect
+                                id={`split-method-${r.key}`}
+                                name={`split-method-${r.key}`}
+                                label={`Line ${i + 1} method`}
+                                value={r.method}
+                                disabled={busy}
+                                onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
+                                className="min-w-0 flex-1"
+                              >
+                                <option value="cash">Cash</option>
+                                <option value="bank_transfer">Bank transfer</option>
+                              </FloatingLabelSelect>
+                              <FloatingLabelInput
+                                id={`split-amount-${r.key}`}
+                                name={`split-amount-${r.key}`}
+                                type="text"
+                                inputMode="numeric"
+                                label="Amount"
+                                value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
+                                onChange={(e) => updateRow(r.key, { amount: e.target.value })}
+                                disabled={busy}
+                                alwaysFloat
+                                className="flex-1 min-w-0"
+                              />
+                              {rows.length > 1 && (
+                                <Button
+                                  label={`Remove line ${i + 1}`}
+                                  variant="secondary"
+                                  icon={<IconTrash size={14} />}
+                                  iconOnly
+                                  rounded="full"
+                                  size="xs"
+                                  disabled={busy}
+                                  onClick={() => removeRow(r.key)}
+                                />
+
+                              )}
+                            </div>
+                            {r.method === 'cash' && (
+                              <FloatingLabelInput
+                                id={`split-tendered-${r.key}`}
+                                name={`split-tendered-${r.key}`}
+                                type="text"
+                                inputMode="numeric"
+                                label={t('input.handed_over_optional.label')}
+                                placeholder={t('input.handed_over_optional.placeholder')}
+                                value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
+                                onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
+                                disabled={busy}
+                                alwaysFloat
+                                className="w-full"
+                              />
+                            )}
+                          </div>
                         </div>
-                        {r.method === 'cash' && (
-                          <FloatingLabelInput
-                            id={`split-tendered-${r.key}`}
-                            name={`split-tendered-${r.key}`}
-                            type="text"
-                            inputMode="numeric"
-                            label="Handed over (optional)"
-                            value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
-                            onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
-                            disabled={busy}
-                            alwaysFloat
-                            className="w-full"
-                          />
-                        )}
+
                         {err && parseAmount(r.amount) !== null && (
                           <p className="pl-6 text-xs text-red-600">{err}</p>
                         )}
@@ -348,7 +357,6 @@ const PayModal: React.FC<Props> = ({
                       variant="secondary"
                       rounded="lg"
                       icon={<IconPlus size={14} />}
-                      iconPosition="left"
                       disabled={busy || rows.length >= MAX_SPLIT_LINES}
                       onClick={addRow}
                     />
@@ -388,7 +396,7 @@ const PayModal: React.FC<Props> = ({
               />
             )
           )}
-          <Button label="Cancel" variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
+          <Button label={t('btn.cancel')} variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
         </div>
       }
     />

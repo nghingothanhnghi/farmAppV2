@@ -243,7 +243,7 @@ const ShiftsPage: React.FC = () => {
           {history.length === 0 ? (
             <EmptyState message="No shifts yet." />
           ) : (
-            <ul className="divide-y divide-gray-200 dark:divide-white/5 bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-white/5">
+            <ul className="divide-y divide-gray-200 dark:divide-white/5 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-white/5">
               {history.map((h) => (
                 <li key={h.id}>
                   <button
