@@ -1,6 +1,6 @@
 // src/utils/status.ts
 import i18n from '../i18n';
-import type { TableStatus, PaymentMethod, BillState } from '../models/interfaces/Billiard';
+import type { TableStatus, PaymentMethod } from '../models/interfaces/Billiard';
 
 export const TABLE_STATUS_VARIANTS = {
   available: 'success',
