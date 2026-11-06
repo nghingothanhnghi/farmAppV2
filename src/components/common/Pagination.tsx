@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Button from './Button';
+import { IconChevronLeft, IconChevronRight } from '@tabler/icons-react';
 
 interface PaginationProps {
     page: number;
@@ -56,9 +57,11 @@ const Pagination: React.FC<PaginationProps> = ({
                 <Button
                     type="button"
                     label="Previous"
+                    icon={<IconChevronLeft size={16} />}
+                    iconOnly
                     variant="secondary"
                     size="sm"
-                    rounded="lg"
+                    rounded="full"
                     disabled={loading || currentPage <= 1}
                     onClick={() => onPageChange(currentPage - 1)}
                 />
@@ -80,8 +83,10 @@ const Pagination: React.FC<PaginationProps> = ({
                     type="button"
                     label="Next"
                     variant="secondary"
+                    icon={<IconChevronRight size={16} />}
+                    iconOnly
                     size="sm"
-                    rounded="lg"
+                    rounded="full"
                     disabled={loading || currentPage >= totalPages}
                     onClick={() => onPageChange(currentPage + 1)}
                 />
