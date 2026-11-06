@@ -18,6 +18,12 @@
                 "actuators": "Actuators",
                 "sensors": "Sensors",
                 "batches": "Batches"
+            },
+            "cms": {
+                "posts":"Posts",
+                "categories":"Categories",
+                "tags": "Tags",
+                "media": "Media"
             }
         }
       },

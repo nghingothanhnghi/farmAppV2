@@ -18,7 +18,13 @@
                 "actuators": "Bộ chấp hành",
                 "sensors": "Cảm biến",
                 "batches": "Vụ trồng"
-            }       
+            },
+            "cms": {
+                "posts":"Bài viết",
+                "categories":"Danh mục",
+                "tags": "Thẻ",
+                "media": "Phương tiện"
+            }
         }
       },
     "btn":{

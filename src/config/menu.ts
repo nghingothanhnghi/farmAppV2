@@ -18,7 +18,10 @@ import {
   IconArtboard,
   IconGitCherryPick,
   IconCarrot,
-  IconCircleNumber1
+  IconCircleNumber1,
+  IconTag,
+  IconCategory2,
+  IconPhotoVideo
 } from '@tabler/icons-react';
 
 export interface MenuItem {
@@ -138,9 +141,34 @@ export const menuItems: MenuItem[] = [
 
   {
     id: 'cms',
-    label: 'CMS Content',
+    label: 'CMS Management',
     icon: IconArticle,
-    to: '/dashboard/cms',
+    children: [
+      {
+        id: 'cms-posts',
+        label: 'menu.portal.cms.posts',
+        icon: IconLayoutDashboard,
+        to: '/dashboard/cms',
+      },
+      {
+        id: 'cms-categories',
+        label: 'menu.portal.cms.categories',
+        icon: IconCategory2,
+        to: '/dashboard/cms/categories',
+      },   
+      {
+        id: 'cms-tags',
+        label: 'menu.portal.cms.tags',
+        icon: IconTag,
+        to: '/dashboard/cms/tags',
+      },  
+      {
+        id: 'cms-media',
+        label: 'menu.portal.cms.media',
+        icon: IconPhotoVideo,
+        to: '/dashboard/cms/media',
+      },                
+    ],    
   },
   { id: 'billiard', 
     label: 'Billiard', 
