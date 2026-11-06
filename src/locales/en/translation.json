@@ -23,7 +23,8 @@
                 "posts":"Posts",
                 "categories":"Categories",
                 "tags": "Tags",
-                "media": "Media"
+                "media": "Media",
+                "menus": "Menus"
             }
         }
       },

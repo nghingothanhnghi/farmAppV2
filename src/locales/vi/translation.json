@@ -23,7 +23,8 @@
                 "posts":"Bài viết",
                 "categories":"Danh mục",
                 "tags": "Thẻ",
-                "media": "Phương tiện"
+                "media": "Phương tiện",
+                "menus": "Menu"
             }
         }
       },

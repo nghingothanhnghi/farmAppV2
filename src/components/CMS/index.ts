@@ -4,3 +4,5 @@ export { default as CmsPostCreatePage } from './CmsPostCreatePage';
 export { default as CmsCategoryManagementPage } from './CmsCategoryManagementPage'; // ✅ NEW
 export { default as CmsTagManagementPage } from './CmsTagManagementPage';  
 export { default as CmsMediaManagementPage } from './CmsMediaManagementPage';
+export { default as CmsMenuManagementPage } from './CmsMenuManagementPage';
+export { default as CmsMenuBuilderPage } from './CmsMenuBuilderPage';
