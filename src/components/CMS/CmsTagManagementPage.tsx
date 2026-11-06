@@ -10,6 +10,8 @@ import LinearProgress from "../common/LinearProgress";
 import EmptyState from "../common/EmptyState";
 import Modal from "../common/Modal";
 import Button from "../common/Button";
+import { FormGroup, FormLabel, FormSelect } from "../common/Form";
+import type { TagDeleteOptions } from "../../services/tagService";
 import { IconTrash } from "@tabler/icons-react";
 import TagFormModal from "./components/TagFormModal";
 import { getApiErrorMessage } from "../../utils/apiError";
@@ -25,6 +27,16 @@ const CmsTagManagementPage: React.FC = () => {
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedTag, setSelectedTag] = useState<CmsTag | null>(null);
     const [deleting, setDeleting] = useState(false);
+    // Set when the server answers 409 (tag is in use) so the dialog can offer merge / force.
+    const [inUseMessage, setInUseMessage] = useState<string | null>(null);
+    const [mergeInto, setMergeInto] = useState("");
+
+    const closeDeleteModal = () => {
+        setConfirmModalOpen(false);
+        setSelectedTag(null);
+        setInUseMessage(null);
+        setMergeInto("");
+    };
 
     const handleCreateSubmit = async (data: TagInput) => {
         try {
@@ -39,21 +51,32 @@ const CmsTagManagementPage: React.FC = () => {
         }
     };
 
-    const handleConfirmDelete = async () => {
+    const handleConfirmDelete = async (options?: TagDeleteOptions) => {
         if (!selectedTag) return;
         setDeleting(true);
         try {
-            await actions.deleteTag(selectedTag.id);
-            setAlert({ type: "success", message: `Tag "${selectedTag.name}" deleted.` });
+            const result = await actions.deleteTag(selectedTag.id, options);
+            const target = tags.find((t) => t.id === result.merged_into_tag_id);
+            const message = result.merged_into_tag_id != null
+                ? `Tag "${selectedTag.name}" merged into "${target?.name ?? result.merged_into_tag_id}" (${result.posts_moved} posts updated).`
+                : options?.force
+                    ? `Tag "${selectedTag.name}" deleted and removed from ${result.posts_affected} posts.`
+                    : `Tag "${selectedTag.name}" deleted.`;
+            setAlert({ type: "success", message });
+            closeDeleteModal();
         } catch (err: any) {
-            setAlert({
-                type: "error",
-                message: getApiErrorMessage(err, "Failed to delete tag."),
-            });
+            if (err?.response?.status === 409 && !options) {
+                // In use: keep the dialog open and let the user choose what to do.
+                setInUseMessage(getApiErrorMessage(err, "This tag is used by posts."));
+            } else {
+                setAlert({
+                    type: "error",
+                    message: getApiErrorMessage(err, "Failed to delete tag."),
+                });
+                closeDeleteModal();
+            }
         } finally {
             setDeleting(false);
-            setConfirmModalOpen(false);
-            setSelectedTag(null);
         }
     };
 
@@ -134,37 +157,86 @@ const CmsTagManagementPage: React.FC = () => {
 
             <Modal
                 showCloseButton={false}
-                size="xsmall"
+                size={inUseMessage ? "small" : "xsmall"}
                 isOpen={confirmModalOpen}
-                onClose={() => {
-                    setConfirmModalOpen(false);
-                    setSelectedTag(null);
-                }}
+                onClose={closeDeleteModal}
                 content={
-                    <div className="text-sm px-10 pt-6 pb-10 text-center">
-                        <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-                        Are you sure you want to delete tag{" "}
-                        <strong>{selectedTag?.name}</strong>?
-                    </div>
+                    inUseMessage ? (
+                        <div className="text-sm px-10 pt-6 pb-8 space-y-4">
+                            <IconAlertCircle size={64} className="text-amber-500 mb-2 mx-auto" />
+                            <p className="text-center">
+                                <strong>{selectedTag?.name}</strong> is still used by posts.
+                                <span className="block text-xs text-gray-500 dark:text-gray-400 mt-1">{inUseMessage}</span>
+                            </p>
+                            <FormGroup className="space-y-1">
+                                <FormLabel htmlFor="merge_into">Merge into another tag</FormLabel>
+                                <FormSelect
+                                    id="merge_into"
+                                    name="merge_into"
+                                    value={mergeInto}
+                                    onChange={(e) => setMergeInto(e.target.value)}
+                                >
+                                    <option value="">Select a tag…</option>
+                                    {tags
+                                        .filter((t) => t.id !== selectedTag?.id)
+                                        .map((t) => (
+                                            <option key={t.id} value={t.id}>{t.name}</option>
+                                        ))}
+                                </FormSelect>
+                            </FormGroup>
+                        </div>
+                    ) : (
+                        <div className="text-sm px-10 pt-6 pb-10 text-center">
+                            <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+                            Are you sure you want to delete tag{" "}
+                            <strong>{selectedTag?.name}</strong>?
+                        </div>
+                    )
                 }
                 actions={
-                    <div className="flex gap-4">
-                        <Button
-                            label={deleting ? "Deleting..." : "Yes, Delete"}
-                            variant="danger"
-                            onClick={handleConfirmDelete}
-                            className="min-w-[150px]"
-                            rounded="lg"
-                            disabled={deleting}
-                        />
-                        <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={() => setConfirmModalOpen(false)}
-                            className="min-w-[150px]"
-                            rounded="lg"
-                        />
-                    </div>
+                    inUseMessage ? (
+                        <div className="flex flex-wrap justify-center gap-3">
+                            <Button
+                                label={deleting ? "Working..." : "Merge & delete"}
+                                variant="primary"
+                                onClick={() => handleConfirmDelete({ merge_into: Number(mergeInto) })}
+                                rounded="lg"
+                                disabled={deleting || !mergeInto}
+                            />
+                            <Button
+                                label="Remove from all posts & delete"
+                                variant="danger"
+                                onClick={() => handleConfirmDelete({ force: true })}
+                                rounded="lg"
+                                disabled={deleting}
+                            />
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={closeDeleteModal}
+                                rounded="lg"
+                                disabled={deleting}
+                            />
+                        </div>
+                    ) : (
+                        <div className="flex gap-4">
+                            <Button
+                                label={deleting ? "Deleting..." : "Yes, Delete"}
+                                variant="danger"
+                                onClick={() => handleConfirmDelete()}
+                                className="min-w-[150px]"
+                                rounded="lg"
+                                disabled={deleting}
+                            />
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={closeDeleteModal}
+                                className="min-w-[150px]"
+                                rounded="lg"
+                            />
+                        </div>
+                    )
                 }
             />
         </div>

@@ -11,6 +11,7 @@ import LinearProgress from "../common/LinearProgress";
 import EmptyState from "../common/EmptyState";
 import Modal from "../common/Modal";
 import Button from "../common/Button";
+import { FormGroup, FormLabel, FormSelect } from "../common/Form";
 import { IconMoodEmpty } from "@tabler/icons-react";
 import CategoryFormModal from "./components/CategoryFormModal";
 import { getApiErrorMessage } from "../../utils/apiError";
@@ -28,6 +29,35 @@ const CmsCategoryManagementPage: React.FC = () => {
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedCategory, setSelectedCategory] = useState<CmsCategory | null>(null);
     const [deleting, setDeleting] = useState(false);
+    // "" = server default (children and posts move up to the parent)
+    const [reassignTo, setReassignTo] = useState("");
+
+    const closeDeleteModal = () => {
+        setConfirmModalOpen(false);
+        setSelectedCategory(null);
+        setReassignTo("");
+    };
+
+    // The category itself and its descendants can't be a reassign target.
+    const reassignOptions = useMemo(() => {
+        if (!selectedCategory) return [];
+        const excluded = new Set<number>([selectedCategory.id]);
+        let grew = true;
+        while (grew) {
+            grew = false;
+            for (const c of categories) {
+                if (c.parent_id != null && excluded.has(c.parent_id) && !excluded.has(c.id)) {
+                    excluded.add(c.id);
+                    grew = true;
+                }
+            }
+        }
+        return categories.filter((c) => !excluded.has(c.id));
+    }, [categories, selectedCategory]);
+
+    const defaultTargetLabel = selectedCategory?.parent_id
+        ? `Parent category (${categories.find((c) => c.id === selectedCategory.parent_id)?.name ?? "default"})`
+        : "Top level / uncategorised (default)";
 
     const parentName = (parentId?: number | null) =>
         parentId ? categories.find((c) => c.id === parentId)?.name ?? "-" : "-";
@@ -63,17 +93,23 @@ const CmsCategoryManagementPage: React.FC = () => {
         if (!selectedCategory) return;
         setDeleting(true);
         try {
-            await actions.deleteCategory(selectedCategory.id);
-            setAlert({ type: "success", message: `Category "${selectedCategory.name}" deleted.` });
+            const result = await actions.deleteCategory(
+                selectedCategory.id,
+                reassignTo ? { reassign_to: Number(reassignTo) } : undefined
+            );
+            setAlert({
+                type: "success",
+                message: `Category "${selectedCategory.name}" deleted. Moved ${result.moved_children} sub-categories and ${result.moved_posts} posts.`,
+            });
         } catch (err: any) {
+            // 409 = a menu item still links to it, 400 = invalid reassign_to; detail says what to do.
             setAlert({
                 type: "error",
                 message: getApiErrorMessage(err, "Failed to delete category."),
             });
         } finally {
             setDeleting(false);
-            setConfirmModalOpen(false);
-            setSelectedCategory(null);
+            closeDeleteModal();
         }
     };
 
@@ -166,17 +202,30 @@ const CmsCategoryManagementPage: React.FC = () => {
 
             <Modal
                 showCloseButton={false}
-                size="xsmall"
+                size="small"
                 isOpen={confirmModalOpen}
-                onClose={() => {
-                    setConfirmModalOpen(false);
-                    setSelectedCategory(null);
-                }}
+                onClose={closeDeleteModal}
                 content={
-                    <div className="text-sm px-10 pt-6 pb-10 text-center">
-                        <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-                        Are you sure you want to delete category{" "}
-                        <strong>{selectedCategory?.name}</strong>?
+                    <div className="text-sm px-10 pt-6 pb-8 space-y-4">
+                        <div className="text-center">
+                            <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+                            Are you sure you want to delete category{" "}
+                            <strong>{selectedCategory?.name}</strong>?
+                        </div>
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="reassign_to">Move its sub-categories and posts to</FormLabel>
+                            <FormSelect
+                                id="reassign_to"
+                                name="reassign_to"
+                                value={reassignTo}
+                                onChange={(e) => setReassignTo(e.target.value)}
+                            >
+                                <option value="">{defaultTargetLabel}</option>
+                                {reassignOptions.map((c) => (
+                                    <option key={c.id} value={c.id}>{c.name}</option>
+                                ))}
+                            </FormSelect>
+                        </FormGroup>
                     </div>
                 }
                 actions={
@@ -192,7 +241,7 @@ const CmsCategoryManagementPage: React.FC = () => {
                         <Button
                             label="Cancel"
                             variant="secondary"
-                            onClick={() => setConfirmModalOpen(false)}
+                            onClick={closeDeleteModal}
                             className="min-w-[150px]"
                             rounded="lg"
                         />

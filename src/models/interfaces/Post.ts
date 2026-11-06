@@ -38,6 +38,22 @@ export interface CmsMedia {
   uploaded_by_id?: number | null;
 }
 
+/** DELETE /cms/categories/{id}[?reassign_to] */
+export interface CmsCategoryDeleteResult {
+  detail: string;
+  moved_children: number;
+  moved_posts: number;
+  moved_to_category_id: number | null;
+}
+
+/** DELETE /cms/tags/{id}[?force][&merge_into] */
+export interface CmsTagDeleteResult {
+  detail: string;
+  posts_affected: number;
+  merged_into_tag_id: number | null;
+  posts_moved: number;
+}
+
 export interface CmsPost {
 
   id: number;
