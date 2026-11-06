@@ -1,6 +1,11 @@
 // src/services/categoryService.ts
 import apiClient from "../api/client";
-import type { CmsCategory } from "../models/interfaces/Post";
+import type { CmsCategory, CmsCategoryDeleteResult } from "../models/interfaces/Post";
+
+export interface CategoryDeleteOptions {
+    /** Move child categories and posts here instead of to the parent. */
+    reassign_to?: number;
+}
 
 export const categoryService = {
     async getAll(parentId?: number): Promise<CmsCategory[]> {
@@ -25,7 +30,9 @@ export const categoryService = {
         return res.data;
     },
 
-    async delete(id: number): Promise<void> {
-        await apiClient.delete(`/cms/categories/${id}`);
+    /** 409 when a menu item links to the category; 400 for an invalid `reassign_to`. */
+    async delete(id: number, options?: CategoryDeleteOptions): Promise<CmsCategoryDeleteResult> {
+        const res = await apiClient.delete(`/cms/categories/${id}`, { params: options });
+        return res.data;
     },
 };

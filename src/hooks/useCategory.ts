@@ -1,6 +1,6 @@
 // src/hooks/useCategory.ts
 import { useState, useCallback, useEffect } from "react";
-import { categoryService } from "../services/categoryService";
+import { categoryService, type CategoryDeleteOptions } from "../services/categoryService";
 import type { CmsCategory } from "../models/interfaces/Post";
 import { getApiErrorMessage } from "../utils/apiError";
 
@@ -41,10 +41,12 @@ export const useCategory = () => {
         return updated;
     }, []);
 
-    const deleteCategory = useCallback(async (id: number) => {
-        await categoryService.delete(id);
-        setCategories(prev => prev.filter(c => c.id !== id));
-    }, []);
+    const deleteCategory = useCallback(async (id: number, options?: CategoryDeleteOptions) => {
+        const result = await categoryService.delete(id, options);
+        // The server re-parents children, so reload instead of just filtering locally.
+        await fetchCategories();
+        return result;
+    }, [fetchCategories]);
 
     useEffect(() => {
         fetchCategories();

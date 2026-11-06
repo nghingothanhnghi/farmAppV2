@@ -1,6 +1,13 @@
 // src/services/tagService.ts
 import apiClient from "../api/client";
-import type { CmsTag } from "../models/interfaces/Post";
+import type { CmsTag, CmsTagDeleteResult } from "../models/interfaces/Post";
+
+export interface TagDeleteOptions {
+    /** Detach the tag from every post, then delete it. */
+    force?: boolean;
+    /** Move this tag's posts to another tag, then delete it. */
+    merge_into?: number;
+}
 
 export const tagService = {
     async getAll(): Promise<CmsTag[]> {
@@ -13,7 +20,9 @@ export const tagService = {
         return res.data;
     },
 
-    async delete(id: number): Promise<void> {
-        await apiClient.delete(`/cms/tags/${id}`);
+    /** 409 when the tag is in use and neither `force` nor `merge_into` is given. */
+    async delete(id: number, options?: TagDeleteOptions): Promise<CmsTagDeleteResult> {
+        const res = await apiClient.delete(`/cms/tags/${id}`, { params: options });
+        return res.data;
     },
 };
