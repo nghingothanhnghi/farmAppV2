@@ -5,7 +5,7 @@ import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import { slugify } from "../../../utils/slug";
 import { getApiErrorMessage } from "../../../utils/apiError";
-import type { CmsMenuSummary, MenuInput } from "../../../models/interfaces/Menu";
+import { MENU_LIMITS, type CmsMenuSummary, type MenuInput } from "../../../models/interfaces/Menu";
 
 interface Props {
     isOpen: boolean;
@@ -13,7 +13,7 @@ interface Props {
     mode: "create" | "edit";
     initialData?: CmsMenuSummary | null;
     /** Throws on failure; the modal stays open and shows the message (e.g. 400 "location already in use"). */
-    onSubmit: (data: MenuInput) => Promise<void>;
+    onSubmit: (data: Partial<MenuInput>) => Promise<void>;
 }
 
 // Locations are free-form keys agreed with the site (guide §6); these are just hints.
@@ -54,11 +54,23 @@ const MenuFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialData, on
         try {
             setLoading(true);
             setError(null);
-            await onSubmit({
+            const next: MenuInput = {
                 name: name.trim(),
                 slug: slug.trim() || undefined,
                 location: location.trim() || null,
-            });
+            };
+
+            if (mode === "edit" && initialData) {
+                // Partial update: only send what changed. Re-sending an unchanged `location`/`slug`
+                // could trip the backend's uniqueness checks against the menu itself.
+                const changes: Partial<MenuInput> = {};
+                if (next.name !== initialData.name) changes.name = next.name;
+                if (next.slug && next.slug !== initialData.slug) changes.slug = next.slug;
+                if (next.location !== (initialData.location ?? null)) changes.location = next.location;
+                if (Object.keys(changes).length > 0) await onSubmit(changes);
+            } else {
+                await onSubmit(next);
+            }
             onClose();
         } catch (err: any) {
             setError(getApiErrorMessage(err, "Failed to save menu."));
@@ -82,6 +94,7 @@ const MenuFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialData, on
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            maxLength={MENU_LIMITS.menuName}
                             required
                         />
                     </FormGroup>
@@ -106,6 +119,7 @@ const MenuFormModal: React.FC<Props> = ({ isOpen, onClose, mode, initialData, on
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
+                            maxLength={MENU_LIMITS.location}
                             placeholder="e.g. header, footer"
                         />
                         <p className="text-xs text-zinc-500 dark:text-zinc-400">

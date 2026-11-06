@@ -66,6 +66,7 @@ interface FormInputProps {
   multiple?: boolean;
   ref?: React.RefObject<HTMLInputElement>;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  maxLength?: number;
 
   lang?: string;
 }
@@ -87,12 +88,14 @@ export const FormInput: React.FC<FormInputProps> = ({
   multiple = false,
   ref,
   inputMode,
+  maxLength,
   lang
 }) => {
   return (
     <div className={`${className}`}>
       <input
         type={type}
+        maxLength={maxLength}
         id={id}
         name={name}
         value={value}
