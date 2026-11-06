@@ -147,7 +147,7 @@ export const menuItems: MenuItem[] = [
       {
         id: 'cms-posts',
         label: 'menu.portal.cms.posts',
-        icon: IconLayoutDashboard,
+        icon: IconArticle,
         to: '/dashboard/cms',
       },
       {
