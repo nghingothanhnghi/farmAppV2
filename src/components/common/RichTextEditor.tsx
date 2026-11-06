@@ -1,12 +1,17 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { IconBold, IconItalic, IconUnderline, IconStrikethrough, IconH3, IconList, IconListNumbers, IconPolaroid } from '@tabler/icons-react';
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Underline from "@tiptap/extension-underline";
 import Image from '@tiptap/extension-image'
 import Button from "./Button";
 import ButtonGroup from "./ButtonGroup";
 import MediaPickerModal from "./MediaPickerModal";
+import { mediaService } from "../../services/mediaService";
+import { getImageUrl } from "../../utils/getImageUrl";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { validateMediaFile } from "../../utils/mediaValidation";
+import { useAlert } from "../../contexts/alertContext";
 
 interface ToolbarConfig {
     bold?: boolean;
@@ -29,6 +34,43 @@ interface Props {
 const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar }) => {
 
     const [showMediaPicker, setShowMediaPicker] = useState(false);
+    const [uploadingCount, setUploadingCount] = useState(0);
+    const { setAlert } = useAlert();
+
+    // The backend sanitizer drops `data:` URLs (guide §8.2), so pasted/dropped images are
+    // uploaded to the media library and inserted by URL instead of being embedded as base64.
+    const editorRef = useRef<Editor | null>(null);
+    const uploadImagesRef = useRef<(files: File[], pos?: number) => Promise<void>>(async () => {});
+    uploadImagesRef.current = async (files, pos) => {
+        let insertAt = pos;
+        for (const file of files) {
+            const invalid = validateMediaFile(file, { imagesOnly: true });
+            if (invalid) {
+                setAlert({ type: "error", message: invalid });
+                continue;
+            }
+            setUploadingCount((c) => c + 1);
+            try {
+                const created = await mediaService.upload(file);
+                const node = {
+                    type: "image",
+                    attrs: { src: getImageUrl(created.url), alt: created.alt_text ?? file.name },
+                };
+                const chain = editorRef.current?.chain().focus();
+                if (!chain) return;
+                if (insertAt !== undefined) chain.insertContentAt(insertAt, node).run();
+                else chain.insertContent(node).run();
+                insertAt = undefined; // later files go at the caret
+            } catch (err: any) {
+                setAlert({ type: "error", message: getApiErrorMessage(err, "Failed to upload image.") });
+            } finally {
+                setUploadingCount((c) => c - 1);
+            }
+        }
+    };
+
+    const imageFilesFrom = (list?: FileList | null) =>
+        Array.from(list ?? []).filter((f) => f.type.startsWith("image/"));
 
     /* ----------------------------------------
        Toolbar defaults
@@ -50,15 +92,35 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
             Underline,
             Image.configure({
                 inline: false,
-                allowBase64: true,
+                allowBase64: false,
             }),
         ],
         content: value,
         editable: !readOnly,
+        editorProps: {
+            handlePaste: (_view, event) => {
+                const files = imageFilesFrom(event.clipboardData?.files);
+                if (files.length === 0) return false; // let TipTap handle text/HTML paste
+                event.preventDefault();
+                void uploadImagesRef.current(files);
+                return true;
+            },
+            handleDrop: (view, event, _slice, moved) => {
+                if (moved) return false; // dragging nodes inside the editor
+                const files = imageFilesFrom(event.dataTransfer?.files);
+                if (files.length === 0) return false;
+                event.preventDefault();
+                const pos = view.posAtCoords({ left: event.clientX, top: event.clientY })?.pos;
+                void uploadImagesRef.current(files, pos);
+                return true;
+            },
+        },
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
         },
     });
+
+    editorRef.current = editor;
 
     if (!editor) return null;
 
@@ -184,6 +246,12 @@ const RichTextEditor: React.FC<Props> = ({ value, onChange, readOnly, toolbar })
                             rounded="lg"
                         />
                     )}
+                </div>
+            )}
+
+            {uploadingCount > 0 && (
+                <div className="px-3 py-1 text-xs text-gray-500 dark:text-gray-400">
+                    Uploading image…
                 </div>
             )}
 

@@ -10,13 +10,14 @@ import { getImageUrl } from "../../utils/getImageUrl";
 import { useAlert } from "../../contexts/alertContext";
 import type { CmsMedia } from "../../models/interfaces/Post";
 import { getApiErrorMessage } from "../../utils/apiError";
+import { CMS_IMAGE_ACCEPT, validateMediaFile } from "../../utils/mediaValidation";
 
 const PAGE_SIZE = 30;
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    onSelect: (url: string, altText?: string) => void;
+    onSelect: (url: string, altText?: string | null) => void;
 }
 
 const MediaPickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
@@ -59,6 +60,13 @@ const MediaPickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
     const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
+
+        const invalid = validateMediaFile(file, { imagesOnly: true });
+        if (invalid) {
+            setAlert({ type: "error", message: invalid });
+            if (fileInputRef.current) fileInputRef.current.value = "";
+            return;
+        }
 
         try {
             setUploading(true);
@@ -108,7 +116,7 @@ const MediaPickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
                         <input
                             ref={fileInputRef}
                             type="file"
-                            accept="image/*"
+                            accept={CMS_IMAGE_ACCEPT}
                             className="hidden"
                             onChange={handleFileSelected}
                         />

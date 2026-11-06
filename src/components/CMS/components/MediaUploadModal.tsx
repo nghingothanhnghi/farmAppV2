@@ -4,6 +4,7 @@ import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import FileInput from "../../common/FileInput";
+import { CMS_IMAGE_ACCEPT, CMS_MAX_MEDIA_SIZE_MB, validateMediaFile } from "../../../utils/mediaValidation";
 
 interface Props {
     isOpen: boolean;
@@ -15,14 +16,24 @@ const MediaUploadModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
     const [file, setFile] = useState<File | null>(null);
     const [altText, setAltText] = useState("");
     const [loading, setLoading] = useState(false);
+    const [fileError, setFileError] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     useEffect(() => {
         if (isOpen) {
             setFile(null);
+            setFileError(null);
             setAltText("");
         }
     }, [isOpen]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const picked = e.target.files?.[0] || null;
+        const error = picked ? validateMediaFile(picked, { imagesOnly: true }) : null;
+        setFileError(error);
+        setFile(error ? null : picked);
+        if (error && fileInputRef.current) fileInputRef.current.value = "";
+    };
 
     const handleSubmit = async () => {
         if (!file) return;
@@ -49,11 +60,15 @@ const MediaUploadModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
                         <FileInput
                             id="media_file"
                             inputRef={fileInputRef}
-                            accept="image/*"
+                            accept={CMS_IMAGE_ACCEPT}
                             multiple={false}
                             label="Choose image"
-                            onChange={(e) => setFile(e.target.files?.[0] || null)}
+                            onChange={handleFileChange}
                         />
+                        <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                            JPG, PNG, GIF or WebP, up to {CMS_MAX_MEDIA_SIZE_MB} MB.
+                        </p>
+                        {fileError && <p className="text-xs text-red-500">{fileError}</p>}
                     </FormGroup>
 
                     <FormGroup className="space-y-1">

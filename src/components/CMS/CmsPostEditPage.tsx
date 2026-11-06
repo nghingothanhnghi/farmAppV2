@@ -44,7 +44,6 @@ const CmsPostEditPage: React.FC = () => {
                 meta_title: selectedPost.meta_title,
                 meta_description: selectedPost.meta_description,
                 is_featured: selectedPost.is_featured,
-                published_at: selectedPost.published_at ?? null,
                 scheduled_at: selectedPost.scheduled_at ?? null,
             });
             setPreviewUrl(selectedPost.featured_image?.url ? getImageUrl(selectedPost.featured_image.url) : null);

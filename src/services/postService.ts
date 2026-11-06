@@ -3,18 +3,31 @@ import type {
     CmsPost,
     CmsPostCreate,
     CmsPostUpdate,
-    PaginatedPosts
+    PaginatedPosts,
+    PostStatus,
+    PostType
 } from "../models/interfaces/Post";
+
+export type PostSortKey = "created_at" | "published_at" | "title" | "view_count";
 
 export interface PostQuery {
     page?: number;
+    /** default 20, max 100 */
     page_size?: number;
+    /** title + excerpt only (case-insensitive) */
     search?: string;
-    status?: string;
-    post_type?: string;
+    /** Non-editors may only request "published" (anything else is 403). */
+    status?: PostStatus;
+    post_type?: PostType;
+    /** exact category, does not include descendants */
     category_id?: number;
     tag_id?: number;
     author_id?: number;
+    is_featured?: boolean;
+    /** default "created_at"; use "published_at" for public feeds */
+    sort?: PostSortKey;
+    /** default "desc" */
+    order?: "asc" | "desc";
 }
 
 export const postService = {
@@ -32,17 +45,20 @@ export const postService = {
         return res.data;
     },
 
-    async getBySlug(slug: string) {
-        const res = await apiClient.get(`/cms/posts/slug/${slug}`);
+    /** `trackView` increments view_count server-side; pass false for SSR/prefetch/previews. */
+    async getBySlug(slug: string, trackView = true): Promise<CmsPost> {
+        const res = await apiClient.get(`/cms/posts/slug/${encodeURIComponent(slug)}`, {
+            params: { track_view: trackView },
+        });
         return res.data;
     },
 
-    async create(data: CmsPostCreate) {
+    async create(data: CmsPostCreate): Promise<CmsPost> {
         const res = await apiClient.post("/cms/posts", data);
         return res.data;
     },
 
-    async update(id: number, data: CmsPostUpdate) {
+    async update(id: number, data: CmsPostUpdate): Promise<CmsPost> {
         const res = await apiClient.put(`/cms/posts/${id}`, data);
         return res.data;
     },
@@ -51,12 +67,12 @@ export const postService = {
         await apiClient.delete(`/cms/posts/${id}`);
     },
 
-    async publish(id: number) {
+    async publish(id: number): Promise<CmsPost> {
         const res = await apiClient.post(`/cms/posts/${id}/publish`);
         return res.data;
     },
 
-    async archive(id: number) {
+    async archive(id: number): Promise<CmsPost> {
         const res = await apiClient.post(`/cms/posts/${id}/archive`);
         return res.data;
     },

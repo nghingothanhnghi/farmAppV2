@@ -19,23 +19,23 @@ import type { CategoryInput } from '../../../hooks/useCategory';
 import type { TagInput } from '../../../hooks/useTag';
 import { slugify } from "../../../utils/slug";
 import { useCmsPermissions } from "../../../hooks/useCmsPermissions";
+import { CMS_IMAGE_ACCEPT, validateMediaFile } from "../../../utils/mediaValidation";
 import { isoToDatetimeLocal, datetimeLocalToIso } from '../../../utils/formatters';
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
 export interface PostFormData {
     title?: string;
     slug?: string;
-    excerpt?: string;
+    excerpt?: string | null;
     content?: string;
     post_type?: PostType;
     status?: PostStatus;
     category_id?: number | null;
     featured_image_id?: number | null;
     tag_ids?: number[];
-    meta_title?: string;
-    meta_description?: string;
+    meta_title?: string | null;
+    meta_description?: string | null;
     is_featured?: boolean;
-    published_at?: string | null;
     scheduled_at?: string | null;
 }
 
@@ -77,6 +77,7 @@ export default function PostForm({
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { canEditTaxonomy } = useCmsPermissions();
+    const [imageError, setImageError] = useState<string | null>(null);
 
     // ✅ NEW — category & tag data
     const [categories, setCategories] = useState<CmsCategory[]>([]);
@@ -526,13 +527,21 @@ export default function PostForm({
                                         <FileInput
                                             id="featured_image"
                                             inputRef={fileInputRef}
-                                            accept="image/*"
+                                            accept={CMS_IMAGE_ACCEPT}
                                             label="Upload Image"
-                                            onChange={(e) =>
-                                                onImageChange(e.target.files?.[0] || null)
-                                            }
+                                            onChange={(e) => {
+                                                const picked = e.target.files?.[0] || null;
+                                                const error = picked ? validateMediaFile(picked, { imagesOnly: true }) : null;
+                                                setImageError(error);
+                                                if (error) {
+                                                    if (fileInputRef.current) fileInputRef.current.value = "";
+                                                    return;
+                                                }
+                                                onImageChange(picked);
+                                            }}
                                         />
                                     )}
+                                    {imageError && <p className="text-xs text-red-500">{imageError}</p>}
                                 </div>
                             </FormGroup>
 
