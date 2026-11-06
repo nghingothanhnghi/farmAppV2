@@ -7,6 +7,7 @@ import { useAlert } from '../../contexts/alertContext';
 import type { CmsPostCreate } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
 import PostForm, { type PostFormData } from './components/PostForm';
+import { getApiErrorMessage, getApiFieldErrors } from "../../utils/apiError";
 
 const DEFAULT_FORM: PostFormData = {
     title: "",
@@ -111,10 +112,10 @@ const CmsPostCreatePage: React.FC = () => {
             setAlert({ type: "success", message: `"${created.title}" created.` });
             navigate("/dashboard/cms");
         } catch (err: any) {
-            setFieldErrors(err.response?.data?.errors ?? {});
+            setFieldErrors(getApiFieldErrors(err));
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to create post.",
+                message: getApiErrorMessage(err, "Failed to create post."),
             });
         } finally {
             setSubmitting(false);

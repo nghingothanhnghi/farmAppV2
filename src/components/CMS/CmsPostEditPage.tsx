@@ -9,6 +9,7 @@ import PageTitle from '../common/PageTitle';
 import LinearProgress from '../common/LinearProgress';
 import PostForm, { type PostFormData } from './components/PostForm';
 import { getImageUrl } from "../../utils/getImageUrl";
+import { getApiErrorMessage, getApiFieldErrors } from "../../utils/apiError";
 
 const CmsPostEditPage: React.FC = () => {
     const navigate = useNavigate();
@@ -133,10 +134,10 @@ const CmsPostEditPage: React.FC = () => {
             setAlert({ type: "success", message: "Post updated successfully." });
             navigate("/dashboard/cms");
         } catch (err: any) {
-            setFieldErrors(err.response?.data?.errors ?? {});
+            setFieldErrors(getApiFieldErrors(err));
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to update post.",
+                message: getApiErrorMessage(err, "Failed to update post."),
             });
         } finally {
             setSubmitting(false);

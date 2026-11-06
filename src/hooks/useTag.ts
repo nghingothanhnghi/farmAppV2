@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { tagService } from "../services/tagService";
 import type { CmsTag } from "../models/interfaces/Post";
+import { getApiErrorMessage } from "../utils/apiError";
 
 export interface TagInput {
     name: string;
@@ -21,7 +22,7 @@ export const useTag = () => {
             setError(null);
         } catch (err: any) {
             setTags([]);
-            setError(err.response?.data?.detail ?? "Failed loading tags");
+            setError(getApiErrorMessage(err, "Failed loading tags"));
         } finally {
             setLoading(false);
         }

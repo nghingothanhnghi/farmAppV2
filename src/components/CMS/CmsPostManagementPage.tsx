@@ -1,5 +1,5 @@
 // src/components/CMS/CmsPostManagementPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
@@ -12,12 +12,18 @@ import Modal from '../common/Modal';
 import Button from '../common/Button';
 import ScheduleModal from './components/ScheduleModal';
 import { IconAlertCircle, IconCirclePlus } from '@tabler/icons-react';
+import { getApiErrorMessage } from "../../utils/apiError";
+import { useCmsPermissions } from "../../hooks/useCmsPermissions";
+
+const PAGE_SIZE = 20; // matches the backend default; max is 100
 
 const CmsPostManagementPage: React.FC = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
     const { setAlert } = useAlert();
-    const { posts, loading, actions } = usePostContext();
+    const { posts, loading, pagination, actions } = usePostContext();
+    const { canManagePost } = useCmsPermissions();
+    const [page, setPage] = useState(1);
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
@@ -26,14 +32,20 @@ const CmsPostManagementPage: React.FC = () => {
     const [schedulingPost, setSchedulingPost] = useState<CmsPost | null>(null);
 
     useEffect(() => {
-        actions.fetchPosts();
-    }, []);
+        actions.fetchPosts({ page, page_size: PAGE_SIZE });
+    }, [page]);
+
+    const canManage = useCallback((post: CmsPost) => canManagePost(post), [canManagePost]);
 
     const handleConfirmDelete = async () => {
         if (!selectedPost) return;
 
         try {
+            const wasLastOnPage = posts.length === 1;
             await actions.deletePost(selectedPost.id);
+            // keep the page full and the total accurate
+            if (wasLastOnPage && page > 1) setPage(page - 1);
+            else actions.fetchPosts({ page, page_size: PAGE_SIZE });
 
             setAlert({
                 type: "success",
@@ -47,8 +59,7 @@ const CmsPostManagementPage: React.FC = () => {
             setAlert({
                 type: "error",
                 message:
-                    err.response?.data?.detail ??
-                    "Failed to delete post.",
+                    getApiErrorMessage(err, "Failed to delete post."),
             });
         }
     };
@@ -61,7 +72,7 @@ const CmsPostManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to publish post.",
+                message: getApiErrorMessage(err, "Failed to publish post."),
             });
         }
     };
@@ -73,7 +84,7 @@ const CmsPostManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to archive post.",
+                message: getApiErrorMessage(err, "Failed to archive post."),
             });
         }
     };
@@ -86,13 +97,13 @@ const CmsPostManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to schedule post.",
+                message: getApiErrorMessage(err, "Failed to schedule post."),
             });
             throw err;
         }
     };
 
-    if (loading) return <LinearProgress
+    if (loading && posts.length === 0) return <LinearProgress
         position='absolute'
         thickness="h-1"
         duration={3000}
@@ -128,8 +139,37 @@ const CmsPostManagementPage: React.FC = () => {
                     onPublish={handlePublish}
                     onArchive={handleArchive}
                     onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
+                    canManage={canManage}
                 />
             </div>
+
+            {pagination.total > 0 && (
+                <div className="flex items-center justify-between gap-4 py-4 text-sm text-gray-600 dark:text-gray-300">
+                    <span>
+                        Page {pagination.page} of {Math.max(pagination.pages, 1)} · {pagination.total} posts
+                    </span>
+                    <div className="flex gap-2">
+                        <Button
+                            type="button"
+                            label="Previous"
+                            variant="secondary"
+                            size="sm"
+                            rounded="lg"
+                            disabled={loading || page <= 1}
+                            onClick={() => setPage(page - 1)}
+                        />
+                        <Button
+                            type="button"
+                            label="Next"
+                            variant="secondary"
+                            size="sm"
+                            rounded="lg"
+                            disabled={loading || page >= pagination.pages}
+                            onClick={() => setPage(page + 1)}
+                        />
+                    </div>
+                </div>
+            )}
 
 
             <ScheduleModal

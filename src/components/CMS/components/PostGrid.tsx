@@ -18,6 +18,8 @@ interface Props {
     onPublish: (post: CmsPost) => void;
     onArchive: (post: CmsPost) => void;
     onSchedule: (post: CmsPost) => void;
+    /** Row-level permission (own post or editor). Defaults to allowed; backend still enforces 403. */
+    canManage?: (post: CmsPost) => boolean;
 }
 
 export default function PostGrid({
@@ -28,11 +30,8 @@ export default function PostGrid({
     onPublish,
     onArchive,
     onSchedule,
+    canManage = () => true,
 }: Props) {
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     const columnDefs = useMemo(() => [
         {
@@ -116,7 +115,7 @@ export default function PostGrid({
                         iconOnly
                         variant="secondary"
                         onClick={() => onPublish(data)}
-                        disabled={data.status === "published"}
+                        disabled={data.status === "published" || !canManage(data)}
                         label="Publish"
                         size="xs"
                         rounded="full"
@@ -127,7 +126,7 @@ export default function PostGrid({
                         iconOnly
                         variant="secondary"
                         onClick={() => onSchedule(data)}
-                        disabled={data.status === "published" || data.status === "archived"}
+                        disabled={data.status === "published" || data.status === "archived" || !canManage(data)}
                         label="Schedule"
                         size="xs"
                         rounded="full"
@@ -138,7 +137,7 @@ export default function PostGrid({
                         iconOnly
                         variant="secondary"
                         onClick={() => onArchive(data)}
-                        disabled={data.status === "archived"}
+                        disabled={data.status === "archived" || !canManage(data)}
                         label="Archive"
                         size="xs"
                         rounded="full"
@@ -149,20 +148,24 @@ export default function PostGrid({
                         row={data}
                         onEdit={onEdit}
                         onDelete={onDelete}
+                        disabled={!canManage(data)}
                     />
 
                 </div>
             )
         }
-    ], [onEdit, onDelete, onPublish, onArchive, onSchedule]);
+    ], [onEdit, onDelete, onPublish, onArchive, onSchedule, canManage]);
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
 
         <DataGrid
             rowData={posts}
             columnDefs={columnDefs}
-            pagination
-            paginationPageSize={10}
+            pagination={false} // paging is server-side, see CmsPostManagementPage
             height="auto"
         />
 

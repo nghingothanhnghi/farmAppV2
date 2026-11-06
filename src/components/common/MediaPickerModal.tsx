@@ -9,6 +9,7 @@ import { mediaService } from "../../services/mediaService";
 import { getImageUrl } from "../../utils/getImageUrl";
 import { useAlert } from "../../contexts/alertContext";
 import type { CmsMedia } from "../../models/interfaces/Post";
+import { getApiErrorMessage } from "../../utils/apiError";
 
 const PAGE_SIZE = 30;
 
@@ -40,7 +41,7 @@ const MediaPickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to load media library.",
+                message: getApiErrorMessage(err, "Failed to load media library."),
             });
         } finally {
             setLoading(false);
@@ -68,7 +69,7 @@ const MediaPickerModal: React.FC<Props> = ({ isOpen, onClose, onSelect }) => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to upload image.",
+                message: getApiErrorMessage(err, "Failed to upload image."),
             });
         } finally {
             setUploading(false);

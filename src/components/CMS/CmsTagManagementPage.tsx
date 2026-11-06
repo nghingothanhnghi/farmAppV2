@@ -12,10 +12,13 @@ import Modal from "../common/Modal";
 import Button from "../common/Button";
 import { IconTrash } from "@tabler/icons-react";
 import TagFormModal from "./components/TagFormModal";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { useCmsPermissions } from "../../hooks/useCmsPermissions";
 
 const CmsTagManagementPage: React.FC = () => {
     const { tags, loading, actions } = useTag();
     const { setAlert } = useAlert();
+    const { canEditTaxonomy, canDeleteTaxonomy } = useCmsPermissions();
 
     const [formOpen, setFormOpen] = useState(false);
 
@@ -30,7 +33,7 @@ const CmsTagManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to create tag.",
+                message: getApiErrorMessage(err, "Failed to create tag."),
             });
             throw err;
         }
@@ -45,7 +48,7 @@ const CmsTagManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to delete tag.",
+                message: getApiErrorMessage(err, "Failed to delete tag."),
             });
         } finally {
             setDeleting(false);
@@ -67,7 +70,7 @@ const CmsTagManagementPage: React.FC = () => {
             resizable: false,
             pinned: "right",
             cellStyle: { textAlign: "center" },
-            cellRenderer: ({ data }: any) => (
+            cellRenderer: ({ data }: any) => canDeleteTaxonomy ? (
                 <div className="flex gap-2 items-center justify-center h-full">
                     <Button
                         icon={<IconTrash size={16} stroke={1.5} />}
@@ -83,9 +86,9 @@ const CmsTagManagementPage: React.FC = () => {
                         className="bg-transparent"
                     />
                 </div>
-            ),
+            ) : null,
         },
-    ], []);
+    ], [canDeleteTaxonomy]);
 
     if (loading && tags.length === 0) {
         return <LinearProgress position="absolute" thickness="h-1" duration={3000} />;
@@ -95,7 +98,7 @@ const CmsTagManagementPage: React.FC = () => {
         <div className="flex flex-col h-full min-h-0">
             <PageTitle
                 title="Tag Management"
-                actions={
+                actions={canEditTaxonomy ? (
                     <Button
                         type="button"
                         label="New Tag"
@@ -105,7 +108,7 @@ const CmsTagManagementPage: React.FC = () => {
                         iconPosition="left"
                         rounded="lg"
                     />
-                }
+                ) : undefined}
             />
             <div style={{ flex: '1 1 auto', minHeight: 0 }}>
                 {tags.length === 0 ? (

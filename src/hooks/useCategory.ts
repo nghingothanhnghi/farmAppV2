@@ -2,6 +2,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { categoryService } from "../services/categoryService";
 import type { CmsCategory } from "../models/interfaces/Post";
+import { getApiErrorMessage } from "../utils/apiError";
 
 export interface CategoryInput {
     name: string;
@@ -22,7 +23,7 @@ export const useCategory = () => {
             setError(null);
         } catch (err: any) {
             setCategories([]);
-            setError(err.response?.data?.detail ?? "Failed loading categories");
+            setError(getApiErrorMessage(err, "Failed loading categories"));
         } finally {
             setLoading(false);
         }

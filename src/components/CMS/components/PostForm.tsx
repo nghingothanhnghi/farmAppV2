@@ -18,6 +18,7 @@ import TagFormModal from './TagFormModal';
 import type { CategoryInput } from '../../../hooks/useCategory';
 import type { TagInput } from '../../../hooks/useTag';
 import { slugify } from "../../../utils/slug";
+import { useCmsPermissions } from "../../../hooks/useCmsPermissions";
 import { isoToDatetimeLocal, datetimeLocalToIso } from '../../../utils/formatters';
 
 // ✅ Own shape for the form — compatible with both Create and Update payloads.
@@ -75,6 +76,7 @@ export default function PostForm({
 }: Props) {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
+    const { canEditTaxonomy } = useCmsPermissions();
 
     // ✅ NEW — category & tag data
     const [categories, setCategories] = useState<CmsCategory[]>([]);
@@ -390,7 +392,7 @@ export default function PostForm({
                                 className=""
                                 variant="secondary"
                             />
-                            <Button
+                            {canEditTaxonomy && <Button
                                 type="button"
                                 icon={<IconPlus size={16} />}
                                 iconOnly
@@ -399,7 +401,7 @@ export default function PostForm({
                                 rounded="full"
                                 size="sm"
                                 onClick={() => setCategoryModalOpen(true)}
-                            />
+                            />}
                         </div>
                     </FormGroup>
                     <hr role="presentation" className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"></hr>
@@ -424,7 +426,7 @@ export default function PostForm({
                                     onTagsChange?.(selected.map((v) => Number(v)))
                                 }
                             />
-                            <Button
+                            {canEditTaxonomy && <Button
                                 type="button"
                                 icon={<IconPlus size={16} />}
                                 iconOnly
@@ -433,7 +435,7 @@ export default function PostForm({
                                 rounded="full"
                                 size="sm"
                                 onClick={() => setTagModalOpen(true)}
-                            />
+                            />}
                         </div>
                     </FormGroup>
 

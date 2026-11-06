@@ -11,6 +11,7 @@ import type {
 } from "../models/interfaces/Post";
 
 import type { PostQuery } from "../services/postService";
+import { getApiErrorMessage } from "../utils/apiError";
 
 const normalizePostPayload = <
     T extends {
@@ -67,7 +68,7 @@ export const usePost = () => {
 
         } catch (err: any) {
             setPosts([]); // ✅ don't leave posts undefined on error either
-            setError(err.response?.data?.detail ?? "Failed loading posts");
+            setError(getApiErrorMessage(err, "Failed loading posts"));
 
         } finally {
 
@@ -85,7 +86,7 @@ export const usePost = () => {
             setError(null);
         } catch (err: any) {
             setSelectedPost(null);
-            setError(err.response?.data?.detail ?? "Failed loading post");
+            setError(getApiErrorMessage(err, "Failed loading post"));
         } finally {
             setLoading(false);
         }
