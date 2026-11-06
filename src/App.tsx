@@ -60,6 +60,8 @@ const CmsPostCreatePage = lazy(() => import("./components/CMS").then(m => ({ def
 const CmsCategoryManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsCategoryManagementPage })));
 const CmsTagManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsTagManagementPage })));
 const CmsMediaManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsMediaManagementPage })));
+const CmsMenuManagementPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsMenuManagementPage })));
+const CmsMenuBuilderPage = lazy(() => import("./components/CMS").then(m => ({ default: m.CmsMenuBuilderPage })));
 
 const BilliardTablesPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardTablesPage })));
 const BilliardSessionPage = lazy(() => import("./components/billiard").then(m => ({ default: m.BilliardSessionPage })));
@@ -190,6 +192,22 @@ function App() {
               element={
                 <PrivateRoute>
                   <CmsMediaManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/cms/menus"
+              element={
+                <PrivateRoute>
+                  <CmsMenuManagementPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/dashboard/cms/menus/:id"
+              element={
+                <PrivateRoute>
+                  <CmsMenuBuilderPage />
                 </PrivateRoute>
               }
             />

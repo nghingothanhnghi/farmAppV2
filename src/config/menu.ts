@@ -21,7 +21,8 @@ import {
   IconCircleNumber1,
   IconTag,
   IconCategory2,
-  IconPhotoVideo
+  IconPhotoVideo,
+  IconListTree
 } from '@tabler/icons-react';
 
 export interface MenuItem {
@@ -167,6 +168,12 @@ export const menuItems: MenuItem[] = [
         label: 'menu.portal.cms.media',
         icon: IconPhotoVideo,
         to: '/dashboard/cms/media',
+      },
+      {
+        id: 'cms-menus',
+        label: 'menu.portal.cms.menus',
+        icon: IconListTree,
+        to: '/dashboard/cms/menus',
       },                
     ],    
   },

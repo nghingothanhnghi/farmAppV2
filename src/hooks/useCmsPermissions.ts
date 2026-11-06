@@ -41,5 +41,9 @@ export const useCmsPermissions = () => {
         canEditTaxonomy: isEditor,
         /** Category / tag delete */
         canDeleteTaxonomy: isAdmin,
+        /** Menu + menu item create / update / item delete */
+        canEditMenus: isEditor,
+        /** Menu delete */
+        canDeleteMenu: isAdmin,
     };
 };
