@@ -32,13 +32,13 @@ const CmsMenuManagementPage: React.FC = () => {
 
     const openBuilder = (menu: CmsMenuSummary) => navigate(`/dashboard/cms/menus/${menu.id}`);
 
-    const handleFormSubmit = async (data: MenuInput) => {
+    const handleFormSubmit = async (data: Partial<MenuInput>) => {
         // Errors propagate to the modal, which keeps itself open and shows them.
         if (formMode === "edit" && editing) {
             await actions.updateMenu(editing.id, data);
             setAlert({ type: "success", message: "Menu updated." });
         } else {
-            const created = await actions.createMenu(data);
+            const created = await actions.createMenu(data as MenuInput);
             setAlert({ type: "success", message: "Menu created. Add some items to it." });
             openBuilder(created);
         }

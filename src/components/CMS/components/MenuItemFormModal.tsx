@@ -5,7 +5,7 @@ import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput, FormSelect, FormCheckbox } from "../../common/Form";
 import { getApiErrorMessage } from "../../../utils/apiError";
 import { countChildren, flattenForSelect } from "../../../utils/menuTree";
-import type { CmsMenuItem, MenuItemInput, MenuItemTargetType } from "../../../models/interfaces/Menu";
+import { MENU_LIMITS, type CmsMenuItem, type MenuItemInput, type MenuItemTargetType } from "../../../models/interfaces/Menu";
 import type { CmsCategory } from "../../../models/interfaces/Post";
 
 export interface PostOption {
@@ -135,6 +135,7 @@ const MenuItemFormModal: React.FC<Props> = ({
                             type="text"
                             value={label}
                             onChange={(e) => setLabel(e.target.value)}
+                            maxLength={MENU_LIMITS.itemLabel}
                             required
                         />
                     </FormGroup>
@@ -160,6 +161,7 @@ const MenuItemFormModal: React.FC<Props> = ({
                                 type="text"
                                 value={url}
                                 onChange={(e) => setUrl(e.target.value)}
+                                maxLength={MENU_LIMITS.itemUrl}
                                 placeholder="/about or https://example.com"
                             />
                         </FormGroup>

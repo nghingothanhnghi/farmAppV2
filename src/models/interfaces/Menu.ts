@@ -1,5 +1,13 @@
 // src/models/interfaces/Menu.ts
-// CMS menus (FRONTEND_GUIDE §3 / §7 "Menu builder").
+// CMS menus (FRONTEND_GUIDE §3 / §7 "Menu builder"). Mirrors app/cms/schemas/menu.py.
+
+/** Server-side max lengths (pydantic Field max_length). */
+export const MENU_LIMITS = {
+  menuName: 150,
+  location: 50,
+  itemLabel: 150,
+  itemUrl: 500,
+} as const;
 
 export type MenuItemTargetType = "custom" | "category" | "post";
 
@@ -9,7 +17,7 @@ export interface CmsMenuSummary {
   slug: string;
   /** Free-form key the site renders by ("header", "footer", ...). Unique across menus. */
   location: string | null;
-  created_at?: string;
+  created_at: string;
   updated_at?: string | null;
 }
 
