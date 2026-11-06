@@ -10,6 +10,7 @@ import LinearProgress from '../common/LinearProgress';
 import PostGrid from './components/PostGrid';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
+import Pagination from '../common/Pagination';
 import ScheduleModal from './components/ScheduleModal';
 import { IconAlertCircle, IconCirclePlus } from '@tabler/icons-react';
 import { getApiErrorMessage } from "../../utils/apiError";
@@ -141,37 +142,16 @@ const CmsPostManagementPage: React.FC = () => {
                     onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
                     canManage={canManage}
                 />
+                {pagination.total > 0 && (
+                    <Pagination
+                        page={page}
+                        total={pagination.total}
+                        pageSize={PAGE_SIZE}
+                        loading={loading}
+                        onPageChange={setPage}
+                    />
+                )}
             </div>
-
-            {pagination.total > 0 && (
-                <div className="flex items-center justify-between gap-4 py-4 text-sm text-gray-600 dark:text-gray-300">
-                    <span>
-                        Page {pagination.page} of {Math.max(pagination.pages, 1)} · {pagination.total} posts
-                    </span>
-                    <div className="flex gap-2">
-                        <Button
-                            type="button"
-                            label="Previous"
-                            variant="secondary"
-                            size="sm"
-                            rounded="lg"
-                            disabled={loading || page <= 1}
-                            onClick={() => setPage(page - 1)}
-                        />
-                        <Button
-                            type="button"
-                            label="Next"
-                            variant="secondary"
-                            size="sm"
-                            rounded="lg"
-                            disabled={loading || page >= pagination.pages}
-                            onClick={() => setPage(page + 1)}
-                        />
-                    </div>
-                </div>
-            )}
-
-
             <ScheduleModal
                 isOpen={scheduleModalOpen}
                 onClose={() => { setScheduleModalOpen(false); setSchedulingPost(null); }}
