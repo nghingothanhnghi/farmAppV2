@@ -13,10 +13,13 @@ import Modal from "../common/Modal";
 import Button from "../common/Button";
 import { IconMoodEmpty } from "@tabler/icons-react";
 import CategoryFormModal from "./components/CategoryFormModal";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { useCmsPermissions } from "../../hooks/useCmsPermissions";
 
 const CmsCategoryManagementPage: React.FC = () => {
     const { categories, loading, actions } = useCategory();
     const { setAlert } = useAlert();
+    const { canEditTaxonomy, canDeleteTaxonomy } = useCmsPermissions();
 
     const [formOpen, setFormOpen] = useState(false);
     const [formMode, setFormMode] = useState<"create" | "edit">("create");
@@ -36,7 +39,7 @@ const CmsCategoryManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to create category.",
+                message: getApiErrorMessage(err, "Failed to create category."),
             });
             throw err;
         }
@@ -50,7 +53,7 @@ const CmsCategoryManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to update category.",
+                message: getApiErrorMessage(err, "Failed to update category."),
             });
             throw err;
         }
@@ -65,7 +68,7 @@ const CmsCategoryManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to delete category.",
+                message: getApiErrorMessage(err, "Failed to delete category."),
             });
         } finally {
             setDeleting(false);
@@ -98,19 +101,19 @@ const CmsCategoryManagementPage: React.FC = () => {
             cellRenderer: ({ data }: any) => (
                 <ActionButtons
                     row={data}
-                    onEdit={() => {
+                    onEdit={canEditTaxonomy ? () => {
                         setEditing(data);
                         setFormMode("edit");
                         setFormOpen(true);
-                    }}
-                    onDelete={() => {
+                    } : undefined}
+                    onDelete={canDeleteTaxonomy ? () => {
                         setSelectedCategory(data);
                         setConfirmModalOpen(true);
-                    }}
+                    } : undefined}
                 />
             ),
         },
-    ], [categories]);
+    ], [categories, canEditTaxonomy, canDeleteTaxonomy]);
 
     if (loading && categories.length === 0) {
         return <LinearProgress position="absolute" thickness="h-1" duration={3000} />;
@@ -120,7 +123,7 @@ const CmsCategoryManagementPage: React.FC = () => {
         <div className="">
             <PageTitle
                 title="Category Management"
-                actions={
+                actions={canEditTaxonomy ? (
                     <Button
                         type="button"
                         label="New Category"
@@ -134,7 +137,7 @@ const CmsCategoryManagementPage: React.FC = () => {
                         iconPosition="left"
                         rounded="lg"
                     />
-                }
+                ) : undefined}
             />
 
             {categories.length === 0 ? (

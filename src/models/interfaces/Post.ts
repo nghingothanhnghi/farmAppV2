@@ -35,6 +35,7 @@ export interface CmsMedia {
   filename: string;
   url: string;
   alt_text?: string;
+  uploaded_by_id?: number | null;
 }
 
 export interface CmsPost {

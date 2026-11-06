@@ -12,11 +12,14 @@ import Modal from "../common/Modal";
 import Button from "../common/Button";
 import MediaUploadModal from "./components/MediaUploadModal";
 import MediaEditModal from "./components/MediaEditModal";
+import { getApiErrorMessage } from "../../utils/apiError";
+import { useCmsPermissions } from "../../hooks/useCmsPermissions";
 
 const PAGE_SIZE = 50;
 
 const CmsMediaManagementPage: React.FC = () => {
     const { setAlert } = useAlert();
+    const { canManageMedia } = useCmsPermissions();
 
     const [media, setMedia] = useState<CmsMedia[]>([]);
     const [loading, setLoading] = useState(true);
@@ -44,7 +47,7 @@ const CmsMediaManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to load media library.",
+                message: getApiErrorMessage(err, "Failed to load media library."),
             });
         } finally {
             setLoading(false);
@@ -64,7 +67,7 @@ const CmsMediaManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to upload media.",
+                message: getApiErrorMessage(err, "Failed to upload media."),
             });
             throw err;
         }
@@ -79,7 +82,7 @@ const CmsMediaManagementPage: React.FC = () => {
         } catch (err: any) {
             setAlert({
                 type: "error",
-                message: err.response?.data?.detail ?? "Failed to update media.",
+                message: getApiErrorMessage(err, "Failed to update media."),
             });
             throw err;
         }
@@ -96,8 +99,7 @@ const CmsMediaManagementPage: React.FC = () => {
             setAlert({
                 type: "error",
                 message:
-                    err.response?.data?.detail ??
-                    "Failed to delete media. It may still be in use by a post.",
+                    getApiErrorMessage(err, "Failed to delete media. It may still be in use by a post."),
             });
         } finally {
             setDeleting(false);
@@ -178,6 +180,7 @@ const CmsMediaManagementPage: React.FC = () => {
                                         className="bg-transparent"
                                         onClick={() => handleCopyUrl(getImageUrl(item.url))}
                                     />
+                                    {canManageMedia(item) && (<>
                                     <Button
                                         variant="secondary"
                                         icon={<IconPencil size={14} />}
@@ -204,6 +207,7 @@ const CmsMediaManagementPage: React.FC = () => {
                                             setConfirmModalOpen(true);
                                         }}
                                     />
+                                    </>)}
                                 </div>
                             </div>
                         ))}
