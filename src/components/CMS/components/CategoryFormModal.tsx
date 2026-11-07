@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
-import { FormGroup, FormLabel, FormInput, FormSelect } from "../../common/Form";
+import { FormGroup, FormLabel, FormInput, FormSelect, FloatingLabelTextarea } from "../../common/Form";
 import { slugify } from "../../../utils/slug";
 import type { CmsCategory } from "../../../models/interfaces/Post";
 import type { CategoryInput } from "../../../hooks/useCategory";
@@ -28,6 +28,7 @@ const CategoryFormModal: React.FC<Props> = ({
     const [slug, setSlug] = useState("");
     const [slugTouched, setSlugTouched] = useState(false);
     const [parentId, setParentId] = useState<string>("");
+    const [description, setDescription] = useState("");
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -38,11 +39,13 @@ const CategoryFormModal: React.FC<Props> = ({
             setSlug(initialData.slug);
             setSlugTouched(true);
             setParentId(initialData.parent_id ? String(initialData.parent_id) : "");
+            setDescription(initialData.description ?? "");
         } else {
             setName("");
             setSlug("");
             setSlugTouched(false);
             setParentId("");
+            setDescription("");
         }
     }, [isOpen, mode, initialData]);
 
@@ -65,9 +68,13 @@ const CategoryFormModal: React.FC<Props> = ({
             await onSubmit({
                 name: name.trim(),
                 slug: slug.trim() || undefined,
+                // empty → null so editing can clear an existing description
+                description: description.trim() || null,
                 parent_id: parentId ? Number(parentId) : null,
             });
             onClose();
+        } catch {
+            // the page already showed the error alert; keep the modal open so nothing is lost
         } finally {
             setLoading(false);
         }
@@ -102,6 +109,16 @@ const CategoryFormModal: React.FC<Props> = ({
                                 setSlugTouched(true);
                                 setSlug(e.target.value);
                             }}
+                        />
+                    </FormGroup>
+
+                    <FormGroup className="space-y-1">
+                        <FloatingLabelTextarea
+                            id="cat_description"
+                            label="Description (optional)"
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            rows={3}
                         />
                     </FormGroup>
 

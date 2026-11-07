@@ -7,6 +7,7 @@ import { getApiErrorMessage } from "../utils/apiError";
 export interface CategoryInput {
     name: string;
     slug?: string;
+    description?: string | null;
     parent_id?: number | null;
 }
 
