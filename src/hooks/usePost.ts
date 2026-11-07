@@ -1,6 +1,6 @@
 // src/hooks/usePost.ts
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { postService } from "../services/postService";
 
 import type {
@@ -50,13 +50,19 @@ export const usePost = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    // Only the most recent fetch may apply its result: typing in the search box (or the provider's
+    // initial unfiltered fetch) must never overwrite newer, filtered results.
+    const latestFetch = useRef(0);
+
     const fetchPosts = useCallback(async (query?: PostQuery) => {
 
+        const requestId = ++latestFetch.current;
         setLoading(true);
 
         try {
 
             const data = await postService.getAll(query);
+            if (requestId !== latestFetch.current) return;
 
             // ✅ read `results`, guard against unexpected shape
             const results = Array.isArray(data?.results) ? data.results : [];
@@ -73,12 +79,13 @@ export const usePost = () => {
             setError(null);
 
         } catch (err: any) {
+            if (requestId !== latestFetch.current) return;
             setPosts([]); // ✅ don't leave posts undefined on error either
             setError(getApiErrorMessage(err, "Failed loading posts"));
 
         } finally {
 
-            setLoading(false);
+            if (requestId === latestFetch.current) setLoading(false);
 
         }
 
