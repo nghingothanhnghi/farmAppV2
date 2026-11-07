@@ -57,6 +57,9 @@ interface Props {
     onTagsChange?: (tagIds: number[]) => void;
 
     onContentChange?: (html: string) => void;
+
+    /** Edit mode: the slug as stored, used to warn when it is changed. */
+    originalSlug?: string;
 }
 
 export default function PostForm({
@@ -73,11 +76,14 @@ export default function PostForm({
     onCategoryChange,
     onTagsChange,
     onContentChange,
+    originalSlug,
 }: Props) {
 
     const fileInputRef = useRef<HTMLInputElement | null>(null);
     const { canEditTaxonomy } = useCmsPermissions();
     const [imageError, setImageError] = useState<string | null>(null);
+    const slugChanged =
+        isEdit && !!originalSlug && !!formData.slug && formData.slug.trim() !== originalSlug;
 
     // ✅ NEW — category & tag data
     const [categories, setCategories] = useState<CmsCategory[]>([]);
@@ -290,6 +296,15 @@ export default function PostForm({
                                     {helper && (
                                         <p className="text-sm text-zinc-500 dark:text-zinc-400">
                                             {helper}
+                                        </p>
+                                    )}
+
+                                    {name === "slug" && slugChanged && (
+                                        <p className="text-sm text-amber-600">
+                                            Changing the slug changes this {formData.post_type === "page" ? "page" : "post"}'s
+                                            public URL. There are no redirects, so existing links to the old URL
+                                            will stop working. The server may also add a suffix such as -2 if the
+                                            slug is taken.
                                         </p>
                                     )}
                                 </div>
