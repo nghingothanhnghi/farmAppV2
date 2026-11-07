@@ -36,7 +36,7 @@ const MainLayout: React.FC = () => {
           className={`flex flex-1 flex-col pb-2 lg:min-w-0 lg:pt-2 lg:pr-2 transition-all duration-300 ${menuOpen ? "lg:pl-64" : "lg:pl-18"
             }`}
         >
-          <div className="grow p-6 lg:rounded-3xl lg:bg-white border border-gray-200 lg:p-10 lg:shadow-xs lg:dark:bg-gray-900 lg:dark:text-gray-100 dark:border dark:border-white/5">
+          <div className="grow p-6 lg:rounded-3xl lg:bg-zinc-100 border border-gray-200 lg:p-10 lg:shadow-xs lg:dark:bg-gray-900 lg:dark:text-gray-100 dark:border dark:border-white/5">
             {/* Router children go here */}
             <Outlet />
           </div>
