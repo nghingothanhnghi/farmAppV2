@@ -11,6 +11,12 @@ import PostGrid from './components/PostGrid';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import Pagination from '../common/Pagination';
+import EmptyState from '../common/EmptyState';
+import PostFilterBar from './components/PostFilterBar';
+import { usePostFilters, toPostQuery } from '../../hooks/usePostFilters';
+import { categoryService } from '../../services/categoryService';
+import { tagService } from '../../services/tagService';
+import type { CmsCategory, CmsTag } from '../../models/interfaces/Post';
 import ScheduleModal from './components/ScheduleModal';
 import { IconAlertCircle, IconCirclePlus } from '@tabler/icons-react';
 import { getApiErrorMessage } from "../../utils/apiError";
@@ -23,8 +29,11 @@ const CmsPostManagementPage: React.FC = () => {
     const navigate = useNavigate();
     const { setAlert } = useAlert();
     const { posts, loading, pagination, actions } = usePostContext();
-    const { canManagePost } = useCmsPermissions();
-    const [page, setPage] = useState(1);
+    const { canManagePost, isEditor } = useCmsPermissions();
+    const { filters, update, reset, activeCount } = usePostFilters();
+    const page = filters.page;
+    const [categories, setCategories] = useState<CmsCategory[]>([]);
+    const [tags, setTags] = useState<CmsTag[]>([]);
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
@@ -32,9 +41,19 @@ const CmsPostManagementPage: React.FC = () => {
     const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
     const [schedulingPost, setSchedulingPost] = useState<CmsPost | null>(null);
 
+    // Filter dropdown options (non-fatal if they fail: the list still works)
     useEffect(() => {
-        actions.fetchPosts({ page, page_size: PAGE_SIZE });
-    }, [page]);
+        categoryService.getAll().then(setCategories).catch(() => setCategories([]));
+        tagService.getAll().then(setTags).catch(() => setTags([]));
+    }, []);
+
+    const query = toPostQuery(filters, PAGE_SIZE);
+    const queryKey = JSON.stringify(query);
+
+    useEffect(() => {
+        actions.fetchPosts(query);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [queryKey]);
 
     const canManage = useCallback((post: CmsPost) => canManagePost(post), [canManagePost]);
 
@@ -45,8 +64,8 @@ const CmsPostManagementPage: React.FC = () => {
             const wasLastOnPage = posts.length === 1;
             await actions.deletePost(selectedPost.id);
             // keep the page full and the total accurate
-            if (wasLastOnPage && page > 1) setPage(page - 1);
-            else actions.fetchPosts({ page, page_size: PAGE_SIZE });
+            if (wasLastOnPage && page > 1) update({ page: page - 1 });
+            else actions.fetchPosts(query);
 
             setAlert({
                 type: "success",
@@ -104,12 +123,6 @@ const CmsPostManagementPage: React.FC = () => {
         }
     };
 
-    if (loading && posts.length === 0) return <LinearProgress
-        position='absolute'
-        thickness="h-1"
-        duration={3000}
-    />;
-
     return (
         <div className="flex flex-col h-full min-h-0">
             <PageTitle
@@ -128,10 +141,30 @@ const CmsPostManagementPage: React.FC = () => {
                     />
                 }
             />
+            {loading && <LinearProgress position='absolute' thickness="h-1" duration={3000} />}
+            <PostFilterBar
+                filters={filters}
+                onChange={update}
+                onReset={reset}
+                activeCount={activeCount}
+                categories={categories}
+                tags={tags}
+                isEditor={isEditor}
+            />
             <div style={{ flex: '1 1 auto', minHeight: 0 }}>
+                {!loading && posts.length === 0 ? (
+                    <div className="flex flex-col items-center">
+                        <EmptyState
+                            message={activeCount > 0 ? 'No posts match your filters.' : 'No posts yet.'}
+                        />
+                        {activeCount > 0 && (
+                            <Button label="Clear filters" variant="secondary" rounded="lg" onClick={reset} />
+                        )}
+                    </div>
+                ) : (
                 <PostGrid
                     posts={posts}
-                    loading={loading}
+                    loading={loading && posts.length === 0}
                     onEdit={(post) => navigate(`/dashboard/cms/${post.id}/edit`)}
                     onDelete={(post) => {
                         setSelectedPost(post);
@@ -142,13 +175,14 @@ const CmsPostManagementPage: React.FC = () => {
                     onSchedule={(post) => { setSchedulingPost(post); setScheduleModalOpen(true); }}
                     canManage={canManage}
                 />
+                )}
                 {pagination.total > 0 && (
                     <Pagination
                         page={page}
                         total={pagination.total}
                         pageSize={PAGE_SIZE}
                         loading={loading}
-                        onPageChange={setPage}
+                        onPageChange={(p) => update({ page: p })}
                     />
                 )}
             </div>
