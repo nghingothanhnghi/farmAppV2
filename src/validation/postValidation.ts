@@ -6,7 +6,7 @@ export const postSchema = Yup.object({
     .trim()
     .required("Title is required")
     .min(3, "Title must be at least 3 characters")
-    .max(200, "Title must be under 200 characters"),
+    .max(255, "Title must be under 255 characters"),
 
   slug: Yup.string()
     .trim()
@@ -17,7 +17,7 @@ export const postSchema = Yup.object({
     ),
 
   excerpt: Yup.string()
-    .max(300, "Excerpt must be under 300 characters")
+    .max(500, "Excerpt must be under 500 characters")
     .nullable(),
 
   content: Yup.string()

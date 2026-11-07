@@ -14,6 +14,7 @@ import Pagination from '../common/Pagination';
 import EmptyState from '../common/EmptyState';
 import PostFilterBar from './components/PostFilterBar';
 import { usePostFilters, toPostQuery } from '../../hooks/usePostFilters';
+import { menuService, type MenuReference } from '../../services/menuService';
 import { categoryService } from '../../services/categoryService';
 import { tagService } from '../../services/tagService';
 import type { CmsCategory, CmsTag } from '../../models/interfaces/Post';
@@ -37,6 +38,19 @@ const CmsPostManagementPage: React.FC = () => {
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPostListItem | null>(null);
+    // Menu items that link to the post being deleted (client-side check, best effort)
+    const [menuRefs, setMenuRefs] = useState<MenuReference[]>([]);
+
+    useEffect(() => {
+        setMenuRefs([]);
+        if (!confirmModalOpen || !selectedPost) return;
+        let cancelled = false;
+        menuService
+            .findPostReferences(selectedPost.id)
+            .then((refs) => { if (!cancelled) setMenuRefs(refs); })
+            .catch(() => { /* no menu access or backend error: just skip the warning */ });
+        return () => { cancelled = true; };
+    }, [confirmModalOpen, selectedPost]);
 
     const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
     const [schedulingPost, setSchedulingPost] = useState<CmsPostListItem | null>(null);
@@ -206,6 +220,17 @@ const CmsPostManagementPage: React.FC = () => {
                         <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
                         Are you sure you want to delete post{' '}
                         <strong>{selectedPost?.title}</strong>?
+                        {menuRefs.length > 0 && (
+                            <div className="mt-4 text-left text-xs rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 p-3">
+                                This post is linked from {menuRefs.length} menu item{menuRefs.length > 1 ? 's' : ''}.
+                                After deleting, the link stops working (it is hidden on the site):
+                                <ul className="list-disc pl-5 mt-1">
+                                    {menuRefs.map((r, i) => (
+                                        <li key={i}>{r.menuName} → {r.itemLabel}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 }
                 actions={

@@ -78,7 +78,18 @@ const CmsCategoryManagementPage: React.FC = () => {
     const handleEditSubmit = async (data: CategoryInput) => {
         if (!editing) return;
         try {
-            await actions.updateCategory(editing.id, data);
+            // Partial update: send only what changed (an untouched slug can't collide with itself).
+            const patch: Partial<CategoryInput> = {};
+            if (data.name !== editing.name) patch.name = data.name;
+            if (data.slug && data.slug !== editing.slug) patch.slug = data.slug;
+            if ((data.description ?? null) !== (editing.description ?? null)) patch.description = data.description ?? null;
+            if ((data.parent_id ?? null) !== (editing.parent_id ?? null)) patch.parent_id = data.parent_id ?? null;
+
+            if (Object.keys(patch).length === 0) {
+                setAlert({ type: "info", message: "No changes to save." });
+                return;
+            }
+            await actions.updateCategory(editing.id, patch);
             setAlert({ type: "success", message: `Category "${data.name}" updated.` });
         } catch (err: any) {
             setAlert({

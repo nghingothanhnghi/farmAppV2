@@ -1,5 +1,5 @@
 // src/components/CMS/CmsMenuBuilderPage.tsx
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import {
     IconPlus,
@@ -53,6 +53,18 @@ const CmsMenuBuilderPage: React.FC = () => {
             .getAll({ status: "published", page_size: 100, sort: "published_at", order: "desc" })
             .then((res) => setPosts(res.results.map((p) => ({ id: p.id, title: p.title, post_type: p.post_type }))))
             .catch(() => setPosts([]));
+    }, []);
+
+    /** Server-side search so any published post/page can be picked, not just the newest 100. */
+    const searchPosts = useCallback(async (q: string): Promise<PostOption[]> => {
+        const res = await postService.getAll({
+            status: "published",
+            search: q.trim() || undefined,
+            page_size: 50,
+            sort: q.trim() ? "title" : "published_at",
+            order: q.trim() ? "asc" : "desc",
+        });
+        return res.results.map((p) => ({ id: p.id, title: p.title, post_type: p.post_type }));
     }, []);
 
     const [formOpen, setFormOpen] = useState(false);
@@ -273,6 +285,7 @@ const CmsMenuBuilderPage: React.FC = () => {
                 items={items}
                 categories={categories}
                 posts={posts}
+                searchPosts={searchPosts}
                 onSubmit={handleFormSubmit}
             />
 

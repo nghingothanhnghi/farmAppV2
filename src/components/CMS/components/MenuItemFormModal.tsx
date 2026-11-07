@@ -23,6 +23,8 @@ interface Props {
     items: CmsMenuItem[];
     categories: CmsCategory[];
     posts: PostOption[];
+    /** Optional server-side search for the post picker (published posts/pages matching the text). */
+    searchPosts?: (query: string) => Promise<PostOption[]>;
     /** Throws on failure; the modal stays open and shows the message. */
     onSubmit: (data: MenuItemInput) => Promise<void>;
 }
@@ -41,6 +43,7 @@ const MenuItemFormModal: React.FC<Props> = ({
     items,
     categories,
     posts,
+    searchPosts,
     onSubmit,
 }) => {
     const [label, setLabel] = useState("");
@@ -52,6 +55,35 @@ const MenuItemFormModal: React.FC<Props> = ({
     const [isActive, setIsActive] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+
+    // Post picker: starts with the preloaded list; typing searches the server (debounced).
+    const [postQuery, setPostQuery] = useState("");
+    const [postOptions, setPostOptions] = useState<PostOption[]>(posts);
+    const [postSearching, setPostSearching] = useState(false);
+
+    useEffect(() => { setPostOptions(posts); }, [posts]);
+
+    useEffect(() => {
+        if (!isOpen) setPostQuery("");
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (!searchPosts || targetType !== "post") return;
+        if (!postQuery.trim()) { setPostOptions(posts); return; }
+        let cancelled = false;
+        const timer = setTimeout(async () => {
+            setPostSearching(true);
+            try {
+                const found = await searchPosts(postQuery);
+                if (!cancelled) setPostOptions(found);
+            } catch {
+                // keep the previous options; the picker is only a convenience
+            } finally {
+                if (!cancelled) setPostSearching(false);
+            }
+        }, 300);
+        return () => { cancelled = true; clearTimeout(timer); };
+    }, [postQuery, searchPosts, targetType, posts]);
 
     useEffect(() => {
         if (!isOpen) return;
@@ -186,6 +218,15 @@ const MenuItemFormModal: React.FC<Props> = ({
                     {targetType === "post" && (
                         <FormGroup className="space-y-1">
                             <FormLabel htmlFor="mi_post">Post / page</FormLabel>
+                            {searchPosts && (
+                                <FormInput
+                                    id="mi_post_search"
+                                    type="text"
+                                    value={postQuery}
+                                    onChange={(e) => setPostQuery(e.target.value)}
+                                    placeholder="Search published posts by title or excerpt…"
+                                />
+                            )}
                             <FormSelect
                                 id="mi_post"
                                 value={targetId}
@@ -193,17 +234,17 @@ const MenuItemFormModal: React.FC<Props> = ({
                             >
                                 <option value="">Select a published post or page…</option>
                                 {/* keep the current target selectable even if it is no longer in the list */}
-                                {targetId && !posts.some((p) => String(p.id) === targetId) && (
+                                {targetId && !postOptions.some((p) => String(p.id) === targetId) && (
                                     <option value={targetId}>Current target (#{targetId})</option>
                                 )}
-                                {posts.map((p) => (
+                                {postOptions.map((p) => (
                                     <option key={p.id} value={p.id}>
                                         {p.title}{p.post_type === "page" ? " (page)" : ""}
                                     </option>
                                 ))}
                             </FormSelect>
                             <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                Only published items are listed. A link to an unpublished post is hidden on the site.
+                                {postSearching ? "Searching… " : ""}Only published items are listed. A link to an unpublished post is hidden on the site.
                             </p>
                         </FormGroup>
                     )}
