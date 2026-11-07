@@ -1,100 +1,32 @@
 // src/models/interfaces/Post.ts
-// Hand-written mirror of the CMS schemas (FRONTEND_GUIDE §3). If this and the backend's
-// /openapi.json ever disagree, the OpenAPI wins — see `npm run gen:api` for generated types.
+// Response types are DERIVED from the backend's OpenAPI schema (src/api/schema.d.ts, `npm run gen:api`),
+// so a backend change shows up as a type error here instead of a runtime surprise.
+// Request payloads below stay hand-written (they encode UI rules such as "never send null for title")
+// and are checked against the generated request types in src/api/schemaCheck.ts.
 //
 // Nullability follows the API: optional/absent fields come back as `null`, not `undefined`.
+import type { components } from "../../api/schema";
 
-export type PostStatus =
-  | "draft"
-  | "published"
-  | "scheduled"
-  | "archived";
+type Schemas = components["schemas"];
 
-export type PostType =
-  | "post"
-  | "page";
+export type PostStatus = Schemas["PostStatus"];
 
-export interface CmsAuthor {
-  id: number;
-  username: string;
-  full_name?: string;
-  email?: string;
-}
+export type PostType = Schemas["PostType"];
 
-export interface CmsCategory {
-  id: number;
-  name: string;
-  slug: string;
-  description?: string | null;
-  parent_id?: number | null;
-  created_at?: string;
-  updated_at?: string | null;
-}
+export type CmsAuthor = Schemas["AuthorOut"];
 
-export interface CmsTag {
-  id: number;
-  name: string;
-  slug: string;
-  created_at?: string;
-}
+export type CmsCategory = Schemas["CategoryOut"];
 
-export interface CmsMedia {
-  id: number;
-  filename: string;
-  /** RELATIVE, e.g. "/static/cms_media/ab12.png" — run through getImageUrl() before rendering. */
-  url: string;
-  mime_type?: string | null;
-  file_size?: number | null;
-  alt_text?: string | null;
-  uploaded_by_id?: number | null;
-  created_at?: string;
-}
+export type CmsTag = Schemas["TagOut"];
 
-export interface CmsPost {
+/** `url` is RELATIVE, e.g. "/static/cms_media/ab12.png" — run through getImageUrl() before rendering. */
+export type CmsMedia = Schemas["MediaOut"];
 
-  id: number;
+/** GET /cms/posts/{id}, create/update/publish/archive/schedule responses. */
+export type CmsPost = Schemas["PostOut"];
 
-  title: string;
-
-  slug: string;
-
-  excerpt?: string | null;
-
-  /** Sanitized HTML as stored by the server. */
-  content: string;
-
-  post_type: PostType;
-
-  status: PostStatus;
-
-  is_featured: boolean;
-
-  view_count: number;
-
-  published_at?: string | null;
-
-  scheduled_at?: string | null;
-
-  created_at: string;
-
-  updated_at?: string | null;
-
-  author: CmsAuthor | null;
-
-  category?: CmsCategory | null;
-
-  category_id?: number | null;
-
-  featured_image?: CmsMedia | null;
-
-  featured_image_id?: number | null;
-
-  tags: CmsTag[];
-
-  meta_title?: string | null;
-
-  meta_description?: string | null;
-}
+/** One row of GET /cms/posts (no `content`, `tags`, `updated_at`). Rows are used as CmsPost by the grid. */
+export type CmsPostListItem = Schemas["PostListItem"];
 
 /** POST /cms/posts. `published_at` is server-stamped and is NOT accepted. */
 export interface CmsPostCreate {
@@ -164,18 +96,8 @@ export interface CmsPostUpdate {
   scheduled_at?: string | null;
 }
 
-export interface PaginatedPosts {
-
-  results: CmsPost[];
-
-  total: number;
-
-  page: number;
-
-  page_size: number;
-
-  pages?: number;
-}
+/** The backend returns no `pages`; usePost computes it from total / page_size. */
+export type PaginatedPosts = Schemas["PaginatedPosts"] & { pages?: number };
 
 /** DELETE /cms/categories/{id}[?reassign_to] */
 export interface CmsCategoryDeleteResult {

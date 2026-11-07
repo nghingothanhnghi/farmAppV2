@@ -5,6 +5,7 @@ import { postService } from "../services/postService";
 
 import type {
     CmsPost,
+    CmsPostListItem,
     CmsPostCreate,
     CmsPostUpdate,
     PostStatus,
@@ -37,7 +38,7 @@ const normalizePostPayload = <
 
 export const usePost = () => {
 
-    const [posts, setPosts] = useState<CmsPost[]>([]);
+    const [posts, setPosts] = useState<CmsPostListItem[]>([]);
     const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
 
     const [pagination, setPagination] = useState({

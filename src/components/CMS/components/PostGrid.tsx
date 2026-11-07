@@ -1,6 +1,6 @@
 // src/components/CMS/components/PostGrid.tsx
 import { useMemo } from 'react';
-import type { CmsPost } from "../../../models/interfaces/Post";
+import type { CmsPostListItem } from "../../../models/interfaces/Post";
 import DataGrid from '../../common/dataGrid/dataGrid';
 import ProductImage from "../../common/ProductImage";
 import ActionButtons from '../../common/dataGrid/actionButton';
@@ -11,15 +11,15 @@ import PostStatusDisplay from './PostStatusDisplay';
 import { formatDateTime } from '../../../utils/formatters';
 
 interface Props {
-    posts: CmsPost[];
+    posts: CmsPostListItem[];
     loading: boolean;
-    onEdit: (post: CmsPost) => void;
-    onDelete: (post: CmsPost) => void;
-    onPublish: (post: CmsPost) => void;
-    onArchive: (post: CmsPost) => void;
-    onSchedule: (post: CmsPost) => void;
+    onEdit: (post: CmsPostListItem) => void;
+    onDelete: (post: CmsPostListItem) => void;
+    onPublish: (post: CmsPostListItem) => void;
+    onArchive: (post: CmsPostListItem) => void;
+    onSchedule: (post: CmsPostListItem) => void;
     /** Row-level permission (own post or editor). Defaults to allowed; backend still enforces 403. */
-    canManage?: (post: CmsPost) => boolean;
+    canManage?: (post: CmsPostListItem) => boolean;
 }
 
 export default function PostGrid({

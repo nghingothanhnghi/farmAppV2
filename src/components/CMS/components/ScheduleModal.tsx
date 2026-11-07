@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import Modal from "../../common/Modal";
 import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput } from "../../common/Form";
-import type { CmsPost } from "../../../models/interfaces/Post";
+import type { CmsPostListItem } from "../../../models/interfaces/Post";
 import { isoToDatetimeLocal } from '../../../utils/formatters';
 
 const isFuture = (localValue: string) => {
@@ -14,7 +14,7 @@ const isFuture = (localValue: string) => {
 interface Props {
     isOpen: boolean;
     onClose: () => void;
-    post: CmsPost | null;
+    post: CmsPostListItem | null;
     onSubmit: (isoDate: string) => Promise<void>;
 }
 
