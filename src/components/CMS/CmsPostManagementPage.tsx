@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { usePostContext } from '../../contexts/postContext';
 import { useAlert } from '../../contexts/alertContext';
-import type { CmsPost } from "../../models/interfaces/Post";
+import type { CmsPostListItem } from "../../models/interfaces/Post";
 import PageTitle from '../common/PageTitle';
 import LinearProgress from '../common/LinearProgress';
 import PostGrid from './components/PostGrid';
@@ -36,10 +36,10 @@ const CmsPostManagementPage: React.FC = () => {
     const [tags, setTags] = useState<CmsTag[]>([]);
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-    const [selectedPost, setSelectedPost] = useState<CmsPost | null>(null);
+    const [selectedPost, setSelectedPost] = useState<CmsPostListItem | null>(null);
 
     const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
-    const [schedulingPost, setSchedulingPost] = useState<CmsPost | null>(null);
+    const [schedulingPost, setSchedulingPost] = useState<CmsPostListItem | null>(null);
 
     // Filter dropdown options (non-fatal if they fail: the list still works)
     useEffect(() => {
@@ -55,7 +55,7 @@ const CmsPostManagementPage: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey]);
 
-    const canManage = useCallback((post: CmsPost) => canManagePost(post), [canManagePost]);
+    const canManage = useCallback((post: CmsPostListItem) => canManagePost(post), [canManagePost]);
 
     const handleConfirmDelete = async () => {
         if (!selectedPost) return;
@@ -85,7 +85,7 @@ const CmsPostManagementPage: React.FC = () => {
     };
 
 
-    const handlePublish = async (post: CmsPost) => {
+    const handlePublish = async (post: CmsPostListItem) => {
         try {
             await actions.publishPost(post.id);
             setAlert({ type: "success", message: `"${post.title}" published.` });
@@ -97,7 +97,7 @@ const CmsPostManagementPage: React.FC = () => {
         }
     };
 
-    const handleArchive = async (post: CmsPost) => {
+    const handleArchive = async (post: CmsPostListItem) => {
         try {
             await actions.archivePost(post.id);
             setAlert({ type: "success", message: `"${post.title}" archived.` });

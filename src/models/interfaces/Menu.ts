@@ -1,5 +1,9 @@
 // src/models/interfaces/Menu.ts
-// CMS menus (FRONTEND_GUIDE §3 / §7 "Menu builder"). Mirrors app/cms/schemas/menu.py.
+import type { components } from "../../api/schema";
+
+type Schemas = components["schemas"];
+
+// CMS menus (FRONTEND_GUIDE §3 / §7 "Menu builder"). Response types derive from the generated OpenAPI schema (src/api/schema.d.ts).
 
 /** Server-side max lengths (pydantic Field max_length). */
 export const MENU_LIMITS = {
@@ -9,39 +13,14 @@ export const MENU_LIMITS = {
   itemUrl: 500,
 } as const;
 
-export type MenuItemTargetType = "custom" | "category" | "post";
+export type MenuItemTargetType = Schemas["MenuItemTargetType"];
 
-export interface CmsMenuSummary {
-  id: number;
-  name: string;
-  slug: string;
-  /** Free-form key the site renders by ("header", "footer", ...). Unique across menus. */
-  location: string | null;
-  created_at: string;
-  updated_at?: string | null;
-}
+export type CmsMenuSummary = Schemas["MenuSummary"];
 
-export interface CmsMenuItem {
-  id: number;
-  menu_id: number;
-  label: string;
-  target_type: MenuItemTargetType;
-  /** custom items only */
-  url: string | null;
-  /** category / post items only */
-  target_id: number | null;
-  parent_id: number | null;
-  order: number;
-  open_in_new_tab: boolean;
-  is_active: boolean;
-  /** Computed by the server. `null` = target missing/unpublished: the site must not render a link. */
-  resolved_url: string | null;
-  children: CmsMenuItem[];
-}
+/** `resolved_url` is computed by the server; `null` = target missing/unpublished: the site must not render a link. */
+export type CmsMenuItem = Schemas["MenuItemOut"];
 
-export interface CmsMenu extends CmsMenuSummary {
-  items: CmsMenuItem[];
-}
+export type CmsMenu = Schemas["MenuOut"];
 
 export interface MenuInput {
   name: string;
