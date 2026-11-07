@@ -82,40 +82,11 @@ export const menuItems: MenuItem[] = [
         id: 'hydro-actuators',
         label: 'menu.portal.hydro_system.actuators',
         icon: IconGitCherryPick,
-        children: [
-          {
-            id: 'hydro-pump',
-            label: 'Pump',
-            to: '/hydroponic-system/actuators/pump',
-          },
-          {
-            id: 'hydro-light',
-            label: 'Light',
-            to: '/hydroponic-system/actuators/light',
-          },
-          {
-            id: 'hydro-fan',
-            label: 'Fan',
-            to: '/hydroponic-system/actuators/fan',
-          },
-        ],
       },      
       {
         id: 'hydro-sensors',
         label: 'menu.portal.hydro_system.sensors',
         icon: IconActivity,
-        children: [
-          {
-            id: 'hydro-temperature',
-            label: 'Temperature',
-            to: '/hydroponic-system/sensors/temperature',
-          },
-          {
-            id: 'hydro-humidity',
-            label: 'Humidity',
-            to: '/hydroponic-system/sensors/humidity',
-          },
-        ],
       },
       {
         id: 'hydro-batches',

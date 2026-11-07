@@ -1,7 +1,7 @@
 // src/components/layout/DesktopSidebarToggleButton.tsx
 import React, { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconLogout, IconUserEdit, IconChevronRight } from '@tabler/icons-react';
+import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconLogout, IconUserEdit } from '@tabler/icons-react';
 import Button from '../common/Button';
 import DropdownButton from '../common/DropdownButton';
 import ListLink from '../common/ListLink';
