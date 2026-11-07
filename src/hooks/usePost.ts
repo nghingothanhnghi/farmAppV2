@@ -18,10 +18,16 @@ const normalizePostPayload = <
         status?: PostStatus;
         scheduled_at?: string | null;
     }
->(data: T): T | Omit<T, "scheduled_at"> => {
+>(data: T, partial = false): T | Omit<T, "scheduled_at"> => {
 
     // Only scheduled posts need scheduled_at.
-    if (data.status !== "scheduled" || !data.scheduled_at) {
+    // In a partial update `status` may be absent (e.g. only the time of an already-scheduled post
+    // changed): then scheduled_at must be kept. When leaving "scheduled" the server clears it.
+    const keep = partial && data.status === undefined
+        ? data.scheduled_at !== undefined
+        : data.status === "scheduled" && !!data.scheduled_at;
+
+    if (!keep) {
         const { scheduled_at, ...rest } = data;
         return rest;
     }
@@ -104,7 +110,7 @@ export const usePost = () => {
     }, []);
 
     const updatePost = useCallback(async (id: number, data: CmsPostUpdate) => {
-        const payload = normalizePostPayload(data);
+        const payload = normalizePostPayload(data, true);
         const updated = await postService.update(id, payload);
         setPosts(prev => prev.map(p => p.id === id ? updated : p));
         setSelectedPost(prev => (prev?.id === id ? updated : prev));

@@ -1,10 +1,14 @@
 // src/components/CMS/CmsPostEditPage.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import { usePostContext } from '../../contexts/postContext';
 import { mediaService } from '../../services/mediaService';
+import { postService } from '../../services/postService';
 import { useAlert } from '../../contexts/alertContext';
-import type { CmsPostUpdate } from "../../models/interfaces/Post";
+import { buildPostUpdate } from "../../utils/postDiff";
+import Modal from "../common/Modal";
+import Button from "../common/Button";
 import PageTitle from '../common/PageTitle';
 import LinearProgress from '../common/LinearProgress';
 import PostForm, { type PostFormData } from './components/PostForm';
@@ -22,6 +26,10 @@ const CmsPostEditPage: React.FC = () => {
 
     const [imageFile, setImageFile] = useState<File | null>(null);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+    // `updated_at` of the post as it was when the form was filled: used to detect edits by someone else.
+    const loadedUpdatedAt = useRef<string | null>(null);
+    const [conflictOpen, setConflictOpen] = useState(false);
 
     useEffect(() => {
         if (id) {
@@ -46,6 +54,7 @@ const CmsPostEditPage: React.FC = () => {
                 is_featured: selectedPost.is_featured,
                 scheduled_at: selectedPost.scheduled_at ?? null,
             });
+            loadedUpdatedAt.current = selectedPost.updated_at ?? null;
             setPreviewUrl(selectedPost.featured_image?.url ? getImageUrl(selectedPost.featured_image.url) : null);
         }
     }, [selectedPost, id]);
@@ -60,7 +69,7 @@ const CmsPostEditPage: React.FC = () => {
         if (type === "checkbox") {
             finalValue = (e.target as HTMLInputElement).checked;
         } else if (name === "category_id") {
-            finalValue = value ? Number(value) : undefined;
+            finalValue = value ? Number(value) : null;
         } else if (name === "tag_ids") {
             finalValue = value
                 ? value.split(",").map((v) => Number(v.trim())).filter((n) => !isNaN(n))
@@ -99,38 +108,41 @@ const CmsPostEditPage: React.FC = () => {
         );
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!id) return;
-
-        // Defensive narrowing — PostForm's Yup schema should already guarantee
-        // title/content are non-empty, but keeps TS happy and guards against
-        // PostForm being reused elsewhere without validation.
-        if (!formData.title || !formData.content) {
-            return;
-        }
+    /** Uploads a new featured image, sends ONLY the changed fields, and reports the outcome. */
+    const save = async () => {
+        if (!id || !selectedPost || !formData.title || !formData.content) return;
 
         setSubmitting(true);
-
         try {
-            let featuredImageId = formData.featured_image_id ?? undefined;
+            let featuredImageId = formData.featured_image_id ?? null;
 
-            // ✅ Upload to media library first, get back the media id
+            // Upload to the media library first, then reference the returned id
             if (imageFile) {
                 const media = await mediaService.upload(imageFile, formData.title);
                 featuredImageId = media.id;
             }
 
-            await actions.updatePost(Number(id), {
+            const changes = buildPostUpdate(selectedPost, {
                 ...formData,
-                title: formData.title,       // ✅ now correctly narrowed to string
-                content: formData.content,   // ✅ same
                 featured_image_id: featuredImageId,
-                tag_ids: formData.tag_ids ?? [],
-                scheduled_at: formData.scheduled_at ?? undefined,
-            } as CmsPostUpdate);
+            });
 
-            setAlert({ type: "success", message: "Post updated successfully." });
+            if (Object.keys(changes).length === 0) {
+                setAlert({ type: "info", message: "No changes to save." });
+                navigate("/dashboard/cms");
+                return;
+            }
+
+            const updated = await actions.updatePost(Number(id), changes);
+
+            if (changes.slug && updated.slug !== changes.slug) {
+                setAlert({
+                    type: "warning",
+                    message: `Post updated, but the slug "${changes.slug}" was taken, so it was saved as "${updated.slug}".`,
+                });
+            } else {
+                setAlert({ type: "success", message: "Post updated successfully." });
+            }
             navigate("/dashboard/cms");
         } catch (err: any) {
             setFieldErrors(getApiFieldErrors(err));
@@ -141,6 +153,27 @@ const CmsPostEditPage: React.FC = () => {
         } finally {
             setSubmitting(false);
         }
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!id) return;
+
+        // Defensive narrowing: PostForm's Yup schema should already guarantee this.
+        if (!formData.title || !formData.content) return;
+
+        // No locking on the API (last write wins), so compare `updated_at` ourselves.
+        try {
+            const latest = await postService.getById(Number(id));
+            if ((latest.updated_at ?? null) !== loadedUpdatedAt.current) {
+                setConflictOpen(true);
+                return;
+            }
+        } catch {
+            // can't check (network/permissions): let the save itself report any real error
+        }
+
+        await save();
     };
 
     if (!selectedPost || selectedPost.id !== Number(id)) {
@@ -163,10 +196,49 @@ const CmsPostEditPage: React.FC = () => {
                 fieldErrors={fieldErrors}
                 setFieldErrors={setFieldErrors}
                 featuredImageUrl={previewUrl}       // ✅ NEW
+                originalSlug={selectedPost.slug}
                 onImageChange={handleImageChange}
                 onCategoryChange={handleCategoryChange}
                 onTagsChange={handleTagsChange}
                 onContentChange={handleContentChange}
+            />
+
+            <Modal
+                showCloseButton={false}
+                size="xsmall"
+                isOpen={conflictOpen}
+                onClose={() => setConflictOpen(false)}
+                content={
+                    <div className="text-sm px-10 pt-6 pb-10 text-center">
+                        <IconAlertTriangle size={64} className="text-amber-500 mb-4 mx-auto" />
+                        This post was changed by someone else after you opened it.
+                        <span className="block text-xs text-gray-500 dark:text-gray-400 mt-2">
+                            Saving now only sends the fields you changed, but it will still overwrite their
+                            version of those fields. Cancel and reload to see their changes first.
+                        </span>
+                    </div>
+                }
+                actions={
+                    <div className="flex gap-4">
+                        <Button
+                            label="Save anyway"
+                            variant="danger"
+                            onClick={async () => {
+                                setConflictOpen(false);
+                                await save();
+                            }}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => setConflictOpen(false)}
+                            className="min-w-[150px]"
+                            rounded="lg"
+                        />
+                    </div>
+                }
             />
         </div>
     );
