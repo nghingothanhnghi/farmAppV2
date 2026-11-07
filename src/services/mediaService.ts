@@ -29,12 +29,14 @@ export const mediaService = {
         return res.data;
     },
 
+    /** PATCH takes a form-encoded body (not JSON, not multipart): see FRONTEND_GUIDE §7. */
     async update(id: number, altText?: string): Promise<CmsMedia> {
-        const formData = new FormData();
-        if (altText !== undefined) formData.append("alt_text", altText);
+        const body = new URLSearchParams();
+        if (altText !== undefined) body.set("alt_text", altText);
 
-        const res = await apiClient.patch(`/cms/media/${id}`, formData, {
-            headers: { "Content-Type": "multipart/form-data" },
+        // Must be explicit: apiClient defaults to application/json and axios won't override a default.
+        const res = await apiClient.patch(`/cms/media/${id}`, body, {
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
         });
         return res.data;
     },

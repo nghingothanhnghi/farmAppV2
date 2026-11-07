@@ -6,6 +6,11 @@ import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import type { CmsPost } from "../../../models/interfaces/Post";
 import { isoToDatetimeLocal } from '../../../utils/formatters';
 
+const isFuture = (localValue: string) => {
+    const t = new Date(localValue).getTime();
+    return !isNaN(t) && t > Date.now();
+};
+
 interface Props {
     isOpen: boolean;
     onClose: () => void;
@@ -17,21 +22,29 @@ interface Props {
 const ScheduleModal: React.FC<Props> = ({ isOpen, onClose, post, onSubmit }) => {
     const [value, setValue] = useState("");
     const [loading, setLoading] = useState(false);
+    const [touched, setTouched] = useState(false);
 
     useEffect(() => {
         if (isOpen) {
             setValue(isoToDatetimeLocal(post?.scheduled_at));
+            setTouched(false);
         }
     }, [isOpen, post]);
 
+    // The backend rejects past times with 400; catch it here for instant feedback.
+    const inPast = !!value && !isFuture(value);
+
     const handleSubmit = async () => {
-        if (!value) return;
+        setTouched(true);
+        if (!value || inPast) return;
         const iso = new Date(value).toISOString();
 
         try {
             setLoading(true);
             await onSubmit(iso);
             onClose();
+        } catch {
+            // the page already showed the error alert; keep the modal open
         } finally {
             setLoading(false);
         }
@@ -51,9 +64,16 @@ const ScheduleModal: React.FC<Props> = ({ isOpen, onClose, post, onSubmit }) => 
                             id="schedule_at"
                             type="datetime-local"
                             value={value}
-                            onChange={(e) => setValue(e.target.value)}
+                            onChange={(e) => {
+                                setValue(e.target.value);
+                                setTouched(true);
+                            }}
+                            min={isoToDatetimeLocal(new Date().toISOString())}
                             required
                         />
+                        {touched && inPast && (
+                            <p className="text-xs text-red-500">Choose a time in the future.</p>
+                        )}
                         <p className="text-xs text-zinc-500 dark:text-zinc-400">
                             The post will automatically switch to "Published" at this local time.
                         </p>
@@ -65,7 +85,7 @@ const ScheduleModal: React.FC<Props> = ({ isOpen, onClose, post, onSubmit }) => 
                     <Button
                         label={loading ? "Scheduling..." : "Schedule"}
                         onClick={handleSubmit}
-                        disabled={loading || !value}
+                        disabled={loading || !value || inPast}
                         className="min-w-[150px]"
                         rounded="lg"
                     />
