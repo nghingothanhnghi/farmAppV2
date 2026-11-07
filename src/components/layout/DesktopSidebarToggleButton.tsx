@@ -1,6 +1,7 @@
 // src/components/layout/DesktopSidebarToggleButton.tsx
-import React, { useState } from 'react';
-import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconChevronRight, IconDeviceMobileCheck, IconCamera, IconCircleNumber1, IconBrain, IconPlant, IconUserShield, IconSportBillard, IconCheese, IconArticle, IconCalendarCheck, IconAnalyze, IconCashRegister, IconLogout, IconUserEdit } from '@tabler/icons-react';
+import React, { useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconLogout, IconUserEdit, IconChevronRight } from '@tabler/icons-react';
 import Button from '../common/Button';
 import DropdownButton from '../common/DropdownButton';
 import ListLink from '../common/ListLink';
@@ -21,18 +22,74 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
     onClick,
     className = '',
 }) => {
-    const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
     const [hovered, setHovered] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleMouseLeave = () => {
-        setActiveItem(null);
+    const [activeItem, setActiveItem] = useState<MenuItem | null>(null);
+    const [menuPosition, setMenuPosition] = useState<{ top: number; left: number } | null>(null);
+    const sidebarRef = useRef<HTMLDivElement>(null);
+    const flyoutRef = useRef<HTMLDivElement>(null);
+
+    const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const clearCloseTimer = () => {
+        if (closeTimer.current) {
+            clearTimeout(closeTimer.current);
+            closeTimer.current = null;
+        }
     };
 
+    const handleRegionLeave = () => {
+        clearCloseTimer();
+
+        closeTimer.current = setTimeout(() => {
+            const isSidebarHovered =
+                sidebarRef.current?.matches(':hover') ?? false;
+
+            const isFlyoutHovered =
+                flyoutRef.current?.matches(':hover') ?? false;
+
+            if (!isSidebarHovered && !isFlyoutHovered) {
+                setActiveItem(null);
+                setMenuPosition(null);
+            }
+        }, 200);
+    };
+
+    const handleItemMouseEnter = (
+        item: MenuItem,
+        element: HTMLDivElement
+    ) => {
+        clearCloseTimer();
+
+        if (!item.children?.length) {
+            setActiveItem(null);
+            setMenuPosition(null);
+            return;
+        }
+
+        const rect = element.getBoundingClientRect();
+
+        setActiveItem(item);
+        setMenuPosition({
+            top: rect.top,
+            left: rect.right,
+        });
+    };
+
+    React.useEffect(() => {
+        return () => {
+            clearCloseTimer();
+        };
+    }, []);
+
     return (
-        <div className={`hidden lg:flex lg:flex-col fixed top-0 left-4 z-40 bg-transparent h-full min-h-0 ${className}`}
-            onMouseLeave={handleMouseLeave}>
+        <div className={`hidden lg:flex lg:flex-col fixed top-0 left-4 z-20 bg-transparent h-full min-h-0 ${className}`}
+            ref={sidebarRef}
+            onMouseLeave={handleRegionLeave}
+            onMouseEnter={clearCloseTimer}
+        >
             <Button
                 variant="secondary"
                 icon={
@@ -52,56 +109,37 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
             />
-            {/* <div className="flex flex-1 flex-col overflow-y-auto space-y-0.5 pt-8 ">
-                <ListLink to="/scheduler-health" icon={<IconCalendarCheck size={16} />} label="Health Schedule" iconOnlyMode={true} />
-                <ListLink to="/devices-controller" icon={<IconDeviceMobileCheck size={16} />} label="Devices Controller" iconOnlyMode={true} />
-                <ListLink to="/ar-detection" icon={<IconCamera size={16} />} label="AR Detection" iconOnlyMode={true} />
-                <ListLink to="/model-training" icon={<IconBrain size={16} />} label="Model Training" iconOnlyMode={true} />
-                <ListLink to="/hydroponic-system" icon={<IconPlant size={16} />} label="Hydroponics" iconOnlyMode={true} />
-                <ListLink to="/jackpot" icon={<IconCircleNumber1 size={16} />} label="Jackpot" iconOnlyMode={true} />
-                <ListLink to="/dashboard/products" icon={<IconCheese size={16} />} label="Products" iconOnlyMode={true} />
-                <ListLink to="/dashboard/cms" icon={<IconArticle size={16} />} label="CMS Content" iconOnlyMode={true} />
-                <ListLink to="/billiard" icon={<IconSportBillard size={16} />} label="Billiard" iconOnlyMode={true} />
-                <ListLink to="/users" icon={<IconUserShield size={16} />} label="User Management" iconOnlyMode={true} />
-                <ListLink to="/migrate" icon={<IconAnalyze size={16} />} label="Data Migration" iconOnlyMode={true} />
-                <ListLink to="/payments" icon={<IconCashRegister size={16} />} label="Payments" iconOnlyMode={true} />
-            </div> */}
             <div className="flex flex-1 flex-col overflow-y-auto space-y-0.5 pt-8">
                 {menuItems.map((item) => {
                     const Icon = item.icon;
-                    const hasChildren = !!item.children?.length;
                     const isActive = activeItem?.id === item.id;
 
                     return (
                         <div
                             key={item.id}
                             className="relative"
-                            onMouseEnter={() => {
-                                setActiveItem(hasChildren ? item : null);
-                            }}
+                            onMouseEnter={(e) =>
+                                handleItemMouseEnter(item, e.currentTarget)
+                            }
                         >
                             <div
                                 className={`flex items-center justify-center rounded-lg transition-colors ${isActive
-                                        ? 'bg-gray-100 dark:bg-zinc-800'
-                                        : ''
+                                    ? 'bg-gray-100 dark:bg-zinc-800'
+                                    : ''
                                     }`}
                             >
                                 {item.to ? (
                                     <ListLink
                                         to={item.to}
-                                        icon={
-                                            Icon ? <Icon size={16} /> : undefined
-                                        }
+                                        icon={Icon ? <Icon size={16} /> : undefined}
                                         label={item.label}
-                                        iconOnlyMode={true}
+                                        iconOnlyMode
                                     />
                                 ) : (
                                     <Button
                                         type="button"
                                         variant="secondary"
-                                        icon={
-                                            Icon ? <Icon size={16} /> : undefined
-                                        }
+                                        icon={Icon ? <Icon size={16} /> : undefined}
                                         iconOnly
                                         label={item.label}
                                         rounded="lg"
@@ -110,50 +148,53 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                                     />
                                 )}
                             </div>
-
-                            {/* Floating child menu */}
-                            {hasChildren && isActive && (
-                                <div
-                                    className="
-                                        absolute left-full top-0 z-50 ml-2
-                                        w-64 max-h-[calc(100vh-2rem)]
-                                        overflow-y-auto
-                                        rounded-xl border border-gray-200
-                                        bg-white p-3 shadow-xl
-                                        dark:border-white/10
-                                        dark:bg-zinc-900
-                                    "
-                                    onMouseEnter={() => setActiveItem(item)}
-                                >
-                                    <div className="mb-2 flex items-center justify-between border-b border-gray-100 px-2 pb-3 dark:border-white/10">
-                                        <div className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-white">
-                                            {Icon && <Icon size={17} />}
-                                            {item.label}
-                                        </div>
-
-                                        <IconChevronRight
-                                            size={15}
-                                            className="text-gray-400"
-                                        />
-                                    </div>
-
-                                    <MultiLevelMenu
-                                        items={item.children ?? []}
-                                        mobile={false}
-                                    />
-                                </div>
-                            )}
                         </div>
                     );
                 })}
             </div>
+            {activeItem?.children?.length && menuPosition &&
+                createPortal(
+                    <div
+                        ref={flyoutRef}
+                        className="fixed z-[100] pl-2"
+                        style={{
+                            top: menuPosition.top,
+                            left: menuPosition.left,
+                        }}
+                        onMouseEnter={clearCloseTimer}
+                        onMouseLeave={handleRegionLeave}
+                    >
+                        <div
+                            className="
+                    w-64 max-h-[calc(100vh-2rem)]
+                    overflow-y-auto
+                    rounded-xl border border-gray-200
+                    bg-white p-3 shadow-xl
+                    dark:border-white/10
+                    dark:bg-zinc-900
+                "
+                        >
+                            <div className="mb-2 flex items-center gap-2 border-b border-gray-100 px-2 pb-3 text-sm font-semibold text-gray-800 dark:border-white/10 dark:text-white">
+                                {activeItem.icon &&
+                                    React.createElement(activeItem.icon, { size: 17 })}
+                                {activeItem.label}
+                            </div>
+
+                            <MultiLevelMenu
+                                items={activeItem.children}
+                                mobile={false}
+                            />
+                        </div>
+                    </div>,
+                    document.body
+                )
+            }
             <div className='flex flex-col justify-between items-center space-y-0.5 pb-4'>
                 {user ? (
                     <>
-                        <CartButton rounded="lg" />
-
+                        <CartButton rounded='lg' />
                         <DropdownButton
-                            className="w-full text-left bg-transparent"
+                            className='w-full text-left bg-transparent'
                             iconOnly={true}
                             showArrow={false}
                             label={
@@ -164,24 +205,13 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                                 />
                             }
                             items={[
-                                {
-                                    label: 'Edit Profile',
-                                    value: 'edit-profile',
-                                    icon: <IconUserEdit size={18} />,
-                                },
-                                {
-                                    label: 'Logout',
-                                    value: 'Logout',
-                                    icon: <IconLogout size={18} />,
-                                },
+                                { label: 'Edit Profile', value: 'edit-profile', icon: <IconUserEdit size={18} /> },
+                                { label: <> Logout</>, value: 'Logout', icon: <IconLogout size={18} /> },
                             ]}
                             onSelect={(item) => {
                                 if (item.value === 'Logout') {
                                     logout();
-                                } else if (
-                                    item.value === 'edit-profile' &&
-                                    user?.id
-                                ) {
+                                } else if (item.value === 'edit-profile' && user?.id) {
                                     navigate(`/users/${user.id}/edit`);
                                 }
                             }}
@@ -194,9 +224,9 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                         icon={<IconUserEdit size={18} />}
                         iconOnly
                         label="Sign Up"
-                        className="bg-transparent"
+                        className='bg-transparent'
                         onClick={() => navigate('/sign-up')}
-                        rounded="full"
+                        rounded='full'
                     />
                 )}
             </div>
