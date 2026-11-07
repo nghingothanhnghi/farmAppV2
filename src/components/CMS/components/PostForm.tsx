@@ -279,11 +279,17 @@ export default function PostForm({
     const isScheduled = formData.status === "scheduled";
 
     return (
-        <Form onSubmit={handleSubmit} className="mx-auto max-w-4xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+        <Form onSubmit={handleSubmit} className="mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-8">
                 {/* Left */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="
+                    space-y-6 
+                    bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 
+                    border border-gray-100 dark:border-white/5
+                    rounded-lg
+                    shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] 
+                    p-4
+                ">
 
                     {fields.map(([name, label, type, required, helper], index) => (
                         <React.Fragment key={name}>
@@ -458,118 +464,117 @@ export default function PostForm({
                 </div>
 
                 {/* Right */}
-                <div className="space-y-6">
-                    <div className="shadow-sm border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700 rounded-lg">
-                        <div className="p-4">
-                            <h3 className="text-sm font-medium">
-                                Publish
-                            </h3>
-                        </div>
-
-                        <div className="space-y-4 px-4 pb-4">
-                            <FormGroup className="space-y-1">
-                                <FormLabel htmlFor="status">Status</FormLabel>
-                                <FormSelect
-                                    name="status"
-                                    id="status"
-                                    value={formData.status ?? "draft"}
-                                    onChange={handleStatusChange}
-                                >
-                                    <option value="draft">Draft</option>
-                                    <option value="published">Published</option>
-                                    <option value="scheduled">Scheduled</option>
-                                    <option value="archived">Archived</option>
-                                </FormSelect>
-                            </FormGroup>
-
-                            {/* ✅ NEW — only visible when status is "scheduled" */}
-                            {isScheduled && (
-                                <FormGroup className="space-y-1">
-                                    <FormLabel htmlFor="scheduled_at">Publish at</FormLabel>
-                                    <FormInput
-                                        id="scheduled_at"
-                                        name="scheduled_at"
-                                        type="datetime-local"
-                                        value={isoToDatetimeLocal(formData.scheduled_at)}
-                                        onChange={handleScheduledAtChange}
-                                        required
-                                    />
-                                    <p className="text-xs text-zinc-500 dark:text-zinc-400">
-                                        The post will automatically publish at this local time.
-                                    </p>
-                                    {mergedErrors.scheduled_at && (
-                                        <p className="text-xs text-red-500">{mergedErrors.scheduled_at}</p>
-                                    )}
-                                </FormGroup>
-                            )}
-
-                            <FormGroup className="space-y-1">
-                                <FormLabel htmlFor="post_type">Post Type</FormLabel>
-                                <FormSelect
-                                    name="post_type"
-                                    id="post_type"
-                                    value={formData.post_type ?? "post"}
-                                    onChange={onChange}
-                                >
-                                    <option value="post">Post</option>
-                                    <option value="page">Page</option>
-                                </FormSelect>
-                            </FormGroup>
-
-                            <FormCheckbox
-                                id="is_featured"
-                                name="is_featured"
-                                label="Featured post"
-                                checked={formData.is_featured ?? false}
-                                onChange={onChange}
-                            />
-
-                            <FormGroup className="space-y-1">
-                                <FormLabel htmlFor="featured_image">Featured Image</FormLabel>
-                                <div className="space-y-1">
-                                    <div className="aspect-video w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
-                                        {featuredImageUrl ? (
-                                            <img
-                                                src={featuredImageUrl}
-                                                alt={formData.title || "Featured image"}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <span className="text-gray-400 text-sm">No Image</span>
-                                        )}
-                                    </div>
-                                    {onImageChange && (
-                                        <FileInput
-                                            id="featured_image"
-                                            inputRef={fileInputRef}
-                                            accept={CMS_IMAGE_ACCEPT}
-                                            label="Upload Image"
-                                            onChange={(e) => {
-                                                const picked = e.target.files?.[0] || null;
-                                                const error = picked ? validateMediaFile(picked, { imagesOnly: true }) : null;
-                                                setImageError(error);
-                                                if (error) {
-                                                    if (fileInputRef.current) fileInputRef.current.value = "";
-                                                    return;
-                                                }
-                                                onImageChange(picked);
-                                            }}
-                                        />
-                                    )}
-                                    {imageError && <p className="text-xs text-red-500">{imageError}</p>}
-                                </div>
-                            </FormGroup>
-
-                        </div>
+                <div className="
+                    space-y-6 
+                    bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 
+                    border border-gray-100 dark:border-white/5
+                    rounded-lg
+                    shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] 
+                    p-4                
+                ">
+                    <div>
+                        <h3 className="text-sm font-medium">
+                            Publish
+                        </h3>
                     </div>
+                    <div className="space-y-4">
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="status">Status</FormLabel>
+                            <FormSelect
+                                name="status"
+                                id="status"
+                                value={formData.status ?? "draft"}
+                                onChange={handleStatusChange}
+                            >
+                                <option value="draft">Draft</option>
+                                <option value="published">Published</option>
+                                <option value="scheduled">Scheduled</option>
+                                <option value="archived">Archived</option>
+                            </FormSelect>
+                        </FormGroup>
 
+                        {/* ✅ NEW — only visible when status is "scheduled" */}
+                        {isScheduled && (
+                            <FormGroup className="space-y-1">
+                                <FormLabel htmlFor="scheduled_at">Publish at</FormLabel>
+                                <FormInput
+                                    id="scheduled_at"
+                                    name="scheduled_at"
+                                    type="datetime-local"
+                                    value={isoToDatetimeLocal(formData.scheduled_at)}
+                                    onChange={handleScheduledAtChange}
+                                    required
+                                />
+                                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                                    The post will automatically publish at this local time.
+                                </p>
+                                {mergedErrors.scheduled_at && (
+                                    <p className="text-xs text-red-500">{mergedErrors.scheduled_at}</p>
+                                )}
+                            </FormGroup>
+                        )}
+
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="post_type">Post Type</FormLabel>
+                            <FormSelect
+                                name="post_type"
+                                id="post_type"
+                                value={formData.post_type ?? "post"}
+                                onChange={onChange}
+                            >
+                                <option value="post">Post</option>
+                                <option value="page">Page</option>
+                            </FormSelect>
+                        </FormGroup>
+
+                        <FormCheckbox
+                            id="is_featured"
+                            name="is_featured"
+                            label="Featured post"
+                            checked={formData.is_featured ?? false}
+                            onChange={onChange}
+                        />
+
+                        <FormGroup className="space-y-1">
+                            <FormLabel htmlFor="featured_image">Featured Image</FormLabel>
+                            <div className="space-y-1">
+                                <div className="aspect-video w-full bg-gray-100 dark:bg-gray-950 flex items-center justify-center overflow-hidden rounded-lg">
+                                    {featuredImageUrl ? (
+                                        <img
+                                            src={featuredImageUrl}
+                                            alt={formData.title || "Featured image"}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <span className="text-gray-400 text-sm">No Image</span>
+                                    )}
+                                </div>
+                                {onImageChange && (
+                                    <FileInput
+                                        id="featured_image"
+                                        inputRef={fileInputRef}
+                                        accept={CMS_IMAGE_ACCEPT}
+                                        label="Upload Image"
+                                        onChange={(e) => {
+                                            const picked = e.target.files?.[0] || null;
+                                            const error = picked ? validateMediaFile(picked, { imagesOnly: true }) : null;
+                                            setImageError(error);
+                                            if (error) {
+                                                if (fileInputRef.current) fileInputRef.current.value = "";
+                                                return;
+                                            }
+                                            onImageChange(picked);
+                                        }}
+                                    />
+                                )}
+                                {imageError && <p className="text-xs text-red-500">{imageError}</p>}
+                            </div>
+                        </FormGroup>
+                    </div>
                 </div>
-
             </div>
 
-            <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-
-            <FormActions className="lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
+            <FormActions className=" mt-10 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
                 <Button
                     type="button"
                     label="Back"
