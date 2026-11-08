@@ -9,44 +9,7 @@ import type {
     MenuReorderEntry,
 } from "../models/interfaces/Menu";
 
-export interface MenuReference {
-    menuId: number;
-    menuName: string;
-    itemLabel: string;
-}
-
-const collectRefs = (
-    items: CmsMenuItem[],
-    menu: { id: number; name: string },
-    postId: number,
-    out: MenuReference[]
-) => {
-    for (const item of items) {
-        if (item.target_type === "post" && item.target_id === postId) {
-            out.push({ menuId: menu.id, menuName: menu.name, itemLabel: item.label });
-        }
-        if (item.children?.length) collectRefs(item.children, menu, postId, out);
-    }
-};
-
 export const menuService = {
-    /**
-     * Menu items pointing at a post. The backend does not guard post deletion (the item just stops
-     * resolving), so this is a client-side check: list menus, load each tree, scan for the post.
-     * Best effort: a menu that fails to load is skipped.
-     */
-    async findPostReferences(postId: number): Promise<MenuReference[]> {
-        const menus = await menuService.getAll();
-        const trees = await Promise.all(
-            menus.map((m) => menuService.getById(m.id, false).catch(() => null))
-        );
-        const out: MenuReference[] = [];
-        trees.forEach((tree, i) => {
-            if (tree) collectRefs(tree.items ?? [], menus[i], postId, out);
-        });
-        return out;
-    },
-
     /** Summaries only: no `items`. */
     async getAll(): Promise<CmsMenuSummary[]> {
         const res = await apiClient.get("/cms/menus");

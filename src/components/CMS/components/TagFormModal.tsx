@@ -5,26 +5,35 @@ import Button from "../../common/Button";
 import { FormGroup, FormLabel, FormInput } from "../../common/Form";
 import { slugify } from "../../../utils/slug";
 import type { TagInput } from "../../../hooks/useTag";
+import type { CmsTag } from "../../../models/interfaces/Post";
 
 interface Props {
     isOpen: boolean;
     onClose: () => void;
+    mode?: "create" | "edit";
+    initialData?: CmsTag | null;
+    /** Throws on failure; the page already showed the error, so the modal just stays open. */
     onSubmit: (data: TagInput) => Promise<void>;
 }
 
-const TagFormModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
+const TagFormModal: React.FC<Props> = ({ isOpen, onClose, mode = "create", initialData, onSubmit }) => {
     const [name, setName] = useState("");
     const [slug, setSlug] = useState("");
     const [slugTouched, setSlugTouched] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (isOpen) {
+        if (!isOpen) return;
+        if (mode === "edit" && initialData) {
+            setName(initialData.name);
+            setSlug(initialData.slug);
+            setSlugTouched(true); // renaming must not rewrite the public slug
+        } else {
             setName("");
             setSlug("");
             setSlugTouched(false);
         }
-    }, [isOpen]);
+    }, [isOpen, mode, initialData]);
 
     useEffect(() => {
         if (!slugTouched) {
@@ -39,6 +48,8 @@ const TagFormModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
             setLoading(true);
             await onSubmit({ name: name.trim(), slug: slug.trim() || undefined });
             onClose();
+        } catch {
+            // the page already showed the error alert; keep the modal open so nothing is lost
         } finally {
             setLoading(false);
         }
@@ -48,7 +59,7 @@ const TagFormModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="New Tag"
+            title={mode === "edit" ? "Edit Tag" : "New Tag"}
             size="small"
             content={
                 <div className="px-10 pb-4 space-y-4">
@@ -80,7 +91,7 @@ const TagFormModal: React.FC<Props> = ({ isOpen, onClose, onSubmit }) => {
             actions={
                 <div className="flex gap-4">
                     <Button
-                        label={loading ? "Saving..." : "Create"}
+                        label={loading ? "Saving..." : mode === "edit" ? "Update" : "Create"}
                         onClick={handleSubmit}
                         disabled={loading || !name.trim()}
                         className="min-w-[150px]"

@@ -126,10 +126,11 @@ export const usePost = () => {
     }, []); // ✅ no dependency needed now
 
 
-    const deletePost = useCallback(async (id: number) => {
-        await postService.delete(id);
+    const deletePost = useCallback(async (id: number, options?: { force?: boolean }) => {
+        const result = await postService.delete(id, options);
         setPosts(prev => prev.filter(x => x.id !== id));
         setSelectedPost(prev => (prev?.id === id ? null : prev));
+        return result;
     }, []);
 
     const publishPost = useCallback(async (id: number) => {

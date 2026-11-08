@@ -107,6 +107,19 @@ export interface CmsCategoryDeleteResult {
   moved_to_category_id: number | null;
 }
 
+/** DELETE /cms/posts/{id}[?force]. 409 while a menu item links to the post; `force` is editor-only. */
+export interface CmsPostDeleteResult {
+  detail: string;
+  /** Menu items removed by `force=true` (0 otherwise). */
+  menu_items_removed: number;
+}
+
+/** PUT /cms/tags/{id}: renaming keeps the slug unless one is sent. 409 on duplicate name/slug. */
+export interface CmsTagUpdate {
+  name?: string;
+  slug?: string;
+}
+
 /** DELETE /cms/tags/{id}[?force][&merge_into] */
 export interface CmsTagDeleteResult {
   detail: string;

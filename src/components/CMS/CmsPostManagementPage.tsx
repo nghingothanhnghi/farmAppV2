@@ -14,7 +14,6 @@ import Pagination from '../common/Pagination';
 import EmptyState from '../common/EmptyState';
 import PostFilterBar from './components/PostFilterBar';
 import { usePostFilters, toPostQuery } from '../../hooks/usePostFilters';
-import { menuService, type MenuReference } from '../../services/menuService';
 import { categoryService } from '../../services/categoryService';
 import { tagService } from '../../services/tagService';
 import type { CmsCategory, CmsTag } from '../../models/interfaces/Post';
@@ -38,19 +37,15 @@ const CmsPostManagementPage: React.FC = () => {
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedPost, setSelectedPost] = useState<CmsPostListItem | null>(null);
-    // Menu items that link to the post being deleted (client-side check, best effort)
-    const [menuRefs, setMenuRefs] = useState<MenuReference[]>([]);
+    // Set when the server answers 409 (a menu item links to the post) so the dialog can offer "force".
+    const [inUseMessage, setInUseMessage] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
-    useEffect(() => {
-        setMenuRefs([]);
-        if (!confirmModalOpen || !selectedPost) return;
-        let cancelled = false;
-        menuService
-            .findPostReferences(selectedPost.id)
-            .then((refs) => { if (!cancelled) setMenuRefs(refs); })
-            .catch(() => { /* no menu access or backend error: just skip the warning */ });
-        return () => { cancelled = true; };
-    }, [confirmModalOpen, selectedPost]);
+    const closeDeleteModal = () => {
+        setConfirmModalOpen(false);
+        setSelectedPost(null);
+        setInUseMessage(null);
+    };
 
     const [scheduleModalOpen, setScheduleModalOpen] = useState(false);
     const [schedulingPost, setSchedulingPost] = useState<CmsPostListItem | null>(null);
@@ -71,30 +66,39 @@ const CmsPostManagementPage: React.FC = () => {
 
     const canManage = useCallback((post: CmsPostListItem) => canManagePost(post), [canManagePost]);
 
-    const handleConfirmDelete = async () => {
+    const handleConfirmDelete = async (force = false) => {
         if (!selectedPost) return;
+        setDeleting(true);
 
         try {
             const wasLastOnPage = posts.length === 1;
-            await actions.deletePost(selectedPost.id);
+            const result = await actions.deletePost(selectedPost.id, force ? { force: true } : undefined);
             // keep the page full and the total accurate
             if (wasLastOnPage && page > 1) update({ page: page - 1 });
             else actions.fetchPosts(query);
 
+            const removed = result.menu_items_removed;
             setAlert({
                 type: "success",
-                message: `Post "${selectedPost.title}" deleted successfully.`,
+                message: removed > 0
+                    ? `Post "${selectedPost.title}" deleted and removed from ${removed} menu item${removed > 1 ? 's' : ''}.`
+                    : `Post "${selectedPost.title}" deleted successfully.`,
             });
-
-            setConfirmModalOpen(false);
-            setSelectedPost(null);
+            closeDeleteModal();
 
         } catch (err: any) {
-            setAlert({
-                type: "error",
-                message:
-                    getApiErrorMessage(err, "Failed to delete post."),
-            });
+            if (err?.response?.status === 409 && !force) {
+                // A menu item links to this post: keep the dialog open and explain.
+                setInUseMessage(getApiErrorMessage(err, "This post is linked from a menu."));
+            } else {
+                setAlert({
+                    type: "error",
+                    message: getApiErrorMessage(err, "Failed to delete post."),
+                });
+                closeDeleteModal();
+            }
+        } finally {
+            setDeleting(false);
         }
     };
 
@@ -209,45 +213,60 @@ const CmsPostManagementPage: React.FC = () => {
 
             <Modal
                 showCloseButton={false}
-                size='xsmall'
+                size={inUseMessage ? 'small' : 'xsmall'}
                 isOpen={confirmModalOpen}
-                onClose={() => {
-                    setConfirmModalOpen(false);
-                    setSelectedPost(null);
-                }}
+                onClose={closeDeleteModal}
                 content={
-                    <div className="text-sm px-10 pt-6 pb-10 text-center">
-                        <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-                        Are you sure you want to delete post{' '}
-                        <strong>{selectedPost?.title}</strong>?
-                        {menuRefs.length > 0 && (
-                            <div className="mt-4 text-left text-xs rounded-lg bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-200 p-3">
-                                This post is linked from {menuRefs.length} menu item{menuRefs.length > 1 ? 's' : ''}.
-                                After deleting, the link stops working (it is hidden on the site):
-                                <ul className="list-disc pl-5 mt-1">
-                                    {menuRefs.map((r, i) => (
-                                        <li key={i}>{r.menuName} → {r.itemLabel}</li>
-                                    ))}
-                                </ul>
-                            </div>
-                        )}
-                    </div>
+                    inUseMessage ? (
+                        <div className="text-sm px-10 pt-6 pb-8 space-y-3 text-center">
+                            <IconAlertCircle size={64} className="text-amber-500 mb-2 mx-auto" />
+                            <p>
+                                <strong>{selectedPost?.title}</strong> is linked from a menu.
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">{inUseMessage}</p>
+                            <p className="text-xs">
+                                {isEditor
+                                    ? 'You can delete the post and remove those menu items, or remove the menu link first.'
+                                    : 'Ask an editor to remove the menu link first, or to delete the post.'}
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="text-sm px-10 pt-6 pb-10 text-center">
+                            <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
+                            Are you sure you want to delete post{' '}
+                            <strong>{selectedPost?.title}</strong>?
+                        </div>
+                    )
                 }
                 actions={
-                    <div className="flex gap-4">
-                        <Button
-                            label='Yes, Delete'
-                            variant="danger"
-                            onClick={handleConfirmDelete}
-                            className='min-w-[150px]'
-                            rounded='lg'
-                        />
+                    <div className="flex flex-wrap justify-center gap-3">
+                        {inUseMessage ? (
+                            isEditor && (
+                                <Button
+                                    label={deleting ? 'Working...' : 'Delete post & remove menu items'}
+                                    variant="danger"
+                                    onClick={() => handleConfirmDelete(true)}
+                                    rounded='lg'
+                                    disabled={deleting}
+                                />
+                            )
+                        ) : (
+                            <Button
+                                label={deleting ? 'Deleting...' : 'Yes, Delete'}
+                                variant="danger"
+                                onClick={() => handleConfirmDelete()}
+                                className='min-w-[150px]'
+                                rounded='lg'
+                                disabled={deleting}
+                            />
+                        )}
                         <Button
                             label="Cancel"
                             variant="secondary"
-                            onClick={() => setConfirmModalOpen(false)}
-                            className='min-w-[150px]'
+                            onClick={closeDeleteModal}
+                            className={inUseMessage ? undefined : 'min-w-[150px]'}
                             rounded='lg'
+                            disabled={deleting}
                         />
                     </div>
                 }

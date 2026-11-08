@@ -1,6 +1,6 @@
 // src/services/tagService.ts
 import apiClient from "../api/client";
-import type { CmsTag, CmsTagDeleteResult } from "../models/interfaces/Post";
+import type { CmsTag, CmsTagDeleteResult, CmsTagUpdate } from "../models/interfaces/Post";
 
 export interface TagDeleteOptions {
     /** Detach the tag from every post, then delete it. */
@@ -17,6 +17,12 @@ export const tagService = {
 
     async create(data: { name: string; slug?: string }): Promise<CmsTag> {
         const res = await apiClient.post("/cms/tags", data);
+        return res.data;
+    },
+
+    /** Partial update (editor). 409 on duplicate name/slug. */
+    async update(id: number, data: CmsTagUpdate): Promise<CmsTag> {
+        const res = await apiClient.put(`/cms/tags/${id}`, data);
         return res.data;
     },
 
