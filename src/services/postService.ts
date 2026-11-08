@@ -1,6 +1,7 @@
 import apiClient from "../api/client";
 import type {
     CmsPost,
+    CmsPostDeleteResult,
     CmsPostCreate,
     CmsPostUpdate,
     PaginatedPosts,
@@ -63,8 +64,14 @@ export const postService = {
         return res.data;
     },
 
-    async delete(id: number) {
-        await apiClient.delete(`/cms/posts/${id}`);
+    /**
+     * 409 while a menu item links to the post. `force: true` (editors only) deletes the post and
+     * removes those menu items; the result says how many.
+     */
+    async delete(id: number, options?: { force?: boolean }): Promise<CmsPostDeleteResult> {
+        const res = await apiClient.delete(`/cms/posts/${id}`, { params: options?.force ? { force: true } : undefined });
+        // older backends answered {detail} only
+        return { detail: res.data?.detail ?? "", menu_items_removed: res.data?.menu_items_removed ?? 0 };
     },
 
     async publish(id: number): Promise<CmsPost> {

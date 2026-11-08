@@ -3,7 +3,7 @@ import React, { useMemo, useState } from "react";
 import { IconPlus, IconAlertCircle, IconMoodEmpty } from "@tabler/icons-react";
 import { useTag, type TagInput } from "../../hooks/useTag";
 import { useAlert } from "../../contexts/alertContext";
-import type { CmsTag } from "../../models/interfaces/Post";
+import type { CmsTag, CmsTagUpdate } from "../../models/interfaces/Post";
 import PageTitle from "../common/PageTitle";
 import DataGrid from "../common/dataGrid/dataGrid";
 import LinearProgress from "../common/LinearProgress";
@@ -12,7 +12,7 @@ import Modal from "../common/Modal";
 import Button from "../common/Button";
 import { FormGroup, FormLabel, FormSelect } from "../common/Form";
 import type { TagDeleteOptions } from "../../services/tagService";
-import { IconTrash } from "@tabler/icons-react";
+import ActionButtons from "./../common/dataGrid/actionButton";
 import TagFormModal from "./components/TagFormModal";
 import { getApiErrorMessage } from "../../utils/apiError";
 import { useCmsPermissions } from "../../hooks/useCmsPermissions";
@@ -23,6 +23,8 @@ const CmsTagManagementPage: React.FC = () => {
     const { canEditTaxonomy, canDeleteTaxonomy } = useCmsPermissions();
 
     const [formOpen, setFormOpen] = useState(false);
+    const [formMode, setFormMode] = useState<"create" | "edit">("create");
+    const [editing, setEditing] = useState<CmsTag | null>(null);
 
     const [confirmModalOpen, setConfirmModalOpen] = useState(false);
     const [selectedTag, setSelectedTag] = useState<CmsTag | null>(null);
@@ -46,6 +48,29 @@ const CmsTagManagementPage: React.FC = () => {
             setAlert({
                 type: "error",
                 message: getApiErrorMessage(err, "Failed to create tag."),
+            });
+            throw err;
+        }
+    };
+
+    const handleEditSubmit = async (data: TagInput) => {
+        if (!editing) return;
+        // Partial update: send only what changed (an untouched slug can't collide with itself).
+        const patch: CmsTagUpdate = {};
+        if (data.name !== editing.name) patch.name = data.name;
+        if (data.slug && data.slug !== editing.slug) patch.slug = data.slug;
+        if (Object.keys(patch).length === 0) {
+            setAlert({ type: "info", message: "No changes to save." });
+            return;
+        }
+        try {
+            await actions.updateTag(editing.id, patch);
+            setAlert({ type: "success", message: `Tag "${data.name}" updated.` });
+        } catch (err: any) {
+            setAlert({
+                type: "error",
+                // 409 = another tag already uses that name or slug
+                message: getApiErrorMessage(err, "Failed to update tag."),
             });
             throw err;
         }
@@ -87,31 +112,28 @@ const CmsTagManagementPage: React.FC = () => {
         {
             headerName: "",
             field: "actions",
-            width: 80,
+            width: 100,
             filter: false,
             sortable: false,
             resizable: false,
             pinned: "right",
             cellStyle: { textAlign: "center" },
-            cellRenderer: ({ data }: any) => canDeleteTaxonomy ? (
-                <div className="flex gap-2 items-center justify-center h-full">
-                    <Button
-                        icon={<IconTrash size={16} stroke={1.5} />}
-                        iconOnly
-                        variant="secondary"
-                        onClick={() => {
-                            setSelectedTag(data);
-                            setConfirmModalOpen(true);
-                        }}
-                        label="Delete"
-                        size="xs"
-                        rounded="full"
-                        className="bg-transparent"
-                    />
-                </div>
-            ) : null,
+            cellRenderer: ({ data }: any) => (
+                <ActionButtons
+                    row={data}
+                    onEdit={canEditTaxonomy ? () => {
+                        setEditing(data);
+                        setFormMode("edit");
+                        setFormOpen(true);
+                    } : undefined}
+                    onDelete={canDeleteTaxonomy ? () => {
+                        setSelectedTag(data);
+                        setConfirmModalOpen(true);
+                    } : undefined}
+                />
+            ),
         },
-    ], [canDeleteTaxonomy]);
+    ], [canEditTaxonomy, canDeleteTaxonomy]);
 
     if (loading && tags.length === 0) {
         return <LinearProgress position="absolute" thickness="h-1" duration={3000} />;
@@ -125,7 +147,7 @@ const CmsTagManagementPage: React.FC = () => {
                     <Button
                         type="button"
                         label="New Tag"
-                        onClick={() => setFormOpen(true)}
+                        onClick={() => { setEditing(null); setFormMode("create"); setFormOpen(true); }}
                         variant="secondary"
                         icon={<IconPlus size={16} className="text-gray-500" />}
                         iconPosition="left"
@@ -152,7 +174,9 @@ const CmsTagManagementPage: React.FC = () => {
             <TagFormModal
                 isOpen={formOpen}
                 onClose={() => setFormOpen(false)}
-                onSubmit={handleCreateSubmit}
+                mode={formMode}
+                initialData={editing}
+                onSubmit={formMode === "edit" ? handleEditSubmit : handleCreateSubmit}
             />
 
             <Modal

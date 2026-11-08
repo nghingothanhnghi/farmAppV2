@@ -1,7 +1,7 @@
 // src/hooks/useTag.ts
 import { useState, useCallback, useEffect } from "react";
 import { tagService, type TagDeleteOptions } from "../services/tagService";
-import type { CmsTag } from "../models/interfaces/Post";
+import type { CmsTag, CmsTagUpdate } from "../models/interfaces/Post";
 import { getApiErrorMessage } from "../utils/apiError";
 
 export interface TagInput {
@@ -34,6 +34,12 @@ export const useTag = () => {
         return created;
     }, []);
 
+    const updateTag = useCallback(async (id: number, data: CmsTagUpdate) => {
+        const updated = await tagService.update(id, data);
+        setTags(prev => prev.map(t => t.id === id ? updated : t));
+        return updated;
+    }, []);
+
     const deleteTag = useCallback(async (id: number, options?: TagDeleteOptions) => {
         const result = await tagService.delete(id, options);
         setTags(prev => prev.filter(t => t.id !== id));
@@ -51,6 +57,7 @@ export const useTag = () => {
         actions: {
             fetchTags,
             createTag,
+            updateTag,
             deleteTag,
         },
     };
