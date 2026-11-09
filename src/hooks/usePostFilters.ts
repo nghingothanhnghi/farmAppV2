@@ -11,6 +11,8 @@ export interface PostFilters {
     status: PostStatus | "";
     post_type: PostType | "";
     category_id: number | null;
+    /** only meaningful with a category: also match posts in its child categories */
+    include_descendants: boolean;
     tag_id: number | null;
     is_featured: boolean | null;
     sort: PostSortKey;
@@ -40,6 +42,7 @@ const parse = (p: URLSearchParams): PostFilters => {
         status: status && STATUSES.includes(status) ? status : "",
         post_type: type && TYPES.includes(type) ? type : "",
         category_id: positiveInt(p.get("category")),
+        include_descendants: p.get("sub") === "1" && positiveInt(p.get("category")) !== null,
         tag_id: positiveInt(p.get("tag")),
         is_featured: featured === "true" ? true : featured === "false" ? false : null,
         sort: sort && SORTS.includes(sort) ? sort : DEFAULT_SORT,
@@ -54,6 +57,7 @@ const serialize = (f: PostFilters): URLSearchParams => {
     if (f.status) p.set("status", f.status);
     if (f.post_type) p.set("type", f.post_type);
     if (f.category_id) p.set("category", String(f.category_id));
+    if (f.category_id && f.include_descendants) p.set("sub", "1");
     if (f.tag_id) p.set("tag", String(f.tag_id));
     if (f.is_featured !== null) p.set("featured", String(f.is_featured));
     if (f.sort !== DEFAULT_SORT) p.set("sort", f.sort);
@@ -70,6 +74,7 @@ export const toPostQuery = (f: PostFilters, pageSize: number): PostQuery => ({
     status: f.status || undefined,
     post_type: f.post_type || undefined,
     category_id: f.category_id ?? undefined,
+    include_descendants: f.category_id && f.include_descendants ? true : undefined,
     tag_id: f.tag_id ?? undefined,
     is_featured: f.is_featured ?? undefined,
     sort: f.sort,
@@ -84,6 +89,8 @@ export const usePostFilters = () => {
     const update = useCallback(
         (patch: Partial<PostFilters>) => {
             const next = { ...parse(params), ...patch };
+            // clearing the category also clears its "include subcategories" modifier
+            if (!next.category_id) next.include_descendants = false;
             if (!("page" in patch)) next.page = 1;
             setParams(serialize(next), { replace: true });
         },
