@@ -96,34 +96,17 @@ export interface CmsPostUpdate {
   scheduled_at?: string | null;
 }
 
-/** The backend returns no `pages`; usePost computes it from total / page_size. */
-export type PaginatedPosts = Schemas["PaginatedPosts"] & { pages?: number };
+/** GET /cms/posts: `{results, total, page, page_size, pages}`. */
+export type PaginatedPosts = Schemas["PaginatedPosts"];
 
-/** DELETE /cms/categories/{id}[?reassign_to] */
-export interface CmsCategoryDeleteResult {
-  detail: string;
-  moved_children: number;
-  moved_posts: number;
-  moved_to_category_id: number | null;
-}
+/** DELETE /cms/categories/{id}[?reassign_to]: `{detail, moved_children, moved_posts, moved_to_category_id}` */
+export type CmsCategoryDeleteResult = Schemas["CategoryDeleteOut"];
 
 /** DELETE /cms/posts/{id}[?force]. 409 while a menu item links to the post; `force` is editor-only. */
-export interface CmsPostDeleteResult {
-  detail: string;
-  /** Menu items removed by `force=true` (0 otherwise). */
-  menu_items_removed: number;
-}
-
-/** PUT /cms/tags/{id}: renaming keeps the slug unless one is sent. 409 on duplicate name/slug. */
-export interface CmsTagUpdate {
-  name?: string;
-  slug?: string;
-}
+export type CmsPostDeleteResult = Schemas["PostDeleteOut"];
 
 /** DELETE /cms/tags/{id}[?force][&merge_into] */
-export interface CmsTagDeleteResult {
-  detail: string;
-  posts_affected: number;
-  merged_into_tag_id: number | null;
-  posts_moved: number;
-}
+export type CmsTagDeleteResult = Schemas["TagDeleteOut"];
+
+/** PUT /cms/tags/{id}: omitted fields untouched; `null` is a 422 (so never send it). 409 on duplicate name/slug. */
+export type CmsTagUpdate = { name?: string; slug?: string };

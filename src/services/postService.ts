@@ -20,8 +20,10 @@ export interface PostQuery {
     /** Non-editors may only request "published" (anything else is 403). */
     status?: PostStatus;
     post_type?: PostType;
-    /** exact category, does not include descendants */
+    /** exact category unless `include_descendants` is set */
     category_id?: number;
+    /** with `category_id`: also match posts in all child categories (recursive) */
+    include_descendants?: boolean;
     tag_id?: number;
     author_id?: number;
     is_featured?: boolean;

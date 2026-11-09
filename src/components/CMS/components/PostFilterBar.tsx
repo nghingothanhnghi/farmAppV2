@@ -123,6 +123,21 @@ const PostFilterBar: React.FC<Props> = ({
                 ))}
             </FormSelect>
 
+            {filters.category_id && (
+                <label
+                    htmlFor="post_filter_sub"
+                    className="flex items-center gap-2 pb-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer select-none"
+                >
+                    <input
+                        id="post_filter_sub"
+                        type="checkbox"
+                        checked={filters.include_descendants}
+                        onChange={(e) => onChange({ include_descendants: e.target.checked })}
+                    />
+                    Include subcategories
+                </label>
+            )}
+
             <FormSelect
                 className="w-[170px]"
                 id="post_filter_tag"

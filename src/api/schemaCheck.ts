@@ -3,7 +3,7 @@
 // backend's generated request types. If the backend renames/removes a field or changes an enum, `tsc`
 // fails here instead of the app failing at runtime. Regenerate with `npm run gen:api`.
 import type { components, paths } from "./schema";
-import type { CmsPostCreate, CmsPostUpdate } from "../models/interfaces/Post";
+import type { CmsPostCreate, CmsPostUpdate, CmsTagUpdate } from "../models/interfaces/Post";
 import type { MenuInput, MenuItemInput, MenuReorderEntry } from "../models/interfaces/Menu";
 import type { PostQuery } from "../services/postService";
 
@@ -24,6 +24,7 @@ export type _Checks = [
     AssertAssignable<MenuInput, Schemas["MenuCreate"]>,
     AssertAssignable<MenuItemInput, Request<Schemas["MenuItemCreate"], "label">>,
     AssertAssignable<MenuReorderEntry, Schemas["MenuItemReorderEntry"]>,
+    AssertAssignable<CmsTagUpdate, Schemas["TagUpdate"]>,
     // GET /cms/posts query params
     AssertAssignable<PostQuery, NonNullable<paths["/cms/posts"]["get"]["parameters"]["query"]>>,
 ];

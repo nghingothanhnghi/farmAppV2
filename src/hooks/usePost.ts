@@ -74,7 +74,7 @@ export const usePost = () => {
                 total: data?.total ?? results.length,
                 page: data?.page ?? 1,
                 page_size: data?.page_size ?? results.length,
-                pages: data?.pages ?? Math.ceil((data?.total ?? results.length) / (data?.page_size || 20)),
+                pages: data?.pages ?? 1,
             });
 
             setError(null);

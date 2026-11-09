@@ -3737,7 +3737,11 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        put?: never;
+        /**
+         * Update Tag
+         * @description Partial update (name and/or slug). 409 on a duplicate name or slug; `null` is a 422.
+         */
+        put: operations["update_tag_cms_tags__tag_id__put"];
         post?: never;
         /**
          * Delete Tag
@@ -5409,6 +5413,17 @@ export interface components {
              */
             slug?: string | null;
         };
+        /** CategoryDeleteOut */
+        CategoryDeleteOut: {
+            /** Detail */
+            detail: string;
+            /** Moved Children */
+            moved_children: number;
+            /** Moved Posts */
+            moved_posts: number;
+            /** Moved To Category Id */
+            moved_to_category_id: number | null;
+        };
         /** CategoryOut */
         CategoryOut: {
             /** Name */
@@ -5473,6 +5488,14 @@ export interface components {
             server_state_version: number;
             /** Tables */
             tables: components["schemas"]["TableStateOut"][];
+        };
+        /**
+         * DeleteOut
+         * @description Body of a successful DELETE for resources with no extra counters.
+         */
+        DeleteOut: {
+            /** Detail */
+            detail: string;
         };
         /** DetectionObjectSchema */
         DetectionObjectSchema: {
@@ -7162,6 +7185,11 @@ export interface components {
             page: number;
             /** Page Size */
             page_size: number;
+            /**
+             * Pages
+             * @description ceil(total / page_size); 0 when there are no results
+             */
+            pages: number;
         };
         /** PasswordResetConfirm */
         PasswordResetConfirm: {
@@ -7650,6 +7678,16 @@ export interface components {
              * @default []
              */
             tag_ids: number[];
+        };
+        /** PostDeleteOut */
+        PostDeleteOut: {
+            /** Detail */
+            detail: string;
+            /**
+             * Menu Items Removed
+             * @description Menu items removed because they linked to the post (only non-zero with ?force=true)
+             */
+            menu_items_removed: number;
         };
         /**
          * PostListItem
@@ -8636,6 +8674,17 @@ export interface components {
             /** Slug */
             slug?: string | null;
         };
+        /** TagDeleteOut */
+        TagDeleteOut: {
+            /** Detail */
+            detail: string;
+            /** Posts Affected */
+            posts_affected: number;
+            /** Merged Into Tag Id */
+            merged_into_tag_id: number | null;
+            /** Posts Moved */
+            posts_moved: number;
+        };
         /** TagOut */
         TagOut: {
             /** Name */
@@ -8649,6 +8698,16 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /**
+         * TagUpdate
+         * @description Partial update: omitted fields are untouched; `null` is rejected (422) for both.
+         */
+        TagUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Slug */
+            slug?: string | null;
         };
         /** TemplateCreate */
         TemplateCreate: {
@@ -15733,7 +15792,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["CategoryDeleteOut"];
                 };
             };
             /** @description Validation Error */
@@ -15831,6 +15890,41 @@ export interface operations {
             };
         };
     };
+    update_tag_cms_tags__tag_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                tag_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TagUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TagOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     delete_tag_cms_tags__tag_id__delete: {
         parameters: {
             query?: {
@@ -15853,7 +15947,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["TagDeleteOut"];
                 };
             };
             /** @description Validation Error */
@@ -15980,7 +16074,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["DeleteOut"];
                 };
             };
             /** @description Validation Error */
@@ -16035,6 +16129,8 @@ export interface operations {
                 status?: components["schemas"]["PostStatus"] | null;
                 post_type?: components["schemas"]["PostType"] | null;
                 category_id?: number | null;
+                /** @description With category_id: also match posts in all child categories (recursive) */
+                include_descendants?: boolean;
                 tag_id?: number | null;
                 author_id?: number | null;
                 /** @description Search in title/excerpt */
@@ -16207,7 +16303,10 @@ export interface operations {
     };
     delete_post_cms_posts__post_id__delete: {
         parameters: {
-            query?: never;
+            query?: {
+                /** @description Also delete menu items that link to this post (editors only) */
+                force?: boolean;
+            };
             header?: never;
             path: {
                 post_id: number;
@@ -16222,7 +16321,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["PostDeleteOut"];
                 };
             };
             /** @description Validation Error */
@@ -16504,7 +16603,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["DeleteOut"];
                 };
             };
             /** @description Validation Error */
@@ -16605,7 +16704,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["DeleteOut"];
                 };
             };
             /** @description Validation Error */
