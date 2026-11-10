@@ -14,6 +14,7 @@ import Pagination from '../common/Pagination';
 import EmptyState from '../common/EmptyState';
 import PostFilterBar from './components/PostFilterBar';
 import { usePostFilters, toPostQuery } from '../../hooks/usePostFilters';
+import { useRefetchOnFocus } from '../../hooks/useRefetchOnFocus';
 import { categoryService } from '../../services/categoryService';
 import { tagService } from '../../services/tagService';
 import type { CmsCategory, CmsTag } from '../../models/interfaces/Post';
@@ -63,6 +64,9 @@ const CmsPostManagementPage: React.FC = () => {
         actions.fetchPosts(query);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [queryKey]);
+
+    // B9: scheduled posts go live in the background; refresh when the user comes back to the tab
+    useRefetchOnFocus(() => actions.fetchPosts(query));
 
     const canManage = useCallback((post: CmsPostListItem) => canManagePost(post), [canManagePost]);
 

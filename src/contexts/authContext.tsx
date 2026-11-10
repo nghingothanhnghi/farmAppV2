@@ -87,7 +87,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const userData = await authService.getCurrentUser();
             setUser(userData);
 
-            const userRoles = await authService.getUserRoles(userData.id);
+            // /auth/me now includes `roles`; only fall back to the extra
+            // request for backends that don't return them yet.
+            const userRoles = Array.isArray(userData.roles) && userData.roles.length > 0
+                ? userData.roles
+                : await authService.getUserRoles(userData.id);
             setRoles(userRoles);
         } catch (error) {
             logout(); // token might be invalid or expired
