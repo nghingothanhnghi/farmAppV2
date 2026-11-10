@@ -31,12 +31,6 @@ export async function getUserRoles(userId: number): Promise<Role[]> {
 }
 
 
-export const getMyRoles = async (): Promise<Role[]> => {
-  const res = await apiClient.get<Role[]>('/roles/my/roles');
-  return res.data;
-};
-
-
 export function logout(): void {
   localStorage.removeItem('token');
 }
