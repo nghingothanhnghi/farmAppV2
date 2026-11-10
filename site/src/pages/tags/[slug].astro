@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getTag, getFeed } from '../../lib/api';
+
+const { slug } = Astro.params;
+const tag = slug ? await getTag(slug) : null;
+if (!tag) return Astro.rewrite('/404');
+const page = Math.max(1, Number(Astro.url.searchParams.get('page')) || 1);
+const feed = await getFeed({ page, tagId: tag.id });
+---
+<Base title={`#${tag.name}`}>
+  <h1>#{tag.name}</h1>
+  {feed && feed.results.length > 0 ? (
+    <>
+      <div class="grid">{feed.results.map((p) => <PostCard post={p} />)}</div>
+      <Pagination page={feed.page} pages={feed.pages} basePath={`/tags/${tag.slug}`} />
+    </>
+  ) : <p class="empty">No posts with this tag yet.</p>}
+</Base>

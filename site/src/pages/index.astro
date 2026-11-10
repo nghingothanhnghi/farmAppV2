@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Pagination from '../components/Pagination.astro';
+import { getFeed, SITE_NAME } from '../lib/api';
+
+const page = Math.max(1, Number(Astro.url.searchParams.get('page')) || 1);
+const feed = await getFeed({ page });
+---
+<Base title={undefined} description={`Latest posts from ${SITE_NAME}`}>
+  <h1>Latest posts</h1>
+  {feed && feed.results.length > 0 ? (
+    <>
+      <div class="grid">{feed.results.map((p) => <PostCard post={p} />)}</div>
+      <Pagination page={feed.page} pages={feed.pages} basePath="/" />
+    </>
+  ) : <p class="empty">No posts yet.</p>}
+</Base>

@@ -2,6 +2,8 @@
 
 // API Configuration
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+// Public website (see /site). Used by the CMS "View on site" button.
+export const PUBLIC_SITE_URL = (import.meta.env.VITE_PUBLIC_SITE_URL || 'http://localhost:4321').replace(/\/+$/, '');
 export const OBJECT_DETECTION_STREAM_MODE = (import.meta.env.VITE_OBJECT_DETECTION_STREAM_MODE || 'http') as 'http' | 'websocket';
 export const OBJECT_DETECTION_CAPTURE_INTERVAL = Number(import.meta.env.VITE_OBJECT_DETECTION_CAPTURE_INTERVAL || 1000);
 export const OBJECT_DETECTION_MODEL_NAME = import.meta.env.VITE_OBJECT_DETECTION_MODEL_NAME || 'hardware-detection-model';

@@ -18,3 +18,18 @@ jobs:
       # tsc -b also type-checks src/api/schemaCheck.ts against the committed schema.d.ts,
       # so hand-written request types are verified without needing a live backend.
       - run: npm run build
+
+  site:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      - run: npm run build
