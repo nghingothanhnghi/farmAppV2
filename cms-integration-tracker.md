@@ -1,7 +1,7 @@
 # CMS Frontend ↔ Backend Integration Tracker
 
 Audited: 2026-11-06 · Repo `nghingothanhnghi/farmAppV2` · Against `FRONTEND_GUIDE.md` (§12 checklist + flows), `app/cms/schemas/menu.py`, the backend's updated guide (2026-11-08) and its `openapi.json` (**latest received 2026-11-09**; `src/api/schema.d.ts` is generated from it)
-Last update: 2026-11-10 — items 1–16, **B1–B5** are **in main** (verified: `src/` on main is identical to `cms-b3-b5-regen-types`). **B8, B9, G12 check and a CI build workflow** are on branch **`cms-b8-b9-ci`** (`tsc` and `npm run build` clean; not merged). Nothing has been tested in a browser or against the live backend.
+Last update: 2026-11-10 — items 1–16, **B1–B5, B8, B9, CI, G12 and the public site** are **merged to main**. **Sitemap + RSS + robots** are on branch **`cms-sitemap-rss`** (builds clean; checked against a mock backend; not merged). Verified by the owner on localhost: a post published in the admin appears on the public site. Not yet tested against the live backend: the clear-field cases and delete-with-menu-link cases in *Suggested next*.
 Legend: ✅ done · 🔧 on branch, needs merge + manual test · 🟡 partial / optional · ⬜ not started · ❓ can't verify from frontend
 
 ## Pattern in use (keep new work consistent)
@@ -32,20 +32,20 @@ Everything above still deserves a manual pass against the live backend.
 ## 2. B3–B5 ✅ (in main)
 Regenerated types from the 2026-11-09 openapi; **B3** include-subcategories filter (`?sub=1`, checkbox in `PostFilterBar`); **B4** `pages` from the server; **B5** delete results aliased to generated schemas. Verify: `npm run check:api` against the live backend shows no diff; pick a parent category and tick "Include subcategories".
 
-## 2b. On branch `cms-b8-b9-ci` 🔧
+## 2b. B8 / B9 / CI ✅ (merged)
 | # | What changed | How to verify |
 |---|---|---|
-| B8 | `authContext.getUser` uses `me.roles` from `/auth/me` and only falls back to `/roles/user/{id}` if absent; unused `getMyRoles` removed | Log in: no `/roles/user/{id}` request; role-gated UI unchanged |
-| B9 | `hooks/useRefetchOnFocus.ts` (refetch on tab focus/visible, ≥30 s apart) used by the post list | Schedule a post ~1 min ahead, switch tabs and come back: status shows published |
-| CI | `.github/workflows/ci.yml` runs `npm ci` + `npm run build` (includes `schemaCheck.ts` against the committed `schema.d.ts`). `check:api` stays manual (needs a backend); lint is not gated (existing errors) | Open a PR: workflow runs |
+| B8 | `authContext.getUser` uses `me.roles` from `/auth/me`; falls back to `/roles/user/{id}` only if absent; unused `getMyRoles` removed | Log in: no `/roles/user/{id}` request; role-gated UI unchanged |
+| B9 | `hooks/useRefetchOnFocus.ts` (refetch on tab focus/visible, ≥30 s apart) used by the post list | Schedule a post ~1 min ahead, switch tabs and come back: it shows as published |
+| CI | `.github/workflows/ci.yml`: admin `npm run build` (includes `schemaCheck.ts`) and `site` build. `check:api` stays manual; lint is not gated (existing errors) | Open a PR: workflow runs |
 
 ## 3. Backend items status
 | # | Backend change | Status |
 |---|---|---|
 | B6 | Category delete **409 if a menu item links to it** (message names the menu and item) | Category delete shows the server error via alert; **check the text reads well** (no `force` for categories) |
 | B7 | Update semantics: omit untouched, **explicit `null` clears** post `category_id`, `featured_image_id`, `excerpt`, `meta_*`, `scheduled_at`; never `null` for title/content/post_type/status; tag update rejects `null` (422) | Frontend sends exactly this. The openapi/guide say nothing for categories, menus, menu items: **run the manual clear-field test once** |
-| B8 | `GET /auth/me` includes `roles` | 🔧 done on `cms-b8-b9-ci` |
-| B9 | Scheduled posts go live within ~60 s | 🔧 done on `cms-b8-b9-ci` (refetch on focus) |
+| B8 | `GET /auth/me` includes `roles` | ✅ merged |
+| B9 | Scheduled posts go live within ~60 s | ✅ merged (refetch on focus) |
 
 ## 4. Backend schema verification
 **Confirmed ✅:** everything in the 2026-11-07 openapi (post params, sort/order, menu enum `custom | category | post`, `CategoryOut.description`, menu summaries, reorder, media `skip`/`limit` with **no total**, delete params) **plus, from the 2026-11-09 openapi:** tag update exists and rejects `null`; delete responses are typed exactly as the frontend assumed (category `{detail, moved_children, moved_posts, moved_to_category_id}`, tag `{detail, posts_affected, merged_into_tag_id, posts_moved}`, post `{detail, menu_items_removed}`, others `{detail}`); `pages` = ceil(total / page_size), 0 when empty; `include_descendants` and `force` params.
@@ -56,15 +56,16 @@ Regenerated types from the 2026-11-09 openapi; **B3** include-subcategories filt
 |---|---|---|
 | 15b | Menus: no drag-and-drop; editing an item's parent appends it last | `@dnd-kit` (new dependency) |
 | 17 | Filter dropdowns load all categories and tags once (no backend pagination) | Searchable picker if needed |
-| CI | 🔧 build workflow added; `check:api` still manual (CI can't reach a backend) | Run `check:api` against the deployed backend before releases, or commit an `openapi.json` snapshot |
+| CI | ✅ build workflow merged; `check:api` still manual (CI can't reach a backend) | Run `check:api` against the deployed backend before releases, or commit an `openapi.json` snapshot |
 | G3 | Backend: no category tree / `?root=true`; pickers build the tree client-side (done) | None needed |
 | G7 | Backend: view counting only via `GET …/slug` (`track_view`); `POST /cms/posts/{id}/view` planned | Public site sends `track_view=false`: views are not counted until the planned endpoint exists |
 | G9 | Policy: any logged-in user can create **and publish** posts. The UI shows publish for own posts | Decide: keep, or restrict to editors (backend change + hide button) |
 | G12 | Media list has no `total` | ✅ verified: `CmsMediaManagementPage` pages with `skip`/`limit` and `hasMore` |
 
-## 6. Public site 🔧 (branch `cms-public-site`)
-Astro server-rendered site in `site/` (see `site/README.md`): feed, `/posts/:slug` (posts + pages), `/categories/:slug` (with subcategories), `/tags/:slug`, 404, header/footer menus (`resolved_url`, `null` skipped, new-tab rel), sanitized HTML, absolute media URLs, `track_view=false`, `Cache-Control: s-maxage=60`. Admin has a **View on site** button (published posts; `VITE_PUBLIC_SITE_URL`). Tested only against a local mock backend (pages, 404 for drafts/unknown, script stripping, menu null-skip, no auth header); **not tested against the real backend**.
-To do: set the real domain and menu locations (`PUBLIC_MENU_HEADER/FOOTER`), deploy (Vercel adapter), sitemap/RSS, persistent media storage (§7).
+## 6. Public site ✅ merged · sitemap/RSS 🔧
+Astro server-rendered site in `site/` (see `site/README.md`): feed, `/posts/:slug` (posts + pages), `/categories/:slug` (with subcategories), `/tags/:slug`, 404, header/footer menus, sanitized HTML, absolute media URLs, `track_view=false`, `Cache-Control: s-maxage=60`. Admin has a **View on site** button (`VITE_PUBLIC_SITE_URL`). Works on localhost against the real backend (owner-verified).
+On `cms-sitemap-rss`: `/sitemap.xml` (published posts + pages, categories, tags), `/rss.xml` (latest 30), `/robots.txt`, RSS `<link rel="alternate">`; `PUBLIC_SITE_URL` sets the origin (build-time variable).
+To do: set the real domain and menu locations (`PUBLIC_MENU_HEADER/FOOTER`), deploy (Vercel adapter, `PUBLIC_*` set before build), submit the sitemap to Google Search Console, persistent media storage (§7).
 
 ## 7. Environment / backend ❓
 - Production frontend origin in `CORS_ALLOWED_ORIGINS` (or `FRONTEND_URL`); `VITE_API_BASE_URL` set on Vercel.
@@ -73,6 +74,7 @@ To do: set the real domain and menu locations (`PUBLIC_MENU_HEADER/FOOTER`), dep
 - Dev-only: if "usePostContext must be used inside PostProvider" appears, hard refresh / restart Vite (HMR can duplicate the context module).
 
 ## Suggested next
-1. Merge `cms-b8-b9-ci`.
-2. **Manual test pass against the live backend** (this is now the main open risk): clear-field cases (category description/parent, menu location, item "No parent"), post delete with a menu link (editor and non-editor), category delete with a menu link, tag rename conflict, scheduled → published, include-subcategories filter.
-3. Public site (if in scope), then the optional items in §5.
+1. Merge `cms-sitemap-rss`.
+2. Deploy the public site (own domain) and set `PUBLIC_API_URL`, `PUBLIC_SITE_URL`, menu locations; fix persistent media storage first.
+3. **Manual test pass against the live backend** (main open risk): clear-field cases (category description/parent, menu location, item "No parent"), post delete with a menu link (editor and non-editor), category delete with a menu link, tag rename conflict, scheduled → published, include-subcategories filter.
+4. Optional items in §5.

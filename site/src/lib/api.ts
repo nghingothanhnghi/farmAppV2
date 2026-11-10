@@ -35,10 +35,10 @@ export const mediaUrl = (u?: string | null): string | null => {
   return `${API_URL}${u.startsWith('/') ? '' : '/static/'}${u}`;
 };
 
-export const getFeed = (opts: { page?: number; pageSize?: number; categoryId?: number; tagId?: number; includeDescendants?: boolean } = {}) =>
+export const getFeed = (opts: { postType?: 'post' | 'page'; page?: number; pageSize?: number; categoryId?: number; tagId?: number; includeDescendants?: boolean } = {}) =>
   get<PaginatedPosts>('/cms/posts', {
     status: 'published',
-    post_type: 'post',
+    post_type: opts.postType === undefined ? 'post' : opts.postType,
     sort: 'published_at',
     order: 'desc',
     page: opts.page ?? 1,
@@ -60,3 +60,28 @@ export const getMenu = (location: string) => get<Menu>(`/cms/menus/location/${en
 export async function safeMenu(location: string): Promise<Menu | null> {
   try { return await getMenu(location); } catch { return null; }
 }
+
+export const SITE_URL_ENV = (import.meta.env.PUBLIC_SITE_URL || '').replace(/\/+$/, '');
+
+/** Public origin used in sitemap / RSS / robots. Falls back to the request origin. */
+export const siteOrigin = (requestUrl: URL) => SITE_URL_ENV || requestUrl.origin;
+
+/** All published posts + pages, newest first (server max page size is 100). Capped to keep sitemap builds bounded. */
+export async function getAllPublished(maxPages = 50): Promise<PostListItem[]> {
+  const out: PostListItem[] = [];
+  for (let page = 1; page <= maxPages; page++) {
+    const res = await get<PaginatedPosts>('/cms/posts', {
+      status: 'published', sort: 'published_at', order: 'desc', page, page_size: 100,
+    });
+    if (!res) break;
+    out.push(...res.results);
+    if (page >= res.pages) break;
+  }
+  return out;
+}
+
+export const getCategories = async () => (await get<Category[]>('/cms/categories')) ?? [];
+export const getTags = async () => (await get<Tag[]>('/cms/tags')) ?? [];
+
+export const xmlEscape = (v: string) =>
+  v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
