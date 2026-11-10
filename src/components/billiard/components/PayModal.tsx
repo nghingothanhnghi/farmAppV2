@@ -186,7 +186,441 @@ const PayModal: React.FC<Props> = ({
   const inStripeStep = clientSecret !== null;
   const money = (n: number) => formatMoneyString(n, bill.currency);
 
+  // ---- shared cash shift warning -----------------------------------------
+
+  const renderShiftWarning = () => {
+    if (
+      !noShiftOpen ||
+      !onOpenShift ||
+      (mode !== 'cash' && mode !== 'split')
+    ) {
+      return null;
+    }
+
+    return (
+      <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-2 text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
+        <p>
+          No cash shift is open. If this club requires one,
+          payment will be refused.
+        </p>
+
+        <button
+          type="button"
+          className="underline font-medium"
+          onClick={onOpenShift}
+        >
+          Open a shift
+        </button>
+      </div>
+    );
+  };
+
+  // ---- cash content -------------------------------------------------------
+
+  const renderCashContent = () => (
+    <div className="space-y-4 pt-2">
+      {renderShiftWarning()}
+
+      <FloatingLabelInput
+        id="cash-tendered"
+        name="cash-tendered"
+        type="text"
+        label={t('input.amount_handed_over.label')}
+        inputMode="numeric"
+        value={
+          tenderedNum === null ? '' : fmtNumber(tenderedNum)
+        }
+        placeholder={`${fmtNumber(due)} (exact)`}
+        alwaysFloat
+        onChange={(e) => setTendered(e.target.value)}
+        disabled={busy}
+      />
+
+      <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
+        <Button
+          label="Exact"
+          size="xs"
+          variant={tenderedNum === null ? 'primary' : 'secondary'}
+          rounded="lg"
+          disabled={busy}
+          onClick={() => setTendered('')}
+        />
+
+        {QUICK_AMOUNTS.map((a) => (
+          <Button
+            key={a}
+            label={fmtNumber(a)}
+            size="xs"
+            variant="secondary"
+            rounded="lg"
+            disabled={busy}
+            onClick={() => setTendered(String(a))}
+          />
+        ))}
+      </div>
+
+      {cashInvalid ? (
+        <p className="text-xs text-red-600">
+          {t('cashier.short_by', {
+            amount: money(due - (tenderedNum ?? 0)),
+          })}
+        </p>
+      ) : (
+        <p className="text-sm text-gray-800 dark:text-gray-100">
+          {t('input.change_due.label')}:{' '}
+          <span className="font-semibold">
+            {money(Math.max(0, change))}
+          </span>
+        </p>
+      )}
+    </div>
+  );
+
+  // ---- split content ------------------------------------------------------
+
+  const renderSplitContent = () => (
+    <div className="space-y-3 border-t border-gray-200 dark:border-white/5 pt-3">
+      {renderShiftWarning()}
+
+      {rows.map((r, i) => {
+        const err = rowError(r);
+
+        return (
+          <div key={r.key} className="space-y-1.5">
+            <div className="flex items-start gap-2">
+              <span className="w-4 shrink-0 pt-3 text-xs text-gray-500 text-center">
+                {i + 1}
+              </span>
+
+              <div className="flex-1 min-w-0 space-y-2">
+                <div className="flex items-center gap-2">
+                  <FloatingLabelSelect
+                    id={`split-method-${r.key}`}
+                    name={`split-method-${r.key}`}
+                    label={`Line ${i + 1} method`}
+                    value={r.method}
+                    disabled={busy}
+                    onChange={(e) =>
+                      updateRow(r.key, {
+                        method: e.target.value as LineMethod,
+                      })
+                    }
+                    className="min-w-0 flex-1"
+                  >
+                    <option value="cash">Cash</option>
+                    <option value="bank_transfer">Bank transfer</option>
+                  </FloatingLabelSelect>
+
+                  <FloatingLabelInput
+                    id={`split-amount-${r.key}`}
+                    name={`split-amount-${r.key}`}
+                    type="text"
+                    inputMode="numeric"
+                    label="Amount"
+                    value={
+                      parseAmount(r.amount) === null
+                        ? ''
+                        : fmtNumber(parseAmount(r.amount)!)
+                    }
+                    onChange={(e) =>
+                      updateRow(r.key, { amount: e.target.value })
+                    }
+                    disabled={busy}
+                    alwaysFloat
+                    className="flex-1 min-w-0"
+                  />
+
+                  {rows.length > 1 && (
+                    <Button
+                      label={`Remove line ${i + 1}`}
+                      variant="secondary"
+                      icon={<IconTrash size={14} />}
+                      iconOnly
+                      rounded="full"
+                      size="xs"
+                      disabled={busy}
+                      onClick={() => removeRow(r.key)}
+                    />
+                  )}
+                </div>
+
+                {r.method === 'cash' && (
+                  <FloatingLabelInput
+                    id={`split-tendered-${r.key}`}
+                    name={`split-tendered-${r.key}`}
+                    type="text"
+                    inputMode="numeric"
+                    label={t('input.handed_over_optional.label')}
+                    placeholder={t('input.handed_over_optional.placeholder')}
+                    value={
+                      parseAmount(r.tendered) === null
+                        ? ''
+                        : fmtNumber(parseAmount(r.tendered)!)
+                    }
+                    onChange={(e) =>
+                      updateRow(r.key, { tendered: e.target.value })
+                    }
+                    disabled={busy}
+                    alwaysFloat
+                    className="w-full"
+                  />
+                )}
+              </div>
+            </div>
+
+            {err && parseAmount(r.amount) !== null && (
+              <p className="pl-6 text-xs text-red-600">
+                {err}
+              </p>
+            )}
+          </div>
+        );
+      })}
+
+      <div className="flex items-center justify-between">
+        <Button
+          label="Add line"
+          size="xs"
+          variant="secondary"
+          rounded="lg"
+          icon={<IconPlus size={14} />}
+          disabled={busy || rows.length >= MAX_SPLIT_LINES}
+          onClick={addRow}
+        />
+
+        <p
+          className={`text-sm font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'
+            }`}
+        >
+          Remaining: {money(remaining)}
+        </p>
+      </div>
+
+      <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
+        {t('warning.split_method.split_total_warning', {
+          amount: money(due),
+        })}
+      </p>
+    </div>
+  );
+
   return (
+    // <Modal
+    //   isOpen={isOpen}
+    //   onClose={busy ? () => { } : onClose}
+    //   title={`Pay ${money(due)}`}
+    //   size="small"
+    //   content={
+    //     <div className="px-10 pb-4 space-y-4">
+    //       {inStripeStep ? (
+    //         StripeCheckout ? (
+    //           <StripeCheckout clientSecret={clientSecret} onSuccess={handleConfirm} />
+    //         ) : (
+    //           <p className="text-sm text-gray-600 dark:text-gray-300">
+    //             Complete the card payment, then confirm to settle the bill.
+    //           </p>
+    //         )
+    //       ) : (
+    //         <>
+    //           <div className="space-y-3">
+    //             {modes.map((m) => (
+    //               <div key={m.value} className="space-y-0.5">
+    //                 <FormRadio
+    //                   id={`pay-${m.value}`}
+    //                   name="payment_method"
+    //                   label={m.label}
+    //                   checked={mode === m.value}
+    //                   onChange={() => setMode(m.value)}
+    //                   disabled={busy}
+    //                 />
+    //                 <p className="pl-7 text-[0.625rem] text-gray-500 dark:text-gray-400">{m.hint}</p>
+    //               </div>
+    //             ))}
+    //           </div>
+
+    //           {noShiftOpen && onOpenShift && (mode === 'cash' || mode === 'split') && (
+    //             <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-2 text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
+    //               <p>No cash shift is open. If this club requires one, payment will be refused.</p>
+    //               <button type="button" className="underline font-medium" onClick={onOpenShift}>
+    //                 Open a shift
+    //               </button>
+    //             </div>
+    //           )}
+
+    //           {mode === 'cash' && (
+    //             <div className="space-y-4 pt-3">
+    //               <FloatingLabelInput
+    //                 id="cash-tendered"
+    //                 name="cash-tendered"
+    //                 type="text"
+    //                 label={t('input.amount_handed_over.label')}
+    //                 inputMode="numeric"
+    //                 value={tenderedNum === null ? '' : fmtNumber(tenderedNum)}
+    //                 placeholder={`${fmtNumber(due)} (exact)`}
+    //                 alwaysFloat
+    //                 onChange={(e) => setTendered(e.target.value)}
+    //                 disabled={busy}
+    //               />
+    //               <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
+    //                 <Button
+    //                   label="Exact"
+    //                   size="xs"
+    //                   variant={tenderedNum === null ? 'primary' : 'secondary'}
+    //                   rounded="lg"
+    //                   disabled={busy}
+    //                   onClick={() => setTendered('')}
+    //                 />
+    //                 {QUICK_AMOUNTS.map((a) => (
+    //                   <Button
+    //                     key={a}
+    //                     label={fmtNumber(a)}
+    //                     size="xs"
+    //                     variant="secondary"
+    //                     rounded="lg"
+    //                     disabled={busy}
+    //                     onClick={() => setTendered(String(a))}
+    //                   />
+    //                 ))}
+    //               </div>
+    //               {cashInvalid ? (
+    //                 <p className="text-xs text-red-600">
+    //                   {t("cashier.short_by", {
+    //                     amount: money(due - (tenderedNum ?? 0)),
+    //                   })}
+    //                 </p>
+    //               ) : (
+    //                 <p className="text-sm text-gray-800 dark:text-gray-100">
+    //                   {t('input.change_due.label')}: <span className="font-semibold">{money(Math.max(0, change))}</span>
+    //                 </p>
+    //               )}
+    //             </div>
+    //           )}
+
+    //           {mode === 'split' && (
+    //             <div className="space-y-3 border-t border-gray-200 dark:border-white/5 pt-3">
+    //               {rows.map((r, i) => {
+    //                 const err = rowError(r);
+    //                 return (
+    //                   <div key={r.key} className="space-y-1.5">
+    //                     <div className="flex items-start gap-2">
+    //                       <span className="w-4 shrink-0 pt-3 text-xs text-gray-500 text-center">
+    //                         {i + 1}
+    //                       </span>
+    //                       <div className="flex-1 min-w-0 space-y-2">
+    //                         <div className="flex items-center gap-2">
+    //                           <FloatingLabelSelect
+    //                             id={`split-method-${r.key}`}
+    //                             name={`split-method-${r.key}`}
+    //                             label={`Line ${i + 1} method`}
+    //                             value={r.method}
+    //                             disabled={busy}
+    //                             onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
+    //                             className="min-w-0 flex-1"
+    //                           >
+    //                             <option value="cash">Cash</option>
+    //                             <option value="bank_transfer">Bank transfer</option>
+    //                           </FloatingLabelSelect>
+    //                           <FloatingLabelInput
+    //                             id={`split-amount-${r.key}`}
+    //                             name={`split-amount-${r.key}`}
+    //                             type="text"
+    //                             inputMode="numeric"
+    //                             label="Amount"
+    //                             value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
+    //                             onChange={(e) => updateRow(r.key, { amount: e.target.value })}
+    //                             disabled={busy}
+    //                             alwaysFloat
+    //                             className="flex-1 min-w-0"
+    //                           />
+    //                           {rows.length > 1 && (
+    //                             <Button
+    //                               label={`Remove line ${i + 1}`}
+    //                               variant="secondary"
+    //                               icon={<IconTrash size={14} />}
+    //                               iconOnly
+    //                               rounded="full"
+    //                               size="xs"
+    //                               disabled={busy}
+    //                               onClick={() => removeRow(r.key)}
+    //                             />
+
+    //                           )}
+    //                         </div>
+    //                         {r.method === 'cash' && (
+    //                           <FloatingLabelInput
+    //                             id={`split-tendered-${r.key}`}
+    //                             name={`split-tendered-${r.key}`}
+    //                             type="text"
+    //                             inputMode="numeric"
+    //                             label={t('input.handed_over_optional.label')}
+    //                             placeholder={t('input.handed_over_optional.placeholder')}
+    //                             value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
+    //                             onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
+    //                             disabled={busy}
+    //                             alwaysFloat
+    //                             className="w-full"
+    //                           />
+    //                         )}
+    //                       </div>
+    //                     </div>
+
+    //                     {err && parseAmount(r.amount) !== null && (
+    //                       <p className="pl-6 text-xs text-red-600">{err}</p>
+    //                     )}
+    //                   </div>
+    //                 );
+    //               })}
+    //               <div className="flex items-center justify-between">
+    //                 <Button
+    //                   label="Add line"
+    //                   size="xs"
+    //                   variant="secondary"
+    //                   rounded="lg"
+    //                   icon={<IconPlus size={14} />}
+    //                   disabled={busy || rows.length >= MAX_SPLIT_LINES}
+    //                   onClick={addRow}
+    //                 />
+    //                 <p
+    //                   className={`text-sm font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'}`}
+    //                 >
+    //                   Remaining: {money(remaining)}
+    //                 </p>
+    //               </div>
+    //               <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
+    //                 {t('warning.split_method.split_total_warning', { amount: money(due) })}
+    //               </p>
+    //             </div>
+    //           )}
+    //         </>
+    //       )}
+    //     </div>
+    //   }
+    //   actions={
+    //     <div className="flex gap-4">
+    //       {!inStripeStep ? (
+    //         <Button
+    //           label={busy ? t('btn.processing') : t('btn.pay')}
+    //           onClick={handlePay}
+    //           disabled={!canPay}
+    //           className="min-w-[150px]"
+    //           rounded="lg"
+    //         />
+    //       ) : (
+    //         !StripeCheckout && (
+    //           <Button
+    //             label={busy ? t('btn.confirming') : t('btn.confirm_payment')}
+    //             onClick={handleConfirm}
+    //             disabled={busy}
+    //             className="min-w-[150px]"
+    //             rounded="lg"
+    //           />
+    //         )
+    //       )}
+    //       <Button label={t('btn.cancel')} variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
+    //     </div>
+    //   }
+    // />
+
     <Modal
       isOpen={isOpen}
       onClose={busy ? () => { } : onClose}
@@ -196,182 +630,70 @@ const PayModal: React.FC<Props> = ({
         <div className="px-10 pb-4 space-y-4">
           {inStripeStep ? (
             StripeCheckout ? (
-              <StripeCheckout clientSecret={clientSecret} onSuccess={handleConfirm} />
+              <StripeCheckout
+                clientSecret={clientSecret!}
+                onSuccess={handleConfirm}
+              />
             ) : (
               <p className="text-sm text-gray-600 dark:text-gray-300">
                 Complete the card payment, then confirm to settle the bill.
               </p>
             )
           ) : (
-            <>
-              <div className="space-y-3">
-                {modes.map((m) => (
-                  <div key={m.value} className="space-y-0.5">
-                    <FormRadio
-                      id={`pay-${m.value}`}
-                      name="payment_method"
-                      label={m.label}
-                      checked={mode === m.value}
-                      onChange={() => setMode(m.value)}
-                      disabled={busy}
-                    />
-                    <p className="pl-7 text-[0.625rem] text-gray-500 dark:text-gray-400">{m.hint}</p>
-                  </div>
-                ))}
-              </div>
+            <div className="space-y-3">
+              {modes.map((m) => {
+                const selected = mode === m.value;
 
-              {noShiftOpen && onOpenShift && (mode === 'cash' || mode === 'split') && (
-                <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-2 text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
-                  <p>No cash shift is open. If this club requires one, payment will be refused.</p>
-                  <button type="button" className="underline font-medium" onClick={onOpenShift}>
-                    Open a shift
-                  </button>
-                </div>
-              )}
-
-              {mode === 'cash' && (
-                <div className="space-y-4 pt-3">
-                  <FloatingLabelInput
-                    id="cash-tendered"
-                    name="cash-tendered"
-                    type="text"
-                    label={t('input.amount_handed_over.label')}
-                    inputMode="numeric"
-                    value={tenderedNum === null ? '' : fmtNumber(tenderedNum)}
-                    placeholder={`${fmtNumber(due)} (exact)`}
-                    alwaysFloat
-                    onChange={(e) => setTendered(e.target.value)}
-                    disabled={busy}
-                  />
-                  <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
-                    <Button
-                      label="Exact"
-                      size="xs"
-                      variant={tenderedNum === null ? 'primary' : 'secondary'}
-                      rounded="lg"
-                      disabled={busy}
-                      onClick={() => setTendered('')}
-                    />
-                    {QUICK_AMOUNTS.map((a) => (
-                      <Button
-                        key={a}
-                        label={fmtNumber(a)}
-                        size="xs"
-                        variant="secondary"
-                        rounded="lg"
+                return (
+                  <div
+                    key={m.value}
+                    className={`space-y-2 ${selected
+                        ? 'rounded-lg border border-gray-200 dark:border-white/10 p-3'
+                        : ''
+                      }`}
+                  >
+                    <div>
+                      <FormRadio
+                        id={`pay-${m.value}`}
+                        name="payment_method"
+                        label={m.label}
+                        checked={selected}
+                        onChange={() => setMode(m.value)}
                         disabled={busy}
-                        onClick={() => setTendered(String(a))}
                       />
-                    ))}
-                  </div>
-                  {cashInvalid ? (
-                    <p className="text-xs text-red-600">
-                      Short by {money(due - (tenderedNum ?? 0))}.
-                    </p>
-                  ) : (
-                    <p className="text-sm text-gray-800 dark:text-gray-100">
-                      {t('input.change_due.label')}: <span className="font-semibold">{money(Math.max(0, change))}</span>
-                    </p>
-                  )}
-                </div>
-              )}
 
-              {mode === 'split' && (
-                <div className="space-y-3 border-t border-gray-200 dark:border-white/5 pt-3">
-                  {rows.map((r, i) => {
-                    const err = rowError(r);
-                    return (
-                      <div key={r.key} className="space-y-1.5">
-                        <div className="flex items-start gap-2">
-                          <span className="w-4 shrink-0 pt-3 text-xs text-gray-500 text-center">
-                            {i + 1}
-                          </span>
-                          <div className="flex-1 min-w-0 space-y-2">
-                            <div className="flex items-center gap-2">
-                              <FloatingLabelSelect
-                                id={`split-method-${r.key}`}
-                                name={`split-method-${r.key}`}
-                                label={`Line ${i + 1} method`}
-                                value={r.method}
-                                disabled={busy}
-                                onChange={(e) => updateRow(r.key, { method: e.target.value as LineMethod })}
-                                className="min-w-0 flex-1"
-                              >
-                                <option value="cash">Cash</option>
-                                <option value="bank_transfer">Bank transfer</option>
-                              </FloatingLabelSelect>
-                              <FloatingLabelInput
-                                id={`split-amount-${r.key}`}
-                                name={`split-amount-${r.key}`}
-                                type="text"
-                                inputMode="numeric"
-                                label="Amount"
-                                value={parseAmount(r.amount) === null ? '' : fmtNumber(parseAmount(r.amount)!)}
-                                onChange={(e) => updateRow(r.key, { amount: e.target.value })}
-                                disabled={busy}
-                                alwaysFloat
-                                className="flex-1 min-w-0"
-                              />
-                              {rows.length > 1 && (
-                                <Button
-                                  label={`Remove line ${i + 1}`}
-                                  variant="secondary"
-                                  icon={<IconTrash size={14} />}
-                                  iconOnly
-                                  rounded="full"
-                                  size="xs"
-                                  disabled={busy}
-                                  onClick={() => removeRow(r.key)}
-                                />
+                      <p className="pl-7 text-[0.625rem] text-gray-500 dark:text-gray-400">
+                        {m.hint}
+                      </p>
+                    </div>
 
-                              )}
-                            </div>
-                            {r.method === 'cash' && (
-                              <FloatingLabelInput
-                                id={`split-tendered-${r.key}`}
-                                name={`split-tendered-${r.key}`}
-                                type="text"
-                                inputMode="numeric"
-                                label={t('input.handed_over_optional.label')}
-                                placeholder={t('input.handed_over_optional.placeholder')}
-                                value={parseAmount(r.tendered) === null ? '' : fmtNumber(parseAmount(r.tendered)!)}
-                                onChange={(e) => updateRow(r.key, { tendered: e.target.value })}
-                                disabled={busy}
-                                alwaysFloat
-                                className="w-full"
-                              />
-                            )}
+                    {selected && (
+                      <div className="pl-7">
+                        {m.value === 'cash' && renderCashContent()}
+
+                        {m.value === 'split' && renderSplitContent()}
+
+                        {m.value === 'bank_transfer' && (
+                          <div className="pt-2">
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              Customer scans a QR code and transfers the payment.
+                            </p>
                           </div>
-                        </div>
+                        )}
 
-                        {err && parseAmount(r.amount) !== null && (
-                          <p className="pl-6 text-xs text-red-600">{err}</p>
+                        {m.value === 'stripe' && (
+                          <div className="pt-2">
+                            <p className="text-sm text-gray-600 dark:text-gray-300">
+                              Pay online securely by card.
+                            </p>
+                          </div>
                         )}
                       </div>
-                    );
-                  })}
-                  <div className="flex items-center justify-between">
-                    <Button
-                      label="Add line"
-                      size="xs"
-                      variant="secondary"
-                      rounded="lg"
-                      icon={<IconPlus size={14} />}
-                      disabled={busy || rows.length >= MAX_SPLIT_LINES}
-                      onClick={addRow}
-                    />
-                    <p
-                      className={`text-sm font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'}`}
-                    >
-                      Remaining: {money(remaining)}
-                    </p>
+                    )}
                   </div>
-                  <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
-                    {t('warning.split_method.split_total_warning', { amount: money(due) })}
-                  </p>
-                </div>
-              )}
-            </>
+                );
+              })}
+            </div>
           )}
         </div>
       }
@@ -388,7 +710,11 @@ const PayModal: React.FC<Props> = ({
           ) : (
             !StripeCheckout && (
               <Button
-                label={busy ? t('btn.confirming') : t('btn.confirm_payment')}
+                label={
+                  busy
+                    ? t('btn.confirming')
+                    : t('btn.confirm_payment')
+                }
                 onClick={handleConfirm}
                 disabled={busy}
                 className="min-w-[150px]"
@@ -396,10 +722,19 @@ const PayModal: React.FC<Props> = ({
               />
             )
           )}
-          <Button label={t('btn.cancel')} variant="secondary" onClick={onClose} disabled={busy} className="min-w-[150px]" rounded="lg" />
+
+          <Button
+            label={t('btn.cancel')}
+            variant="secondary"
+            onClick={onClose}
+            disabled={busy}
+            className="min-w-[150px]"
+            rounded="lg"
+          />
         </div>
       }
     />
+
   );
 };
 
