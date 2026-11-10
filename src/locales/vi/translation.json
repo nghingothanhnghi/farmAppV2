@@ -798,6 +798,7 @@
         "paid_at": "Vào lúc",
         "balance_due": "Còn nợ",
         "received_by": "Nhận bởi",
+        "short_by": "Thiếu {{amount}}",
         "receipt": "Biên lai",
         "payment": "Thanh toán",
         "cash_missing": " (thiếu tiền mặt)",
