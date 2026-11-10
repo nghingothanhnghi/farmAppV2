@@ -63,7 +63,7 @@ export const menuItems: MenuItem[] = [
 
   {
     id: 'hydroponic-system',
-    label: 'menu.portal.hydro_system.hydro_system_label',
+    label: `menu.portal.hydro_system.hydro_system_label`,
     icon: IconPlant,
     children: [
       {
@@ -113,7 +113,7 @@ export const menuItems: MenuItem[] = [
 
   {
     id: 'cms',
-    label: 'CMS Management',
+    label: 'menu.portal.cms.cms_label',
     icon: IconArticle,
     children: [
       {

@@ -20,6 +20,7 @@
                 "batches": "Vụ trồng"
             },
             "cms": {
+                "cms_label":"Quản lý nội dung",
                 "posts":"Bài viết",
                 "categories":"Danh mục",
                 "tags": "Thẻ",

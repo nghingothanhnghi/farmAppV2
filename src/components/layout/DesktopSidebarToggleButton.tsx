@@ -1,5 +1,6 @@
 // src/components/layout/DesktopSidebarToggleButton.tsx
 import React, { useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { createPortal } from 'react-dom';
 import { IconLayoutSidebarLeftExpand, IconDeviceGamepad3, IconLogout, IconUserEdit } from '@tabler/icons-react';
 import Button from '../common/Button';
@@ -22,6 +23,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
     onClick,
     className = '',
 }) => {
+    const { t } = useTranslation();
     const [hovered, setHovered] = useState(false);
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -132,7 +134,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                                     <ListLink
                                         to={item.to}
                                         icon={Icon ? <Icon size={16} /> : undefined}
-                                        label={item.label}
+                                        label={t(item.label)}
                                         iconOnlyMode
                                     />
                                 ) : (
@@ -141,7 +143,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                                         variant="secondary"
                                         icon={Icon ? <Icon size={16} /> : undefined}
                                         iconOnly
-                                        label={item.label}
+                                        label={t(item.label)}
                                         rounded="lg"
                                         size="sm"
                                         className="bg-transparent"
@@ -177,7 +179,7 @@ const DesktopSidebarToggleButton: React.FC<DesktopSidebarToggleButtonProps> = ({
                             <div className="mb-2 flex items-center gap-2 border-b border-gray-100 px-2 pb-3 text-sm font-semibold text-gray-800 dark:border-white/10 dark:text-white">
                                 {activeItem.icon &&
                                     React.createElement(activeItem.icon, { size: 17 })}
-                                {activeItem.label}
+                                {t(activeItem.label)}
                             </div>
 
                             <MultiLevelMenu
