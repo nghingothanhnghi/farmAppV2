@@ -1,0 +1,22 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Pagination from '../../components/Pagination.astro';
+import { getCategory, getFeed } from '../../lib/api';
+
+const { slug } = Astro.params;
+const category = slug ? await getCategory(slug) : null;
+if (!category) return Astro.rewrite('/404');
+const page = Math.max(1, Number(Astro.url.searchParams.get('page')) || 1);
+const feed = await getFeed({ page, categoryId: category.id, includeDescendants: true });
+---
+<Base title={category.name} description={category.description ?? undefined}>
+  <h1>{category.name}</h1>
+  {category.description && <p class="muted">{category.description}</p>}
+  {feed && feed.results.length > 0 ? (
+    <>
+      <div class="grid">{feed.results.map((p) => <PostCard post={p} />)}</div>
+      <Pagination page={feed.page} pages={feed.pages} basePath={`/categories/${category.slug}`} />
+    </>
+  ) : <p class="empty">No posts in this category yet.</p>}
+</Base>

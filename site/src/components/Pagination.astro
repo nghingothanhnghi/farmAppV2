@@ -1,0 +1,12 @@
+---
+interface Props { page: number; pages: number; basePath: string }
+const { page, pages, basePath } = Astro.props;
+const href = (p: number) => (p <= 1 ? basePath : `${basePath}?page=${p}`);
+---
+{pages > 1 && (
+  <nav class="pager" aria-label="Pagination">
+    {page > 1 ? <a href={href(page - 1)}>← Newer</a> : <span />}
+    <span>Page {page} / {pages}</span>
+    {page < pages ? <a href={href(page + 1)}>Older →</a> : <span />}
+  </nav>
+)}

@@ -1,0 +1,29 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPost, mediaUrl } from '../../lib/api';
+import { renderContent } from '../../lib/html';
+
+const { slug } = Astro.params;
+const post = slug ? await getPost(slug) : null;
+// Only published content is public, even if the backend returned something else.
+if (!post || post.status !== 'published') return Astro.rewrite('/404');
+
+const cover = mediaUrl(post.featured_image?.url);
+const html = renderContent(post.content);
+const date = post.published_at ? new Date(post.published_at).toLocaleDateString('en-GB', { dateStyle: 'long' }) : '';
+const isPage = post.post_type === 'page';
+---
+<Base title={post.meta_title || post.title} description={post.meta_description || post.excerpt || undefined} image={cover} type="article">
+  <article>
+    <header class="post-head">
+      {!isPage && post.category && <a class="chip" href={`/categories/${post.category.slug}`}>{post.category.name}</a>}
+      <h1>{post.title}</h1>
+      {!isPage && <small>{date}</small>}
+    </header>
+    {cover && <img class="post-cover" src={cover} alt={post.featured_image?.alt_text ?? post.title} />}
+    <div class="prose" set:html={html} />
+    {!isPage && post.tags.length > 0 && (
+      <p class="tags">{post.tags.map((t) => <a href={`/tags/${t.slug}`}>#{t.name}</a>)}</p>
+    )}
+  </article>
+</Base>

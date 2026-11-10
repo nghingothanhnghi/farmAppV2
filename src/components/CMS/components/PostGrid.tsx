@@ -5,7 +5,8 @@ import DataGrid from '../../common/dataGrid/dataGrid';
 import ProductImage from "../../common/ProductImage";
 import ActionButtons from '../../common/dataGrid/actionButton';
 import Button from '../../common/Button';
-import { IconSend, IconArchive, IconClock } from '@tabler/icons-react';
+import { IconSend, IconArchive, IconClock, IconExternalLink } from '@tabler/icons-react';
+import { PUBLIC_SITE_URL } from '../../../config/constants';
 import Badge from '../../common/Badge';
 import PostStatusDisplay from './PostStatusDisplay';
 import { formatDateTime } from '../../../utils/formatters';
@@ -102,7 +103,7 @@ export default function PostGrid({
         {
             headerName: "",
             field: "actions",
-            width: 200,
+            width: 240,
             filter: false,
             sortable: false,
             resizable: false,
@@ -110,6 +111,17 @@ export default function PostGrid({
             cellStyle: { textAlign: "center" },
             cellRenderer: ({ data }: any) => (
                 <div className="flex gap-2 items-center justify-center h-full">
+                    <Button
+                        icon={<IconExternalLink size={16} stroke={1.5} />}
+                        iconOnly
+                        variant="secondary"
+                        onClick={() => window.open(`${PUBLIC_SITE_URL}/posts/${data.slug}`, "_blank", "noopener,noreferrer")}
+                        disabled={data.status !== "published"}
+                        label="View on site"
+                        size="xs"
+                        rounded="full"
+                        className="bg-transparent"
+                    />
                     <Button
                         icon={<IconSend size={16} stroke={1.5} />}
                         iconOnly

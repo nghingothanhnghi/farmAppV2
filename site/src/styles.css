@@ -1,0 +1,31 @@
+:root { --fg:#1d2a22; --muted:#5d6b62; --bg:#fafaf7; --accent:#2f7d4f; --line:#e3e6df; }
+@media (prefers-color-scheme: dark) { :root { --fg:#e8ede9; --muted:#9aa89f; --bg:#121814; --accent:#6cc08b; --line:#27322b; } }
+* { box-sizing: border-box; }
+body { margin:0; font:16px/1.65 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; color:var(--fg); background:var(--bg); }
+a { color:var(--accent); }
+main, .site-header, .site-footer { max-width: 1040px; margin: 0 auto; padding: 24px 16px; }
+.site-header { display:flex; flex-wrap:wrap; gap:16px; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line); }
+.brand { font-weight:700; font-size:1.25rem; text-decoration:none; color:var(--fg); }
+ul.menu, ul.submenu { list-style:none; margin:0; padding:0; display:flex; gap:20px; flex-wrap:wrap; }
+ul.submenu { margin-left:12px; gap:12px; font-size:.9em; }
+.site-header ul.menu > li { position:relative; }
+.site-footer { border-top:1px solid var(--line); color:var(--muted); display:grid; gap:12px; }
+.grid { display:grid; gap:20px; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); }
+.card { border:1px solid var(--line); border-radius:12px; overflow:hidden; background:color-mix(in srgb,var(--bg),var(--fg) 3%); }
+.card img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+.card-body { padding:14px 16px 18px; }
+.card h2 { font-size:1.1rem; margin:6px 0; line-height:1.3; }
+.card h2 a { color:var(--fg); text-decoration:none; }
+.chip { font-size:.75rem; text-transform:uppercase; letter-spacing:.04em; text-decoration:none; }
+small, .muted { color:var(--muted); }
+.pager { display:flex; justify-content:space-between; margin-top:32px; }
+.post-head h1 { font-size:2rem; line-height:1.2; margin:.2em 0; }
+.post-cover { width:100%; border-radius:12px; margin:16px 0; }
+.prose { max-width:70ch; }
+.prose img { max-width:100%; height:auto; border-radius:8px; }
+.prose iframe { max-width:100%; aspect-ratio:16/9; border:0; width:100%; }
+.prose h2,.prose h3 { line-height:1.3; margin-top:1.8em; }
+.prose blockquote { border-left:3px solid var(--accent); margin-left:0; padding-left:16px; color:var(--muted); }
+.prose pre { overflow:auto; background:color-mix(in srgb,var(--bg),var(--fg) 6%); padding:12px; border-radius:8px; }
+.tags a { margin-right:8px; }
+.empty { text-align:center; color:var(--muted); padding:48px 0; }

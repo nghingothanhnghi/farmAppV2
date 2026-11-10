@@ -1,0 +1,15 @@
+---
+import { mediaUrl, type PostListItem } from '../lib/api';
+const { post } = Astro.props as { post: PostListItem };
+const img = mediaUrl(post.featured_image?.url);
+const date = post.published_at ? new Date(post.published_at).toLocaleDateString('en-GB', { dateStyle: 'medium' }) : '';
+---
+<article class="card">
+  {img && <a href={`/posts/${post.slug}`}><img src={img} alt={post.featured_image?.alt_text ?? post.title} loading="lazy" /></a>}
+  <div class="card-body">
+    {post.category && <a class="chip" href={`/categories/${post.category.slug}`}>{post.category.name}</a>}
+    <h2><a href={`/posts/${post.slug}`}>{post.title}</a></h2>
+    {post.excerpt && <p>{post.excerpt}</p>}
+    <small>{date}{post.author ? ` · ${(post.author as any).username ?? ''}` : ''}</small>
+  </div>
+</article>

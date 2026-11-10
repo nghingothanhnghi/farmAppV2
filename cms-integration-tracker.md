@@ -58,14 +58,13 @@ Regenerated types from the 2026-11-09 openapi; **B3** include-subcategories filt
 | 17 | Filter dropdowns load all categories and tags once (no backend pagination) | Searchable picker if needed |
 | CI | 🔧 build workflow added; `check:api` still manual (CI can't reach a backend) | Run `check:api` against the deployed backend before releases, or commit an `openapi.json` snapshot |
 | G3 | Backend: no category tree / `?root=true`; pickers build the tree client-side (done) | None needed |
-| G7 | Backend: view counting only via `GET …/slug` (`track_view`); `POST /cms/posts/{id}/view` planned | Only matters for the public site |
+| G7 | Backend: view counting only via `GET …/slug` (`track_view`); `POST /cms/posts/{id}/view` planned | Public site sends `track_view=false`: views are not counted until the planned endpoint exists |
 | G9 | Policy: any logged-in user can create **and publish** posts. The UI shows publish for own posts | Decide: keep, or restrict to editors (backend change + hide button) |
 | G12 | Media list has no `total` | ✅ verified: `CmsMediaManagementPage` pages with `skip`/`limit` and `hasMore` |
 
-## 6. Not started ⬜
-| Item | Notes |
-|---|---|
-| Public site: feed (`status=published`, `sort=published_at`, `track_view=false` on SSR), post/page by slug, category/tag pages via `GET /cms/categories/slug/{slug}` and `GET /cms/tags/slug/{slug}`, **menu renderer** (`menuService.getByLocation`; use `resolved_url`, skip `null`, `open_in_new_tab` → `target="_blank" rel="noopener"`; 404 when no menu uses the location), routes `/posts/:slug` + `/categories/:slug` (menu `resolved_url` values point to them; pages also live under `/posts/:slug`), 404 page, render `content` in a prose container with absolute media URLs | Repo is admin-only today. **Decide whether the public site lives in this app.** Cache: don't cache authenticated responses; ISR revalidate ≤ 60 s for scheduled posts |
+## 6. Public site 🔧 (branch `cms-public-site`)
+Astro server-rendered site in `site/` (see `site/README.md`): feed, `/posts/:slug` (posts + pages), `/categories/:slug` (with subcategories), `/tags/:slug`, 404, header/footer menus (`resolved_url`, `null` skipped, new-tab rel), sanitized HTML, absolute media URLs, `track_view=false`, `Cache-Control: s-maxage=60`. Admin has a **View on site** button (published posts; `VITE_PUBLIC_SITE_URL`). Tested only against a local mock backend (pages, 404 for drafts/unknown, script stripping, menu null-skip, no auth header); **not tested against the real backend**.
+To do: set the real domain and menu locations (`PUBLIC_MENU_HEADER/FOOTER`), deploy (Vercel adapter), sitemap/RSS, persistent media storage (§7).
 
 ## 7. Environment / backend ❓
 - Production frontend origin in `CORS_ALLOWED_ORIGINS` (or `FRONTEND_URL`); `VITE_API_BASE_URL` set on Vercel.

@@ -1,0 +1,21 @@
+---
+import type { MenuItem } from '../lib/api';
+interface Props { items: MenuItem[]; depth?: number }
+const { items, depth = 0 } = Astro.props;
+// Use resolved_url; skip items the backend could not resolve (null), e.g. unpublished targets.
+const visible = items.filter((i) => i.is_active && i.resolved_url);
+---
+{visible.length > 0 && (
+  <ul class={depth === 0 ? 'menu' : 'submenu'}>
+    {visible.map((i) => (
+      <li>
+        <a
+          href={i.resolved_url!}
+          target={i.open_in_new_tab ? '_blank' : undefined}
+          rel={i.open_in_new_tab ? 'noopener noreferrer' : undefined}
+        >{i.label}</a>
+        {i.children?.length > 0 && <Astro.self items={i.children} depth={depth + 1} />}
+      </li>
+    ))}
+  </ul>
+)}
