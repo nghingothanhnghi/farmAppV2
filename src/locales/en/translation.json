@@ -136,8 +136,11 @@
         "reserved": "Reserved",
         "completed": "Completed",
         "voided": "Voided",
+        "failed": "Failed",
+        "stripe": "Card",
         "cash ": "Cash",
         "bank_transfer": "Bank Transfer",
+        "split": "Split",
         "pending": "Waiting"
     },
     "loading_state":{

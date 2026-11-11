@@ -136,8 +136,11 @@
         "reserved": "Đã đặt",
         "completed": "Hoàn thành",
         "voided": "Đã hủy",
+        "failed": "Thất bại",
+        "stripe": "Thẻ",
         "cash": "Tiền mặt",
         "bank_transfer": "Chuyển khoản ngân hàng",
+        "split": "Thanh toán kết hợp",
         "pending": "Đang chờ"
     },
     "loading_state":{

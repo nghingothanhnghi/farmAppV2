@@ -8,6 +8,10 @@ import Badge from '../../common/Badge';
 import { useNow } from '../../../hooks/useNow';
 import { formatCountdown, formatMoneyString, msUntil } from '../../../utils/billiard';
 import type { PaymentLine } from '../../../models/interfaces/Billiard';
+import {
+  getPaymentLineStatusLabel,
+  getPaymentLineStatusVariant,
+} from '../../../utils/status';
 
 interface Props {
   line: PaymentLine;
@@ -44,7 +48,12 @@ const TransferWaiting: React.FC<Props> = ({ line, currency, busy, amountPaid, on
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">Waiting for bank transfer</h3>
-        <Badge label="Waiting" variant="warning" size="xsmall" />
+        {/* <Badge label="Waiting" variant="warning" size="xsmall" /> */}
+        <Badge
+  label={getPaymentLineStatusLabel(line.status)}
+  variant={getPaymentLineStatusVariant(line.status)}
+  size="xsmall"
+/>
       </div>
 
       {hasQr && (
