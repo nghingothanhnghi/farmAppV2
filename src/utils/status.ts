@@ -1,6 +1,6 @@
 // src/utils/status.ts
 import i18n from '../i18n';
-import type { TableStatus, PaymentMethod } from '../models/interfaces/Billiard';
+import type { TableStatus, BillPaymentMethod, LineStatus, BillState } from '../models/interfaces/Billiard';
 
 export const TABLE_STATUS_VARIANTS = {
   available: 'success',
@@ -15,6 +15,43 @@ export const getTableStatusVariant = (status: TableStatus) =>
 export const getTableStatusLabel = (status: TableStatus): string =>
   i18n.t(`badge_status.${status}`);
 
-export const getPaymentMethodLabel = (method: PaymentMethod): string =>
-  i18n.t(`badge_status.${method}`);
+
+// ---- Bill status -------------------------------------------------
+
+export const BILL_STATUS_VARIANTS = {
+  active: 'success',
+  stopped: 'secondary',
+  pending: 'warning',
+  paid: 'success',
+} as const satisfies Record<BillState, string>;
+
+export const getBillStatusVariant = (status: BillState) =>
+  BILL_STATUS_VARIANTS[status];
+
+export const getBillStatusLabel = (status: BillState): string =>
+  i18n.t(`badge_status.${status}`);
+
+// ---- Payment line status -----------------------------------------
+
+export const PAYMENT_LINE_STATUS_VARIANTS = {
+  pending: 'warning',
+  completed: 'success',
+  cancelled: 'secondary',
+  voided: 'danger',
+  failed: 'danger',
+} as const satisfies Record<LineStatus, string>;
+
+export const getPaymentLineStatusVariant = (status: LineStatus) =>
+  PAYMENT_LINE_STATUS_VARIANTS[status];
+
+export const getPaymentLineStatusLabel = (status: LineStatus): string =>
+  i18n.t(`badge_status.${status}`);
+
+// ---- Payment method ----------------------------------------------
+// export const getPaymentMethodLabel = (method: PaymentMethod): string =>
+//   i18n.t(`badge_status.${method}`);
+
+export const getPaymentMethodLabel = (
+  method: BillPaymentMethod
+): string => i18n.t(`badge_status.${method}`);
 

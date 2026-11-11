@@ -133,7 +133,12 @@
         "unavailable": "Không có sẵn",
         "maintenance": "Bảo trì",
         "playing": "Đang chơi",
-        "reserved": "Đã đặt"
+        "reserved": "Đã đặt",
+        "completed": "Hoàn thành",
+        "voided": "Đã hủy",
+        "cash": "Tiền mặt",
+        "bank_transfer": "Chuyển khoản ngân hàng",
+        "pending": "Đang chờ"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"

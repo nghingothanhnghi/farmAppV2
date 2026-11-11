@@ -9,7 +9,13 @@ import Button from '../../common/Button';
 import Modal from '../../common/Modal';
 import { formatDateTime } from '../../../utils/formatters';
 import { formatMoneyString, getBillState, toAmount } from '../../../utils/billiard';
-import type { BillResponse, LineStatus, PaymentLine } from '../../../models/interfaces/Billiard';
+import type { BillResponse, PaymentLine } from '../../../models/interfaces/Billiard';
+
+import {
+  getPaymentMethodLabel,
+  getPaymentLineStatusLabel,
+  getPaymentLineStatusVariant,
+} from '../../../utils/status';
 
 interface Props {
   bill: BillResponse;
@@ -19,20 +25,20 @@ interface Props {
   onVoid: (lineId: number, reason: string) => Promise<unknown>;
 }
 
-const METHOD_LABEL: Record<string, string> = {
-  cash: 'Cash',
-  bank_transfer: 'Bank transfer',
-  stripe: 'Card',
-  split: 'Split',
-};
+// const METHOD_LABEL: Record<string, string> = {
+//   cash: 'Cash',
+//   bank_transfer: 'Bank transfer',
+//   stripe: 'Card',
+//   split: 'Split',
+// };
 
-const STATUS_BADGE: Record<LineStatus, { label: string; variant: 'warning' | 'success' | 'gray' | 'danger' }> = {
-  pending: { label: 'Waiting', variant: 'warning' },
-  completed: { label: 'Paid', variant: 'success' },
-  cancelled: { label: 'Cancelled', variant: 'gray' },
-  voided: { label: 'Voided', variant: 'gray' },
-  failed: { label: 'Failed', variant: 'danger' },
-};
+// const STATUS_BADGE: Record<LineStatus, { label: string; variant: 'warning' | 'success' | 'gray' | 'danger' }> = {
+//   pending: { label: 'Waiting', variant: 'warning' },
+//   completed: { label: 'Paid', variant: 'success' },
+//   cancelled: { label: 'Cancelled', variant: 'gray' },
+//   voided: { label: 'Voided', variant: 'gray' },
+//   failed: { label: 'Failed', variant: 'danger' },
+// };
 
 const MIN_REASON = 3;
 const MAX_REASON = 255;
@@ -52,7 +58,10 @@ const LineItem: React.FC<{
   onVoid: (line: PaymentLine) => void;
 }> = ({ line, currency, canVoid, busy, onVoid }) => {
   const { t } = useTranslation();
-  const badge = STATUS_BADGE[line.status] ?? { label: line.status, variant: 'gray' as const };
+  // const badge = STATUS_BADGE[line.status] ?? { label: line.status, variant: 'gray' as const };
+const statusLabel = getPaymentLineStatusLabel(line.status);
+const statusVariant = getPaymentLineStatusVariant(line.status);
+
   // cancelled / voided lines stay visible but greyed out
   const dimmed = line.status === 'cancelled' || line.status === 'voided';
 
@@ -61,9 +70,17 @@ const LineItem: React.FC<{
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className={`text-sm text-gray-800 dark:text-gray-100 ${dimmed ? 'line-through' : ''}`}>
-            {METHOD_LABEL[line.method] ?? line.method}
+            {/* {METHOD_LABEL[line.method] ?? line.method} */}
+
+{getPaymentMethodLabel(line.method)}
+
           </span>
-          <Badge label={badge.label} variant={badge.variant} size="xsmall" />
+          {/* <Badge label={badge.label} variant={badge.variant} size="xsmall" /> */}
+            <Badge
+    label={statusLabel}
+    variant={statusVariant}
+    size="xsmall"
+  />
         </div>
         <span className={`text-sm font-medium text-gray-900 dark:text-white ${dimmed ? 'line-through' : ''}`}>
           {formatMoneyString(line.amount, currency)}
@@ -153,7 +170,12 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
           {paid ? t("cashier.receipt") : t("cashier.payment")}
         </h3>
         {bill.payment_method && paid && (
-          <Badge label={METHOD_LABEL[bill.payment_method] ?? bill.payment_method} variant="info" size="xsmall" />
+          //  <Badge label={METHOD_LABEL[bill.payment_method] ?? bill.payment_method} variant="info" size="xsmall" /> 
+          <Badge
+  label={getPaymentMethodLabel(bill.payment_method)}
+  variant="info"
+  size="xsmall"
+/>
         )}
       </div>
 

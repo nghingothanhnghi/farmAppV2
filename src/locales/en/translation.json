@@ -133,7 +133,12 @@
         "unavailable": "Unavailable",
         "maintenance": "Maintenance",
         "playing": "Playing",
-        "reserved": "Reserved"
+        "reserved": "Reserved",
+        "completed": "Completed",
+        "voided": "Voided",
+        "cash ": "Cash",
+        "bank_transfer": "Bank Transfer",
+        "pending": "Waiting"
     },
     "loading_state":{
         "message_01": "Loading banner..."
