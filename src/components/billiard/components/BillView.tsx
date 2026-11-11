@@ -5,6 +5,7 @@ import Badge from '../../common/Badge';
 import FoodDrinkImg from '../../../assets/icons/food_drink-icon.png'
 import EmptyState from '../../common/EmptyState';
 import { formatDateTime } from '../../../utils/formatters';
+import { getPaymentMethodLabel } from '../../../utils/status';
 import { formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import { getPricingSummary } from '../../../utils/pricing';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
@@ -108,11 +109,24 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       </div>
 
       <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-        <Line label={t('billiard_tables.cards.fee_table')} value={formatMoneyString(b.total_table_fee, c)} />
-        <Line label={t('billiard_tables.cards.fee_product')} value={formatMoneyString(b.total_product_fee, c)} />
-        <Line label={t('billiard_tables.cards.fee_total')} value={formatMoneyString(b.grand_total, c)} bold />
+        <Line 
+          label={t('billiard_tables.cards.fee_table')} 
+          value={formatMoneyString(b.total_table_fee, c)} 
+        />
+        <Line 
+          label={t('billiard_tables.cards.fee_product')} 
+          value={formatMoneyString(b.total_product_fee, c)} 
+        />
+        <Line 
+          label={t('billiard_tables.cards.fee_total')} 
+          value={formatMoneyString(b.grand_total, c)} 
+          bold 
+        />
         {bill.payment_method && state === 'paid' && (
-          <Line label={t('billiard_tables.receipt.paidBy')} value={bill.payment_method.replace('_', ' ')} />
+          <Line
+            label={t('billiard_tables.receipt.paidBy')}
+            value={getPaymentMethodLabel(bill.payment_method)}
+          />
         )}
       </div>
     </div>

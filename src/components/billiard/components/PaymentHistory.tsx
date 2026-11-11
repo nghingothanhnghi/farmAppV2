@@ -1,10 +1,13 @@
 // src/components/billiard/components/PaymentHistory.tsx
 // "History" panel of the payments guide: every payment action on the bill, newest last.
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { usePaymentEvents } from '../../../hooks/usePaymentEvents';
 import { formatDateTime } from '../../../utils/formatters';
 import { formatMoneyString } from '../../../utils/billiard';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
+import Button from '../../common/Button';
+import Spinner from '../../common/Spinner';
 
 const EVENT_LABEL: Record<string, string> = {
   line_created: 'Payment line created',
@@ -39,11 +42,11 @@ interface Props {
 }
 
 const PaymentHistory: React.FC<Props> = ({ bill }) => {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   // Anything that changes a payment changes at least one of these, so the panel stays current.
-  const refreshKey = `${bill.payment_state}|${bill.amount_paid ?? ''}|${bill.payments?.length ?? 0}|${
-    bill.payments?.map((p) => p.status).join(',') ?? ''
-  }`;
+  const refreshKey = `${bill.payment_state}|${bill.amount_paid ?? ''}|${bill.payments?.length ?? 0}|${bill.payments?.map((p) => p.status).join(',') ?? ''
+    }`;
   const { events, loading, error, refetch } = usePaymentEvents(bill.session_id, open, refreshKey);
 
   // Nothing has happened to the bill's payment yet.
@@ -51,15 +54,21 @@ const PaymentHistory: React.FC<Props> = ({ bill }) => {
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 dark:bg-gray-900 p-4 space-y-3">
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between text-sm font-medium text-gray-800 dark:text-gray-100"
-      >
-        <span>Payment history</span>
-        <span className="text-xs text-gray-500">{open ? 'Hide' : 'Show'}</span>
-      </button>
+      <div className="flex items-center justify-between gap-2">
+        <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100">
+          {t('cashier.payment_history')}
+        </h3>
+        <Button
+          label={open ? t('btn.hide') : t('btn.show')}
+          onClick={() => setOpen((o) => !o)}
+          type="button"
+          size="xs"
+          rounded="lg"
+          variant="secondary"
+          className="min-w-[60px]"
+          />
+      </div>
+
 
       {open && (
         <>
@@ -72,7 +81,7 @@ const PaymentHistory: React.FC<Props> = ({ bill }) => {
             </p>
           )}
           {loading && events.length === 0 ? (
-            <p className="text-xs text-gray-500">Loading...</p>
+            <Spinner className="mx-auto" />
           ) : events.length === 0 && !error ? (
             <p className="text-xs text-gray-500">No payment activity recorded.</p>
           ) : (

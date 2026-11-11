@@ -113,7 +113,9 @@
         "refresh": "Refresh",
         "register_controller": "Register Controller",
         "new_post": "New Post",
-        "void_payment": "Void Payment"
+        "void_payment": "Void Payment",
+        "show": "Show",
+        "hide": "Hide"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -811,6 +813,7 @@
         "short_by": "Short by {{amount}}",
         "receipt": "Receipt",
         "payment": "Payment",
+        "payment_history": "Payment History",
         "cash_missing": " (cash missing)",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },

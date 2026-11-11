@@ -113,7 +113,9 @@
         "refresh": "Làm mới",
         "register_controller": "Đăng ký bộ điều khiển",
         "new_post": "Bài viết mới",
-        "void_payment": "Hủy thanh toán"
+        "void_payment": "Hủy thanh toán",
+        "show": "Chi tiết",
+        "hide": "Đóng lại"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -810,6 +812,7 @@
         "short_by": "Thiếu {{amount}}",
         "receipt": "Biên lai",
         "payment": "Thanh toán",
+        "payment_history": "Lịch sử thanh toán",
         "cash_missing": " (thiếu tiền mặt)",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },    

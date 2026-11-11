@@ -25,21 +25,6 @@ interface Props {
   onVoid: (lineId: number, reason: string) => Promise<unknown>;
 }
 
-// const METHOD_LABEL: Record<string, string> = {
-//   cash: 'Cash',
-//   bank_transfer: 'Bank transfer',
-//   stripe: 'Card',
-//   split: 'Split',
-// };
-
-// const STATUS_BADGE: Record<LineStatus, { label: string; variant: 'warning' | 'success' | 'gray' | 'danger' }> = {
-//   pending: { label: 'Waiting', variant: 'warning' },
-//   completed: { label: 'Paid', variant: 'success' },
-//   cancelled: { label: 'Cancelled', variant: 'gray' },
-//   voided: { label: 'Voided', variant: 'gray' },
-//   failed: { label: 'Failed', variant: 'danger' },
-// };
-
 const MIN_REASON = 3;
 const MAX_REASON = 255;
 
@@ -118,7 +103,7 @@ const statusVariant = getPaymentLineStatusVariant(line.status);
       {line.status === 'completed' && canVoid && (
         <div className="flex justify-end">
           <Button
-            label="Void"
+            label={t('btn.void_payment')}
             size="xs"
             variant="danger"
             rounded="lg"
@@ -172,10 +157,10 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
         {bill.payment_method && paid && (
           //  <Badge label={METHOD_LABEL[bill.payment_method] ?? bill.payment_method} variant="info" size="xsmall" /> 
           <Badge
-  label={getPaymentMethodLabel(bill.payment_method)}
-  variant="info"
-  size="xsmall"
-/>
+            label={getPaymentMethodLabel(bill.payment_method)}
+            variant="info"
+            size="xsmall"
+          />
         )}
       </div>
 
