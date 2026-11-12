@@ -9,9 +9,10 @@ const EmptyState: React.FC<EmptyStateProps> = ({
   message,
   height = 150,
   width = 150,
+  className = '',
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 space-y-4 h-48">
+    <div className={`flex flex-col items-center justify-center text-center text-gray-500 dark:text-gray-400 space-y-4 h-48 ${className}`}>
       {animationData ? (
         <Lottie animationData={animationData} loop autoplay style={{ height, width }} />
       ) : imageSrc ? (

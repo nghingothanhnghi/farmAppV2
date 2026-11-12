@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { IconArrowLeft } from '@tabler/icons-react';
+import InboxImg from '../../assets/icons/inbox.png';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Badge from '../common/Badge';
@@ -97,7 +98,13 @@ const BankInboxPage: React.FC = () => {
         {loading ? (
           <LinearProgress position="absolute" thickness="h-1" duration={3000} />
         ) : items.length === 0 ? (
-          <EmptyState message="Nothing here." />
+          <EmptyState 
+            imageSrc={InboxImg}
+            width={100}
+            height={100}
+            message="Nothing here." 
+            className="mt-10"
+          />
         ) : (
           <ul className="divide-y divide-gray-200 dark:divide-white/5 bg-white dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-white/5">
             {items.map((tx) => {

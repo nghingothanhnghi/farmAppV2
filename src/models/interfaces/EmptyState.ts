@@ -7,4 +7,5 @@ export interface EmptyStateProps {
   message: string;
   height?: number;
   width?: number;
+  className?: string; // Additional CSS classes for styling
 }
