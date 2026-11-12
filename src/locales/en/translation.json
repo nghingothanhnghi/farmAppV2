@@ -759,6 +759,10 @@
                 "title": "Add Item",
                 "description": "Add drinks or snacks to the bill for this table."
             },
+            "void":{
+                "title": "Void {{amount}}",
+                "description": "The bill will reopen and can be paid again. Give a reason for the record."
+            },
             "table": {
                 "title": "New Table",
                 "description": ""
@@ -785,6 +789,18 @@
         "payment_description": "Easily manage payments, track each transaction and control cash, online and bank transfer collections.",
         "by_payment_method": "By payment method ({{count}} payments)"
     },
+    "payment_events": {
+        "line_created": "Payment line created",
+        "cash_received": "Cash received",
+        "transfer_awaiting": "Waiting for bank transfer",
+        "transfer_confirmed": "Transfer confirmed by cashier",
+        "transfer_auto_confirmed": "Transfer confirmed automatically by the bank",
+        "transfer_assigned_from_bank": "Bank transaction assigned by a manager",
+        "line_cancelled": "Payment line cancelled",
+        "line_failed": "Payment line failed",
+        "line_voided": "Payment line voided",
+        "order_paid": "Bill fully paid"
+    },    
     "cashier": {
         "page_header": {
             "title": "Cash drawer",
@@ -821,6 +837,9 @@
         "payment": "Payment",
         "payment_history": "Payment History",
         "cash_missing": " (cash missing)",
+        "payment_line": "Payment #{{id}}",
+        "system": "System",
+        "user": "User #{{id}}",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
     "bank_inbox": {

@@ -1,6 +1,6 @@
 // src/utils/status.ts
 import i18n from '../i18n';
-import type { TableStatus, BillPaymentMethod, LineStatus, BillState } from '../models/interfaces/Billiard';
+import type { TableStatus, BillPaymentMethod, LineStatus, BillState, PaymentEventType } from '../models/interfaces/Billiard';
 import type { BankTxStatus } from '../models/interfaces/BankFeed';
 import type { Shift } from '../models/interfaces/CashDrawer';
 
@@ -53,6 +53,28 @@ export const getPaymentLineStatusLabel = (status: LineStatus): string =>
 export const getPaymentMethodLabel = (
   method: BillPaymentMethod
 ): string => i18n.t(`badge_status.${method}`);
+
+// ---- Payment event type ------------------------------------------
+export const PAYMENT_EVENT_LABELS = {
+  line_created: 'payment_events.line_created',
+  cash_received: 'payment_events.cash_received',
+  transfer_awaiting: 'payment_events.transfer_awaiting',
+  transfer_confirmed: 'payment_events.transfer_confirmed',
+  transfer_auto_confirmed: 'payment_events.transfer_auto_confirmed',
+  transfer_assigned_from_bank: 'payment_events.transfer_assigned_from_bank',
+  line_cancelled: 'payment_events.line_cancelled',
+  line_failed: 'payment_events.line_failed',
+  line_voided: 'payment_events.line_voided',
+  order_paid: 'payment_events.order_paid',
+} as const satisfies Record<PaymentEventType, string>;
+
+export const getPaymentEventLabel = (type: string): string => {
+  const key = PAYMENT_EVENT_LABELS[type as PaymentEventType];
+
+  return key
+    ? i18n.t(key)
+    : type.replace(/_/g, ' ');
+};
 
 // ---- Bank transaction status ------------------------------------
 

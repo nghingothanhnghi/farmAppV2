@@ -759,6 +759,10 @@
                 "title": "Thêm món",
                 "description": "Thêm đồ uống hoặc đồ ăn vào hóa đơn cho bàn này."
             },
+            "void":{
+                "title": "Hủy thanh toán {{amount}}",
+                "description": "Hóa đơn sẽ được mở lại và có thể thanh toán lại. Vui lòng nhập lý do để lưu vào lịch sử."
+            },            
             "table": {
                 "title": "Bàn mới",
                 "description": ""
@@ -785,6 +789,18 @@
         "payment_description": "Dễ dàng quản lý thanh toán, theo dõi từng giao dịch và kiểm soát các khoản thu tiền mặt, trực tuyến và chuyển khoản.",
         "by_payment_method": "Theo phương thức thanh toán ({{count}} giao dịch)"
     },
+    "payment_events": {
+        "line_created": "Đã tạo khoản thanh toán",
+        "cash_received": "Đã nhận tiền mặt",
+        "transfer_awaiting": "Đang chờ chuyển khoản",
+        "transfer_confirmed": "Thu ngân đã xác nhận chuyển khoản",
+        "transfer_auto_confirmed": "Ngân hàng đã tự động xác nhận chuyển khoản",
+        "transfer_assigned_from_bank": "Quản lý đã ghép giao dịch ngân hàng",
+        "line_cancelled": "Đã hủy khoản thanh toán",
+        "line_failed": "Thanh toán thất bại",
+        "line_voided": "Đã vô hiệu hóa khoản thanh toán",
+        "order_paid": "Hóa đơn đã được thanh toán đầy đủ"
+    },    
     "cashier": {
         "page_header": {
             "title": "Ngăn kéo tiền mặt",
@@ -820,6 +836,9 @@
         "payment": "Thanh toán",
         "payment_history": "Lịch sử thanh toán",
         "cash_missing": " (thiếu tiền mặt)",
+        "payment_line": "Khoản thanh toán #{{id}}",
+        "system": "Hệ thống",
+        "user": "Người dùng #{{id}}",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },
     "bank_inbox": {

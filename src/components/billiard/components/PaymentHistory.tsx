@@ -8,21 +8,7 @@ import { formatMoneyString } from '../../../utils/billiard';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
 import Button from '../../common/Button';
 import Spinner from '../../common/Spinner';
-
-const EVENT_LABEL: Record<string, string> = {
-  line_created: 'Payment line created',
-  cash_received: 'Cash received',
-  transfer_awaiting: 'Waiting for bank transfer',
-  transfer_confirmed: 'Transfer confirmed by cashier',
-  transfer_auto_confirmed: 'Transfer confirmed automatically by the bank',
-  transfer_assigned_from_bank: 'Bank transaction assigned by a manager',
-  line_cancelled: 'Payment line cancelled',
-  line_failed: 'Payment line failed',
-  line_voided: 'Payment line voided',
-  order_paid: 'Bill fully paid',
-};
-
-const prettify = (type: string) => EVENT_LABEL[type] ?? type.replace(/_/g, ' ');
+import { getPaymentEventLabel } from '../../../utils/status';
 
 const str = (v: unknown): string | null => (typeof v === 'string' && v.trim() !== '' ? v : null);
 
@@ -66,9 +52,8 @@ const PaymentHistory: React.FC<Props> = ({ bill }) => {
           rounded="lg"
           variant="secondary"
           className="min-w-[60px]"
-          />
+        />
       </div>
-
 
       {open && (
         <>
@@ -90,12 +75,18 @@ const PaymentHistory: React.FC<Props> = ({ bill }) => {
                 const extra = detail(ev.data, bill.currency);
                 return (
                   <li key={ev.id} className="py-2 space-y-0.5">
-                    <p className="text-sm text-gray-800 dark:text-gray-100">{prettify(ev.event_type)}</p>
+                    <p className="text-sm text-gray-800 dark:text-gray-100">
+                      {getPaymentEventLabel(ev.event_type)}
+                    </p>
                     <p className="text-[0.6875rem] text-gray-500 dark:text-gray-400">
                       {formatDateTime(ev.created_at)}
-                      {ev.line_id !== null ? ` · line #${ev.line_id}` : ''}
-                      {ev.actor_id === null ? ' · system' : ` · user #${ev.actor_id}`}
-                      {extra ? ` · ${extra}` : ''}
+                      {ev.line_id !== null && (
+                        <> · {t('cashier.payment_line', { id: ev.line_id })}</>
+                      )}
+                      {ev.actor_id === null
+                        ? <> · {t('cashier.system')}</>
+                        : <> · {t('cashier.user', { id: ev.actor_id })}</>}
+                      {extra && <> · {extra}</>}
                     </p>
                   </li>
                 );

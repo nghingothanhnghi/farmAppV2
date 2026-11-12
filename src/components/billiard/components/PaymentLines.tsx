@@ -44,8 +44,8 @@ const LineItem: React.FC<{
 }> = ({ line, currency, canVoid, busy, onVoid }) => {
   const { t } = useTranslation();
   // const badge = STATUS_BADGE[line.status] ?? { label: line.status, variant: 'gray' as const };
-const statusLabel = getPaymentLineStatusLabel(line.status);
-const statusVariant = getPaymentLineStatusVariant(line.status);
+  const statusLabel = getPaymentLineStatusLabel(line.status);
+  const statusVariant = getPaymentLineStatusVariant(line.status);
 
   // cancelled / voided lines stay visible but greyed out
   const dimmed = line.status === 'cancelled' || line.status === 'voided';
@@ -55,17 +55,13 @@ const statusVariant = getPaymentLineStatusVariant(line.status);
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <span className={`text-sm text-gray-800 dark:text-gray-100 ${dimmed ? 'line-through' : ''}`}>
-            {/* {METHOD_LABEL[line.method] ?? line.method} */}
-
-{getPaymentMethodLabel(line.method)}
-
+            {getPaymentMethodLabel(line.method)}
           </span>
-          {/* <Badge label={badge.label} variant={badge.variant} size="xsmall" /> */}
-            <Badge
-    label={statusLabel}
-    variant={statusVariant}
-    size="xsmall"
-  />
+          <Badge
+            label={statusLabel}
+            variant={statusVariant}
+            size="xsmall"
+          />
         </div>
         <span className={`text-sm font-medium text-gray-900 dark:text-white ${dimmed ? 'line-through' : ''}`}>
           {formatMoneyString(line.amount, currency)}
@@ -197,12 +193,18 @@ const PaymentLines: React.FC<Props> = ({ bill, canVoid, busy, onVoid }) => {
       <Modal
         isOpen={voiding !== null}
         onClose={closeVoid}
-        title={voiding ? `Void ${formatMoneyString(voiding.amount, c)}` : 'Void payment'}
+        title={
+          voiding
+            ? t('billiard_tables.modals.void.title', {
+              amount: formatMoneyString(voiding.amount, c),
+            })
+            : 'Void payment'
+        }
         size="small"
         content={
           <div className="px-10 pb-4 space-y-2">
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              The bill will reopen and can be paid again. Give a reason for the record.
+              {t('billiard_tables.modals.void.description')}
             </p>
             <textarea
               aria-label="Void reason"
