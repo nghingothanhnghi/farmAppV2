@@ -2,6 +2,7 @@
 import i18n from '../i18n';
 import type { TableStatus, BillPaymentMethod, LineStatus, BillState } from '../models/interfaces/Billiard';
 import type { BankTxStatus } from '../models/interfaces/BankFeed';
+import type { Shift } from '../models/interfaces/CashDrawer';
 
 export const TABLE_STATUS_VARIANTS = {
   available: 'success',
@@ -49,9 +50,6 @@ export const getPaymentLineStatusLabel = (status: LineStatus): string =>
   i18n.t(`badge_status.${status}`);
 
 // ---- Payment method ----------------------------------------------
-// export const getPaymentMethodLabel = (method: PaymentMethod): string =>
-//   i18n.t(`badge_status.${method}`);
-
 export const getPaymentMethodLabel = (
   method: BillPaymentMethod
 ): string => i18n.t(`badge_status.${method}`);
@@ -82,3 +80,18 @@ export const BANK_TX_STATUS_TABS: {
   { id: 'matched', label: 'badge_status.matched' },
   { id: 'ignored', label: 'badge_status.ignored' },
 ];
+
+// ---- Cash drawer shift status -----------------------------------
+
+export type ShiftStatus = Shift['status'];
+
+export const SHIFT_STATUS_VARIANTS = {
+  open: 'success',
+  closed: 'gray',
+} as const satisfies Record<ShiftStatus, string>;
+
+export const getShiftStatusVariant = (status: ShiftStatus) =>
+  SHIFT_STATUS_VARIANTS[status];
+
+export const getShiftStatusLabel = (status: ShiftStatus): string =>
+  i18n.t(`badge_status.${status}`);

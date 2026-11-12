@@ -147,7 +147,9 @@
         "needs_review": "Needs review",
         "unmatched": "Unmatched",
         "matched": "Matched",
-        "ignored": "Ignored"
+        "ignored": "Ignored",
+        "open": "Open",
+        "closed": "Closed"
     },
     "loading_state":{
         "message_01": "Loading banner..."

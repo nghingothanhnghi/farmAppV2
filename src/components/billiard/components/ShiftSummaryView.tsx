@@ -5,6 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { formatDateTime } from '../../../utils/formatters';
 import { formatMoneyString, toAmount } from '../../../utils/billiard';
 import type { Shift, ShiftSummary } from '../../../models/interfaces/CashDrawer';
+import {
+  getShiftStatusLabel,
+  getShiftStatusVariant,
+} from '../../../utils/status';
 
 const Row: React.FC<{ label: string; value: React.ReactNode; bold?: boolean }> = ({ label, value, bold }) => (
   <div className="flex items-center justify-between gap-3 text-sm">
@@ -63,8 +67,8 @@ const ShiftSummaryView: React.FC<{ shift: ShiftSummary }> = ({ shift }) => {
           </p>
         </div>
         <Badge
-          label={shift.status === 'open' ? 'Open' : 'Closed'}
-          variant={shift.status === 'open' ? 'success' : 'gray'}
+          label={getShiftStatusLabel(shift.status)}
+          variant={getShiftStatusVariant(shift.status)}
           size="xsmall"
         />
       </div>

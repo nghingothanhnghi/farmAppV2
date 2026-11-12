@@ -147,7 +147,9 @@
         "needs_review": "Cần xử lý",
         "unmatched": "Chưa khớp",
         "matched": "Đã đối soát",
-        "ignored": "Đã bỏ qua"
+        "ignored": "Đã bỏ qua",
+        "open": "Đang mở",
+        "closed": "Đã đóng"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"
