@@ -842,6 +842,12 @@
         "user": "User #{{id}}",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
+    "bill_status": {
+        "active": "Playing",
+        "stopped": "Awaiting payment",
+        "pending": "Payment in progress",
+        "paid": "Paid"
+    },    
     "bank_inbox": {
         "page_header": {
             "title": "Bank Inbox",

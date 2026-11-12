@@ -5,7 +5,7 @@ import Badge from '../../common/Badge';
 import FoodDrinkImg from '../../../assets/icons/food_drink-icon.png'
 import EmptyState from '../../common/EmptyState';
 import { formatDateTime } from '../../../utils/formatters';
-import { getPaymentMethodLabel } from '../../../utils/status';
+import { getPaymentMethodLabel, getBillStatusLabel, getBillStatusVariant, } from '../../../utils/status';
 import { formatDuration, formatMoneyString, getBillState } from '../../../utils/billiard';
 import { getPricingSummary } from '../../../utils/pricing';
 import type { BillResponse } from '../../../models/interfaces/Billiard';
@@ -48,7 +48,7 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
           </p>
         </div>
 
-        <Badge
+        {/* <Badge
           label={
             state === 'paid' ? 'Paid'
               : state === 'pending' ? 'Payment in progress'
@@ -61,7 +61,14 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
                 : 'info'
           }
           size="xsmall"
-        />
+        /> */}
+
+<Badge
+  label={getBillStatusLabel(state)}
+  variant={getBillStatusVariant(state)}
+  size="xsmall"
+/>
+
       </div>
 
       {hasPricing && (

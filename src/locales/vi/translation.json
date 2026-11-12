@@ -841,6 +841,12 @@
         "user": "Người dùng #{{id}}",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },
+    "bill_status": {
+        "active": "Đang chơi",
+        "stopped": "Chờ thanh toán",
+        "pending": "Đang xử lý thanh toán",
+        "paid": "Đã thanh toán"
+    },       
     "bank_inbox": {
         "page_header": {
             "title": "Hộp thư giao dịch",

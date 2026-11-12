@@ -21,7 +21,7 @@ export const getTableStatusLabel = (status: TableStatus): string =>
 // ---- Bill status -------------------------------------------------
 
 export const BILL_STATUS_VARIANTS = {
-  active: 'success',
+  active: 'info',
   stopped: 'secondary',
   pending: 'warning',
   paid: 'success',
@@ -31,7 +31,7 @@ export const getBillStatusVariant = (status: BillState) =>
   BILL_STATUS_VARIANTS[status];
 
 export const getBillStatusLabel = (status: BillState): string =>
-  i18n.t(`badge_status.${status}`);
+  i18n.t(`bill_status.${status}`);
 
 // ---- Payment line status -----------------------------------------
 
