@@ -1,6 +1,7 @@
 // src/utils/status.ts
 import i18n from '../i18n';
 import type { TableStatus, BillPaymentMethod, LineStatus, BillState } from '../models/interfaces/Billiard';
+import type { BankTxStatus } from '../models/interfaces/BankFeed';
 
 export const TABLE_STATUS_VARIANTS = {
   available: 'success',
@@ -55,3 +56,29 @@ export const getPaymentMethodLabel = (
   method: BillPaymentMethod
 ): string => i18n.t(`badge_status.${method}`);
 
+// ---- Bank transaction status ------------------------------------
+
+export const BANK_TX_STATUS_VARIANTS = {
+  needs_review: 'warning',
+  unmatched: 'danger',
+  matched: 'success',
+  ignored: 'gray',
+} as const satisfies Record<BankTxStatus, string>;
+
+export const getBankTxStatusVariant = (status: BankTxStatus) =>
+  BANK_TX_STATUS_VARIANTS[status];
+
+export const getBankTxStatusLabel = (status: BankTxStatus): string =>
+  i18n.t(`badge_status.${status}`);
+
+// ---- Bank transaction tabs --------------------------------------
+
+export const BANK_TX_STATUS_TABS: {
+  id: BankTxStatus;
+  label: string;
+}[] = [
+  { id: 'needs_review', label: 'badge_status.needs_review' },
+  { id: 'unmatched', label: 'badge_status.unmatched' },
+  { id: 'matched', label: 'badge_status.matched' },
+  { id: 'ignored', label: 'badge_status.ignored' },
+];

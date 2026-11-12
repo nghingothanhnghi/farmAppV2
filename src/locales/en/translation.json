@@ -143,7 +143,11 @@
         "cash ": "Cash",
         "bank_transfer": "Bank Transfer",
         "split": "Split",
-        "pending": "Waiting"
+        "pending": "Waiting",
+        "needs_review": "Needs review",
+        "unmatched": "Unmatched",
+        "matched": "Matched",
+        "ignored": "Ignored"
     },
     "loading_state":{
         "message_01": "Loading banner..."
@@ -817,6 +821,16 @@
         "cash_missing": " (cash missing)",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
+    "bank_inbox": {
+        "page_header": {
+            "title": "Bank Inbox",
+            "description": "Incoming bank transactions that the system has not yet automatically reconciled."
+        },
+        "needs_review": "Needs Review",
+        "unmatched": "Unmatched",
+        "matched": "Matched",
+        "ignored": "Ignored"
+    },    
     "post": {
         "page_header": {
             "title": "Post Management",

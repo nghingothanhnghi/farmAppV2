@@ -143,7 +143,11 @@
         "cash": "Tiền mặt",
         "bank_transfer": "Chuyển khoản ngân hàng",
         "split": "Thanh toán kết hợp",
-        "pending": "Đang chờ"
+        "pending": "Đang chờ",
+        "needs_review": "Cần xử lý",
+        "unmatched": "Chưa khớp",
+        "matched": "Đã đối soát",
+        "ignored": "Đã bỏ qua"
     },
     "loading_state":{
         "message_01": "Đang tải hình ảnh"
@@ -815,7 +819,17 @@
         "payment_history": "Lịch sử thanh toán",
         "cash_missing": " (thiếu tiền mặt)",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
-    },    
+    },
+    "bank_inbox": {
+        "page_header": {
+            "title": "Hộp thư giao dịch",
+            "description": "Các giao dịch chuyển khoản đến mà hệ thống chưa thể tự động đối soát."
+        },
+        "needs_review": "Cần xử lý",
+        "unmatched": "Chưa khớp",
+        "matched": "Đã đối soát",
+        "ignored": "Đã bỏ qua"
+    },
     "post": {
         "page_header": {
             "title": "Quản lý Bài viết",
