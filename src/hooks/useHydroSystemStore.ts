@@ -436,6 +436,24 @@ export const useHydroSystemStore = (enabled = true) => {
                 userId,
                 onMessage: (message) => {
                     switch (message.type) {
+                        case 'ping':
+                            hardwareDetectionService.sendWebSocketMessage({ type: 'pong' });
+                            break;
+
+                        case 'connection_established':
+                            break;
+
+                        case 'bulk_detections_created':
+                        case 'detection_processed':
+                            setHardwareDetections(prev => {
+                                const seen = new Set(prev.map(d => d.id));
+                                const incoming = (message.data ?? []).filter((d: HardwareDetectionResponse) => !seen.has(d.id));
+                                return [...incoming, ...prev];
+                            });
+                            break;
+
+                        case 'detection_validated':
+                        case 'detection_updated':
                         case 'detection_update':
                             setHardwareDetections(prev => {
                                 const updated = prev.map(d =>
@@ -448,11 +466,15 @@ export const useHydroSystemStore = (enabled = true) => {
                             break;
 
                         case 'location_status_update':
-                            setLocationStatus(prev => ({
-                                ...prev,
-                                [message.data.location]: message.data
-                            }));
+                        case 'location_status_changed':
+                        case 'location_status':
+                        case 'initial_location_status': {
+                            const loc = message.location ?? message.data?.location;
+                            if (loc && message.data) {
+                                setLocationStatus(prev => ({ ...prev, [loc]: message.data }));
+                            }
                             break;
+                        }
 
                         case 'new_detection':
                             setHardwareDetections(prev => [message.data, ...prev]);
@@ -465,8 +487,13 @@ export const useHydroSystemStore = (enabled = true) => {
                             }]);
                             break;
 
+                        case 'inventory_updated':
+                        case 'hydro_device_matched':
+                        case 'stats_updated':
+                        case 'stats':
+                        case 'error':
                         default:
-                            console.log('Unknown hardware detection message type:', message.type);
+                            console.debug('Unhandled hardware detection message type:', message.type);
                     }
                 },
                 onOpen: () => {

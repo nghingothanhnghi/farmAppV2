@@ -18,6 +18,21 @@ import type {
 
 let hardwareSocket: WebSocket | null = null;
 
+// Close a socket without triggering the browser's "connection was interrupted
+// while the page was loading" error when it is still CONNECTING (e.g. React
+// StrictMode unmounting right after mount): defer the close until it opens.
+function closeSocketQuietly(socket: WebSocket) {
+  socket.onmessage = null;
+  socket.onerror = null;
+  socket.onclose = null;
+  if (socket.readyState === WebSocket.CONNECTING) {
+    socket.onopen = () => socket.close();
+  } else {
+    socket.onopen = null;
+    if (socket.readyState === WebSocket.OPEN) socket.close();
+  }
+}
+
 export const hardwareDetectionService = {
   async createDetection(data: HardwareDetectionCreate) {
     const res = await apiClient.post<HardwareDetectionResponse>("/hardware-detection", data);
@@ -184,7 +199,7 @@ export const hardwareDetectionService = {
     // Close existing connection if any
     if (hardwareSocket) {
       console.log('[WebSocket] Closing existing connection before creating new one');
-      hardwareSocket.close();
+      closeSocketQuietly(hardwareSocket);
       hardwareSocket = null;
     }
 
@@ -196,39 +211,52 @@ export const hardwareDetectionService = {
       wsBaseUrl = baseUrl.replace('http', 'ws');
     }
     const params = new URLSearchParams();
-    // Append each location separately -> ?locations=A&locations=B
-    locations.forEach(loc => params.append('locations', loc));
+    // Backend expects ONE comma-separated string: ?locations=A,B
+    // (it declares `locations: Optional[str]`, so repeated keys would keep only the last one)
+    if (locations.length > 0) params.set('locations', locations.join(','));
 
     if (userId !== null) params.append('user_id', String(userId));
 
     const wsUrl = `${wsBaseUrl}/ws/hardware-detection?${params.toString()}`;
     console.log('[WebSocket] Creating new connection to:', wsUrl);
 
-    hardwareSocket = new WebSocket(wsUrl);
+    const socket = new WebSocket(wsUrl);
+    hardwareSocket = socket;
 
-    hardwareSocket.onopen = () => {
+    // Every handler checks `socket === hardwareSocket` so a stale socket
+    // (closed by a newer connectWebSocket call or by React StrictMode's
+    // mount/unmount/mount) can never fire callbacks or clear the new reference.
+    socket.onopen = () => {
+      if (socket !== hardwareSocket) return;
       console.log('[WebSocket] Hardware detection connected');
       onOpen?.();
     };
 
-    hardwareSocket.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      console.log('[WebSocket] Received:', msg);
-      onMessage(msg);
+    socket.onmessage = (event) => {
+      if (socket !== hardwareSocket) return;
+      try {
+        const msg = JSON.parse(event.data);
+        console.log('[WebSocket] Received:', msg);
+        onMessage(msg);
+      } catch (err) {
+        console.error('[WebSocket] Invalid message:', err);
+      }
     };
 
-    hardwareSocket.onerror = (event) => {
+    socket.onerror = (event) => {
+      if (socket !== hardwareSocket) return;
       console.error('[WebSocket] Error:', event);
       onError?.(event);
     };
 
-    hardwareSocket.onclose = () => {
+    socket.onclose = () => {
+      if (socket !== hardwareSocket) return;
       console.warn('[WebSocket] Hardware detection socket closed');
-      onClose?.();
       hardwareSocket = null;
+      onClose?.();
     };
 
-    return hardwareSocket;
+    return socket;
   },
 
   sendWebSocketMessage(message: any) {
@@ -241,7 +269,7 @@ export const hardwareDetectionService = {
 
   disconnectWebSocket() {
     if (hardwareSocket) {
-      hardwareSocket.close();
+      closeSocketQuietly(hardwareSocket);
       hardwareSocket = null;
     }
   },
