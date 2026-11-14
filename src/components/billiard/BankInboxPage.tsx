@@ -29,7 +29,7 @@ const BankInboxPage: React.FC = () => {
   const navigate = useNavigate();
   const canView = useHasAnyRole(['admin', 'super_admin', 'manager']);
   const [tab, setTab] = useState<BankTxStatus>('needs_review');
-  const { items, loading, error, busy, actions } = useBankFeed(tab, canView);
+  const { items, loading, loadingMore, hasMore, error, busy, actions } = useBankFeed(tab, canView);
 
   const [assignTx, setAssignTx] = useState<BankTransaction | null>(null);
   const [ignoreTx, setIgnoreTx] = useState<BankTransaction | null>(null);
@@ -147,6 +147,17 @@ const BankInboxPage: React.FC = () => {
           )}
         </div>
 
+        {hasMore && !loading && (
+          <div className="flex justify-center">
+            <Button
+              label={loadingMore ? 'Loading...' : 'Load more'}
+              variant="secondary"
+              rounded="lg"
+              disabled={loadingMore}
+              onClick={actions.loadMore}
+            />
+          </div>
+        )}
       </div>
 
       <AssignTransactionModal
