@@ -55,7 +55,7 @@ const DeviceForm: React.FC<Props> = ({
     }, [isEdit, formData.id, loadActuators]);
     return (
         <Form onSubmit={onSubmit} className="mx-auto">
-            <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] items-stretch min-h-0 gap-8">
                 <div className="
                     space-y-6
                     bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 
@@ -64,65 +64,89 @@ const DeviceForm: React.FC<Props> = ({
                     shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] 
                     p-4
             ">
-                    {fields.map(([name, label, type, required, helper]) => (
-                        <FormGroup key={name} className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
-                            <div className="space-y-1">
-                                <FormLabel htmlFor={name}>{label}</FormLabel>
-                                {helper && (
-                                    <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                                        {helper}
-                                    </p>
-                                )}
-                            </div>
-                            <div>
-                                <FormInput
-                                    id={name}
-                                    name={name}
-                                    type={type}
-                                    value={(formData[name] ?? '') as string | number}
-                                    onChange={onChange}
-                                    required={required}
+                    {fields.map(([name, label, type, required, helper], index) => (
+                        <React.Fragment key={name}>
+                            <FormGroup className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                                <div className="space-y-1">
+                                    <FormLabel htmlFor={name}>{label}</FormLabel>
+                                    {helper && (
+                                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                                            {helper}
+                                        </p>
+                                    )}
+                                </div>
+
+                                <div>
+                                    <FormInput
+                                        id={name}
+                                        name={name}
+                                        type={type}
+                                        value={(formData[name] ?? '') as string | number}
+                                        onChange={onChange}
+                                        required={required}
+                                    />
+
+                                    {fieldErrors[name] && (
+                                        <p className="text-red-500 text-xs mt-1">
+                                            {fieldErrors[name]}
+                                        </p>
+                                    )}
+                                </div>
+                            </FormGroup>
+
+                            {index < fields.length - 1 && (
+                                <hr
+                                    role="presentation"
+                                    className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5"
                                 />
-                                {fieldErrors[name] && (
-                                    <p className="text-red-500 text-xs mt-1">{fieldErrors[name]}</p>
-                                )}
-                            </div>
-                        </FormGroup>
+                            )}
+                        </React.Fragment>
                     ))}
+
                 </div>
-                <div className='flex flex-col shadow-sm border border-gray-100 dark:bg-gray-800/80 dark:border-gray-700 rounded-lg space-y-0.5'>
-                    <div className='p-4'>
+                <div className='
+                    space-y-0.5
+                    flex flex-col min-h-0
+                    shadow-sm
+                  bg-white border border-gray-100
+                  dark:bg-gray-800/80 dark:border-gray-700
+                    rounded-lg
+                    overflow-hidden
+                '>
+                    <div className="p-4 shrink-0">
                         <h3
                             className="text-sm font-medium text-gray-700 dark:text-gray-100 line-clamp-1"
                         >
                             {t("actuator.title_list")}
                         </h3>
                     </div>
-                    {actuators.length > 0 ? (
-                        <div className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-4">
-                            {actuators.map((actuator) => (
-                                <ActuatorCard
-                                    key={actuator.id}
-                                    actuator={actuator}
-                                    allActuators={actuators}
-                                    variant="linked"
-                                    onUpdated={loadActuators}
-                                    onToggle={(id, active) => {
-                                        actions.patchActuator(id, { is_active: active }).then(loadActuators);
-                                    }}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <EmptyState
-                            animationData={noDataAnimation}
-                            message="No actuators linked to this device"
-                        />
-                    )}
+                    <div className="flex-1 min-h-0 space-y-0.5 overflow-y-auto overscroll-contai px-3 pb-4">
+                        {actuators.length > 0 ? (
+                            <div className="space-y-0.5">
+                                {actuators.map((actuator) => (
+                                    <ActuatorCard
+                                        key={actuator.id}
+                                        actuator={actuator}
+                                        allActuators={actuators}
+                                        variant="linked"
+                                        onUpdated={loadActuators}
+                                        onToggle={(id, active) => {
+                                            actions.patchActuator(id, { is_active: active }).then(loadActuators);
+                                        }}
+                                    />
+                                ))}
+                            </div>
+                        ) : (
+                            <EmptyState
+                                animationData={noDataAnimation}
+                                message="No actuators linked to this device"
+                            />
+                        )}
+                    </div>
+
                 </div>
             </div>
-            <hr className="my-10 w-full border-t border-zinc-950/5 dark:border-white/5" />
-            <FormActions className='lg:static fixed bottom-0 left-0 right-0 p-4 lg:pl-4 lg:pr-0 bg-white dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4'>
+            <FormActions className='mt-10 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4'>
                 <Button
                     type="button"
                     label="Back"

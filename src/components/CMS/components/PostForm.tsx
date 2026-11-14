@@ -574,7 +574,7 @@ export default function PostForm({
                 </div>
             </div>
 
-            <FormActions className=" mt-10 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
+            <FormActions className="mt-10 dark:bg-gray-900 grid grid-cols-1 md:grid-cols-2 lg:flex lg:justify-end gap-4">
                 <Button
                     type="button"
                     label="Back"
