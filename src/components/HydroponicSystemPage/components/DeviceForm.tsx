@@ -54,9 +54,16 @@ const DeviceForm: React.FC<Props> = ({
         }
     }, [isEdit, formData.id, loadActuators]);
     return (
-        <Form onSubmit={onSubmit} className="mx-auto max-w-4xl">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div className="lg:col-span-2 space-y-6">
+        <Form onSubmit={onSubmit} className="mx-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-[2.5fr_1fr] gap-8">
+                <div className="
+                    space-y-6
+                    bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 
+                    border border-gray-100 dark:border-white/5
+                    rounded-lg
+                    shadow dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] 
+                    p-4
+            ">
                     {fields.map(([name, label, type, required, helper]) => (
                         <FormGroup key={name} className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
                             <div className="space-y-1">
