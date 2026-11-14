@@ -54,6 +54,13 @@ export const getPaymentMethodLabel = (
   method: BillPaymentMethod
 ): string => i18n.t(`badge_status.${method}`);
 
+export const getPaymentModeLabel = (
+  mode: BillPaymentMethod | 'split'
+): string =>
+  mode === 'split'
+    ? i18n.t('badge_status.split')
+    : getPaymentMethodLabel(mode);
+
 // ---- Payment event type ------------------------------------------
 export const PAYMENT_EVENT_LABELS = {
   line_created: 'payment_events.line_created',

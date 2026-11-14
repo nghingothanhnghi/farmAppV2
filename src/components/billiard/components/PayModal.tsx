@@ -15,11 +15,13 @@ import {
 } from '../../../utils/billiard';
 import type {
   BillResponse,
+  BillPaymentMethod,
   LineMethod,
   PayPayload,
   PayResponse,
   SplitLinePayload,
 } from '../../../models/interfaces/Billiard';
+import { getPaymentModeLabel } from '../../../utils/status';
 
 interface StripeCheckoutProps {
   clientSecret: string;
@@ -43,13 +45,13 @@ interface Props {
   StripeCheckout?: React.ComponentType<StripeCheckoutProps>;
 }
 
-type Mode = 'cash' | 'bank_transfer' | 'split' | 'stripe';
+type Mode = BillPaymentMethod | 'split';
 
-const MODES: { value: Mode; label: string; hint: string }[] = [
-  { value: 'cash', label: 'Cash', hint: 'Collected at the counter' },
-  { value: 'bank_transfer', label: 'Bank transfer', hint: 'Customer scans a QR and transfers' },
-  { value: 'split', label: 'Split', hint: 'Cash and bank transfer together' },
-  { value: 'stripe', label: 'Card (Stripe)', hint: 'Pay online by card' },
+const MODES: { value: Mode; hint: string }[] = [
+  { value: 'cash', hint: 'Collected at the counter' },
+  { value: 'bank_transfer', hint: 'Customer scans a QR and transfers' },
+  { value: 'split', hint: 'Cash and bank transfer together' },
+  { value: 'stripe', hint: 'Pay online by card' },
 ];
 
 const QUICK_AMOUNTS = [50000, 100000, 200000, 500000];
@@ -432,7 +434,7 @@ const PayModal: React.FC<Props> = ({
                   <div
                     key={m.value}
                     className={`space-y-2 ${selected
-                      ? 'rounded-lg border border-gray-200 dark:border-white/10 p-3'
+                      ? ''
                       : ''
                       }`}
                   >
@@ -440,7 +442,7 @@ const PayModal: React.FC<Props> = ({
                       <FormRadio
                         id={`pay-${m.value}`}
                         name="payment_method"
-                        label={m.label}
+                        label={getPaymentModeLabel(m.value)}
                         checked={selected}
                         onChange={() => setMode(m.value)}
                         disabled={busy}
