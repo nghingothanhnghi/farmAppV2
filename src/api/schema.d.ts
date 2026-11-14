@@ -3087,6 +3087,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/payments/bank-feed/pending-lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Pending Lines
+         * @description Manager: transfer lines still waiting for money, newest first. `?amount=` keeps only lines of exactly that amount.
+         */
+        get: operations["list_pending_lines_payments_bank_feed_pending_lines_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/payments/bank-feed/transactions": {
         parameters: {
             query?: never;
@@ -5003,6 +5023,23 @@ export interface components {
             username: string;
         };
         /** BankTransactionResponse */
+        /**
+         * PendingTransferLineResponse
+         * @description A bank-transfer payment line still waiting for money (hand-added from the Nov 13 guide; regenerate from /openapi.json).
+         */
+        PendingTransferLineResponse: {
+            line_id: number;
+            order_id: number;
+            source_type: string;
+            source_id: string;
+            amount: string;
+            order_total: string;
+            transfer_memo: string | null;
+            /** Format: date-time */
+            created_at: string;
+            expires_at: string | null;
+            expired: boolean;
+        };
         BankTransactionResponse: {
             /** Id */
             id: number;
@@ -14803,6 +14840,40 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["BankTransactionResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_pending_lines_payments_bank_feed_pending_lines_get: {
+        parameters: {
+            query?: {
+                /** @description Only lines of exactly this amount */
+                amount?: number | string | null;
+                limit?: number;
+                offset?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PendingTransferLineResponse"][];
                 };
             };
             /** @description Validation Error */

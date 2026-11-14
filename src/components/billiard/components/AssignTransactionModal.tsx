@@ -1,14 +1,17 @@
 // src/components/billiard/components/AssignTransactionModal.tsx
-// Links a bank transaction to a waiting transfer line. There is no endpoint that lists every
-// waiting line, so the manager opens the bill (by session number) and picks the line from it.
-import React, { useEffect, useState } from 'react';
+// Links a bank transaction to a waiting transfer line. The picker comes from
+// GET /payments/bank-feed/pending-lines?amount=<transaction amount> (managers only), so only
+// waiting lines of exactly the same amount are offered.
+import React, { useCallback, useEffect, useState } from 'react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
-import { FormInput } from '../../common/Form';
-import { billiardService } from '../../../services/billiard_service';
-import { billiardErrorMessage, formatMoneyString, parseWholeAmount, toAmount } from '../../../utils/billiard';
-import type { BankTransaction } from '../../../models/interfaces/BankFeed';
-import type { BillResponse, PaymentLine } from '../../../models/interfaces/Billiard';
+import Badge from '../../common/Badge';
+import Spinner from '../../common/Spinner';
+import { bankFeedService } from '../../../services/bankFeedService';
+import { billiardErrorMessage, formatMoneyString, toAmount } from '../../../utils/billiard';
+import { formatDateTime } from '../../../utils/formatters';
+import { BANK_FEED_PAGE_SIZE } from '../../../models/interfaces/BankFeed';
+import type { BankTransaction, PendingTransferLine } from '../../../models/interfaces/BankFeed';
 
 interface Props {
   tx: BankTransaction | null;
@@ -18,46 +21,68 @@ interface Props {
 }
 
 const AssignTransactionModal: React.FC<Props> = ({ tx, busy, onClose, onAssign }) => {
-  const [sessionId, setSessionId] = useState('');
-  const [bill, setBill] = useState<BillResponse | null>(null);
+  const [lines, setLines] = useState<PendingTransferLine[]>([]);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [lineId, setLineId] = useState<number | null>(null);
 
+  const txId = tx?.id ?? null;
+  const txAmount = tx?.amount ?? null;
+
+  // Load the first page of matching waiting lines each time a transaction is opened.
   useEffect(() => {
-    if (tx) {
-      setSessionId('');
-      setBill(null);
-      setError(null);
-      setLineId(null);
-    }
-  }, [tx]);
-
-  const waiting: PaymentLine[] =
-    bill?.payments?.filter((p) => p.method === 'bank_transfer' && p.status === 'pending') ?? [];
-  const selected = waiting.find((l) => l.id === lineId) ?? null;
-  // VND has no decimals: compare as numbers, not strings ("110000.00" vs "110000").
-  const mismatch = !!tx && !!selected && toAmount(selected.amount) !== toAmount(tx.amount);
-
-  const loadBill = async () => {
-    const id = parseWholeAmount(sessionId);
-    if (id === null || id <= 0) return;
-    setLoading(true);
-    setError(null);
-    setBill(null);
+    if (txId === null || txAmount === null) return;
+    let cancelled = false;
+    setLines([]);
     setLineId(null);
+    setError(null);
+    setHasMore(false);
+    setLoading(true);
+    bankFeedService
+      .pendingLines(txAmount, BANK_FEED_PAGE_SIZE, 0)
+      .then((rows) => {
+        if (cancelled) return;
+        setLines(rows);
+        setHasMore(rows.length >= BANK_FEED_PAGE_SIZE);
+      })
+      .catch((err) => {
+        if (!cancelled) setError(billiardErrorMessage(err, 'Could not load waiting payments'));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [txId, txAmount]);
+
+  const loadMore = useCallback(async () => {
+    if (txAmount === null || loadingMore) return;
+    setLoadingMore(true);
     try {
-      setBill(await billiardService.getSession(id));
+      const rows = await bankFeedService.pendingLines(txAmount, BANK_FEED_PAGE_SIZE, lines.length);
+      setLines((prev) => {
+        const seen = new Set(prev.map((l) => l.line_id));
+        return [...prev, ...rows.filter((l) => !seen.has(l.line_id))];
+      });
+      setHasMore(rows.length >= BANK_FEED_PAGE_SIZE);
     } catch (err) {
-      setError(billiardErrorMessage(err, 'Could not load this bill'));
+      setError(billiardErrorMessage(err, 'Could not load more waiting payments'));
     } finally {
-      setLoading(false);
+      setLoadingMore(false);
     }
-  };
+  }, [txAmount, loadingMore, lines.length]);
+
+  const selected = lines.find((l) => l.line_id === lineId) ?? null;
+  // VND has no decimals: compare as numbers, not strings ("110000.00" vs "110000").
+  // The server already filters by amount; this guards the button if the list is ever mixed.
+  const mismatch = !!tx && !!selected && toAmount(selected.amount) !== toAmount(tx.amount);
 
   const submit = async () => {
     if (!tx || !selected || mismatch) return;
-    if (await onAssign(tx.id, selected.id)) onClose();
+    if (await onAssign(tx.id, selected.line_id)) onClose();
   };
 
   return (
@@ -74,56 +99,59 @@ const AssignTransactionModal: React.FC<Props> = ({ tx, busy, onClose, onAssign }
               <p className="text-xs text-gray-600 dark:text-gray-300 break-words">{tx.content ?? '—'}</p>
             </div>
 
-            <div className="flex items-center gap-2">
-              <FormInput
-                id="assign-session"
-                type="text"
-                inputMode="numeric"
-                value={sessionId}
-                placeholder="Session number"
-                onChange={(e) => setSessionId(e.target.value)}
-                disabled={busy || loading}
-                className="flex-1"
-              />
-              <Button
-                label={loading ? 'Loading...' : 'Find bill'}
-                variant="secondary"
-                rounded="lg"
-                disabled={busy || loading || parseWholeAmount(sessionId) === null}
-                onClick={loadBill}
-              />
-            </div>
+            {loading && <Spinner className="mx-auto my-4" />}
             {error && <p className="text-xs text-red-600">{error}</p>}
 
-            {bill && waiting.length === 0 && (
+            {!loading && !error && lines.length === 0 && (
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                This bill has no waiting bank-transfer line.
+                No waiting bank-transfer line has this amount. If the customer has not paid again yet,
+                pay the bill with a new transfer line first, then assign this transaction to it.
               </p>
             )}
 
-            {waiting.length > 0 && (
-              <ul className="space-y-2">
-                {waiting.map((l) => (
-                  <li key={l.id}>
+            {lines.length > 0 && (
+              <ul className="space-y-2 max-h-72 overflow-y-auto">
+                {lines.map((l) => (
+                  <li key={l.line_id}>
                     <label className="flex items-center justify-between gap-3 cursor-pointer rounded-md border border-slate-200 dark:border-gray-700 p-2 text-sm">
-                      <span className="flex items-center gap-2">
+                      <span className="flex items-start gap-2 min-w-0">
                         <input
                           type="radio"
                           name="assign-line"
-                          checked={lineId === l.id}
-                          onChange={() => setLineId(l.id)}
+                          className="mt-1"
+                          checked={lineId === l.line_id}
+                          onChange={() => setLineId(l.line_id)}
                           disabled={busy}
                         />
-                        <span className="text-gray-800 dark:text-gray-100">
-                          Line #{l.id}
-                          {l.transfer?.memo ? ` · ${l.transfer.memo}` : ''}
+                        <span className="min-w-0">
+                          <span className="block text-gray-800 dark:text-gray-100">
+                            Session #{l.source_id} · Line #{l.line_id}
+                            {l.transfer_memo ? ` · ${l.transfer_memo}` : ''}
+                          </span>
+                          <span className="flex items-center gap-2 text-[0.6875rem] text-gray-500 dark:text-gray-400">
+                            {formatDateTime(l.created_at)}
+                            {l.expired && <Badge label="QR expired" variant="warning" size="xsmall" />}
+                          </span>
                         </span>
                       </span>
-                      <span className="font-medium">{formatMoneyString(l.amount, bill?.currency)}</span>
+                      <span className="font-medium shrink-0">{formatMoneyString(l.amount)}</span>
                     </label>
                   </li>
                 ))}
               </ul>
+            )}
+
+            {hasMore && (
+              <div className="flex justify-center">
+                <Button
+                  label={loadingMore ? 'Loading...' : 'Load more'}
+                  variant="secondary"
+                  size="xs"
+                  rounded="lg"
+                  disabled={loadingMore || busy}
+                  onClick={loadMore}
+                />
+              </div>
             )}
 
             {mismatch && selected && (
