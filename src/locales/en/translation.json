@@ -115,7 +115,8 @@
         "new_post": "New Post",
         "void_payment": "Void Payment",
         "show": "Show",
-        "hide": "Hide"
+        "hide": "Hide",
+        "add_payment_line": "Add Line"
     },
     "badge_status":{
         "inStock": "In Stock",
@@ -763,6 +764,10 @@
                 "title": "Void {{amount}}",
                 "description": "The bill will reopen and can be paid again. Give a reason for the record."
             },
+            "pay":{
+                "title": "Pay {{amount}}",
+                "description": ""
+            },            
             "table": {
                 "title": "New Table",
                 "description": ""
@@ -823,9 +828,11 @@
         "payout_exceeds_drawer_cash": "A pay-out cannot be larger than the cash in the drawer.",
         "float": "Float",
         "history": "History",
+        "exact": "Exact",
         "counted_cash": "Counted cash",
         "variance_cash": "Variance",
         "no_open_shift": "No open shift",
+        "remaining": "Remaining: {{amount}}",
         "handed_over": "Handed over {{amount}}",
         "change": "Change {{amount}}",
         "paid_so_far": "Paid so far",
@@ -840,6 +847,7 @@
         "payment_line": "Payment #{{id}}",
         "system": "System",
         "user": "User #{{id}}",
+        "no_cash_shift_warning": "No cash shift is open. If this club requires one, payment will be refused.",
         "help_message_count_drawer": "Count the cash in the drawer and enter it as the opening float."
     },
     "bill_status": {

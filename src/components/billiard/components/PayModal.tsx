@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
+import InlineNotice from '../../common/InlineNotice';
 import { FormRadio, FloatingLabelInput, FloatingLabelSelect } from '../../common/Form';
 import {
   formatMoneyString,
@@ -200,20 +201,16 @@ const PayModal: React.FC<Props> = ({
     }
 
     return (
-      <div className="rounded-md border border-yellow-200 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 p-2 text-xs text-yellow-800 dark:text-yellow-200 space-y-1">
-        <p>
-          No cash shift is open. If this club requires one,
-          payment will be refused.
-        </p>
 
-        <button
-          type="button"
-          className="underline font-medium"
-          onClick={onOpenShift}
-        >
-          Open a shift
-        </button>
-      </div>
+    <InlineNotice
+      variant="warning"
+      action={{
+        label: t('btn.open_shift'),
+        onClick: onOpenShift,
+      }}
+    >
+      {t('cashier.no_cash_shift_warning')}
+    </InlineNotice>
     );
   };
 
@@ -240,7 +237,7 @@ const PayModal: React.FC<Props> = ({
 
       <div className="grid grid-cols-3 lg:grid-cols-5 gap-2">
         <Button
-          label="Exact"
+          label={t('cashier.exact')}
           size="xs"
           variant={tenderedNum === null ? 'primary' : 'secondary'}
           rounded="lg"
@@ -268,7 +265,7 @@ const PayModal: React.FC<Props> = ({
           })}
         </p>
       ) : (
-        <p className="text-sm text-gray-800 dark:text-gray-100">
+        <p className="text-xs text-gray-800 dark:text-gray-100">
           {t('input.change_due.label')}:{' '}
           <span className="font-semibold">
             {money(Math.max(0, change))}
@@ -299,7 +296,7 @@ const PayModal: React.FC<Props> = ({
                   <FloatingLabelSelect
                     id={`split-method-${r.key}`}
                     name={`split-method-${r.key}`}
-                    label={`Line ${i + 1} method`}
+                    label={t('cashier.payment_line', { id: i + 1 })}
                     value={r.method}
                     disabled={busy}
                     onChange={(e) =>
@@ -318,7 +315,7 @@ const PayModal: React.FC<Props> = ({
                     name={`split-amount-${r.key}`}
                     type="text"
                     inputMode="numeric"
-                    label="Amount"
+                    label={t('input.amount.label')}
                     value={
                       parseAmount(r.amount) === null
                         ? ''
@@ -381,7 +378,7 @@ const PayModal: React.FC<Props> = ({
 
       <div className="flex items-center justify-between">
         <Button
-          label="Add line"
+          label={t('btn.add_payment_line')}
           size="xs"
           variant="secondary"
           rounded="lg"
@@ -389,12 +386,11 @@ const PayModal: React.FC<Props> = ({
           disabled={busy || rows.length >= MAX_SPLIT_LINES}
           onClick={addRow}
         />
-
         <p
-          className={`text-sm font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'
+          className={`text-xs font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'
             }`}
         >
-          Remaining: {money(remaining)}
+         {t('cashier.remaining', { amount: money(remaining) })}
         </p>
       </div>
 
@@ -410,7 +406,7 @@ const PayModal: React.FC<Props> = ({
     <Modal
       isOpen={isOpen}
       onClose={busy ? () => { } : onClose}
-      title={`Pay ${money(due)}`}
+      title={t('billiard_tables.modals.pay.title', { amount: money(due) })}
       size="small"
       content={
         <div className="px-10 pb-4 space-y-4">

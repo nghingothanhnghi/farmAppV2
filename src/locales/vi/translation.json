@@ -115,7 +115,8 @@
         "new_post": "Bài viết mới",
         "void_payment": "Hủy thanh toán",
         "show": "Chi tiết",
-        "hide": "Đóng lại"
+        "hide": "Đóng lại",
+        "add_payment_line": "Thêm khoản thanh toán"
     },
     "badge_status":{
         "inStock": "Còn hàng",
@@ -762,7 +763,11 @@
             "void":{
                 "title": "Hủy thanh toán {{amount}}",
                 "description": "Hóa đơn sẽ được mở lại và có thể thanh toán lại. Vui lòng nhập lý do để lưu vào lịch sử."
-            },            
+            }, 
+            "pay":{
+                "title": "Thanh toán {{amount}}",
+                "description": ""
+            },                        
             "table": {
                 "title": "Bàn mới",
                 "description": ""
@@ -822,9 +827,11 @@
         "payout_exceeds_drawer_cash": "Khoản chi ra không thể lớn hơn tiền mặt trong ngăn kéo.",
         "float": "Tiền vốn đầu ca",
         "history": "Lịch sử",
+        "exact": "Vừa đủ",
         "counted_cash": "Tiền mặt thực đếm",
         "variance_cash": "Chênh lệch tiền mặt",
         "no_open_shift": "Chưa có ca thu ngân nào đang mở",
+        "remaining": "Còn lại {{amount}}",
         "handed_over": "Khách đưa {{amount}}",
         "change": "Tiền thừa {{amount}}",
         "paid_so_far": "Đã thanh toán",
@@ -839,6 +846,7 @@
         "payment_line": "Khoản thanh toán #{{id}}",
         "system": "Hệ thống",
         "user": "Người dùng #{{id}}",
+        "no_cash_shift_warning": "Hiện không có ca làm việc được mở. Nếu câu lạc bộ này yêu cầu phải có ca như vậy, thì việc thanh toán sẽ bị từ chối.",
         "help_message_count_drawer": "Kiểm đếm tiền mặt trong ngăn kéo và nhập số tiền này làm tiền đầu ca."        
     },
     "bill_status": {
