@@ -23,6 +23,7 @@ import type {
   SessionStart,
   TableCreate,
   TableUpdate,
+  TableDeactivateResponse,
   UsageReport,
 } from '../models/interfaces/Billiard';
 
@@ -38,6 +39,13 @@ export const billiardService = {
     data: TableUpdate,
   ): Promise<BilliardTable> {
     const res = await apiClient.patch(`/tables/${tableId}`, data);
+    return res.data;
+  },
+
+  async deactivateTable(
+    tableId: number,
+  ): Promise<TableDeactivateResponse> {
+    const res = await apiClient.delete(`/tables/${tableId}`);
     return res.data;
   },
 

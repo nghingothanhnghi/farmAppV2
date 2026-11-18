@@ -13,6 +13,7 @@ import {
   IconBuildingBank,
 } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
+import Modal from '../common/Modal';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
 import EmptyState from '../common/EmptyState';
@@ -44,6 +45,7 @@ const TablesPage: React.FC = () => {
     startingId,
     creating,
     updating,
+    deactivatingId,
     actions,
   } = useTables();
 
@@ -51,6 +53,8 @@ const TablesPage: React.FC = () => {
   const now = useNow(1000); // local 1s tick for elapsed timers
   const [formOpen, setFormOpen] = useState(false);
   const [editingTable, setEditingTable] = useState<BilliardTable | null>(null);
+  const [tableToDeactivate, setTableToDeactivate] =
+    useState<BilliardTable | null>(null);
 
   const openCreateForm = () => {
     setEditingTable(null);
@@ -82,6 +86,25 @@ const TablesPage: React.FC = () => {
       navigate(`/billiard/sessions/${session.session_id}`);
     } else {
       refetchLive();
+    }
+  };
+
+  const openDeactivateConfirmation = (table: BilliardTable) => {
+    setTableToDeactivate(table);
+  };
+
+  const closeDeactivateConfirmation = () => {
+    if (deactivatingId !== null) return;
+    setTableToDeactivate(null);
+  };
+
+  const handleDeactivate = async () => {
+    if (!tableToDeactivate) return;
+
+    const result = await actions.deactivateTable(tableToDeactivate.id);
+
+    if (result === true) {
+      setTableToDeactivate(null);
     }
   };
 
@@ -214,12 +237,14 @@ const TablesPage: React.FC = () => {
                     live={byTableId.get(table.id)}
                     now={now}
                     starting={startingId === table.id}
-                    disabled={startingId !== null}
+                    disabled={startingId !== null || deactivatingId !== null}
                     onStart={handleStart}
                     onOpen={(sessionId) =>
                       navigate(`/billiard/sessions/${sessionId}`)
                     }
                     onEdit={canManage ? openEditForm : undefined}
+                    onDeactivate={canManage ? openDeactivateConfirmation : undefined}
+                    deactivating={deactivatingId === table.id}
                   />
                 ))}
               </div>
@@ -237,6 +262,63 @@ const TablesPage: React.FC = () => {
           onSubmit={handleFormSubmit}
         />
       )}
+
+      <Modal
+        isOpen={canManage && tableToDeactivate !== null}
+        onClose={closeDeactivateConfirmation}
+        title={t('billiard_tables.modals.deactivate.title', {
+          defaultValue: 'Deactivate table?',
+        })}
+        size="small"
+        showCloseButton={deactivatingId === null}
+        content={
+          <div className="px-7 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+            <p>
+              {t('billiard_tables.modals.deactivate.description', {
+                table: tableToDeactivate?.name ?? '',
+                defaultValue: `Are you sure you want to deactivate "${tableToDeactivate?.name}"?`,
+              })}
+            </p>
+
+            <p>
+              {t('billiard_tables.modals.deactivate.note', {
+                defaultValue:
+                  'The table will no longer appear in the active table list. Historical sessions and billing records will be preserved.',
+              })}
+            </p>
+          </div>
+        }
+        actions={
+          <div className="flex justify-end gap-2">
+            <Button
+              label={t('btn.cancel')}
+              variant="secondary"
+              rounded="lg"
+              disabled={deactivatingId !== null}
+              onClick={closeDeactivateConfirmation}
+            />
+
+            <Button
+              label={
+                deactivatingId !== null
+                  ? t('btn.deactivating', { defaultValue: 'Deactivating...' })
+                  : t('btn.deactivate', { defaultValue: 'Deactivate' })
+              }
+              variant="danger"
+              rounded="lg"
+              disabled={deactivatingId !== null}
+              onClick={handleDeactivate}
+              icon={
+                deactivatingId !== null ? (
+                  <span className="inline-block size-4 animate-spin rounded-full border-2 border-current border-r-transparent" />
+                ) : undefined
+              }
+              iconPosition="left"
+            />
+          </div>
+        }
+      />
+
     </div>
   );
 };

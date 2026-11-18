@@ -1,5 +1,6 @@
 // src/components/billiard/components/TableCard.tsx
 import React from 'react';
+import { IconPencil, IconTrash } from '@tabler/icons-react';
 import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
@@ -28,6 +29,8 @@ interface Props {
   onStart: (table: BilliardTable) => void;
   onOpen: (sessionId: number) => void;
   onEdit?: (table: BilliardTable) => void;
+  onDeactivate?: (table: BilliardTable) => void;
+  deactivating?: boolean;
 }
 
 const Row: React.FC<{
@@ -58,6 +61,8 @@ const TableCard: React.FC<Props> = ({
   onStart,
   onOpen,
   onEdit,
+  onDeactivate,
+  deactivating = false,
 }) => {
   const { t } = useTranslation();
 
@@ -143,7 +148,6 @@ const TableCard: React.FC<Props> = ({
             <Button
               label={t('btn.open_session')}
               variant="secondary"
-              size="sm"
               rounded="lg"
               fullWidth
               disabled={!live}
@@ -164,15 +168,32 @@ const TableCard: React.FC<Props> = ({
           )}
         </div>
 
-        {onEdit && (
-          <Button
-            label="Edit"
-            variant="secondary"
-            size="sm"
-            rounded="lg"
-            disabled={starting}
-            onClick={() => onEdit(table)}
-          />
+        {(onEdit || onDeactivate) && (
+          <div className="flex items-center gap-2">
+            {onEdit && (
+              <Button
+                label={t('btn.edit')}
+                variant="secondary"
+                rounded="full"
+                disabled={disabled || deactivating}
+                onClick={() => onEdit(table)}
+                icon={<IconPencil size={15} />}
+                iconOnly
+              />
+            )}
+
+            {onDeactivate && (
+              <Button
+                label={t('btn.deactivate', { defaultValue: 'Deactivate' })}
+                variant="danger"
+                rounded="full"
+                disabled={disabled || deactivating}
+                onClick={() => onDeactivate(table)}
+                icon={<IconTrash size={15} />}
+                iconOnly
+              />
+            )}
+          </div>
         )}
       </div>
     </div>

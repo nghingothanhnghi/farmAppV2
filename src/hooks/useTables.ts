@@ -7,6 +7,7 @@ import type { BilliardTable, SessionStart, TableCreate, TableUpdate } from '../m
 
 export type CreateTableError = { status?: number; message: string };
 export type UpdateTableError = { status?: number; message: string };
+export type DeactivateTableError = { status?: number; message: string };
 
 export function useTables() {
   const { setAlert } = useAlert();
@@ -16,6 +17,7 @@ export function useTables() {
   const [startingId, setStartingId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
   const [updating, setUpdating] = useState(false);
+  const [deactivatingId, setDeactivatingId] = useState<number | null>(null);
 
   const guard = useRef(false); // blocks double-click double-submit
 
@@ -88,6 +90,42 @@ export function useTables() {
     }
   };
 
+const deactivateTable = async (
+  tableId: number,
+): Promise<true | DeactivateTableError> => {
+  if (guard.current) return { message: '' };
+
+  guard.current = true;
+  setDeactivatingId(tableId);
+
+  try {
+  
+    const response = await billiardService.deactivateTable(tableId);
+
+    setAlert({
+      type: 'success',
+      message: response.message,
+    });
+
+    await fetchTables();
+    return true;
+  } catch (err) {
+    const message = billiardErrorMessage(err, 'Failed to deactivate table');
+    const status = getStatus(err);
+
+    setAlert({ type: 'error', message });
+
+    if (status === 409 || status === 404) {
+      await fetchTables();
+    }
+
+    return { status, message };
+  } finally {
+    guard.current = false;
+    setDeactivatingId(null);
+  }
+};  
+
   const startTable = async (tableId: number): Promise<SessionStart | null> => {
     if (guard.current) return null;
     guard.current = true;
@@ -104,5 +142,5 @@ export function useTables() {
     }
   };
 
-  return { tables, loading, error, startingId, creating, updating, actions: { fetchTables, createTable, updateTable, startTable } };
+  return { tables, loading, error, startingId, creating, updating, deactivatingId, actions: { fetchTables, createTable, updateTable, deactivateTable, startTable } };
 }

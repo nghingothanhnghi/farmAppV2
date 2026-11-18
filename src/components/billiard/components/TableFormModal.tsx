@@ -1,9 +1,11 @@
 // src/components/billiard/components/TableFormModal.tsx
 import React, { useEffect, useState } from 'react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import Modal from '../../common/Modal';
 import Button from '../../common/Button';
+import InlineNotice from '../../common/InlineNotice';
 import { FormGroup, FloatingLabelInput } from '../../common/Form';
 import type {
   BilliardTable,
@@ -98,12 +100,12 @@ const TableFormModal: React.FC<Props> = ({
   return (
     <Modal
       isOpen={isOpen}
-      onClose={loading ? () => {} : onClose}
+      onClose={loading ? () => { } : onClose}
       title={
         isEditing
           ? t('billiard_tables.modals.table.edit_title', {
-              defaultValue: 'Edit table',
-            })
+            defaultValue: 'Edit table',
+          })
           : t('billiard_tables.modals.table.title')
       }
       size="small"
@@ -158,16 +160,17 @@ const TableFormModal: React.FC<Props> = ({
           </FormGroup>
 
           {isPlaying && (
-            <div className="flex gap-2 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-100 dark:border-blue-900/50 p-3">
-              <span className="text-blue-600 dark:text-blue-400 shrink-0">
-                <span className="icon-[tabler--info-circle] text-lg" />
-              </span>
-
-              <p className="text-xs leading-relaxed text-blue-700 dark:text-blue-300">
-                Changing the hourly rate only affects future sessions.
-                The current session keeps its original pricing.
-              </p>
-            </div>
+            <InlineNotice
+              variant="info"
+            >
+              <div className="flex gap-2">
+                <IconInfoCircle />
+                <p className="text-xs leading-relaxed text-blue-700 dark:text-blue-300">
+                  Changing the hourly rate only affects future sessions.
+                  The current session keeps its original pricing.
+                </p>
+              </div>
+            </InlineNotice>
           )}
         </div>
       }
@@ -178,7 +181,7 @@ const TableFormModal: React.FC<Props> = ({
               loading
                 ? t('btn.saving')
                 : isEditing
-                  ? 'Update'
+                  ? t('btn.update')
                   : t('btn.save')
             }
             onClick={handleSubmit}

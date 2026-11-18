@@ -89,6 +89,12 @@ export interface TableUpdate {
   hourly_rate?: string;
 }
 
+export interface TableDeactivateResponse {
+  message: string;
+  id: number;
+  is_active: boolean;
+}
+
 export interface ActiveTable {
   table_id: number;      // mapped from `id`
   table_name?: string;   // mapped from `name`
