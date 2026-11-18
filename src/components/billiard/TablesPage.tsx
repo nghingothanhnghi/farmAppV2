@@ -11,6 +11,7 @@ import {
   IconCirclePlus,
   IconCashRegister,
   IconBuildingBank,
+  IconAlertCircle
 } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Modal from '../common/Modal';
@@ -269,10 +270,11 @@ const TablesPage: React.FC = () => {
         title={t('billiard_tables.modals.deactivate.title', {
           defaultValue: 'Deactivate table?',
         })}
-        size="small"
-        showCloseButton={deactivatingId === null}
+        size="xsmall"
+        showCloseButton={false}
         content={
-          <div className="px-7 space-y-2 text-sm text-gray-600 dark:text-gray-300">
+          <div className="text-sm px-10 pt-6 pb-10 text-center">
+            <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
             <p>
               {t('billiard_tables.modals.deactivate.description', {
                 table: tableToDeactivate?.name ?? '',
@@ -289,15 +291,7 @@ const TablesPage: React.FC = () => {
           </div>
         }
         actions={
-          <div className="flex justify-end gap-2">
-            <Button
-              label={t('btn.cancel')}
-              variant="secondary"
-              rounded="lg"
-              disabled={deactivatingId !== null}
-              onClick={closeDeactivateConfirmation}
-            />
-
+          <div className="flex gap-4">
             <Button
               label={
                 deactivatingId !== null
@@ -314,6 +308,15 @@ const TablesPage: React.FC = () => {
                 ) : undefined
               }
               iconPosition="left"
+              className='min-w-[150px]'
+            />
+            <Button
+              label={t('btn.cancel')}
+              variant="secondary"
+              rounded="lg"
+              disabled={deactivatingId !== null}
+              onClick={closeDeactivateConfirmation}
+              className='min-w-[150px]'
             />
           </div>
         }
