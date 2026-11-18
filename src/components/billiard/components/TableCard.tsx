@@ -5,9 +5,19 @@ import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
 import { useTranslation } from 'react-i18next';
 import { parseUtc } from '../../../utils/formatters';
-import { DEFAULT_CURRENCY, formatElapsed, formatMoneyString } from '../../../utils/billiard';
-import type { ActiveTable, BilliardTable } from '../../../models/interfaces/Billiard';
-import { getTableStatusLabel, getTableStatusVariant } from '../../../utils/status';
+import {
+  DEFAULT_CURRENCY,
+  formatElapsed,
+  formatMoneyString,
+} from '../../../utils/billiard';
+import type {
+  ActiveTable,
+  BilliardTable,
+} from '../../../models/interfaces/Billiard';
+import {
+  getTableStatusLabel,
+  getTableStatusVariant,
+} from '../../../utils/status';
 
 interface Props {
   table: BilliardTable;
@@ -17,36 +27,74 @@ interface Props {
   disabled: boolean; // another start is in flight
   onStart: (table: BilliardTable) => void;
   onOpen: (sessionId: number) => void;
+  onEdit?: (table: BilliardTable) => void;
 }
 
-const Row: React.FC<{ label: string; value: string; bold?: boolean }> = ({ label, value, bold }) => (
+const Row: React.FC<{
+  label: string;
+  value: string;
+  bold?: boolean;
+}> = ({ label, value, bold }) => (
   <div className="flex items-center justify-between text-xs">
     <span className="text-gray-500 dark:text-gray-400">{label}</span>
-    <span className={bold ? 'font-semibold text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-200'}>
+    <span
+      className={
+        bold
+          ? 'font-semibold text-gray-900 dark:text-white'
+          : 'text-gray-700 dark:text-gray-200'
+      }
+    >
       {value}
     </span>
   </div>
 );
 
-const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onStart, onOpen }) => {
+const TableCard: React.FC<Props> = ({
+  table,
+  live,
+  now,
+  starting,
+  disabled,
+  onStart,
+  onOpen,
+  onEdit,
+}) => {
   const { t } = useTranslation();
+
   const currency = live?.currency ?? DEFAULT_CURRENCY;
-  const elapsed = live ? Math.max(0, Math.floor((now - parseUtc(live.start_time)) / 1000)) : 0;
-  // While playing, show the rate of the rule frozen at start (may differ from the table's own rate).
-  const rate = table.status === 'playing' && live?.hourly_rate ? live.hourly_rate : table.hourly_rate;
+  const elapsed = live
+    ? Math.max(0, Math.floor((now - parseUtc(live.start_time)) / 1000))
+    : 0;
+
+  // While playing, show the rate of the rule frozen at session start.
+  const rate =
+    table.status === 'playing' && live?.hourly_rate
+      ? live.hourly_rate
+      : table.hourly_rate;
+
   const variant = getTableStatusVariant(table.status);
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3 flex flex-col">
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">{table.name}</h3>
+          <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
+            {table.name}
+          </h3>
           <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">
             {formatMoneyString(rate, currency)} / h
-            {live?.pricing_rule_name ? ` · ${live.pricing_rule_name}` : ''}
+            {live?.pricing_rule_name
+              ? ` · ${live.pricing_rule_name}`
+              : ''}
           </p>
         </div>
-        <Badge label={getTableStatusLabel(table.status)} variant={variant} size="xsmall" className="capitalize" />
+
+        <Badge
+          label={getTableStatusLabel(table.status)}
+          variant={variant}
+          size="xsmall"
+          className="capitalize"
+        />
       </div>
 
       {table.status === 'playing' && (
@@ -56,10 +104,21 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
               <div className="number-digital text-2xl font-semibold text-gray-900 dark:text-yellow-200">
                 {formatElapsed(elapsed)}
               </div>
+
               <div className="space-y-1 border-t border-gray-200 dark:border-white/5 pt-2">
-                <Row label={t('billiard_tables.cards.fee_table')} value={formatMoneyString(live.current_table_fee, currency)} />
-                <Row label={t('billiard_tables.cards.fee_product')} value={formatMoneyString(live.current_product_fee, currency)} />
-                <Row label={t('billiard_tables.cards.fee_total')} value={formatMoneyString(live.current_total, currency)} bold />
+                <Row
+                  label={t('billiard_tables.cards.fee_table')}
+                  value={formatMoneyString(live.current_table_fee, currency)}
+                />
+                <Row
+                  label={t('billiard_tables.cards.fee_product')}
+                  value={formatMoneyString(live.current_product_fee, currency)}
+                />
+                <Row
+                  label={t('billiard_tables.cards.fee_total')}
+                  value={formatMoneyString(live.current_total, currency)}
+                  bold
+                />
               </div>
             </>
           ) : (
@@ -68,32 +127,52 @@ const TableCard: React.FC<Props> = ({ table, live, now, starting, disabled, onSt
         </div>
       )}
 
-      <div className="mt-auto">
-        {table.status === 'available' && (
-          <StartStopButtons
-            status="available"
-            busy={starting}
-            disabled={disabled}
-            onStart={() => onStart(table)}
-            fullWidth
-          />
-        )}
-        {table.status === 'playing' && (
+      <div className="mt-auto flex items-center gap-2">
+        <div className="flex-1 min-w-0">
+          {table.status === 'available' && (
+            <StartStopButtons
+              status="available"
+              busy={starting}
+              disabled={disabled}
+              onStart={() => onStart(table)}
+              fullWidth
+            />
+          )}
+
+          {table.status === 'playing' && (
+            <Button
+              label={t('btn.open_session')}
+              variant="secondary"
+              size="sm"
+              rounded="lg"
+              fullWidth
+              disabled={!live}
+              onClick={() => live && onOpen(live.session_id)}
+            />
+          )}
+
+          {table.status === 'reserved' && (
+            <p className="text-xs text-gray-400 text-center py-2">
+              Reserved
+            </p>
+          )}
+
+          {table.status === 'maintenance' && (
+            <p className="text-xs text-gray-400 text-center py-2">
+              Under maintenance
+            </p>
+          )}
+        </div>
+
+        {onEdit && (
           <Button
-            label={t("btn.open_session")}
+            label="Edit"
             variant="secondary"
             size="sm"
             rounded="lg"
-            fullWidth
-            disabled={!live}
-            onClick={() => live && onOpen(live.session_id)}
+            disabled={starting}
+            onClick={() => onEdit(table)}
           />
-        )}
-        {table.status === 'reserved' && (
-          <p className="text-xs text-gray-400 text-center">Reserved</p>
-        )}
-        {table.status === 'maintenance' && (
-          <p className="text-xs text-gray-400 text-center">Under maintenance</p>
         )}
       </div>
     </div>

@@ -22,6 +22,7 @@ import type {
   ScorePayload,
   SessionStart,
   TableCreate,
+  TableUpdate,
   UsageReport,
 } from '../models/interfaces/Billiard';
 
@@ -29,6 +30,14 @@ export const billiardService = {
   // --- Tables ---
   async createTable(data: TableCreate): Promise<BilliardTable> {
     const res = await apiClient.post('/tables', data);
+    return res.data;
+  },
+
+  async updateTable(
+    tableId: number,
+    data: TableUpdate,
+  ): Promise<BilliardTable> {
+    const res = await apiClient.patch(`/tables/${tableId}`, data);
     return res.data;
   },
 

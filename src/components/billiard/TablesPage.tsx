@@ -2,7 +2,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {IconDots, IconChartBar, IconDeviceDesktopAnalytics, IconMoodEmpty, IconTag, IconCirclePlus, IconCashRegister, IconBuildingBank } from '@tabler/icons-react';
+import {
+  IconDots,
+  IconChartBar,
+  IconDeviceDesktopAnalytics,
+  IconMoodEmpty,
+  IconTag,
+  IconCirclePlus,
+  IconCashRegister,
+  IconBuildingBank,
+} from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import LinearProgress from '../common/LinearProgress';
@@ -13,7 +22,7 @@ import { useActiveTables } from '../../hooks/useActiveTables';
 import { useNow } from '../../hooks/useNow';
 import TableCard from './components/TableCard';
 import TableFormModal from './components/TableFormModal';
-import type { BilliardTable, TableStatus } from '../../models/interfaces/Billiard';
+import type { BilliardTable, TableCreate, TableStatus } from '../../models/interfaces/Billiard';
 import DropdownButton from '../common/DropdownButton';
 
 const GROUPS: { status: TableStatus; label: string }[] = [
@@ -28,21 +37,65 @@ const TablesPage: React.FC = () => {
   const navigate = useNavigate();
   const canManage = useHasAnyRole(['admin', 'super_admin', 'manager']);
 
-  const { tables, loading, error, startingId, creating, actions } = useTables();
+  const {
+    tables,
+    loading,
+    error,
+    startingId,
+    creating,
+    updating,
+    actions,
+  } = useTables();
+
   const { byTableId, error: liveError, refetch: refetchLive } = useActiveTables(30000);
   const now = useNow(1000); // local 1s tick for elapsed timers
   const [formOpen, setFormOpen] = useState(false);
+  const [editingTable, setEditingTable] = useState<BilliardTable | null>(null);
+
+  const openCreateForm = () => {
+    setEditingTable(null);
+    setFormOpen(true);
+  };
+
+  const openEditForm = (table: BilliardTable) => {
+    setEditingTable(table);
+    setFormOpen(true);
+  };
+
+  const closeForm = () => {
+    setFormOpen(false);
+    setEditingTable(null);
+  };
+
+  const handleFormSubmit = async (data: TableCreate) => {
+    if (editingTable) {
+      return actions.updateTable(editingTable.id, data);
+    }
+
+    return actions.createTable(data);
+  };
 
   const handleStart = async (table: BilliardTable) => {
     const session = await actions.startTable(table.id);
-    if (session) navigate(`/billiard/sessions/${session.session_id}`);
-    else refetchLive(); // 409 → live data is stale too (tables are refetched in the hook)
+
+    if (session) {
+      navigate(`/billiard/sessions/${session.session_id}`);
+    } else {
+      refetchLive();
+    }
   };
 
   const knownStatuses = GROUPS.map((g) => g.status as string);
+
   const sections = [
-    ...GROUPS.map((g) => ({ label: g.label, items: tables.filter((t) => t.status === g.status) })),
-    { label: 'Other', items: tables.filter((t) => !knownStatuses.includes(t.status)) },
+    ...GROUPS.map((g) => ({
+      label: g.label,
+      items: tables.filter((t) => t.status === g.status),
+    })),
+    {
+      label: 'Other',
+      items: tables.filter((t) => !knownStatuses.includes(t.status)),
+    },
   ].filter((s) => s.items.length > 0);
 
   return (
@@ -53,68 +106,70 @@ const TablesPage: React.FC = () => {
         actions={
           <>
             <Button
-              label={t("btn.cash_drawer")}
+              label={t('btn.cash_drawer')}
               variant="secondary"
               icon={<IconCashRegister size={16} className="text-gray-500" />}
               iconPosition="left"
               rounded="lg"
               onClick={() => navigate('/billiard/shifts')}
             />
-            <Button
-              label={t('btn.add_table')}
-              variant="secondary"
-              icon={<IconCirclePlus size={16} className="text-gray-500" />}
-              iconPosition="left"
-              rounded="lg"
-              onClick={() => setFormOpen(true)}
-            />
+
             {canManage && (
-              <>
-                <DropdownButton
-                  label={<IconDots/>}
-                  variant="secondary"
-                  size="md"
-                  direction="auto"
-                  items={[
-                    {
-                      label: t('btn.bank_inbox'),
-                      value: 'bank-inbox',
-                      icon: <IconBuildingBank size={16} />,
-                    },
-                    {
-                      label: t('btn.table_report'),
-                      value: 'reports',
-                      icon: <IconChartBar size={16} />,
-                    },
-                    {
-                      label: t('btn.pricing_rules'),
-                      value: 'pricing-rules',
-                      icon: <IconTag size={16} />,
-                    },
-                    {
-                      label: t('btn.billiard_controllers'),
-                      value: 'controllers',
-                      icon: <IconDeviceDesktopAnalytics size={16} />,
-                    },
-                  ]}
-                  onSelect={(item) => {
-                    switch (item.value) {
-                      case 'bank-inbox':
-                        navigate('/billiard/bank-inbox');
-                        break;
-                      case 'reports':
-                        navigate('/billiard/reports');
-                        break;
-                      case 'pricing-rules':
-                        navigate('/billiard/pricing-rules');
-                        break;
-                      case 'controllers':
-                        navigate('/billiard/controllers');
-                        break;
-                    }
-                  }}
-                />
-              </>
+              <Button
+                label={t('btn.add_table')}
+                variant="secondary"
+                icon={<IconCirclePlus size={16} className="text-gray-500" />}
+                iconPosition="left"
+                rounded="lg"
+                onClick={openCreateForm}
+              />
+            )}
+
+            {canManage && (
+              <DropdownButton
+                label={<IconDots />}
+                variant="secondary"
+                size="md"
+                direction="auto"
+                items={[
+                  {
+                    label: t('btn.bank_inbox'),
+                    value: 'bank-inbox',
+                    icon: <IconBuildingBank size={16} />,
+                  },
+                  {
+                    label: t('btn.table_report'),
+                    value: 'reports',
+                    icon: <IconChartBar size={16} />,
+                  },
+                  {
+                    label: t('btn.pricing_rules'),
+                    value: 'pricing-rules',
+                    icon: <IconTag size={16} />,
+                  },
+                  {
+                    label: t('btn.billiard_controllers'),
+                    value: 'controllers',
+                    icon: <IconDeviceDesktopAnalytics size={16} />,
+                  },
+                ]}
+                onSelect={(item) => {
+                  switch (item.value) {
+                    case 'bank-inbox':
+                      navigate('/billiard/bank-inbox');
+                      break;
+                    case 'reports':
+                      navigate('/billiard/reports');
+                      break;
+                    case 'pricing-rules':
+                      navigate('/billiard/pricing-rules');
+                      break;
+                    case 'controllers':
+                      navigate('/billiard/controllers');
+                      break;
+                  }
+                }}
+              />
             )}
           </>
         }
@@ -131,7 +186,12 @@ const TablesPage: React.FC = () => {
       ) : error && tables.length === 0 ? (
         <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center space-y-3">
           <p className="text-sm text-red-700">{error}</p>
-          <Button label="Retry" variant="secondary" rounded="lg" onClick={actions.fetchTables} />
+          <Button
+            label="Retry"
+            variant="secondary"
+            rounded="lg"
+            onClick={actions.fetchTables}
+          />
         </div>
       ) : tables.length === 0 ? (
         <EmptyState icon={<IconMoodEmpty size={48} />} message="No tables yet." />
@@ -140,8 +200,12 @@ const TablesPage: React.FC = () => {
           {sections.map((section) => (
             <section key={section.label} className="space-y-3">
               <h2 className="text-sm font-medium text-gray-700 dark:text-gray-200">
-                {section.label} <span className="text-gray-400 font-normal">({section.items.length})</span>
+                {section.label}{' '}
+                <span className="text-gray-400 font-normal">
+                  ({section.items.length})
+                </span>
               </h2>
+
               <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(220px,1fr))]">
                 {section.items.map((table) => (
                   <TableCard
@@ -152,7 +216,10 @@ const TablesPage: React.FC = () => {
                     starting={startingId === table.id}
                     disabled={startingId !== null}
                     onStart={handleStart}
-                    onOpen={(sessionId) => navigate(`/billiard/sessions/${sessionId}`)}
+                    onOpen={(sessionId) =>
+                      navigate(`/billiard/sessions/${sessionId}`)
+                    }
+                    onEdit={canManage ? openEditForm : undefined}
                   />
                 ))}
               </div>
@@ -164,9 +231,10 @@ const TablesPage: React.FC = () => {
       {canManage && (
         <TableFormModal
           isOpen={formOpen}
-          onClose={() => setFormOpen(false)}
-          loading={creating}
-          onSubmit={actions.createTable}
+          onClose={closeForm}
+          table={editingTable}
+          loading={creating || updating}
+          onSubmit={handleFormSubmit}
         />
       )}
     </div>

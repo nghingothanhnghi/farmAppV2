@@ -3,9 +3,10 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { billiardService } from '../services/billiard_service';
 import { useAlert } from '../contexts/alertContext';
 import { billiardErrorMessage, getStatus } from '../utils/billiard';
-import type { BilliardTable, SessionStart, TableCreate } from '../models/interfaces/Billiard';
+import type { BilliardTable, SessionStart, TableCreate, TableUpdate } from '../models/interfaces/Billiard';
 
 export type CreateTableError = { status?: number; message: string };
+export type UpdateTableError = { status?: number; message: string };
 
 export function useTables() {
   const { setAlert } = useAlert();
@@ -14,6 +15,8 @@ export function useTables() {
   const [error, setError] = useState<string | null>(null);
   const [startingId, setStartingId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
+  const [updating, setUpdating] = useState(false);
+
   const guard = useRef(false); // blocks double-click double-submit
 
   const fetchTables = useCallback(async () => {
@@ -52,6 +55,39 @@ export function useTables() {
     }
   };
 
+  const updateTable = async (
+    tableId: number,
+    data: TableUpdate,
+  ): Promise<true | UpdateTableError> => {
+    if (guard.current) return { message: '' };
+
+    guard.current = true;
+    setUpdating(true);
+
+    try {
+      await billiardService.updateTable(tableId, data);
+
+      setAlert({
+        type: 'success',
+        message: `Table "${data.name ?? tables.find((t) => t.id === tableId)?.name ?? tableId}" updated.`,
+      });
+
+      await fetchTables();
+      return true;
+    } catch (err) {
+      const message = billiardErrorMessage(err, 'Failed to update table');
+      const status = getStatus(err);
+
+      if (status === 409) fetchTables();
+      else setAlert({ type: 'error', message });
+
+      return { status, message };
+    } finally {
+      guard.current = false;
+      setUpdating(false);
+    }
+  };
+
   const startTable = async (tableId: number): Promise<SessionStart | null> => {
     if (guard.current) return null;
     guard.current = true;
@@ -68,5 +104,5 @@ export function useTables() {
     }
   };
 
-  return { tables, loading, error, startingId, creating, actions: { fetchTables, createTable, startTable } };
+  return { tables, loading, error, startingId, creating, updating, actions: { fetchTables, createTable, updateTable, startTable } };
 }

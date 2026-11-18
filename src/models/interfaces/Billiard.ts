@@ -84,6 +84,11 @@ export interface TableCreate {
   hourly_rate: string;
 }
 
+export interface TableUpdate {
+  name?: string;
+  hourly_rate?: string;
+}
+
 export interface ActiveTable {
   table_id: number;      // mapped from `id`
   table_name?: string;   // mapped from `name`
