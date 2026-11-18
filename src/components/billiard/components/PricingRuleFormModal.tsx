@@ -129,6 +129,18 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
   const toggleDay = (d: DayOfWeek) =>
     set('days', f.days.includes(d) ? f.days.filter((x) => x !== d) : [...f.days, d]);
 
+  const rateLabel =
+    f.rule_type === 'per_minute' || f.rule_type === 'block'
+      ? 'Hourly-equivalent rate (optional)'
+      : 'Hourly rate (optional)';
+
+  const rateHint = {
+    per_minute: 'Charged proportionally by the minute.',
+    hourly: 'Every started hour is charged in full.',
+    block: 'Each started block is charged at the proportional hourly rate.',
+    minimum_hour: 'Charged proportionally, with a minimum billable duration.',
+  }[f.rule_type];
+
   const handleSubmit = async () => {
     const e = validate(f);
     setErrors(e);
@@ -165,7 +177,8 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
             />
             <FieldError msg={errors.name} />
           </FormGroup>
-
+            <FormToggle id="rule_active" label="Active" checked={f.is_active}
+              onChange={(e) => set('is_active', e.target.checked)} />
           <div className="grid gap-4 sm:grid-cols-2">
             <FormGroup className="space-y-1">
               <FloatingLabelSelect
@@ -184,11 +197,30 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
                 ))}
               </FloatingLabelSelect>
             </FormGroup>
+ <FormGroup className="space-y-1">
+            <FloatingLabelSelect
+              id="rule_table"
+              name="table_id"
+              label="Applies to"
+              value={f.table_id}
+              disabled={saving}
+              onChange={(e) => set('table_id', e.target.value)}
+              className="w-full"
+            >
+              <option value="">All tables</option>
+              {tables.map((table) => (
+                <option key={table.id} value={table.id}>
+                  {table.name}
+                </option>
+              ))}
+            </FloatingLabelSelect>
+          </FormGroup>
+          </div>
             <FormGroup className="space-y-1">
               <FloatingLabelInput
                 id="rule_rate"
                 name="hourly_rate"
-                label="Hourly rate (optional)"
+                label={rateLabel}
                 placeholder="Table's own rate"
                 type="text"
                 inputMode="decimal"
@@ -197,9 +229,12 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
                 disabled={saving}
                 alwaysFloat
               />
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {rateHint} Leave empty to use the table's own rate.
+              </p>
               <FieldError msg={errors.hourly_rate} />
             </FormGroup>
-          </div>
+                   
 
           {f.rule_type === 'block' && (
             <FormGroup className="space-y-1">
@@ -215,8 +250,7 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
                 disabled={saving}
                 alwaysFloat
               />
-
-              <p className="text-[0.625rem] text-gray-500 dark:text-gray-400">Time is charged in whole blocks of this length.</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Time is charged in whole blocks of this length.</p>
               <FieldError msg={errors.block_minutes} />
             </FormGroup>
           )}
@@ -238,26 +272,6 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
               <FieldError msg={errors.min_minutes} />
             </FormGroup>
           )}
-
-          <FormGroup className="space-y-1">
-            <FloatingLabelSelect
-              id="rule_table"
-              name="table_id"
-              label="Applies to"
-              value={f.table_id}
-              disabled={saving}
-              onChange={(e) => set('table_id', e.target.value)}
-              className="w-full"
-            >
-              <option value="">All tables</option>
-              {tables.map((table) => (
-                <option key={table.id} value={table.id}>
-                  {table.name}
-                </option>
-              ))}
-            </FloatingLabelSelect>
-          </FormGroup>
-
           <FormGroup className="space-y-1">
             <FormLabel htmlFor="rule_days">Days (none selected = every day)</FormLabel>
             <div className="grid grid-cols-4 gap-x-4 gap-y-3" id="rule_days">
@@ -296,7 +310,7 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
               <FieldError msg={errors.end_time} />
             </FormGroup>
           </div>
-          <p className="text-[0.625rem] text-gray-500 dark:text-gray-400 -mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400 -mt-2">
             Leave both empty for all day. An end time earlier than the start is an overnight window (e.g. 22:00 – 02:00).
           </p>
 
@@ -315,8 +329,7 @@ const PricingRuleFormModal: React.FC<Props> = ({ isOpen, onClose, rule, tables, 
               />
               <FieldError msg={errors.priority} />
             </FormGroup>
-            <FormToggle id="rule_active" label="Active" checked={f.is_active}
-              onChange={(e) => set('is_active', e.target.checked)} />
+
           </div>
 
           {serverError && <p className="text-red-500 text-xs">{serverError}</p>}

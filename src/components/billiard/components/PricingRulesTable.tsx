@@ -106,6 +106,20 @@ const PricingRulesTable: React.FC<Props> = ({
                 flex: 1,
                 minWidth: 140,
                 valueGetter: (p: any) => tableName(p.data?.table_id),
+                cellRenderer: (p: any) => {
+                    const isAllTables = p.data?.table_id == null;
+
+                    return (
+                        <div className="py-1 whitespace-normal leading-tight">
+                            <div>{tableName(p.data?.table_id)}</div>
+                            <div className="text-[10px] text-gray-500 dark:text-gray-400">
+                                {isAllTables
+                                    ? 'Applies to every table'
+                                    : 'Applies only to this table'}
+                            </div>
+                        </div>
+                    );
+                },
             },
             {
                 headerName: 'Priority',
