@@ -78,6 +78,8 @@ const TableCard: React.FC<Props> = ({
       : table.hourly_rate;
 
   const variant = getTableStatusVariant(table.status);
+  const isPlaying = table.status === 'playing';
+  const actionsDisabled = isPlaying || disabled || deactivating;
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3 flex flex-col">
@@ -175,7 +177,7 @@ const TableCard: React.FC<Props> = ({
                 label={t('btn.edit')}
                 variant="secondary"
                 rounded="full"
-                disabled={disabled || deactivating}
+                disabled={actionsDisabled}
                 onClick={() => onEdit(table)}
                 icon={<IconPencil size={15} />}
                 iconOnly
@@ -187,7 +189,7 @@ const TableCard: React.FC<Props> = ({
                 label={t('btn.deactivate', { defaultValue: 'Deactivate' })}
                 variant="danger"
                 rounded="full"
-                disabled={disabled || deactivating}
+                disabled={actionsDisabled}
                 onClick={() => onDeactivate(table)}
                 icon={<IconTrash size={15} />}
                 iconOnly
