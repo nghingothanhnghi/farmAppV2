@@ -275,14 +275,14 @@ const TablesPage: React.FC = () => {
         content={
           <div className="text-sm px-10 pt-6 pb-10 text-center">
             <IconAlertCircle size={64} className="text-red-500 mb-4 mx-auto" />
-            <p>
+            <p className='text-base font-semibold text-gray-100 dark:'>
               {t('billiard_tables.modals.deactivate.description', {
                 table: tableToDeactivate?.name ?? '',
                 defaultValue: `Are you sure you want to deactivate "${tableToDeactivate?.name}"?`,
               })}
             </p>
 
-            <p>
+            <p className='text-sm text-gray-300 leading-relaxed dark:'>
               {t('billiard_tables.modals.deactivate.note', {
                 defaultValue:
                   'The table will no longer appear in the active table list. Historical sessions and billing records will be preserved.',
