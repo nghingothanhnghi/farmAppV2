@@ -26,22 +26,33 @@ const PlayerScore: React.FC<{
   onMinus: () => void;
 }> = ({ label, value, editable, busy, onPlus, onMinus }) => {
   const { t } = useTranslation();
-  const btn =
-    'h-10 w-10 flex items-center justify-center rounded-lg border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-100 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50 dark:hover:bg-white/5';
   return (
     <div className="flex-1 text-center space-y-2">
       <div className="text-xs text-gray-500 dark:text-gray-400">{label}</div>
       <div className="number-digital text-5xl font-bold text-gray-900 dark:text-white">{value}</div>
       {editable && (
         <div className="flex justify-center gap-2">
-          <button type="button" className={btn} aria-label={t('billiard_tables.games.minus')}
-            disabled={busy || value <= 0} onClick={onMinus}>
-            <IconMinus size={18} />
-          </button>
-          <button type="button" className={btn} aria-label={t('billiard_tables.games.plus')}
-            disabled={busy} onClick={onPlus}>
-            <IconPlus size={18} />
-          </button>
+          <Button
+            label={t('billiard_tables.games.minus')}
+            icon={<IconMinus size={18} />}
+            iconOnly
+            variant="outline"
+            size="md"
+            rounded="lg"
+            disabled={busy || value <= 0}
+            onClick={onMinus}
+          />
+
+          <Button
+            label={t('billiard_tables.games.plus')}
+            icon={<IconPlus size={18} />}
+            iconOnly
+            variant="outline"
+            size="md"
+            rounded="lg"
+            disabled={busy}
+            onClick={onPlus}
+          />
         </div>
       )}
     </div>
