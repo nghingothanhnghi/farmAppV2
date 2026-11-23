@@ -13,6 +13,8 @@ export function useSession(sessionId: number) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Why the last manual "Received" was refused: a club rule, not a bug (422 note required / 403 manager only).
+  const [confirmIssue, setConfirmIssue] = useState<'note_required' | 'manager_only' | null>(null);
   const inflight = useRef(false);
 
   const fetchBill = useCallback(async () => {
@@ -105,11 +107,19 @@ export function useSession(sessionId: number) {
     });
 
   // "Received" / "Cancel" on a waiting transfer line. The response is the whole bill: redraw from it.
-  const confirmLine = (lineId: number): Promise<BillResponse | null> =>
+  // Always pass the note when the cashier typed one: the club may require it (422 without).
+  const confirmLine = (lineId: number, note?: string): Promise<BillResponse | null> =>
     run(async () => {
-      const res = await billiardService.confirmLine(sessionId, lineId);
-      setBill(res);
-      return res;
+      try {
+        const res = await billiardService.confirmLine(sessionId, lineId, note);
+        setConfirmIssue(null);
+        setBill(res);
+        return res;
+      } catch (err) {
+        const status = getStatus(err);
+        setConfirmIssue(status === 422 ? 'note_required' : status === 403 ? 'manager_only' : null);
+        throw err;
+      }
     });
 
   const cancelLine = (lineId: number, reason?: string): Promise<BillResponse | null> =>
@@ -132,6 +142,7 @@ export function useSession(sessionId: number) {
     loading,
     error,
     busy,
+    confirmIssue,
     actions: { fetchBill, addItem, stop, pay, confirmPay, confirmLine, cancelLine, voidLine },
   };
 }

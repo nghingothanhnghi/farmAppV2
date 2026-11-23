@@ -108,6 +108,7 @@
         "add_rule": "Thêm quy tắc",
         "cash_drawer": "Quản lý ca thu ngân",
         "bank_inbox": "Đối soát chuyển khoản",
+        "bank_account": "Tài khoản ngân hàng",
         "pay_in": "Nộp tiền",
         "pay_out": "Rút tiền",
         "billiard_controllers": "Bộ điều khiển",
@@ -802,6 +803,7 @@
         "transfer_confirmed": "Thu ngân đã xác nhận chuyển khoản",
         "transfer_auto_confirmed": "Ngân hàng đã tự động xác nhận chuyển khoản",
         "transfer_assigned_from_bank": "Quản lý đã ghép giao dịch ngân hàng",
+        "line_expired": "Quá hạn chưa nhận được tiền chuyển khoản",
         "line_cancelled": "Đã hủy khoản thanh toán",
         "line_failed": "Thanh toán thất bại",
         "line_voided": "Đã vô hiệu hóa khoản thanh toán",
@@ -856,6 +858,12 @@
         "pending": "Đang xử lý thanh toán",
         "paid": "Đã thanh toán"
     },       
+    "bank_account": {
+        "page_header": {
+            "title": "Tài khoản ngân hàng",
+            "description": "Tài khoản nhận tiền của mã QR chuyển khoản. Thu ngân thấy tài khoản này ở màn hình chuyển khoản."
+        }
+    },
     "bank_inbox": {
         "page_header": {
             "title": "Hộp thư giao dịch",

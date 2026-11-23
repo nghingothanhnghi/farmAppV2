@@ -34,7 +34,7 @@ const SessionPage: React.FC = () => {
   const navigate = useNavigate();
   const { setAlert } = useAlert();
 
-  const { bill, loading, error, busy, actions } = useSession(id);
+  const { bill, loading, error, busy, confirmIssue, actions } = useSession(id);
   const { bySessionId, refetch: refetchLive } = useActiveTables(30000);
 
   const state = bill ? getBillState(bill) : null;
@@ -178,8 +178,10 @@ const SessionPage: React.FC = () => {
             currency={bill.currency}
             busy={busy}
             amountPaid={bill.amount_paid}
-            onReceived={async (lineId) => {
-              const res = await actions.confirmLine(lineId);
+            confirmIssue={confirmIssue}
+            canManage={canVoid}
+            onReceived={async (lineId, note) => {
+              const res = await actions.confirmLine(lineId, note);
               if (res && getBillState(res) === 'paid') setAlert({ type: 'success', message: 'Payment recorded.' });
             }}
             onCancel={(lineId, reason) => actions.cancelLine(lineId, reason)}

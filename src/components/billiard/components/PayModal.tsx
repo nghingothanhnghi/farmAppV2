@@ -13,6 +13,7 @@ import {
   getBalanceDue,
   getBillState,
   getWaitingTransferLine,
+  maskAccountNo,
 } from '../../../utils/billiard';
 import type {
   BillResponse,
@@ -22,6 +23,7 @@ import type {
   PayResponse,
   SplitLinePayload,
 } from '../../../models/interfaces/Billiard';
+import { useCurrentBankAccount } from '../../../hooks/useBankAccounts';
 import { getPaymentModeLabel } from '../../../utils/status';
 
 interface StripeCheckoutProps {
@@ -87,6 +89,8 @@ const PayModal: React.FC<Props> = ({
   StripeCheckout,
 }) => {
   const { t } = useTranslation();
+  // Warn before a transfer is started if the club has no account (the line would come back with no QR).
+  const { account: bankAccount, loaded: bankLoaded } = useCurrentBankAccount(isOpen);
   const due = getBalanceDue(bill);
   const [mode, setMode] = useState<Mode>('cash');
   const [tendered, setTendered] = useState<string>(''); // empty = exact payment
@@ -460,6 +464,15 @@ const PayModal: React.FC<Props> = ({
                             <p className="text-sm text-gray-600 dark:text-gray-300">
                               Customer scans a QR code and transfers the payment.
                             </p>
+                            {bankLoaded && (
+                              <p
+                                className={`mt-1 text-xs ${bankAccount ? 'text-gray-500 dark:text-gray-400' : 'text-amber-700 dark:text-amber-400'}`}
+                              >
+                                {bankAccount
+                                  ? `Paying to: ${bankAccount.account_name}, ${maskAccountNo(bankAccount.account_no)}`
+                                  : 'No bank account is set up, so the transfer will show no QR. Ask a manager to set it up.'}
+                              </p>
+                            )}
                           </div>
                         )}
 
