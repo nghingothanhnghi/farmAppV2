@@ -162,6 +162,11 @@ const TablesPage: React.FC = () => {
                     icon: <IconBuildingBank size={16} />,
                   },
                   {
+                    label: t('btn.bank_account'),
+                    value: 'bank-account',
+                    icon: <IconBuildingBank size={16} />,
+                  },
+                  {
                     label: t('btn.table_report'),
                     value: 'reports',
                     icon: <IconChartBar size={16} />,
@@ -181,6 +186,9 @@ const TablesPage: React.FC = () => {
                   switch (item.value) {
                     case 'bank-inbox':
                       navigate('/billiard/bank-inbox');
+                      break;
+                    case 'bank-account':
+                      navigate('/billiard/bank-account');
                       break;
                     case 'reports':
                       navigate('/billiard/reports');

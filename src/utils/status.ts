@@ -77,6 +77,7 @@ export const PAYMENT_EVENT_LABELS = {
   transfer_auto_confirmed: 'payment_events.transfer_auto_confirmed',
   transfer_assigned_from_bank: 'payment_events.transfer_assigned_from_bank',
   line_cancelled: 'payment_events.line_cancelled',
+  line_expired: 'payment_events.line_expired',
   line_failed: 'payment_events.line_failed',
   line_voided: 'payment_events.line_voided',
   order_paid: 'payment_events.order_paid',

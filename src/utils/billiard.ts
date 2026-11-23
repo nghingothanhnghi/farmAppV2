@@ -123,3 +123,19 @@ export const parseWholeAmount = (raw: string): number | null => {
   const digits = raw.replace(/\D/g, '');
   return digits === '' ? null : Number(digits);
 };
+
+// --- Bank account (screen 11) ----------------------------------------------
+
+/** Account number with all but the last 4 characters hidden, e.g. "****6789". */
+export const maskAccountNo = (accountNo: string | null | undefined): string =>
+  accountNo ? `****${accountNo.slice(-4)}` : '';
+
+/** Messages for the bank-account calls: adds 409 / 413 / 501 text on top of billiardErrorMessage. */
+export const bankAccountErrorMessage = (err: unknown, fallback = 'Something went wrong'): string => {
+  const status = getStatus(err);
+  const detail = (err as { response?: { data?: { detail?: unknown } } })?.response?.data?.detail;
+  if (status === 413) return 'The image is larger than 5 MB.';
+  if (status === 501) return 'The server cannot read QR images. Type the account instead.';
+  if (status === 409 && typeof detail !== 'string') return 'This bank account is already in use.';
+  return billiardErrorMessage(err, fallback);
+};

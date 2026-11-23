@@ -189,6 +189,7 @@ export type PaymentEventType =
   | 'transfer_auto_confirmed'
   | 'transfer_assigned_from_bank'
   | 'line_cancelled'
+  | 'line_expired'
   | 'line_failed'
   | 'line_voided'
   | 'order_paid';

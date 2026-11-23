@@ -108,6 +108,7 @@
         "add_rule": "Add rule",
         "cash_drawer": "Cash Drawer",
         "bank_inbox": "Bank Inbox",
+        "bank_account": "Bank Account",
         "pay_in": "Pay in",
         "pay_out": "Pay out",
         "billiard_controllers": "Controllers",
@@ -802,6 +803,7 @@
         "transfer_confirmed": "Transfer confirmed by cashier",
         "transfer_auto_confirmed": "Transfer confirmed automatically by the bank",
         "transfer_assigned_from_bank": "Bank transaction assigned by a manager",
+        "line_expired": "Transfer not received in time",
         "line_cancelled": "Payment line cancelled",
         "line_failed": "Payment line failed",
         "line_voided": "Payment line voided",
@@ -857,6 +859,12 @@
         "pending": "Payment in progress",
         "paid": "Paid"
     },    
+    "bank_account": {
+        "page_header": {
+            "title": "Bank Account",
+            "description": "The account your bank transfer QR pays into. Cashiers see it on the transfer screen."
+        }
+    },
     "bank_inbox": {
         "page_header": {
             "title": "Bank Inbox",
