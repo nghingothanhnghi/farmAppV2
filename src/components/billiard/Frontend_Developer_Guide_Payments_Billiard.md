@@ -1,10 +1,10 @@
 # Frontend Developer Guide: Payments & Billiard
 
-Updated Nov 13, 2026 · @Someone
+Updated Nov 19, 2026 · @Someone
 
 ## Implementation status (farmAppV2)
 
-Checked against the code on Nov 14, 2026 against the Nov 13 guide below. "Done" means the code exists. Nothing has been run against a live backend yet, so the test checklist at the end is still to do. Branch: `feat/bank-inbox-pending-lines`.
+Checked against the code on Nov 23, 2026 against the Nov 19 guide below. "Done" means the code exists, and `tsc -b` and eslint pass. Nothing has been run against a live backend yet, so the test checklist at the end (49 scenarios) is still to do.
 
 | Area | Guide section | Status | Where |
 | --- | --- | --- | --- |
@@ -12,38 +12,63 @@ Checked against the code on Nov 14, 2026 against the Nov 13 guide below. "Done" 
 | Menu and add item (variant required when present) | Step 5 | Done | `AddItemModal` |
 | Stop session, 409 reloads the bill | Step 6 | Done | `useSession` |
 | Pay screen: cash, change, quick amounts, split | Screens 1, 3 | Done | `PayModal` |
+| Pay screen: "Paying to: CLUB A, ****6789" line, or a warning when no bank account is saved | Screen 1, "Backend gaps" | Done (Nov 23) | `PayModal`, `useCurrentBankAccount` |
 | Card (Stripe): hidden after cash or transfer line; switched on by `VITE_STRIPE_ENABLED` | Screen 1 | Done | `PayModal`, `config/constants.ts` |
 | Card (Stripe): the card form itself | Screen 1 | **Not done**: no Stripe SDK or component is plugged in | `SessionPage` (`StripeCheckout` prop) |
-| Transfer waiting: QR, memo, countdown, Received, Cancel, polling | Screen 2 | Done | `TransferWaiting`, `useSession` |
+| Transfer waiting: QR, memo, countdown, Cancel, polling | Screen 2 | Done | `TransferWaiting`, `useSession` |
+| Transfer waiting: `Pays to: <account_name>` next to the QR; no-QR notice ("Ask a manager to set up the bank account", managers get a link to screen 11); `bank_code` never required | Screen 2 | Done (Nov 23) | `TransferWaiting` |
+| Received: optional note box, sent as `{note}`; `422` keeps the box open and marks it required; `403` shows "Ask a manager to confirm" and polling continues | Screen 2 | Done (Nov 23) | `TransferWaiting`, `useSession` (`confirmIssue`) |
 | Receipt, payment lines, void for managers, history | Screen 4, Step 10 | Done | `PaymentLines`, `PaymentHistory`, `usePaymentEvents` |
+| Event label for `line_expired` | Generic order and audit trail | Done (Nov 23) | `utils/status.ts`, `locales/*/translation.json` |
 | Cash drawer: open, close, variance, history, pay-out check | Screen 5 | Done | `ShiftsPage`, `useShifts` |
-| Bank inbox: tabs, ignore, assign with amount check | Screen 6 | Done | `BankInboxPage`, `AssignTransactionModal` |
-| Bank inbox paging (`limit`/`offset`, "Load more") | Screen 6 | Done (Nov 14) | `useBankFeed`, `BankInboxPage`, `bankFeedService.list` |
-| Assign picker from `GET /payments/bank-feed/pending-lines?amount=` | Screen 6 | Done (Nov 14), replaces the "type a session number" workaround | `AssignTransactionModal`, `bankFeedService.pendingLines` |
+| Bank inbox: tabs, ignore, assign with amount check, paging, `pending-lines` picker | Screen 6 | Done | `BankInboxPage`, `AssignTransactionModal`, `useBankFeed`, `bankFeedService` |
 | Manager-only buttons from `GET /auth/me` roles | Who sees which buttons | Done | `authContext`, `useHasAnyRole` |
 | Scoreboard (games in a session) | Screen 7 | Done | `GamesPanel`, `useGames` |
 | Pricing rules and price quote | Screen 8 | Done | `PricingRulesPage`, `PricingQuotePanel`, `usePricingRules` |
-| Table creation and usage report | Screen 9 | Done | `TableFormModal`, `ReportsPage`, `useUsageReport` |
+| Table create, edit and deactivate; usage report | Screen 9 | Done | `TableFormModal`, `TablesPage`, `ReportsPage`, `useUsageReport` |
+| Controller devices: status, register, one-time `api_key` dialog | Screen 10 | Done | `ControllersPage`, `RegisterControllerModal`, `ControllerApiKeyModal`, `useBilliardControllers` |
+| **Bank account set-up (manager)**: current account, QR image upload prefill, typed form, summary before save, correct name, turn off, history and events | Screen 11 | Done (Nov 23). Route `/billiard/bank-account`, reached from the manager menu on the table board | `BankAccountPage`, `bankAccountService`, `useBankAccounts`, `models/interfaces/BankAccount.ts` |
+| Bank account errors: `422` keeps the typed fields, `409` account in use, `413` (size also checked in the browser first), `501` hides the upload button | Screen 11, "Error handling" | Done (Nov 23) | `BankAccountPage`, `bankAccountErrorMessage` in `utils/billiard.ts` |
 | `/payments/orders/...` generic routes | Start here | Not needed for billiard, left out on purpose | n/a |
-| `src/api/schema.d.ts` | Set up | `pending-lines` was added by hand: regenerate with `npx openapi-typescript https://<api>/openapi.json -o src/api/schema.d.ts` | `api/schema.d.ts` |
-| Test checklist (35 scenarios) | Test checklist | **Not done**: needs a dev backend | n/a |
+| `src/api/schema.d.ts` | Set up | **Out of date**: it has no `/payments/bank-accounts` routes. Regenerate with `npm run gen:api` against the new backend. The bank-account types are hand-written in `models/interfaces/BankAccount.ts` until then | `api/schema.d.ts` |
+| Test checklist (49 scenarios, numbers 43 to 49 are new) | Test checklist | **Not done**: needs a dev backend | n/a |
 
 ## Start here
 
-The frontend needs about 25 endpoints to run a billiard table from start to payment: open a table, add drinks, stop the session, take payment, run the cash drawer and review bank transfers. Generate types from the backend's OpenAPI file, and use this guide for the screens and rules the schema cannot tell you.
+The frontend needs about 30 endpoints to run a billiard table from start to payment: open a table, add drinks, stop the session, take payment, run the cash drawer and review bank transfers. Generate types from the backend's OpenAPI file, and use this guide for the screens and rules the schema cannot tell you.
 
 New to the project? Read "The whole process, start to finish" first. It follows one session from the first tap to the receipt, then the screen-by-screen sections explain each part in detail.
 
-### What changed since Oct 24
+### What changed since Nov 20
+
+| Change | What to do in the frontend |
+| --- | --- |
+| Each club saves its own receiving bank account (`/payments/bank-accounts`). The transfer QR is built from it instead of a server setting | New manager screen 11 (bank account set-up). The cashier screens do not change, but read the QR rules in screen 2 |
+| `transfer.bank_code` can now be `null` while the QR still works (the club saved only the bank BIN) | Never require `bank_code`. Draw `qr_payload`; `qr_image_url` is still filled |
+| A transfer to a different account than the one the QR showed lands in the bank inbox as `needs_review` (reason "Received on account ending ...") | Show the reason as it is. No new status |
+| A QR already on screen keeps the account it was created with, even if a manager changes the account afterwards | Nothing to do. Rebuild the QR from the bill, never from a cached account |
+| New errors `413`, `501` (QR image upload) and `409` (account in use) | See "Error handling" and screen 11 |
+
+### What changed since Nov 13
+
+| Change | What to do in the frontend |
+| --- | --- |
+| `PATCH /tables/{id}` edits a table's name or hourly rate, and `DELETE /tables/{id}` deactivates it | New: see screen 9 (manager set-up). `GET /tables` now returns only active tables, so a deactivated table disappears from the board |
+| Manual "Received" can be restricted by the club: manager only, and/or a note is required | The Received call can now return `403` or `422`. Always offer a note field and handle both (see screen 2). No endpoint tells you which rule is on |
+| Controller device admin endpoints: `GET /billiard/controller/status`, `GET /billiard/controller/hydro-candidates`, `POST /billiard/controller/register` | New manager screen 10. The other `/controller/...` calls stay device-only |
+| New audit event type `line_expired` | Add it to your event labels (see "Generic order and audit trail") |
+| Several error messages were corrected | Starting a busy table answers `409 Table is playing`, not "already has an active session"; starting a game in a stopped session answers `409 Games can only be started in an active session` (see "Error handling") |
+
+### Earlier changes (since Oct 24)
 
 | Change | What to do in the frontend |
 | --- | --- |
 | `GET /auth/me` now returns `roles` | Use it to decide whether to show manager buttons. The old "no roles" workaround is no longer needed (see "Who sees which buttons") |
 | `POST /payments/` and `PATCH /payments/{id}` are admin only (the auth fix is merged) | Nothing to change. Billiard screens never used them |
 | `GET /payments/bank-feed/transactions` is paged (`limit` 1 to 200, default 50, and `offset`) | Add paging to the manager inbox (screen 6) |
-| Scoreboard endpoints for the games played in a session | New: see "Extra billiard screens" |
-| Pricing rules and a price quote | New: see "Extra billiard screens". The bill's `pricing_rule_name` comes from these |
-| Table usage report and table creation (manager) | New: see "Extra billiard screens" |
+| Scoreboard endpoints for the games played in a session | See "Extra billiard screens" |
+| Pricing rules and a price quote | See "Extra billiard screens". The bill's `pricing_rule_name` comes from these |
+| Table usage report and table creation (manager) | See "Extra billiard screens" |
 
 ### Set up
 
@@ -57,6 +82,7 @@ New to the project? Read "The whole process, start to finish" first. It follows 
 | The amount | Never send the bill total. For a single payment the server uses `grand_total`. In a split you send how the total is divided, and the lines must add up exactly to `balance_due` |
 | Your club | Every call is limited to the logged-in user's club. An id that belongs to another club returns `404`, not `403` |
 | Trailing slash | Use the paths exactly as written here. `/tables`, `/products` and `/payments/shifts` have no trailing slash |
+| Live updates | There is no WebSocket yet. Poll: `GET /tables/active` about every 30 seconds, and a waiting bill every 3 to 5 seconds (see "Polling, errors and edge cases") |
 
 ### Which URLs to call
 
@@ -66,17 +92,18 @@ New to the project? Read "The whole process, start to finish" first. It follows 
 | Menu and items | `/products`, `/sessions/{id}/items` | `Product[]`, `SessionItem` |
 | Billiard bill and payment | `/sessions/{id}`, `/sessions/{id}/stop`, `/sessions/{id}/pay...` | `Bill` (includes the payment lines) |
 | Cash drawer | `/payments/shifts...` | `Shift` or `ShiftSummary` |
-| Manager bank inbox | `/payments/bank-feed/transactions...` | `BankTransaction` |
+| Manager bank inbox | `/payments/bank-feed/transactions...`, `/payments/bank-feed/pending-lines` | `BankTransaction`, `PendingTransferLine` |
 | Another business later | `/payments/orders/{source_type}/{source_id}/...` | `Order` (same lines as the bill) |
 | Scoreboard | `/sessions/{id}/games`, `/games/{id}/score`, `/games/{id}/reset`, `/games/{id}/new`, `/games/{id}/finish` | `Game`, `NewGameResponse` |
 | Pricing rules and quote | `/billiard/pricing-rules`, `/billiard/pricing-rules/quote` | `PricingRule[]`, `PricingQuote` |
-| Manager reports and set-up | `/reports/tables/usage`, `POST /tables` | `TableUsageReport`, `Table` |
+| Manager reports and set-up | `/reports/tables/usage`, `POST /tables`, `PATCH /tables/{id}`, `DELETE /tables/{id}` | `TableUsageReport`, `Table`, `DeactivateTableResponse` |
+| Manager controller devices | `/billiard/controller/status`, `/billiard/controller/hydro-candidates`, `/billiard/controller/register` | `ControllerDevice[]`, `HydroCandidate[]`, `RegisterControllerResponse` |
 
-`/controller/...` (events, sync, state, register) is for the table controller devices (ESP32), not for the frontend. Do not build screens on it.
+`/billiard/controller/events`, `/sync` and `/state` are for the table controller devices (ESP32), which sign in with a device key, not a user token. Do not build screens on those three. The `status`, `hydro-candidates` and `register` calls above are the only controller calls a screen should use.
 
 Billiard screens should use the `/sessions/{id}/pay...` URLs because they return the full bill, so one response redraws the whole screen. The `/payments/orders/...` URLs return the payment part only. For billiard they work too, with `source_type` set to `billiard_session` and `source_id` set to the session id, but you do not need them.
 
-Do not build billiard screens on `POST /payments/`, `PATCH /payments/{id}` or `/payments/stripe/*`. Those are back-office routes for administrators (admin or super admin only). A cashier gets a `403` there. `POST /payments/` and `PATCH /payments/{id}` used to have no login check at all; the fix is merged and they now require an admin. Everything a cashier needs is under `/sessions`, `/tables` and `/payments/shifts`.
+Do not build billiard screens on `POST /payments/`, `PATCH /payments/{id}` or `/payments/stripe/*`. Those are back-office routes for administrators (admin or super admin only). A cashier or manager gets a `403` there. Everything a cashier needs is under `/sessions`, `/tables` and `/payments/shifts`.
 
 ## The whole process, start to finish
 
@@ -120,7 +147,7 @@ A shift is the cash drawer for the club: one open shift per club, not per cashie
 
 ### Step 3. The table board
 
-`GET /tables` lists every table: `{"id": 1, "name": "T01", "status": "available", "hourly_rate": "100000.00"}`. `status` is `available`, `playing`, `reserved` or `maintenance`. Offer Start only on `available` tables; the server answers `409` for a table that cannot be started.
+`GET /tables` lists every **active** table: `{"id": 1, "name": "T01", "status": "available", "hourly_rate": "100000.00"}`. A table a manager deactivated is not in the list. `status` is `available`, `playing`, `reserved` or `maintenance`. Offer Start only on `available` tables; the server answers `409` for a table that cannot be started.
 
 `GET /tables/active` lists the tables that are playing right now, with live numbers you can show on the tile and refresh every 30 seconds or so:
 
@@ -141,7 +168,7 @@ A shift is the cash drawer for the club: one open shift per club, not per cashie
 ]
 ```
 
-Keep `session_id` on the tile. Every later call uses it. `current_total` is a running estimate for display; the real bill comes from the stop call.
+Keep `session_id` on the tile. Every later call uses it. `current_total` is a running estimate for display; the real bill comes from the stop call. It follows the same pricing rule as the final bill, so it should match what Stop returns.
 
 ### Step 4. Start a session
 
@@ -151,7 +178,7 @@ Keep `session_id` on the tile. Every later call uses it. `current_total` is a ru
 { "session_id": 42, "table_id": 1, "start_time": "2026-10-24T02:00:00", "opened_by": "cashier1" }
 ```
 
-If the table already has an active session the server answers `409 Table already has an active session`. Reload the board and open that session instead.
+If the table cannot be started the server answers `409` with the reason: `Table is playing` (somebody else started it first), `Table is reserved`, `Table is maintenance`, `Table is inactive`, or, if two people start it at the same instant, `Table already has an active session`. Reload the board and open the running session if there is one.
 
 ### Step 5. Add drinks and food
 
@@ -170,7 +197,7 @@ Errors: `404 Product not found`, `400 Product is not available`, `400 Variant do
 
 ### Step 6. Stop the session
 
-`POST /sessions/{id}/stop` ends the clock, frees the table and returns the bill. A second stop returns `409 Session is already completed`, so on that error just load the bill with `GET /sessions/{id}`.
+`POST /sessions/{id}/stop` ends the clock, closes the running game (if any), frees the table and returns the bill. A second stop returns `409 Session is already completed`, so on that error just load the bill with `GET /sessions/{id}`.
 
 ```json
 {
@@ -205,7 +232,7 @@ Errors: `404 Product not found`, `400 Product is not available`, `400 Variant do
 }
 ```
 
-Show this as the pay screen (screen 1). `billing_policy` and `pricing_rule_name` explain how the table fee was worked out; show `pricing_rule_name` as a small caption when it is not `null`.
+Show this as the pay screen (screen 1). `billing_policy` and `pricing_rule_name` explain how the table fee was worked out; show `pricing_rule_name` as a small caption when it is not `null`. `billing_policy` is one of `per_minute`, `hourly`, `block`, `minimum_hour`; very old bills can also show `rounded_hour`, which means the same as `hourly`. `opened_by` and `stopped_by` are `null` when the table controller started or stopped the session by itself.
 
 ### Step 7. Take payment
 
@@ -280,11 +307,12 @@ Rules the server enforces on this call:
 
 ### Step 8. Finish a bank transfer
 
-While the transfer line is `pending`, show screen 2 and refresh the bill every 3 to 5 seconds. There are three ways it ends:
+While the transfer line is `pending`, show screen 2 and refresh the bill every 3 to 5 seconds. There are four ways it ends:
 
 1. **The bank feed confirms it.** SePay posts the incoming transfer to the backend, which matches the memo and the exact amount. The bill turns `paid` by itself, with `paid_by: null`.
-2. **The cashier presses Received.** `POST /sessions/{id}/pay/lines/14/confirm` (the body is optional: `{"note": "checked in the bank app"}`). The bill is returned, now `paid`.
+2. **The cashier presses Received.** `POST /sessions/{id}/pay/lines/14/confirm` (the body is optional: `{"note": "checked in the bank app"}`). The bill is returned, now `paid`. The club may require a note (`422` without one) or restrict the button to managers (`403` for a cashier), see screen 2.
 3. **The cashier presses Cancel.** `POST /sessions/{id}/pay/lines/14/cancel` (optional `{"reason": "customer left"}`). The line becomes `cancelled`, the bill goes back to part paid or `unpaid`, and the cashier pays the balance another way.
+4. **The server cancels it.** If nobody acts, a background job cancels the line some time after the QR expired (60 minutes of grace by default). Your polling sees the line turn `cancelled` with the note "Transfer not received in time".
 
 ### Step 9. Show the receipt, close the shift
 
@@ -315,11 +343,12 @@ Show the bill (items, `total_table_fee`, `total_product_fee`, `grand_total`) and
 
 Shown when `payment_state` is `pending` and a line has `method: "bank_transfer"`, `status: "pending"` and a `transfer` object.
 
-- Draw `transfer.qr_payload` as a QR code with a QR library. If it is `null`, use `<img src={transfer.qr_image_url}>`. If both are `null`, show the account number, account name, amount and memo as text so the customer can type the transfer.
+- Draw `transfer.qr_payload` as a QR code with a QR library. If it is `null`, use `<img src={transfer.qr_image_url}>`. If both are `null`, the club has no bank account saved: show the amount and memo and say "Ask a manager to set up the bank account" (managers: link to screen 11). Account number and name are shown as text when present. The account on the QR is the club's saved account at the moment the line was created, so always show `transfer.account_name` next to the QR; the cashier can spot a wrong account before the customer pays.
 - Always show the amount and the memo in large text. The memo (for example `PAY7L2`) is how the bank feed finds the payment.
-- Show a countdown to `transfer.expires_at`. After it passes, say the QR has expired but keep the Received button working, because the customer may have paid already.
+- Show a countdown to `transfer.expires_at`. After it passes, say the QR has expired but keep the Received button working, because the customer may have paid already. The server only cancels the line itself after a grace period (60 minutes by default).
 - Buttons: **Received** (`POST /sessions/{id}/pay/lines/{line_id}/confirm`) and **Cancel** (`POST /sessions/{id}/pay/lines/{line_id}/cancel`, optional reason).
-- Refresh the bill every 3 to 5 seconds while this screen is open. The bank feed can turn the bill `paid` with no user action, and the screen should switch to the receipt by itself.
+- **Received needs a note field.** Show an optional text box ("Bank reference you checked") and send it as `{"note": "..."}` when it is filled in. A club can require it: then the server answers `422 A note is required to confirm a transfer manually` for a missing or very short note (under 3 characters). On that `422`, keep the note box open and mark it required. A club can also allow only managers to press Received: then a cashier gets `403 Only a manager can confirm a transfer manually`. Show "Ask a manager to confirm this transfer, or wait for the bank" and keep the screen polling. There is no endpoint that tells you in advance which rule is on, so react to the response.
+- Refresh the bill every 3 to 5 seconds while this screen is open. The bank feed can turn the bill `paid` with no user action, and the screen should switch to the receipt by itself. If the server cancels the line after the grace period, the bill goes back to `unpaid` and the screen should switch back to the pay screen.
 
 ### 3. Split editor
 
@@ -353,7 +382,8 @@ A list from `GET /payments/bank-feed/transactions?status=needs_review`, with tab
 
 - **Ignore** asks for a note and calls `POST /payments/bank-feed/transactions/{id}/ignore`.
 - **Assign** links the money to a waiting transfer line: `POST /payments/bank-feed/transactions/{id}/assign` with `{"line_id": 7}`. The amount must equal the line's amount, so show the line's amount next to the transaction and block a mismatch.
-- To pick the line, call `GET /payments/bank-feed/pending-lines?amount=<transaction amount>` (managers only; `limit` 1 to 200, default 50, and `offset`). Each row has `line_id`, `order_id`, `source_type`, `source_id` (the session id for billiard), `amount`, `order_total`, `transfer_memo`, `created_at`, `expires_at` and `expired`. Show a picker with the table or session, the amount and the time, and send the chosen `line_id` to assign. Without `amount` it lists every waiting line, newest first.
+- To pick the line, call `GET /payments/bank-feed/pending-lines?amount=<transaction amount>` (managers only; `limit` 1 to 200, default 50, and `offset`). Each row has `line_id`, `order_id`, `source_type`, `source_id` (the session id for billiard), `amount`, `currency`, `order_total`, `transfer_memo`, `created_at`, `expires_at` and `expired`. Show a picker with the table or session, the amount and the time, and send the chosen `line_id` to assign. Without `amount` it lists every waiting line, newest first. A row with `expired: true` can still be assigned until the server cancels the line.
+- A transaction whose reason says "Money received for a line that is cancelled" arrived after the server (or a cashier) cancelled the line. It will not appear in `pending-lines`. Tell the manager to take payment again with a new transfer line on that bill, then assign the transaction to the new line.
 
 ## Extra billiard screens
 
@@ -366,27 +396,65 @@ A running session can have games, and each game keeps a score for player A and p
 | Action | Call | Notes |
 | --- | --- | --- |
 | List the games | `GET /sessions/{id}/games` | `Game[]` |
-| Start a game | `POST /sessions/{id}/games` (no body, `201`) | `409 Session is not active` once the session is stopped, `409 Session already has an active game` if one is running |
+| Start a game | `POST /sessions/{id}/games` (no body, `201`) | `409 Games can only be started in an active session` once the session is stopped, `409 Session already has an active game` if one is running |
 | Change a score | `POST /games/{game_id}/score` with `{"player": "A", "delta": 1}` | `delta` is -10 to 10 and never 0. `409 Score cannot go below 0` |
 | Reset the score | `POST /games/{game_id}/reset` | Back to 0 to 0 |
 | Next game | `POST /games/{game_id}/new` | Completes this game and opens the next at 0 to 0. The session and its billing timer are not touched. Returns `{finished, started}` |
 | Finish | `POST /games/{game_id}/finish` | Completes this game without starting another |
 
-Use `+1` and `-1` buttons. Replace the game in your list with the one the server returns, and never add to the score locally. Games can be changed only while the game and the session are active, so on `409` reload the list.
+Use `+1` and `-1` buttons. Replace the game in your list with the one the server returns, and never add to the score locally. Games can be changed only while the game and the session are active (`409 Session is not active` or `409 Game is not active` otherwise), so on `409` reload the list.
+
+The table controller (the physical scoreboard) can change scores and start games too, so the score you see may change between refreshes. Always redraw from the server's response, and reload the games list when you open the scoreboard.
 
 ### 8. Pricing rules and price quote
 
-The table fee on the bill comes from the pricing rules; the bill shows the rule that applied in `pricing_rule_name` and `pricing_params`.
+The table fee on the bill comes from the pricing rules; the bill shows the rule that applied in `pricing_rule_name` and `pricing_params`. The rule is chosen once, when the session starts, and stays fixed for that session, so a session that runs past the end of a happy-hour window keeps the happy-hour price.
 
-- `GET /billiard/pricing-rules` lists the rules. Any logged-in user can read them. Managers create (`POST`), change (`PUT /{rule_id}`) and delete (`DELETE /{rule_id}`) them.
+- `GET /billiard/pricing-rules` lists the rules. Any logged-in user can read them. Managers create (`POST`), change (`PUT /{rule_id}`) and delete (`DELETE /{rule_id}`) them. Deleting or editing a rule never changes an existing bill.
 - A rule has a `rule_type`: `per_minute`, `hourly`, `block` (set `params.block_minutes`, 1 to 1440) or `minimum_hour` (set `params.min_minutes`, 1 to 1440). Other `params` keys are dropped by the server.
 - A rule can be limited to one `table_id`, to days (`days_of_week` such as `"sat,sun"`) and to a time window. `start_time` and `end_time` must be sent together. When several rules match, the highest `priority` wins, and a rule for one specific table beats an all-tables rule of the same priority.
 - `GET /billiard/pricing-rules/quote?table_id=1&minutes=90` answers "what would 90 minutes cost now" and writes nothing. Use it for a price preview on the table tile. `at` is optional; unlike other timestamps, a time without an offset in `at` means the club's local time, not UTC.
 
 ### 9. Manager set-up and report
 
-- `POST /tables` with `{"name": "T05", "hourly_rate": 100000}` adds a table (managers only, `201`). The name is 1 to 50 characters and the rate must be above 0.
-- `GET /reports/tables/usage?start_date=...&end_date=...` returns one row per table and a `totals` row. The dates filter on the session's end time. Revenue columns count paid sessions only, and `unpaid_total` is money for sessions that were stopped but not yet paid.
+- `POST /tables` with `{"name": "T05", "hourly_rate": 100000}` adds a table (managers only, `201`). The name is 1 to 50 characters and the rate must be above 0. `409` if the club already has a table with that name.
+- `PATCH /tables/{id}` with `{"name": "T05 VIP"}` and/or `{"hourly_rate": 120000}` edits a table (managers only). Send only the fields you change. `409` if the new name is taken. A new rate applies to **new** sessions only; a running session and old bills keep the rate they started with.
+- `DELETE /tables/{id}` **deactivates** a table (managers only); it does not erase it, so history and reports stay. It returns `{"message": "Billiard table deactivated successfully", "id": 5, "is_active": false}`. `409` if the table has a running session (stop it first) or is already inactive. Ask for confirmation before you call it, and drop the table from the board afterwards. There is no endpoint to reactivate a table yet.
+- `GET /reports/tables/usage?start_date=...&end_date=...` returns one row per table and a `totals` row. The dates filter on the session's end time and are read in the club's time zone; a date-only `end_date` includes that whole day. Revenue columns count paid sessions only, and `unpaid_total` is money for sessions that were stopped but not yet paid.
+
+### 10. Controller devices (manager)
+
+The club's physical scoreboards are run by one central controller (ESP32). A manager can see whether it is online and register it. Everything else about the controller is done by the device itself.
+
+| Action | Call | Notes |
+| --- | --- | --- |
+| List controllers | `GET /billiard/controller/status` | `ControllerDevice[]`. `status` is `online`, `offline`, `syncing` or `error`. A controller that has been silent for 90 seconds shows `offline` |
+| Find devices to register | `GET /billiard/controller/hydro-candidates` | Existing devices of the club that are not yet a controller, so the manager can pick one instead of typing an id |
+| Register | `POST /billiard/controller/register` with `{"device_id": "BILLIARD-CONTROLLER-01", "name": "Main hall"}` or `{"hydro_device_id": 3}` | `201`. Returns the device **and its `api_key`, shown once**. `409` if the id is already registered, `404` if the hydro device is not found, `422` if neither `device_id` nor `hydro_device_id` is sent |
+
+Show the `api_key` in a dialog with a copy button and a clear warning that it cannot be shown again, because only a hash is stored. Never keep it in local storage or logs. Show `last_seen` as "x minutes ago" and highlight an `offline` controller, because while it is offline the physical boards keep working but the POS sees changes only after it reconnects and syncs.
+
+### 11. Bank account set-up (manager)
+
+Each club saves the account its transfer QR pays into. Show this screen to managers and admins only (a cashier gets `403` on everything except `GET /payments/bank-accounts/current`).
+
+| Action | Call | Notes |
+| --- | --- | --- |
+| Show the current account | `GET /payments/bank-accounts/current` | `BankAccount` or `null`. Any logged-in user can call it, so a cashier screen can show "Paying to: CLUB A, ****6789" |
+| Read a QR image | `POST /payments/bank-accounts/parse-qr`, multipart form with one field `file` (PNG or JPG, max 5 MB) | Returns `{bank_bin, account_no, amount, memo}`. **Saves nothing.** Prefill the form with it |
+| Save | `POST /payments/bank-accounts` with `{"bank_bin": "970436", "account_no": "0123456789", "account_name": "CLUB A", "bank_code": "VCB"}` | `201`. Replaces the active account; the old one goes to history |
+| Correct the name | `PATCH /payments/bank-accounts/{id}` with `{"account_name": "...", "bank_code": "..."}` | Bank and account number cannot be edited: save a new account instead |
+| Turn off | `POST /payments/bank-accounts/{id}/deactivate` | Transfers then show no QR until a new account is saved. Ask for confirmation first |
+| History | `GET /payments/bank-accounts` and `GET /payments/bank-accounts/events` | Newest first |
+
+Build the form like this:
+
+1. Two ways in: an **Upload QR image** button and the plain fields. Both end at the same form.
+2. After an upload, fill `bank_bin` and `account_no` from the response and leave `account_name` empty. The QR does not carry the holder name, so the manager must type it. Ignore `amount` and `memo`: they are only present when the picture was a payment QR, and they are not saved.
+3. Show a clear summary before saving ("Account 0123456789, bank 970436, holder CLUB A") and say that new transfers will pay this account.
+4. After saving, reload `current` and show the account. Do not store it in local storage.
+
+Handle the errors in the form: `422` for a bad field or a QR that is not an account QR (show the message and keep the typed fields), `409` when the account is already used by another club, `413` for a large image (check the size in the browser first), and `501` when the server cannot read QR images (hide the upload button after the first `501` and keep typing).
 
 ## State to UI rules
 
@@ -402,7 +470,7 @@ Decide what to render from the bill alone: `payment_state`, `payment_method`, `a
 | `pending` | `payment_method: "stripe"` and no lines | Card form, then the confirm call |
 | `paid` | Any | Receipt |
 
-A bill can go from `paid` back to `pending` or `unpaid` when a manager voids a line, so always handle every row, not only the forward path.
+A bill can go from `paid` back to `pending` or `unpaid` when a manager voids a line, and from `pending` back to `unpaid` when a waiting transfer is cancelled (by a person or by the server), so always handle every row, not only the forward path.
 
 ### Payment line status
 
@@ -410,7 +478,7 @@ A bill can go from `paid` back to `pending` or `unpaid` when a manager voids a l
 | --- | --- | --- |
 | `pending` | Waiting badge, plus the QR for a transfer | Received, Cancel |
 | `completed` | Paid badge | Void (managers only) |
-| `cancelled` | Greyed, labelled cancelled | None |
+| `cancelled` | Greyed, labelled cancelled. The `note` says why, for example "Transfer not received in time" | None |
 | `voided` | Greyed, with `voided_at` and `void_reason` | None |
 | `failed` | Red error badge, "could not be recorded" | None. Tell the cashier to pay the balance again |
 
@@ -420,21 +488,25 @@ Cash lines are `completed` as soon as they are created, so a pending cash line o
 
 | `status` | Meaning | Actions |
 | --- | --- | --- |
-| `needs_review` | A code was found but the amount differs, the line was already paid, or the line was cancelled or voided. Read `reason` | Assign, Ignore |
+| `needs_review` | A code was found but the amount differs, the line was already paid, the line was cancelled or voided, or the money arrived on a different account than the QR showed. Read `reason` | Assign, Ignore |
 | `unmatched` | No code, or an unknown code | Assign, Ignore |
 | `matched` | It settled a line. `order_id` and `line_id` are set | None |
-| `ignored` | Outgoing transfer, another account, or dismissed. Read `note` | None |
+| `ignored` | Outgoing transfer, an account no club has saved, or dismissed. Read `note` | None |
 
 ### Who sees which buttons
 
 | Action | Allowed for |
 | --- | --- |
-| Pay, Received, Cancel, open shift, pay-in or pay-out | Any logged-in user of the club |
+| Pay, Cancel a waiting line, open shift, pay-in or pay-out | Any logged-in user of the club |
+| Received (confirm a transfer by hand) | Any logged-in user of the club, unless the club limits it to managers; the club may also require a note |
 | Scoreboard (start a game, change score, reset, new game, finish) | Any logged-in user of the club |
 | Price quote, list pricing rules | Any logged-in user of the club |
 | Void a line | Manager or admin |
-| List, assign or ignore bank transactions | Manager or admin |
-| Create a table, create, change or delete a pricing rule, table usage report | Manager or admin |
+| List, assign or ignore bank transactions, list pending transfer lines | Manager or admin |
+| Save, correct or turn off the club's bank account, read its history, upload a QR image | Manager or admin |
+| Read the current bank account | Any logged-in user of the club |
+| Create, edit or deactivate a table, create, change or delete a pricing rule, table usage report | Manager or admin |
+| List, register controller devices | Manager or admin |
 | Close a shift | The user who opened it, or a manager |
 
 `GET /auth/me` returns `roles`, so decide from it. Role names are `super_admin`, `admin`, `manager`, `moderator` and `user`. The server always lets a `super_admin` through, so treat `super_admin`, `admin` and `manager` as managers:
@@ -462,12 +534,12 @@ type LineMethod = "cash" | "bank_transfer";
 type LineStatus = "pending" | "completed" | "cancelled" | "voided" | "failed";
 
 interface TransferInstruction {      // only on a pending bank_transfer line
-  bank_code: string | null;
+  bank_code: string | null;          // can be null even when the QR works (the club saved only the BIN)
   account_no: string | null;
   account_name: string | null;
   amount: Money;
   memo: string;                      // e.g. "PAY7L2"
-  qr_payload: string | null;         // draw as a QR code; null if no bank account is configured
+  qr_payload: string | null;         // draw as a QR code; null if the club has no bank account saved
   qr_image_url: string | null;       // hosted QR image fallback
   expires_at: ISODate | null;
 }
@@ -480,7 +552,7 @@ interface PaymentLine {
   cash_tendered: Money | null;       // cash only
   change_given: Money | null;        // cash only
   payment_reference: string | null;
-  note: string | null;
+  note: string | null;               // e.g. the confirmation note, or "Transfer not received in time"
   confirmed_at: ISODate | null;
   voided_at: ISODate | null;
   void_reason: string | null;
@@ -511,7 +583,7 @@ interface Me {                       // GET /auth/me (only the fields the screen
   roles: Role[];
 }
 
-interface Table {                    // GET /tables
+interface Table {                    // GET /tables (active tables only)
   id: number;
   name: string;
   status: TableStatus;
@@ -562,7 +634,16 @@ interface AddItemRequest {           // POST /sessions/{id}/items
   quantity: number;                  // 1 to 1000
 }
 
-interface CreateTableRequest { name: string; hourly_rate: number }   // POST /tables (manager)
+interface CreateTableRequest { name: string; hourly_rate: number }   // POST /tables (manager); name 1-50 chars, rate > 0
+interface UpdateTableRequest {                                       // PATCH /tables/{id} (manager); send only changed fields
+  name?: string;                     // 1 to 50 characters
+  hourly_rate?: number;              // above 0
+}
+interface DeactivateTableResponse {  // DELETE /tables/{id} (manager)
+  message: string;                   // "Billiard table deactivated successfully"
+  id: number;
+  is_active: boolean;                // false
+}
 ```
 
 ### Scoreboard, pricing and report
@@ -639,6 +720,37 @@ interface TableUsageReport {         // GET /reports/tables/usage
 }
 ```
 
+### Controller devices (manager)
+
+```ts
+type DeviceStatus = "online" | "offline" | "syncing" | "error";
+
+interface ControllerDevice {         // GET /billiard/controller/status
+  device_id: string;
+  name: string;
+  status: DeviceStatus;              // "offline" after 90 seconds without a request
+  firmware_version: string | null;
+  last_seen: ISODate | null;
+  last_applied_seq: number;          // highest contiguous device event the server applied
+}
+
+interface HydroCandidate {           // GET /billiard/controller/hydro-candidates
+  hydro_device_id: number;
+  device_id: string;
+  name: string;
+  location: string | null;
+}
+
+interface RegisterControllerRequest {          // POST /billiard/controller/register; send device_id or hydro_device_id
+  device_id?: string;                // max 64 characters
+  hydro_device_id?: number;          // copies the id and name from that device
+  name?: string;                     // max 100 characters
+}
+interface RegisterControllerResponse extends ControllerDevice {
+  api_key: string;                   // shown ONCE; only a hash is stored
+}
+```
+
 ### Billiard bill
 
 ```ts
@@ -661,7 +773,7 @@ interface Bill {                     // GET /sessions/{id}, /stop, and every /pa
   end_time: ISODate | null;
   duration_minutes: number | null;
   hourly_rate: Money;
-  billing_policy: string;
+  billing_policy: string;            // per_minute | hourly | block | minimum_hour (old bills: rounded_hour)
   pricing_rule_name: string | null;
   pricing_params: Record<string, unknown>;
   total_table_fee: Money;
@@ -675,8 +787,8 @@ interface Bill {                     // GET /sessions/{id}, /stop, and every /pa
   amount_paid: Money;                // sum of completed lines
   balance_due: Money;                // grand_total - amount_paid
   payments: PaymentLine[];
-  opened_by: string | null;
-  stopped_by: string | null;
+  opened_by: string | null;          // null when the table controller started the session
+  stopped_by: string | null;         // null when the table controller stopped it
   paid_by: string | null;            // null = confirmed by the bank feed (or not paid)
 }
 
@@ -702,7 +814,7 @@ interface PaySplit { payments: SplitLine[] }   // 1 to 6 lines, must add up to b
 
 type PayRequest = PayOne | PaySplit;           // never both
 
-interface ConfirmLineRequest { note?: string }             // max 255
+interface ConfirmLineRequest { note?: string }             // max 255. Required (3+ chars) when the club turns that rule on
 interface CancelLineRequest { reason?: string }            // max 255
 interface VoidLineRequest { reason: string }               // 3 to 255 characters
 ```
@@ -728,13 +840,13 @@ interface PayOrderResponse extends Order { gateway: Record<string, unknown> | nu
 type EventType =
   | "line_created" | "cash_received" | "transfer_awaiting" | "transfer_confirmed"
   | "transfer_auto_confirmed" | "transfer_assigned_from_bank"
-  | "line_cancelled" | "line_failed" | "line_voided" | "order_paid";
+  | "line_cancelled" | "line_expired" | "line_failed" | "line_voided" | "order_paid";
 
 interface PaymentEvent {             // GET /sessions/{id}/pay/events
   id: number;
   line_id: number | null;
-  event_type: EventType;
-  actor_id: number | null;           // null = the system (e.g. the bank feed)
+  event_type: EventType;             // "line_expired" = the server cancelled a transfer that never arrived (actor_id is null)
+  actor_id: number | null;           // null = the system (e.g. the bank feed or the expiry job)
   data: Record<string, unknown> | null;
   created_at: ISODate;
 }
@@ -790,6 +902,46 @@ interface MovementRequest { type: "pay_in" | "pay_out"; amount: number; reason: 
 interface CloseShiftRequest { counted_cash: number; note?: string }       // >= 0
 ```
 
+### Bank account
+
+```ts
+interface BankAccount {              // GET /payments/bank-accounts/current (or null)
+  id: number;
+  client_id: number;
+  bank_bin: string;                  // 6 digits
+  bank_code: string | null;          // e.g. "VCB"
+  account_no: string;
+  account_name: string;
+  is_active: boolean;
+  created_at: ISODate;
+}
+
+interface BankAccountCreate {        // POST /payments/bank-accounts
+  bank_bin: string;                  // exactly 6 digits
+  account_no: string;                // 4 to 32 letters or digits
+  account_name: string;              // 2 to 100 characters
+  bank_code?: string | null;         // max 20
+}
+
+interface BankAccountRename { account_name: string; bank_code?: string | null }
+
+interface ParsedBankQr {             // POST /payments/bank-accounts/parse-qr (nothing is saved)
+  bank_bin: string;
+  account_no: string;
+  amount: number | null;             // only when the picture was a payment QR; ignore it
+  memo: string | null;
+}
+
+interface BankAccountEvent {         // GET /payments/bank-accounts/events (managers)
+  id: number;
+  account_id: number | null;
+  event_type: "account_created" | "account_replaced" | "account_renamed" | "account_deactivated";
+  actor_id: number | null;
+  data: Record<string, unknown> | null;
+  created_at: ISODate;
+}
+```
+
 ### Bank feed
 
 ```ts
@@ -815,6 +967,20 @@ interface BankTransaction {
   handled_at: ISODate | null;
   note: string | null;
   created_at: ISODate;
+}
+
+interface PendingTransferLine {      // GET /payments/bank-feed/pending-lines (managers)
+  line_id: number;
+  order_id: number;
+  source_type: string;               // "billiard_session"
+  source_id: string;                 // the session id for billiard
+  amount: Money;
+  currency: string;
+  order_total: Money;
+  transfer_memo: string | null;
+  created_at: ISODate;
+  expires_at: ISODate | null;
+  expired: boolean;                  // the QR has expired; the line is still payable until the server cancels it
 }
 
 interface AssignRequest { line_id: number }
@@ -882,6 +1048,7 @@ export const api = {
   pay:   (id: number, body: PayRequest) => request<PayResponse>("POST", `/sessions/${id}/pay`, body),
   confirmCard: (id: number) => request<Bill>("POST", `/sessions/${id}/pay/confirm`),
 
+  // note is optional, but send it whenever the cashier typed one: the club may require it (422 without)
   confirmLine: (id: number, lineId: number, note?: string) =>
     request<Bill>("POST", `/sessions/${id}/pay/lines/${lineId}/confirm`, note ? { note } : undefined),
   cancelLine: (id: number, lineId: number, reason?: string) =>
@@ -912,6 +1079,8 @@ export const api = {
   createRule: (b: PricingRuleRequest) => request<PricingRule>("POST", "/billiard/pricing-rules", b),             // manager
   updateRule: (id: number, b: Partial<PricingRuleRequest>) => request<PricingRule>("PUT", `/billiard/pricing-rules/${id}`, b),  // manager
   createTable: (b: CreateTableRequest) => request<Table>("POST", "/tables", b),                                  // manager
+  updateTable: (id: number, b: UpdateTableRequest) => request<Table>("PATCH", `/tables/${id}`, b),               // manager
+  deactivateTable: (id: number) => request<DeactivateTableResponse>("DELETE", `/tables/${id}`),                  // manager
   tableUsage: (startDate?: string, endDate?: string) => {                                                         // manager
     const q = new URLSearchParams();
     if (startDate) q.set("start_date", startDate);
@@ -920,10 +1089,45 @@ export const api = {
     return request<TableUsageReport>("GET", `/reports/tables/usage${qs ? `?${qs}` : ""}`);
   },
 
+  controllers:      () => request<ControllerDevice[]>("GET", "/billiard/controller/status"),                       // manager
+  hydroCandidates:  () => request<HydroCandidate[]>("GET", "/billiard/controller/hydro-candidates"),               // manager
+  registerController: (b: RegisterControllerRequest) =>                                                           // manager
+    request<RegisterControllerResponse>("POST", "/billiard/controller/register", b),
+
   bankTransactions: (status?: BankTxStatus, limit = 50, offset = 0) => {   // manager only
     const q = new URLSearchParams({ limit: String(limit), offset: String(offset) });
     if (status) q.set("status", status);
     return request<BankTransaction[]>("GET", `/payments/bank-feed/transactions?${q}`);
+  },
+  // Bank account of the club
+  bankAccount:        () => request<BankAccount | null>("GET", "/payments/bank-accounts/current"),
+  bankAccounts:       () => request<BankAccount[]>("GET", "/payments/bank-accounts"),              // manager
+  bankAccountEvents:  () => request<BankAccountEvent[]>("GET", "/payments/bank-accounts/events"),  // manager
+  saveBankAccount:    (b: BankAccountCreate) => request<BankAccount>("POST", "/payments/bank-accounts", b),
+  renameBankAccount:  (id: number, b: BankAccountRename) =>
+    request<BankAccount>("PATCH", `/payments/bank-accounts/${id}`, b),
+  deactivateBankAccount: (id: number) =>
+    request<BankAccount>("POST", `/payments/bank-accounts/${id}/deactivate`),
+  // multipart upload: request() always sends JSON, so this call uses fetch directly.
+  // Do not set Content-Type yourself; the browser adds the boundary.
+  parseBankQr: async (file: File): Promise<ParsedBankQr> => {
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(BASE + "/payments/bank-accounts/parse-qr", {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: form,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new ApiError(res.status, typeof err.detail === "string" ? err.detail : res.statusText);
+    }
+    return res.json();
+  },
+  pendingLines: (amount?: number | string, limit = 50, offset = 0) => {    // manager only
+    const q = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+    if (amount !== undefined) q.set("amount", String(amount));
+    return request<PendingTransferLine[]>("GET", `/payments/bank-feed/pending-lines?${q}`);
   },
   assignTx: (txId: number, lineId: number) =>
     request<BankTransaction>("POST", `/payments/bank-feed/transactions/${txId}/assign`, { line_id: lineId }),
@@ -952,11 +1156,20 @@ const split = await api.pay(42, { payments: [
 const waiting = split.payments.find(p => p.status === "pending" && p.transfer);
 // draw waiting.transfer.qr_payload, then poll api.bill(42)
 
-// Cashier presses Received
-await api.confirmLine(42, waiting!.id);
+// Cashier presses Received. Handle the club's manual-confirm rules.
+try {
+  await api.confirmLine(42, waiting!.id, noteFromInput);
+} catch (e) {
+  if (e instanceof ApiError && e.status === 422) { /* note required: keep the note box open */ }
+  if (e instanceof ApiError && e.status === 403) { /* only a manager may confirm: ask a manager or wait */ }
+}
 
 // Manager voids a completed line
 await api.voidLine(42, 1, "gave too much change");
+
+// Manager renames a table and deactivates another
+await api.updateTable(3, { name: "T03 VIP", hourly_rate: 120000 });
+await api.deactivateTable(7);
 
 // Card
 const card = await api.pay(42, { payment_method: "stripe" });
@@ -966,7 +1179,7 @@ await api.confirmCard(42);
 
 ## Polling, errors and edge cases
 
-A transfer can be confirmed by the bank feed at any moment, so the transfer-waiting screen must refresh itself. Every other failure should reload the bill and redraw it.
+A transfer can be confirmed by the bank feed (or cancelled by the server) at any moment, so the transfer-waiting screen must refresh itself. Every other failure should reload the bill and redraw it.
 
 ### Poll a pending bill
 
@@ -991,7 +1204,7 @@ export function watchBill(id: number, onBill: (b: Bill) => void, ms = 4000) {
 }
 ```
 
-Stop polling when the screen closes, and keep going only while `payment_state` is `pending`.
+Stop polling when the screen closes, and keep going only while `payment_state` is `pending`. When the poll ends because the bill became `unpaid` (the server cancelled the waiting line), switch the screen back to the pay screen.
 
 ### Error handling
 
@@ -1001,22 +1214,28 @@ The server's `detail` text is readable, but it is English and not a stable code.
 | --- | --- | --- |
 | `401` | Token missing or expired | Send the user to login |
 | `400` | Adding an item that cannot be sold (`Product is not available`, `Variant does not belong to this product`) | Show the message and refresh the menu |
-| `403` | Not a manager (void, bank inbox, create table, pricing rules, usage report), or closing someone else's shift | "Only a manager can do this" |
+| `403` | Not a manager (void, bank inbox, pending lines, create/edit/deactivate table, pricing rules, usage report, controller devices), or closing someone else's shift, or confirming a transfer by hand when the club limits that to managers (`Only a manager can confirm a transfer manually`) | "Only a manager can do this" |
 | `404` | Unknown id, or it belongs to another club | "Not found". Go back to the list |
-| `409` | Wrong state. Table: "Table already has an active session". Session: "Items can only be added to an active session", "Session is already completed", "Stop the session before paying". Payment: "Already paid", "A payment is already in progress", "This order already has cash/transfer payments; pay the balance with those methods" (card after part payment). Shift: "Open a shift before taking payments", "A shift is already open", a pay-out larger than the drawer. Scoreboard: "Session is not active", "Game is not active", "Session already has an active game", "Score cannot go below 0" | Reload the bill, the board or the shift and redraw. The screen was out of date |
-| `422` | Split lines do not add up, cash tendered is below the amount, a void or movement reason is too short, or the amount differs on assign | Show the message next to the form. Validate the same rules in the browser first |
+| `409` | Wrong state. Table: `Table is playing` / `Table is reserved` / `Table is maintenance` / `Table is inactive` / `Table already has an active session` (start); `Table '<name>' already exists` (create or rename); `Cannot deactivate a table with an active session` / `Billiard table is already inactive` (deactivate). Session: "Items can only be added to an active session", "Session is already completed", "Stop the session before paying". Payment: "Already paid", "A payment is already in progress", "This order already has cash/transfer payments; pay the balance with those methods" (card after part payment). Shift: "Open a shift before taking payments", "A shift is already open", a pay-out larger than the drawer. Scoreboard: "Session is not active", "Game is not active", "Games can only be started in an active session", "Session already has an active game", "Score cannot go below 0". Controller: `Device '<id>' is already registered`. Bank account: `This bank account is already in use` | Reload the bill, the board or the shift and redraw. The screen was out of date |
+| `422` | Split lines do not add up, cash tendered is below the amount, a void or movement reason is too short, the amount differs on assign, or a manual confirmation needs a note (`A note is required to confirm a transfer manually`), or a bank account field is invalid or the picture is not an account QR | Show the message next to the form. Validate the same rules in the browser first |
+| `413` / `501` | Bank-account QR upload: the image is over 5 MB (`413`), or the server has no QR reader installed (`501`) | Check the size before sending. On `501` hide the upload button and let the manager type the account |
 | `500` on pay | Some lines could not be recorded | Reload the bill. Show which lines failed and offer to pay `balance_due` again |
 
 ### Edge cases
 
 - **Double click.** Disable the pay button while a request is running. A second pay call returns `409`, which you treat as "reload the bill".
+- **Account changed while a QR is waiting.** The waiting line keeps the account its QR showed, and the money still matches. Only new lines use the new account. Never redraw an old QR from `GET /payments/bank-accounts/current`; always draw it from the line's `transfer` object.
 - **Page reload during a transfer.** The QR data is on the bill (`GET /sessions/{id}`), so rebuild the waiting screen from it. Do not store the QR yourself.
 - **QR expired.** `transfer.expires_at` only says when to stop showing the QR as valid. The line stays `pending` for a grace period (60 minutes by default) so a slow bank notification can still match it, so keep both buttons. To start over, cancel and pay again for a new QR.
 - **Line cancelled by the server.** After the grace period a background job cancels the line itself: its `status` becomes `cancelled`, its `note` is "Transfer not received in time", and the bill goes back to `unpaid` (or stays `pending` if another part was already paid). If the screen is polling, treat that like any cancelled line and show the pay buttons again. If the customer pays after that, the money appears in the manager inbox as `needs_review` ("Money received for a line that is cancelled"); to apply it, pay again with a new transfer line and assign the transaction to it.
+- **Received refused.** A `403` or `422` on Received is a club rule, not a bug. Keep the line `pending`, show the reason and keep polling.
 - **Paid, then voided.** A bill can move from `paid` back to `pending` or `unpaid`. Redraw from the response and never assume paid is final.
 - **Two cashiers on one bill.** Treat every response as the truth and redraw. Do not merge it with local state.
+- **Scores changed by the device.** The physical scoreboard can change scores too. Redraw from each response and reload the games list when the scoreboard opens.
+- **Table disappeared.** A manager may have deactivated it. After a `404` or a missing id on the board, reload `GET /tables`.
 - **Old paid bills.** A bill that is `paid` with `payments: []` was settled before the payment module. Show it as paid and hide the line list.
 - **Automatic confirmation.** A bill can become `paid` with `paid_by: null`. Show "Confirmed automatically by the bank" instead of a cashier name.
+- **Session without a cashier name.** `opened_by` or `stopped_by` can be `null` when the table controller acted. Show "Table controller".
 - **Amounts.** Convert both sides with `Number()` before comparing, for example `Number(bill.balance_due) === sum`. VND has no decimals, so amounts are whole numbers.
 - **Time zones.** Timestamps are UTC. Show them in the club's time zone (the backend default is Asia/Ho\_Chi\_Minh).
 - **Stopping twice.** A second stop returns `409 Session is already completed`. Load the bill with `GET /sessions/{id}` and carry on to the pay screen.
@@ -1052,20 +1271,34 @@ Run these on a development backend before release. Use a stopped session with a 
 | 19 | Token expires | The user is sent to login and comes back to the same bill |
 | 20 | Open a bill paid before the payment module | It shows as paid with no line list |
 | 21 | Double click Pay | One payment is created and no error is shown |
-| 22 | Start a table that already has a session | `409` message is shown and the board reloads |
+| 22 | Start a table that is already playing | `409 Table is playing` is shown and the board reloads |
 | 23 | Add an item after the session is stopped | `409` message is shown, nothing is added |
 | 24 | Try to pay a session that is still running | `409 Stop the session before paying`, and the Pay button should not have been shown |
 | 25 | Stop the same session twice | The second call returns `409`, and the app shows the bill and the pay screen |
 | 26 | Split 200,000 cash + 110,000 transfer, then press Cash on the waiting bill | `409 A payment is already in progress`. No pay buttons are shown while a transfer waits |
 | 27 | Pay 100,000 cash, then try Card | `409`, and the Card button is already hidden |
 | 28 | Pay out more cash than the drawer holds | `409` message is shown, and the form checks the amount first |
-| 29 | Log in as a cashier, then as a manager, and compare `GET /auth/me` | The cashier has no manager buttons (void, bank inbox, reports); the manager has them |
+| 29 | Log in as a cashier, then as a manager, and compare `GET /auth/me` | The cashier has no manager buttons (void, bank inbox, reports, table and controller set-up); the manager has them |
 | 30 | Scroll the bank inbox past 50 rows | "Load more" fetches the next page with `offset=50` and no row repeats |
 | 31 | Start a game, press +1 for A three times, then -1 for B at 0 | A shows 3; the B change returns `409 Score cannot go below 0` and the score stays 0 |
 | 32 | Press "Next game" | The old game is `completed`, a new one is `active`, and the list shows both |
 | 33 | Start a second game while one is active, or after the session is stopped | `409` message is shown and the list reloads |
 | 34 | Ask for a quote for 90 minutes on a table with a block or minimum-hour rule | `fee` and `rule_name` match the rule, and nothing is created |
 | 35 | Open the table usage report for a date range | Revenue counts paid sessions only, and `unpaid_total` covers stopped but unpaid sessions |
+| 36 | Rename a table, then rename another table to the same name | The first works; the second shows `409 Table '<name>' already exists` |
+| 37 | Change a table's hourly rate while it is playing | The running session keeps its old rate; the next session uses the new one |
+| 38 | Deactivate a playing table | `409 Cannot deactivate a table with an active session`. Stop the session, then deactivate: the table leaves the board |
+| 39 | Turn on manual-confirm "note required" and press Received with no note | `422` is shown, the note box stays open and is marked required. With a note it succeeds |
+| 40 | Turn on manual-confirm "manager only" and press Received as a cashier | `403` is shown, the line stays `pending`, and polling continues. A manager can confirm |
+| 41 | Open the controller screen as a manager and register a controller | The `api_key` is shown once. Registering the same id again returns `409` |
+| 42 | Stop sending requests from the controller for over 90 seconds | `GET /billiard/controller/status` shows it `offline` |
+| 43 | As a manager, save a bank account by typing the fields | `201`; `GET /payments/bank-accounts/current` shows it; the next transfer QR shows that account name |
+| 44 | Upload a screenshot of a bank account QR | The form is prefilled with the BIN and account number, nothing is saved until you type the holder name and press Save |
+| 45 | Upload a photo of something that is not a bank QR, or a card QR | `422` message is shown and the typed fields stay |
+| 46 | Save the same account in a second club | `409 This bank account is already in use` |
+| 47 | Log in as a cashier and open the bank account screen | Save, history and upload are hidden or answer `403`; `current` still works |
+| 48 | Change the account while a transfer QR is waiting, then pay that line | The old QR still settles the bill; a new transfer line shows the new account |
+| 49 | Send a webhook to an account that no club has saved | The transaction is `ignored` |
 
 ### Simulating the bank webhook in development
 
@@ -1075,7 +1308,7 @@ Ask the backend developer to set `SEPAY_API_KEY` on the dev server, then post a 
 curl -X POST https://<api>/payments/bank-feed/sepay \
   -H "Authorization: Apikey $SEPAY_API_KEY" -H "Content-Type: application/json" \
   -d '{"id": 900001, "gateway": "Vietcombank", "transactionDate": "2026-10-21 18:00:00",
-       "accountNumber": "<PAYMENT_BANK_ACCOUNT_NO>", "code": null,
+       "accountNumber": "<account number shown on the QR>", "code": null,
        "content": "chuyen tien PAY7L2", "transferType": "in", "transferAmount": 110000,
        "accumulated": 0, "referenceCode": "FT1", "description": ""}'
 ```
@@ -1086,5 +1319,9 @@ It answers `{"success": true}` even when the transfer is not matched, so check t
 
 - `GET /products` needs no login and is not limited to the user's club. Scoping it to the club would stop a cashier seeing another club's menu.
 - No endpoint says whether Stripe is configured, so the Card button has to be switched on in the frontend.
+- No endpoint says whether the club's bank account is set before a transfer is started: a missing account shows up as a transfer line with no QR. Call `GET /payments/bank-accounts/current` on the pay screen if you want to warn the cashier first.
+- No endpoint says whether manual confirmation needs a note or a manager, so the Received button has to react to the `403` and `422` responses.
+- No WebSocket yet: the board and the scoreboard have to poll. Real-time updates are on the backend roadmap.
+- A deactivated table cannot be reactivated, and a table cannot be put into `reserved` or `maintenance` from the API yet.
 
 Fixed since Oct 24 (kept here so old notes make sense): `GET /auth/me` now returns `roles`, `POST /payments/` and `PATCH /payments/{id}` are admin only, `GET /payments/bank-feed/pending-lines` lists the waiting transfer lines, and stale transfer lines are cancelled automatically.
