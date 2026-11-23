@@ -22,7 +22,7 @@ import type {
   PayResponse,
   SplitLinePayload,
 } from '../../../models/interfaces/Billiard';
-import { getPaymentModeLabel } from '../../../utils/status';
+import { getPaymentModeLabel, getLineMethodLabel } from '../../../utils/status';
 
 interface StripeCheckoutProps {
   clientSecret: string;
@@ -202,15 +202,15 @@ const PayModal: React.FC<Props> = ({
 
     return (
 
-    <InlineNotice
-      variant="warning"
-      action={{
-        label: t('btn.open_shift'),
-        onClick: onOpenShift,
-      }}
-    >
-      {t('cashier.no_cash_shift_warning')}
-    </InlineNotice>
+      <InlineNotice
+        variant="warning"
+        action={{
+          label: t('btn.open_shift'),
+          onClick: onOpenShift,
+        }}
+      >
+        {t('cashier.no_cash_shift_warning')}
+      </InlineNotice>
     );
   };
 
@@ -306,8 +306,11 @@ const PayModal: React.FC<Props> = ({
                     }
                     className="min-w-0 flex-1"
                   >
-                    <option value="cash">Cash</option>
-                    <option value="bank_transfer">Bank transfer</option>
+                    {(['cash', 'bank_transfer'] as const).map((method) => (
+                      <option key={method} value={method}>
+                        {getLineMethodLabel(method)}
+                      </option>
+                    ))}
                   </FloatingLabelSelect>
 
                   <FloatingLabelInput
@@ -390,7 +393,7 @@ const PayModal: React.FC<Props> = ({
           className={`text-xs font-medium ${remaining === 0 ? 'text-green-600' : 'text-red-600'
             }`}
         >
-         {t('cashier.remaining', { amount: money(remaining) })}
+          {t('cashier.remaining', { amount: money(remaining) })}
         </p>
       </div>
 
