@@ -1,6 +1,6 @@
 // src/utils/status.ts
 import i18n from '../i18n';
-import type { TableStatus, BillPaymentMethod, LineStatus, BillState, PaymentEventType } from '../models/interfaces/Billiard';
+import type { TableStatus, BillPaymentMethod, LineStatus, BillState, PaymentEventType, LineMethod } from '../models/interfaces/Billiard';
 import type { BankTxStatus } from '../models/interfaces/BankFeed';
 import type { Shift } from '../models/interfaces/CashDrawer';
 
@@ -50,8 +50,15 @@ export const getPaymentLineStatusLabel = (status: LineStatus): string =>
   i18n.t(`badge_status.${status}`);
 
 // ---- Payment method ----------------------------------------------
+
+// Supports cash, bank_transfer, and stripe.
 export const getPaymentMethodLabel = (
   method: BillPaymentMethod
+): string => i18n.t(`badge_status.${method}`);
+
+// Supports only cash and bank_transfer, matching your split payment model.
+export const getLineMethodLabel = (
+  method: LineMethod
 ): string => i18n.t(`badge_status.${method}`);
 
 export const getPaymentModeLabel = (

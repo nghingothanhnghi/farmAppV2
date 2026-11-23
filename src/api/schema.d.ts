@@ -1199,6 +1199,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/hardware-detection/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Hardware Detection Summaries
+         * @description Get hardware detection summaries, optionally filtered by location
+         */
+        get: operations["get_hardware_detection_summaries_hardware_detection_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/hardware-detection/{detection_id}": {
         parameters: {
             query?: never;
@@ -3087,26 +3107,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/payments/bank-feed/pending-lines": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * List Pending Lines
-         * @description Manager: transfer lines still waiting for money, newest first. `?amount=` keeps only lines of exactly that amount.
-         */
-        get: operations["list_pending_lines_payments_bank_feed_pending_lines_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/payments/bank-feed/transactions": {
         parameters: {
             query?: never;
@@ -3119,6 +3119,27 @@ export interface paths {
          * @description Manager: bank transactions, e.g. `?status=needs_review` for money that needs a decision.
          */
         get: operations["list_transactions_payments_bank_feed_transactions_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-feed/pending-lines": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List Pending Lines
+         * @description Manager: bank-transfer lines still waiting for money. Use it to pick the `line_id` for
+         *     `POST /transactions/{tx_id}/assign` (`?amount=` narrows it to lines matching the transaction).
+         */
+        get: operations["list_pending_lines_payments_bank_feed_pending_lines_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -3161,6 +3182,112 @@ export interface paths {
          * @description Manager: dismiss a transaction (e.g. a refund was made, or it is not a bill payment).
          */
         post: operations["ignore_transaction_payments_bank_feed_transactions__tx_id__ignore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-accounts/current": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Current */
+        get: operations["current_payments_bank_accounts_current_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Accounts */
+        get: operations["list_accounts_payments_bank_accounts_get"];
+        put?: never;
+        /** Create */
+        post: operations["create_payments_bank_accounts_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-accounts/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Events */
+        get: operations["events_payments_bank_accounts_events_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-accounts/parse-qr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Parse Qr
+         * @description Read a bank QR image. Nothing is saved: show the result, let the user confirm, then POST /.
+         */
+        post: operations["parse_qr_payments_bank_accounts_parse_qr_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/payments/bank-accounts/{account_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Rename */
+        patch: operations["rename_payments_bank_accounts__account_id__patch"];
+        trace?: never;
+    };
+    "/payments/bank-accounts/{account_id}/deactivate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Deactivate */
+        post: operations["deactivate_payments_bank_accounts__account_id__deactivate_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -4475,6 +4602,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/tables/{table_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Deactivate Table */
+        delete: operations["deactivate_table_tables__table_id__delete"];
+        options?: never;
+        head?: never;
+        /** Update Table */
+        patch: operations["update_table_tables__table_id__patch"];
+        trace?: never;
+    };
     "/tables/active": {
         parameters: {
             query?: never;
@@ -5022,24 +5167,73 @@ export interface components {
             /** Username */
             username: string;
         };
-        /** BankTransactionResponse */
-        /**
-         * PendingTransferLineResponse
-         * @description A bank-transfer payment line still waiting for money (hand-added from the Nov 13 guide; regenerate from /openapi.json).
-         */
-        PendingTransferLineResponse: {
-            line_id: number;
-            order_id: number;
-            source_type: string;
-            source_id: string;
-            amount: string;
-            order_total: string;
-            transfer_memo: string | null;
-            /** Format: date-time */
-            created_at: string;
-            expires_at: string | null;
-            expired: boolean;
+        /** BankAccountCreate */
+        BankAccountCreate: {
+            /**
+             * Bank Bin
+             * @description NAPAS BIN, 6 digits
+             */
+            bank_bin: string;
+            /** Bank Code */
+            bank_code?: string | null;
+            /** Account No */
+            account_no: string;
+            /** Account Name */
+            account_name: string;
         };
+        /** BankAccountEventOut */
+        BankAccountEventOut: {
+            /** Id */
+            id: number;
+            /** Account Id */
+            account_id?: number | null;
+            /** Event Type */
+            event_type: string;
+            /** Actor Id */
+            actor_id?: number | null;
+            /** Data */
+            data?: {
+                [key: string]: unknown;
+            } | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /** BankAccountOut */
+        BankAccountOut: {
+            /** Id */
+            id: number;
+            /** Client Id */
+            client_id: number;
+            /** Bank Bin */
+            bank_bin: string;
+            /** Bank Code */
+            bank_code?: string | null;
+            /** Account No */
+            account_no: string;
+            /** Account Name */
+            account_name: string;
+            /** Is Active */
+            is_active: boolean;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * BankAccountRename
+         * @description Only the display name may change in place (e.g. typo fix).
+         */
+        BankAccountRename: {
+            /** Account Name */
+            account_name: string;
+            /** Bank Code */
+            bank_code?: string | null;
+        };
+        /** BankTransactionResponse */
         BankTransactionResponse: {
             /** Id */
             id: number;
@@ -5238,6 +5432,14 @@ export interface components {
             client_id?: string | null;
             /** Client Secret */
             client_secret?: string | null;
+        };
+        /** Body_parse_qr_payments_bank_accounts_parse_qr_post */
+        Body_parse_qr_payments_bank_accounts_parse_qr_post: {
+            /**
+             * File
+             * Format: binary
+             */
+            file: string;
         };
         /** Body_set_manual_mode_hydro_actuator__actuator_id__manual_post */
         Body_set_manual_mode_hydro_actuator__actuator_id__manual_post: {
@@ -6288,6 +6490,45 @@ export interface components {
                 [key: string]: number;
             } | null;
         };
+        /** HardwareDetectionSummaryResponse */
+        HardwareDetectionSummaryResponse: {
+            /** Id */
+            id: number;
+            /** Location */
+            location: string;
+            /**
+             * Summary Date
+             * Format: date-time
+             */
+            summary_date: string;
+            /** Total Detections */
+            total_detections: number;
+            /** Unique Hardware Types */
+            unique_hardware_types: number;
+            /** Validated Detections */
+            validated_detections: number;
+            /** Expected Present */
+            expected_present: number;
+            /** Expected Missing */
+            expected_missing: number;
+            /** Unexpected Present */
+            unexpected_present: number;
+            /** Good Condition */
+            good_condition: number;
+            /** Damaged Condition */
+            damaged_condition: number;
+            /** Unknown Condition */
+            unknown_condition: number;
+            /** Hardware Types Detected */
+            hardware_types_detected: string[] | null;
+            /** Detection Confidence Avg */
+            detection_confidence_avg: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** HardwareDetectionUpdate */
         HardwareDetectionUpdate: {
             /** Hardware Name */
@@ -7228,6 +7469,20 @@ export interface components {
              */
             pages: number;
         };
+        /**
+         * ParsedBankQrOut
+         * @description Result of reading a QR image. Nothing is saved; the user confirms first.
+         */
+        ParsedBankQrOut: {
+            /** Bank Bin */
+            bank_bin: string;
+            /** Account No */
+            account_no: string;
+            /** Amount */
+            amount?: number | null;
+            /** Memo */
+            memo?: string | null;
+        };
         /** PasswordResetConfirm */
         PasswordResetConfirm: {
             /**
@@ -7503,6 +7758,38 @@ export interface components {
             extra_metadata?: {
                 [key: string]: unknown;
             } | null;
+        };
+        /**
+         * PendingTransferLineResponse
+         * @description A bank-transfer line still waiting for money: what a manager picks when assigning a
+         *     bank transaction by hand.
+         */
+        PendingTransferLineResponse: {
+            /** Line Id */
+            line_id: number;
+            /** Order Id */
+            order_id: number;
+            /** Source Type */
+            source_type: string;
+            /** Source Id */
+            source_id: string;
+            /** Amount */
+            amount: string;
+            /** Currency */
+            currency: string;
+            /** Order Total */
+            order_total: string;
+            /** Transfer Memo */
+            transfer_memo?: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Expires At */
+            expires_at?: string | null;
+            /** Expired */
+            expired: boolean;
         };
         /** PlantAnomalyOut */
         PlantAnomalyOut: {
@@ -8675,6 +8962,13 @@ export interface components {
          * @enum {string}
          */
         TableStatus: "available" | "playing" | "reserved" | "maintenance";
+        /** TableUpdate */
+        TableUpdate: {
+            /** Name */
+            name?: string | null;
+            /** Hourly Rate */
+            hourly_rate?: number | string | null;
+        };
         /** TableUsageReport */
         TableUsageReport: {
             /** Period Start */
@@ -11087,6 +11381,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HardwareDetectionResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_hardware_detection_summaries_hardware_detection_summary_get: {
+        parameters: {
+            query?: {
+                /** @description Filter by location */
+                location?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HardwareDetectionSummaryResponse"][];
                 };
             };
             /** @description Validation Error */
@@ -14957,6 +15283,198 @@ export interface operations {
             };
         };
     };
+    current_payments_bank_accounts_current_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountOut"] | null;
+                };
+            };
+        };
+    };
+    list_accounts_payments_bank_accounts_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountOut"][];
+                };
+            };
+        };
+    };
+    create_payments_bank_accounts_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BankAccountCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    events_payments_bank_accounts_events_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountEventOut"][];
+                };
+            };
+        };
+    };
+    parse_qr_payments_bank_accounts_parse_qr_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_parse_qr_payments_bank_accounts_parse_qr_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ParsedBankQrOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    rename_payments_bank_accounts__account_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BankAccountRename"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_payments_bank_accounts__account_id__deactivate_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BankAccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     create_draw_jackpot_draw_post: {
         parameters: {
             query?: never;
@@ -17708,6 +18226,72 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    deactivate_table_tables__table_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": unknown;
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_table_tables__table_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TableUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

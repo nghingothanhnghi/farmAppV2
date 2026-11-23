@@ -47,28 +47,11 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
             {b.duration_minutes != null && ` · ${formatDuration(b.duration_minutes)}`}
           </p>
         </div>
-
-        {/* <Badge
-          label={
-            state === 'paid' ? 'Paid'
-              : state === 'pending' ? 'Payment in progress'
-                : state === 'stopped' ? 'Awaiting payment'
-                  : 'Playing'
-          }
-          variant={
-            state === 'paid' ? 'success'
-              : state === 'pending' || state === 'stopped' ? 'warning'
-                : 'info'
-          }
+        <Badge
+          label={getBillStatusLabel(state)}
+          variant={getBillStatusVariant(state)}
           size="xsmall"
-        /> */}
-
-<Badge
-  label={getBillStatusLabel(state)}
-  variant={getBillStatusVariant(state)}
-  size="xsmall"
-/>
-
+        />
       </div>
 
       {hasPricing && (
@@ -116,18 +99,18 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
       </div>
 
       <div className="space-y-1.5 border-t border-gray-200 dark:border-white/5 pt-3">
-        <Line 
-          label={t('billiard_tables.cards.fee_table')} 
-          value={formatMoneyString(b.total_table_fee, c)} 
+        <Line
+          label={t('billiard_tables.cards.fee_table')}
+          value={formatMoneyString(b.total_table_fee, c)}
         />
-        <Line 
-          label={t('billiard_tables.cards.fee_product')} 
-          value={formatMoneyString(b.total_product_fee, c)} 
+        <Line
+          label={t('billiard_tables.cards.fee_product')}
+          value={formatMoneyString(b.total_product_fee, c)}
         />
-        <Line 
-          label={t('billiard_tables.cards.fee_total')} 
-          value={formatMoneyString(b.grand_total, c)} 
-          bold 
+        <Line
+          label={t('billiard_tables.cards.fee_total')}
+          value={formatMoneyString(b.grand_total, c)}
+          bold
         />
         {bill.payment_method && state === 'paid' && (
           <Line
