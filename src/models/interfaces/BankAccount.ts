@@ -4,7 +4,7 @@
 /** GET /payments/bank-accounts/current (or null when the club has none). */
 export interface BankAccount {
   id: number;
-  client_id: number;
+  client_id: string;
   /** 6 digits. */
   bank_bin: string;
   /** e.g. "VCB". Can be null while the QR still works (the club saved only the BIN). */

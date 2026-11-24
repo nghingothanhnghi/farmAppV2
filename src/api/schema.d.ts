@@ -5206,7 +5206,7 @@ export interface components {
             /** Id */
             id: number;
             /** Client Id */
-            client_id: number;
+            client_id: string;
             /** Bank Bin */
             bank_bin: string;
             /** Bank Code */
