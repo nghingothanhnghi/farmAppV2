@@ -115,7 +115,8 @@ export interface SessionCancelPayload {
 export interface SessionDiscountPayload {
   amount?: number;
   percent?: number;
-  reason: string;
+  /** Required for a non-zero discount; optional when amount is zero (remove). */
+  reason?: string;
 }
 
 export interface ActiveTable {
@@ -130,6 +131,8 @@ export interface ActiveTable {
   pricing_rule_name?: string | null;
   current_table_fee: string;
   current_product_fee: string;
+  /** Discount currently applied to the running subtotal. */
+  current_discount?: string;
   current_total: string;
   ends_at?: string | null;
   remaining_seconds?: number | null;
@@ -189,7 +192,12 @@ export interface BillResponse {
   status?: 'active' | 'completed' | 'cancelled' | (string & {});
   cancel_reason?: string | null;
   discount?: string;
+  /** Present when the discount was entered as a percentage. */
+  discount_percent?: string | null;
   discount_reason?: string | null;
+  discounted_by?: string | null;
+  cancelled_at?: string | null;
+  cancelled_by?: string | null;
   ends_at?: string | null;
   planned_minutes?: number | null;
   currency: string;
@@ -249,13 +257,24 @@ export interface UsageRow {
   table_name: string;
   times_played: number;
   total_minutes: number;
+  /** Paid sessions only; before discounts. */
+  table_revenue: string;
+  /** Paid sessions only; before discounts. */
+  product_revenue: string;
+  /** Discounts on paid sessions only. */
+  discount_total: string;
   total_revenue: string;
   unpaid_total: string;
 }
 
 export interface UsageTotals {
+  table_id?: number;
+  table_name?: string;
   times_played: number;
   total_minutes: number;
+  table_revenue: string;
+  product_revenue: string;
+  discount_total: string;
   total_revenue: string;
   unpaid_total: string;
 }

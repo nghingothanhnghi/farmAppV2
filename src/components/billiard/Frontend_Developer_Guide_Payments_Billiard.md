@@ -27,10 +27,10 @@ Checked against the code on Nov 23, 2026 against the Nov 19 guide below. "Done" 
 | Pricing rules and price quote | Screen 8 | Done | `PricingRulesPage`, `PricingQuotePanel`, `usePricingRules` |
 | Table create, edit and deactivate; usage report | Screen 9 | Done | `TableFormModal`, `TablesPage`, `ReportsPage`, `useUsageReport` |
 | Controller devices: status, register, one-time `api_key` dialog | Screen 10 | Done | `ControllersPage`, `RegisterControllerModal`, `ControllerApiKeyModal`, `useBilliardControllers` |
-| Table reserve, maintenance and release | Roadmap A | Done in frontend; requires the matching backend routes | `TablesPage`, `TableCard`, `useTables` |
-| Cancel an accidentally opened active session | Roadmap B | Done in frontend; requires the matching backend route/migration | `SessionPage`, `useSession` |
-| Manager discount (amount or percent) | Roadmap C | Done in frontend; requires the matching backend route/migration | `SessionPage`, `useSession` |
-| Timed session extension | Roadmap D | Done in frontend (`+30 min`); start-time duration picker follows package work | `SessionPage`, `useSession` |
+| Table reserve, maintenance and release | Roadmap A | **Done (Nov 25)** | `TablesPage`, `TableCard`, `useTables` |
+| Cancel an accidentally opened active session | Roadmap B | **Done (Nov 25)**; cancellation database migration applied | `SessionPage`, `useSession` |
+| Manager discount (amount or percent) | Roadmap C | **Done (Nov 25)** | `SessionPage`, `BillView`, `useSession` |
+| Timed session extension and countdown | Roadmap D | **Done (Nov 25)**; manager `+30 min` shortcut; start-time duration picker follows package work | `SessionPage`, `useSession` |
 | **Bank account set-up (manager)**: current account, QR image upload prefill, typed form, summary before save, correct name, turn off, history and events | Screen 11 | Done (Nov 23). Route `/billiard/bank-account`, reached from the manager menu on the table board | `BankAccountPage`, `bankAccountService`, `useBankAccounts`, `models/interfaces/BankAccount.ts` |
 | Bank account errors: `422` keeps the typed fields, `409` account in use, `413` (size also checked in the browser first), `501` hides the upload button | Screen 11, "Error handling" | Done (Nov 23) | `BankAccountPage`, `bankAccountErrorMessage` in `utils/billiard.ts` |
 | `/payments/orders/...` generic routes | Start here | Not needed for billiard, left out on purpose | n/a |
@@ -167,12 +167,13 @@ A shift is the cash drawer for the club: one open shift per club, not per cashie
     "hourly_rate": "100000.00",
     "current_table_fee": "225000.00",
     "current_product_fee": "85000.00",
+    "current_discount": "0.00",
     "current_total": "310000.00"
   }
 ]
 ```
 
-Keep `session_id` on the tile. Every later call uses it. `current_total` is a running estimate for display; the real bill comes from the stop call. It follows the same pricing rule as the final bill, so it should match what Stop returns.
+Keep `session_id` on the tile. Every later call uses it. `current_total` is a running estimate for display; the real bill comes from the stop call. It follows the same pricing rule as the final bill, so it should match what Stop returns. When `current_discount` is greater than zero, render it as a separate negative line; it is already subtracted from `current_total`.
 
 ### Step 4. Start a session
 
@@ -218,6 +219,10 @@ Errors: `404 Product not found`, `400 Product is not available`, `400 Variant do
   "pricing_params": {},
   "total_table_fee": "225000.00",
   "total_product_fee": "85000.00",
+  "discount": "0.00",
+  "discount_percent": null,
+  "discount_reason": null,
+  "discounted_by": null,
   "grand_total": "310000.00",
   "items": [
     { "id": 7, "product_id": 5, "variant_id": null, "product_name": "Coca Cola", "quantity": 2, "unit_price": "15000.00", "total_price": "30000.00" },
@@ -1332,7 +1337,7 @@ Fixed since Oct 24 (kept here so old notes make sense): `GET /auth/me` now retur
 
 ## Backend roadmap extension (Nov 25)
 
-This section is the frontend contract for roadmap phases A–F. It extends the payment guide above; it does not change the existing payment lifecycle. Until the backend feature branch is deployed, these calls can return `404` and the controls should be treated as unavailable.
+This section is the frontend contract for roadmap phases A–F. It extends the payment guide above; it does not change the existing payment lifecycle. Phases A–D are implemented in the POS UI and available once the backend migration/deployment is current. Packages (phases E/F) remain the next UI increment.
 
 ### Phase A — table availability controls
 
@@ -1341,10 +1346,10 @@ Managers and admins can change a free table's operational status. These are ligh
 | Action | Request | Allowed source state | Result |
 | --- | --- | --- | --- |
 | Reserve | `POST /tables/{id}/reserve` | `available` | `reserved` |
-| Mark maintenance | `POST /tables/{id}/maintenance` | `available` | `maintenance` |
+| Mark maintenance | `POST /tables/{id}/maintenance` | `available`, `reserved` | `maintenance` |
 | Release | `POST /tables/{id}/release` | `reserved`, `maintenance` | `available` |
 
-All three are manager/admin only. Refresh `/tables` after success. A `409` means another person changed the table state; reload rather than guessing. A reserved or maintenance table must not show Start. The board implementation exposes Reserve and Maintenance only to managers, and Release only while the table is in either restricted state.
+All three are manager/admin only. Refresh `/tables` after success. A `409` means another person changed the table state; reload rather than guessing. A reserved or maintenance table must not show Start. A reserved table may go directly to maintenance (for example, it broke before the guest arrived). The board implementation exposes these controls only to managers.
 
 ### Phase B — cancel an active session
 
@@ -1361,9 +1366,19 @@ Never offer cancellation after Stop or after any payment action. That is a payme
 { "percent": 10, "reason": "Promotion" }
 ```
 
-The backend stores the applied monetary amount, clamps it to the bill subtotal, and returns `discount`, `discount_reason`, and recalculated totals. Sending `{ "amount": 0, "reason": "Remove promotion" }` removes it. Discounts are manager/admin only and are refused after a payment order is created. For a percentage set during play, the backend recalculates it when the table is stopped; always replace local bill state with the response.
+The backend stores the applied monetary amount, clamps it to the bill subtotal, and returns `discount`, `discount_percent`, `discount_reason`, `discounted_by`, and recalculated totals. `discount` is the amount currently applied, not necessarily the amount originally requested: when an active session has no table fee or items yet, a saved fixed/percent discount correctly returns `discount: "0"` and begins applying as soon as there is a subtotal. `discount_percent` identifies a percentage discount; the backend does not currently expose the original fixed amount in the Bill response, so the frontend must not invent a persistent fixed-discount label after reload. A non-zero discount needs a 3–255 character reason. Sending `{ "amount": 0 }` removes it and does not require a reason. Discounts are manager/admin only; they are allowed while active or stopped and unpaid, but are refused after a payment order is created. For a percentage set during play, the backend recalculates it whenever the subtotal changes and at Stop; always replace local bill state with the response.
 
 The live table total already includes `discount` when the backend supplies it. On a bill, show the discount as a negative line between the product subtotal and grand total. Do not calculate or persist discounts in the browser.
+
+### Discount-aware usage report
+
+`GET /reports/tables/usage` now returns `table_revenue`, `product_revenue`, and `discount_total` for every table and in `totals`. All three are for paid sessions only. `total_revenue` is net revenue, so the report must preserve this identity:
+
+```text
+table_revenue + product_revenue - discount_total = total_revenue
+```
+
+`unpaid_total` is the net amount for stopped, unpaid sessions. Date filters use session end time in the club time zone; a date-only end date includes the full day.
 
 ### Phase D — timed play
 

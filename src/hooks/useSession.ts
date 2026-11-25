@@ -99,12 +99,29 @@ export function useSession(sessionId: number) {
       return res;
     }, 'Session cancelled.');
 
-  const setDiscount = (payload: SessionDiscountPayload): Promise<BillResponse | null> =>
-    run(async () => {
+  const setDiscount = async (payload: SessionDiscountPayload): Promise<BillResponse | null> => {
+    const result = await run(async () => {
       const res = await billiardService.setDiscount(sessionId, payload);
       setBill(res);
       return res;
-    }, 'Discount updated.');
+    });
+
+    if (result) {
+      const requestedDiscount = (payload.amount ?? 0) > 0 || (payload.percent ?? 0) > 0;
+      const appliedAmount = Number(result.discount ?? 0);
+      if (requestedDiscount && appliedAmount === 0) {
+        setAlert({
+          type: 'info',
+          message: 'Discount saved. It will apply when the session has a table fee or items.',
+        });
+      } else if (payload.amount === 0) {
+        setAlert({ type: 'success', message: 'Discount removed.' });
+      } else {
+        setAlert({ type: 'success', message: 'Discount updated.' });
+      }
+    }
+    return result;
+  };
 
   const extend = (minutes: number): Promise<BillResponse | null> =>
     run(async () => {

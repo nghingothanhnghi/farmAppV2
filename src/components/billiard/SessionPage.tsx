@@ -40,6 +40,7 @@ const SessionPage: React.FC = () => {
   const state = bill ? getBillState(bill) : null;
   const waitingLine = bill ? getWaitingTransferLine(bill) : null;
   const canVoid = useHasAnyRole(['admin', 'super_admin', 'manager']);
+  const canAdjustDiscount = !!bill && canVoid && (state === 'active' || state === 'stopped') && !(bill.payments?.length);
   const gamesApi = useGames(id, { enabled: state === 'active' });
   const now = useNow(1000, state === 'active');
 
@@ -134,7 +135,7 @@ const SessionPage: React.FC = () => {
                 <Button label="+30 min" variant="secondary" rounded="lg" disabled={busy}
                   icon={<IconClockPlus size={16} />} iconPosition="left"
                   onClick={() => actions.extend(30)} />
-                <Button label="Discount" variant="secondary" rounded="lg" disabled={busy}
+                <Button label="Discount" variant="secondary" rounded="lg" disabled={busy || !canAdjustDiscount}
                   icon={<IconDiscount2 size={16} />} iconPosition="left"
                   onClick={() => setDiscountOpen(true)} />
                 <Button label="Cancel session" variant="danger" rounded="lg" disabled={busy}
@@ -195,6 +196,11 @@ const SessionPage: React.FC = () => {
           <Button label={t("btn.print_preview_bill")} variant="secondary" rounded="lg"
             icon={<IconPrinter size={16} />} iconPosition="left"
             onClick={() => setPrintOpen(true)} />
+          {canAdjustDiscount && (
+            <Button label="Discount" variant="secondary" rounded="lg" disabled={busy}
+              icon={<IconDiscount2 size={16} />} iconPosition="left"
+              onClick={() => setDiscountOpen(true)} />
+          )}
           <Button label={t("btn.pay")} rounded="lg" disabled={busy} onClick={() => setPayOpen(true)} />
         </div>
       )}
@@ -315,7 +321,7 @@ const SessionPage: React.FC = () => {
         onClose={() => !busy && setDiscountOpen(false)}
         title="Apply discount"
         content={<div className="space-y-3 px-6 py-5 text-sm">
-          <p>Enter an amount or percent, not both. Enter amount 0 to remove a discount.</p>
+          <p>Enter an amount or percent, not both. A reason is required for a non-zero discount. Enter amount 0 to remove it.</p>
           <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="numeric" value={discountAmount}
             onChange={(event) => { setDiscountAmount(event.target.value); if (event.target.value) setDiscountPercent(''); }} placeholder="Amount (VND)" />
           <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="decimal" value={discountPercent}
@@ -324,12 +330,17 @@ const SessionPage: React.FC = () => {
             onChange={(event) => setDiscountReason(event.target.value)} placeholder="Reason" />
         </div>}
         actions={<div className="flex gap-3">
-          <Button label={busy ? 'Saving...' : 'Save discount'} rounded="lg" disabled={busy || !discountReason.trim() || (!discountAmount && !discountPercent)}
+          <Button label={busy ? 'Saving...' : 'Save discount'} rounded="lg" disabled={busy || (!discountAmount && !discountPercent)}
             onClick={async () => {
               const amount = discountAmount === '' ? undefined : Number(discountAmount);
               const percent = discountPercent === '' ? undefined : Number(discountPercent);
-              if ((amount !== undefined && !Number.isFinite(amount)) || (percent !== undefined && !Number.isFinite(percent))) return;
-              const result = await actions.setDiscount({ amount, percent, reason: discountReason.trim() });
+              if (
+                (amount !== undefined && (!Number.isFinite(amount) || amount < 0)) ||
+                (percent !== undefined && (!Number.isFinite(percent) || percent <= 0 || percent > 100))
+              ) return;
+              const isRemoving = amount === 0;
+              if (!isRemoving && !discountReason.trim()) return;
+              const result = await actions.setDiscount({ amount, percent, reason: discountReason.trim() || undefined });
               if (result) setDiscountOpen(false);
             }} />
           <Button label="Cancel" variant="secondary" rounded="lg" disabled={busy} onClick={() => setDiscountOpen(false)} />

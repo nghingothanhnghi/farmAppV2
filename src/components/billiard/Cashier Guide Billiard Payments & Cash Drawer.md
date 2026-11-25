@@ -13,6 +13,16 @@ You can take a payment once the table's session is stopped and the bill is on sc
 
 Never type the bill total. The Pay window title shows the amount to collect, for example "Pay 310.000 ₫". If part of the bill is already paid, it shows only what is left.
 
+## Stop, cancel, and table availability
+
+Use **Stop** when the customer has finished playing. It ends the timer, calculates the bill, and opens the **Pay** step.
+
+**Cancel session** is different: it is for a session opened by mistake, before it is stopped or paid. Only a manager/admin can cancel it, and they must enter a reason. Cancellation frees the table, keeps an audit record, closes any running game, and sets the bill to zero. A cancelled session cannot be paid. Do not use it when a customer has finished playing or to correct a completed payment; ask a manager to use the appropriate payment-void process instead.
+
+Managers can also mark an available table **Reserved** or **Maintenance**, then **Release** it later. Cashiers cannot start a reserved or maintenance table; ask a manager to release it when the table is ready.
+
+For timed play, a manager can press **+30 min** on an active session. The remaining-time display is a reminder only: it does not automatically stop the table, and billing still uses the actual start and stop times.
+
 ## Paying cash
 
 For cash, type what the customer hands over and the screen shows the change.

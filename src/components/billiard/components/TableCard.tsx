@@ -124,6 +124,12 @@ const TableCard: React.FC<Props> = ({
                   label={t('billiard_tables.cards.fee_product')}
                   value={formatMoneyString(live.current_product_fee, currency)}
                 />
+                {Number(live.current_discount ?? 0) > 0 && (
+                  <Row
+                    label="Discount"
+                    value={`−${formatMoneyString(live.current_discount!, currency)}`}
+                  />
+                )}
                 <Row
                   label={t('billiard_tables.cards.fee_total')}
                   value={formatMoneyString(live.current_total, currency)}
@@ -162,9 +168,14 @@ const TableCard: React.FC<Props> = ({
 
           {table.status === 'reserved' && (
             onStatusChange ? (
-              <Button label="Release" variant="secondary" rounded="lg" fullWidth disabled={actionsDisabled}
-                icon={<IconLockOpen size={16} />} iconPosition="left"
-                onClick={() => onStatusChange(table, 'release')} />
+              <div className="flex gap-2">
+                <Button label="Maintenance" variant="secondary" rounded="lg" size="sm" fullWidth disabled={actionsDisabled}
+                  icon={<IconTool size={15} />} iconPosition="left"
+                  onClick={() => onStatusChange(table, 'maintenance')} />
+                <Button label="Release" variant="secondary" rounded="lg" size="sm" fullWidth disabled={actionsDisabled}
+                  icon={<IconLockOpen size={15} />} iconPosition="left"
+                  onClick={() => onStatusChange(table, 'release')} />
+              </div>
             ) : <p className="text-xs text-gray-400 text-center py-2">Reserved</p>
           )}
 

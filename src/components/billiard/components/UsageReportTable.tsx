@@ -20,6 +20,9 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
       report.totals ?? {
         times_played: rows.reduce((s, r) => s + r.times_played, 0),
         total_minutes: rows.reduce((s, r) => s + r.total_minutes, 0),
+        table_revenue: addDecimalStrings(rows.map((r) => r.table_revenue)),
+        product_revenue: addDecimalStrings(rows.map((r) => r.product_revenue)),
+        discount_total: addDecimalStrings(rows.map((r) => r.discount_total)),
         total_revenue: addDecimalStrings(rows.map((r) => r.total_revenue)),
         unpaid_total: addDecimalStrings(rows.map((r) => r.unpaid_total)),
       },
@@ -35,24 +38,45 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
         field: 'total_minutes',
         width: 140,
         filter: false,
-        valueFormatter: (p: any) => formatDuration(Number(p.value ?? 0)),
+        valueFormatter: (p: { value?: number }) => formatDuration(Number(p.value ?? 0)),
+      },
+      {
+        headerName: 'Table revenue',
+        field: 'table_revenue',
+        flex: 1,
+        filter: false,
+        valueFormatter: (p: { value?: string }) => formatMoneyString(p.value ?? '0', currency),
+      },
+      {
+        headerName: 'Product revenue',
+        field: 'product_revenue',
+        flex: 1,
+        filter: false,
+        valueFormatter: (p: { value?: string }) => formatMoneyString(p.value ?? '0', currency),
+      },
+      {
+        headerName: 'Discounts',
+        field: 'discount_total',
+        flex: 1,
+        filter: false,
+        valueFormatter: (p: { value?: string }) => `−${formatMoneyString(p.value ?? '0', currency)}`,
       },
       {
         headerName: t("dataGrid.headerName.revenue"),
         field: 'total_revenue',
         flex: 1,
         filter: false,
-        valueFormatter: (p: any) => formatMoneyString(p.value, currency),
+        valueFormatter: (p: { value?: string }) => formatMoneyString(p.value ?? '0', currency),
       },
       {
         headerName: t("dataGrid.headerName.unPaid"),
         field: 'unpaid_total',
         flex: 1,
         filter: false,
-        valueFormatter: (p: any) => formatMoneyString(p.value, currency),
+        valueFormatter: (p: { value?: string }) => formatMoneyString(p.value ?? '0', currency),
       },
     ],
-    [currency]
+    [currency, t]
   );
 
   const stat = (label: string, value: string) => (
@@ -64,9 +88,12 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {stat(t("billiard_tables.cards.times_played_billiard.label"), String(totals.times_played))}
         {stat(t("billiard_tables.cards.total_time_billiard.label"), formatDuration(totals.total_minutes))}
+        {stat('Table revenue', formatMoneyString(totals.table_revenue, currency))}
+        {stat('Product revenue', formatMoneyString(totals.product_revenue, currency))}
+        {stat('Discounts', `−${formatMoneyString(totals.discount_total, currency)}`)}
         {stat(t("billiard_tables.cards.total_revenue_billiard.label"), formatMoneyString(totals.total_revenue, currency))}
         {stat(t("billiard_tables.cards.total_unPaid_billiard.label"), formatMoneyString(totals.unpaid_total, currency))}
       </div>

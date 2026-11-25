@@ -4845,6 +4845,27 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/sessions/{session_id}/discount": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Set Discount
+         * @description Manager only. Fixed amount or percent off (table fee + products); amount 0 removes it.
+         *     `409` once a payment was started, because the payment total is then fixed.
+         */
+        post: operations["set_discount_sessions__session_id__discount_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/sessions/{session_id}/cancel": {
         parameters: {
             query?: never;
@@ -5214,6 +5235,11 @@ export interface components {
             current_table_fee: string;
             /** Current Product Fee */
             current_product_fee: string;
+            /**
+             * Current Discount
+             * @default 0
+             */
+            current_discount: string;
             /** Current Total */
             current_total: string;
         };
@@ -5452,6 +5478,17 @@ export interface components {
             total_table_fee: string;
             /** Total Product Fee */
             total_product_fee: string;
+            /**
+             * Discount
+             * @default 0
+             */
+            discount: string;
+            /** Discount Percent */
+            discount_percent?: string | null;
+            /** Discount Reason */
+            discount_reason?: string | null;
+            /** Discounted By */
+            discounted_by?: string | null;
             /** Grand Total */
             grand_total: string;
             /** Items */
@@ -6012,6 +6049,19 @@ export interface components {
             last_seen?: string | null;
             /** Last Applied Seq */
             last_applied_seq: number;
+        };
+        /**
+         * DiscountRequest
+         * @description Exactly one of amount (fixed, currency units) or percent. amount = 0 removes the discount.
+         *     A reason is required when a discount is applied (audit).
+         */
+        DiscountRequest: {
+            /** Amount */
+            amount?: number | string | null;
+            /** Percent */
+            percent?: number | string | null;
+            /** Reason */
+            reason?: string | null;
         };
         /** DrawCreateSchema */
         DrawCreateSchema: {
@@ -7692,6 +7742,17 @@ export interface components {
             total_table_fee: string;
             /** Total Product Fee */
             total_product_fee: string;
+            /**
+             * Discount
+             * @default 0
+             */
+            discount: string;
+            /** Discount Percent */
+            discount_percent?: string | null;
+            /** Discount Reason */
+            discount_reason?: string | null;
+            /** Discounted By */
+            discounted_by?: string | null;
             /** Grand Total */
             grand_total: string;
             /** Items */
@@ -9098,6 +9159,11 @@ export interface components {
             total_revenue: string;
             /** Unpaid Total */
             unpaid_total: string;
+            /**
+             * Discount Total
+             * @default 0
+             */
+            discount_total: string;
         };
         /** TagCreate */
         TagCreate: {
@@ -18821,6 +18887,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_discount_sessions__session_id__discount_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DiscountRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {
