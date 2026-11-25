@@ -54,6 +54,7 @@ export const addDecimalStrings = (values: Array<string | number>): string => {
 };
 
 export const getBillState = (bill: BillResponse): BillState => {
+  if (bill.status === 'cancelled') return 'cancelled';
   if (bill.payment_state === 'paid') return 'paid';
   if (bill.payment_state === 'pending') return 'pending';
   if (bill.end_time) return 'stopped';

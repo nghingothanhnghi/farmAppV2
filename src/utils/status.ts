@@ -25,6 +25,7 @@ export const BILL_STATUS_VARIANTS = {
   stopped: 'secondary',
   pending: 'warning',
   paid: 'success',
+  cancelled: 'danger',
 } as const satisfies Record<BillState, string>;
 
 export const getBillStatusVariant = (status: BillState) =>

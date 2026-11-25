@@ -415,6 +415,7 @@ const PayModal: React.FC<Props> = ({
       onClose={busy ? () => { } : onClose}
       title={t('billiard_tables.modals.pay.title', { amount: money(due) })}
       size="small"
+      position='bottom'
       content={
         <div className="px-10 pb-4 space-y-4">
           {inStripeStep ? (
@@ -463,19 +464,30 @@ const PayModal: React.FC<Props> = ({
                         {m.value === 'split' && renderSplitContent()}
 
                         {m.value === 'bank_transfer' && (
-                          <div className="pt-2">
-                            <p className="text-sm text-gray-600 dark:text-gray-300">
-                              Customer scans a QR code and transfers the payment.
-                            </p>
-                            {bankLoaded && (
-                              <p
-                                className={`mt-1 text-xs ${bankAccount ? 'text-gray-500 dark:text-gray-400' : 'text-amber-700 dark:text-amber-400'}`}
-                              >
-                                {bankAccount
-                                  ? `Paying to: ${bankAccount.account_name}, ${maskAccountNo(bankAccount.account_no)}`
-                                  : 'No bank account is set up, so the transfer will show no QR. Ask a manager to set it up.'}
-                              </p>
-                            )}
+                          <div className="p-4 space-y-4 rounded-lg border border-blue-500 bg-white bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+                            <div className='flex items-start'>
+                              <div className='shrink-0'>
+
+                              </div>
+                              <div className='flex-1'>
+                                <div className='flex items-center justify-between mb-1'>
+                                  <h4 className="text-sm font-bold text-gray-600 dark:text-gray-300">
+                                    Customer scans a QR code and transfers the payment.
+                                  </h4>
+                                </div>
+                                {bankLoaded && (
+                                  <p
+                                    className={`text-xs ${bankAccount ? 'text-gray-500 dark:text-gray-400' : 'text-amber-700 dark:text-amber-400'}`}
+                                  >
+                                    {bankAccount
+                                      ? `Paying to: ${bankAccount.account_name}, ${maskAccountNo(bankAccount.account_no)}`
+                                      : 'No bank account is set up, so the transfer will show no QR. Ask a manager to set it up.'}
+                                  </p>
+                                )}
+                              </div>
+                            </div>
+
+
                           </div>
                         )}
 

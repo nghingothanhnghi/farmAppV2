@@ -107,6 +107,12 @@ const BillView: React.FC<Props> = ({ bill, overrides }) => {
           label={t('billiard_tables.cards.fee_product')}
           value={formatMoneyString(b.total_product_fee, c)}
         />
+        {Number(b.discount ?? 0) > 0 && (
+          <Line
+            label={b.discount_reason ? `Discount · ${b.discount_reason}` : 'Discount'}
+            value={`−${formatMoneyString(b.discount!, c)}`}
+          />
+        )}
         <Line
           label={t('billiard_tables.cards.fee_total')}
           value={formatMoneyString(b.grand_total, c)}

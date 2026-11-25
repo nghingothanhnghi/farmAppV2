@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { billiardService } from '../services/billiard_service';
 import { useAlert } from '../contexts/alertContext';
 import { billiardErrorMessage, getStatus, getWaitingTransferLine } from '../utils/billiard';
-import type { AddItemPayload, BillResponse, PayPayload, PayResponse } from '../models/interfaces/Billiard';
+import type { AddItemPayload, BillResponse, PayPayload, PayResponse, SessionDiscountPayload } from '../models/interfaces/Billiard';
 
 const POLL_MS = 4000;
 
@@ -92,6 +92,27 @@ export function useSession(sessionId: number) {
       return true;
     }, 'Session stopped.')) === true;
 
+  const cancel = (reason: string): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.cancelSession(sessionId, { reason });
+      setBill(res);
+      return res;
+    }, 'Session cancelled.');
+
+  const setDiscount = (payload: SessionDiscountPayload): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.setDiscount(sessionId, payload);
+      setBill(res);
+      return res;
+    }, 'Discount updated.');
+
+  const extend = (minutes: number): Promise<BillResponse | null> =>
+    run(async () => {
+      const res = await billiardService.extendSession(sessionId, minutes);
+      setBill(res);
+      return res;
+    }, 'Session extended.');
+
   const pay = (payload: PayPayload): Promise<PayResponse | null> =>
     run(async () => {
       const res = await billiardService.paySession(sessionId, payload);
@@ -143,6 +164,6 @@ export function useSession(sessionId: number) {
     error,
     busy,
     confirmIssue,
-    actions: { fetchBill, addItem, stop, pay, confirmPay, confirmLine, cancelLine, voidLine },
+    actions: { fetchBill, addItem, stop, cancel, setDiscount, extend, pay, confirmPay, confirmLine, cancelLine, voidLine },
   };
 }

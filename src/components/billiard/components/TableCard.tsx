@@ -1,6 +1,6 @@
 // src/components/billiard/components/TableCard.tsx
 import React from 'react';
-import { IconPencil, IconTrash } from '@tabler/icons-react';
+import { IconPencil, IconTrash, IconTool, IconBookmark, IconLockOpen } from '@tabler/icons-react';
 import Badge from '../../common/Badge';
 import Button from '../../common/Button';
 import StartStopButtons from './StartStopButtons';
@@ -30,7 +30,9 @@ interface Props {
   onOpen: (sessionId: number) => void;
   onEdit?: (table: BilliardTable) => void;
   onDeactivate?: (table: BilliardTable) => void;
+  onStatusChange?: (table: BilliardTable, action: 'reserve' | 'maintenance' | 'release') => void;
   deactivating?: boolean;
+  statusChanging?: boolean;
 }
 
 const Row: React.FC<{
@@ -62,7 +64,9 @@ const TableCard: React.FC<Props> = ({
   onOpen,
   onEdit,
   onDeactivate,
+  onStatusChange,
   deactivating = false,
+  statusChanging = false,
 }) => {
   const { t } = useTranslation();
 
@@ -79,12 +83,12 @@ const TableCard: React.FC<Props> = ({
 
   const variant = getTableStatusVariant(table.status);
   const isPlaying = table.status === 'playing';
-  const actionsDisabled = isPlaying || disabled || deactivating;
+  const actionsDisabled = isPlaying || disabled || deactivating || statusChanging;
 
   return (
     <div className="bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-3 flex flex-col">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
+        <div className="flex-1 min-w-0">
           <h3 className="text-sm font-medium text-gray-800 dark:text-gray-100 truncate">
             {table.name}
           </h3>
@@ -95,12 +99,11 @@ const TableCard: React.FC<Props> = ({
               : ''}
           </p>
         </div>
-
         <Badge
           label={getTableStatusLabel(table.status)}
           variant={variant}
           size="xsmall"
-          className="capitalize"
+          className="shrink-0 whitespace-nowrap capitalize"
         />
       </div>
 
@@ -158,15 +161,19 @@ const TableCard: React.FC<Props> = ({
           )}
 
           {table.status === 'reserved' && (
-            <p className="text-xs text-gray-400 text-center py-2">
-              Reserved
-            </p>
+            onStatusChange ? (
+              <Button label="Release" variant="secondary" rounded="lg" fullWidth disabled={actionsDisabled}
+                icon={<IconLockOpen size={16} />} iconPosition="left"
+                onClick={() => onStatusChange(table, 'release')} />
+            ) : <p className="text-xs text-gray-400 text-center py-2">Reserved</p>
           )}
 
           {table.status === 'maintenance' && (
-            <p className="text-xs text-gray-400 text-center py-2">
-              Under maintenance
-            </p>
+            onStatusChange ? (
+              <Button label="Release" variant="secondary" rounded="lg" fullWidth disabled={actionsDisabled}
+                icon={<IconLockOpen size={16} />} iconPosition="left"
+                onClick={() => onStatusChange(table, 'release')} />
+            ) : <p className="text-xs text-gray-400 text-center py-2">Under maintenance</p>
           )}
         </div>
 
@@ -198,6 +205,17 @@ const TableCard: React.FC<Props> = ({
           </div>
         )}
       </div>
+
+      {onStatusChange && table.status === 'available' && (
+        <div className="flex gap-2 border-t border-gray-100 dark:border-white/10 pt-3">
+          <Button label="Reserve" variant="secondary" rounded="lg" size="sm" fullWidth disabled={actionsDisabled}
+            icon={<IconBookmark size={15} />} iconPosition="left"
+            onClick={() => onStatusChange(table, 'reserve')} />
+          <Button label="Maintenance" variant="secondary" rounded="lg" size="sm" fullWidth disabled={actionsDisabled}
+            icon={<IconTool size={15} />} iconPosition="left"
+            onClick={() => onStatusChange(table, 'maintenance')} />
+        </div>
+      )}
     </div>
   );
 };

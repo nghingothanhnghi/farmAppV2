@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { billiardService } from '../services/billiard_service';
 import { useAlert } from '../contexts/alertContext';
 import { billiardErrorMessage, getStatus } from '../utils/billiard';
-import type { BilliardTable, SessionStart, TableCreate, TableUpdate } from '../models/interfaces/Billiard';
+import type { BilliardTable, SessionStart, StartTablePayload, TableCreate, TableStatusAction, TableUpdate } from '../models/interfaces/Billiard';
 
 export type CreateTableError = { status?: number; message: string };
 export type UpdateTableError = { status?: number; message: string };
@@ -18,6 +18,7 @@ export function useTables() {
   const [creating, setCreating] = useState(false);
   const [updating, setUpdating] = useState(false);
   const [deactivatingId, setDeactivatingId] = useState<number | null>(null);
+  const [statusChangingId, setStatusChangingId] = useState<number | null>(null);
 
   const guard = useRef(false); // blocks double-click double-submit
 
@@ -126,12 +127,12 @@ const deactivateTable = async (
   }
 };  
 
-  const startTable = async (tableId: number): Promise<SessionStart | null> => {
+  const startTable = async (tableId: number, data?: StartTablePayload): Promise<SessionStart | null> => {
     if (guard.current) return null;
     guard.current = true;
     setStartingId(tableId);
     try {
-      return await billiardService.startTable(tableId);
+      return await billiardService.startTable(tableId, data);
     } catch (err) {
       setAlert({ type: 'error', message: billiardErrorMessage(err, 'Failed to start table') });
       if (getStatus(err) === 409) fetchTables(); // table busy -> our list is stale
@@ -142,5 +143,24 @@ const deactivateTable = async (
     }
   };
 
-  return { tables, loading, error, startingId, creating, updating, deactivatingId, actions: { fetchTables, createTable, updateTable, deactivateTable, startTable } };
+  const setTableStatus = async (tableId: number, action: TableStatusAction): Promise<boolean> => {
+    if (guard.current) return false;
+    guard.current = true;
+    setStatusChangingId(tableId);
+    try {
+      await billiardService.setTableStatus(tableId, action);
+      await fetchTables();
+      setAlert({ type: 'success', message: `Table ${action === 'maintenance' ? 'set to maintenance' : action === 'reserve' ? 'reserved' : 'released'}.` });
+      return true;
+    } catch (err) {
+      setAlert({ type: 'error', message: billiardErrorMessage(err, 'Failed to update table status') });
+      if (getStatus(err) === 409 || getStatus(err) === 404) await fetchTables();
+      return false;
+    } finally {
+      guard.current = false;
+      setStatusChangingId(null);
+    }
+  };
+
+  return { tables, loading, error, startingId, creating, updating, deactivatingId, statusChangingId, actions: { fetchTables, createTable, updateTable, deactivateTable, startTable, setTableStatus } };
 }

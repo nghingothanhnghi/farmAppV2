@@ -1,6 +1,6 @@
 # Frontend Developer Guide: Payments & Billiard
 
-Updated Nov 19, 2026 · @Someone
+Updated Nov 25, 2026 · synchronized with the backend roadmap
 
 ## Implementation status (farmAppV2)
 
@@ -27,6 +27,10 @@ Checked against the code on Nov 23, 2026 against the Nov 19 guide below. "Done" 
 | Pricing rules and price quote | Screen 8 | Done | `PricingRulesPage`, `PricingQuotePanel`, `usePricingRules` |
 | Table create, edit and deactivate; usage report | Screen 9 | Done | `TableFormModal`, `TablesPage`, `ReportsPage`, `useUsageReport` |
 | Controller devices: status, register, one-time `api_key` dialog | Screen 10 | Done | `ControllersPage`, `RegisterControllerModal`, `ControllerApiKeyModal`, `useBilliardControllers` |
+| Table reserve, maintenance and release | Roadmap A | Done in frontend; requires the matching backend routes | `TablesPage`, `TableCard`, `useTables` |
+| Cancel an accidentally opened active session | Roadmap B | Done in frontend; requires the matching backend route/migration | `SessionPage`, `useSession` |
+| Manager discount (amount or percent) | Roadmap C | Done in frontend; requires the matching backend route/migration | `SessionPage`, `useSession` |
+| Timed session extension | Roadmap D | Done in frontend (`+30 min`); start-time duration picker follows package work | `SessionPage`, `useSession` |
 | **Bank account set-up (manager)**: current account, QR image upload prefill, typed form, summary before save, correct name, turn off, history and events | Screen 11 | Done (Nov 23). Route `/billiard/bank-account`, reached from the manager menu on the table board | `BankAccountPage`, `bankAccountService`, `useBankAccounts`, `models/interfaces/BankAccount.ts` |
 | Bank account errors: `422` keeps the typed fields, `409` account in use, `413` (size also checked in the browser first), `501` hides the upload button | Screen 11, "Error handling" | Done (Nov 23) | `BankAccountPage`, `bankAccountErrorMessage` in `utils/billiard.ts` |
 | `/payments/orders/...` generic routes | Start here | Not needed for billiard, left out on purpose | n/a |
@@ -1322,6 +1326,64 @@ It answers `{"success": true}` even when the transfer is not matched, so check t
 - No endpoint says whether the club's bank account is set before a transfer is started: a missing account shows up as a transfer line with no QR. Call `GET /payments/bank-accounts/current` on the pay screen if you want to warn the cashier first.
 - No endpoint says whether manual confirmation needs a note or a manager, so the Received button has to react to the `403` and `422` responses.
 - No WebSocket yet: the board and the scoreboard have to poll. Real-time updates are on the backend roadmap.
-- A deactivated table cannot be reactivated, and a table cannot be put into `reserved` or `maintenance` from the API yet.
+- A deactivated table cannot be reactivated. Reserve/maintenance/release are now covered by the roadmap contract below; the backend deployment must include their lifecycle implementation.
 
 Fixed since Oct 24 (kept here so old notes make sense): `GET /auth/me` now returns `roles`, `POST /payments/` and `PATCH /payments/{id}` are admin only, `GET /payments/bank-feed/pending-lines` lists the waiting transfer lines, and stale transfer lines are cancelled automatically.
+
+## Backend roadmap extension (Nov 25)
+
+This section is the frontend contract for roadmap phases A–F. It extends the payment guide above; it does not change the existing payment lifecycle. Until the backend feature branch is deployed, these calls can return `404` and the controls should be treated as unavailable.
+
+### Phase A — table availability controls
+
+Managers and admins can change a free table's operational status. These are lightweight status flags, not customer reservations: no customer name, time, or note is stored.
+
+| Action | Request | Allowed source state | Result |
+| --- | --- | --- | --- |
+| Reserve | `POST /tables/{id}/reserve` | `available` | `reserved` |
+| Mark maintenance | `POST /tables/{id}/maintenance` | `available` | `maintenance` |
+| Release | `POST /tables/{id}/release` | `reserved`, `maintenance` | `available` |
+
+All three are manager/admin only. Refresh `/tables` after success. A `409` means another person changed the table state; reload rather than guessing. A reserved or maintenance table must not show Start. The board implementation exposes Reserve and Maintenance only to managers, and Release only while the table is in either restricted state.
+
+### Phase B — cancel an active session
+
+`POST /sessions/{id}/cancel` accepts `{ "reason": "Opened by mistake" }`; the reason is required and must be at least three characters. Only a manager/admin may cancel, and only while the session is active. A successful response is the normal bill payload with `status: "cancelled"`, `cancel_reason`, zero totals, and an end time. The table becomes available and a running game becomes cancelled.
+
+Never offer cancellation after Stop or after any payment action. That is a payment void, using the existing manager-only payment-line endpoint. A `409` requires a bill reload; `403` means hide/disable the action for the current user. A cancelled bill is read-only: do not render Add item, Stop, Pay, or Confirm actions.
+
+### Phase C — discounts
+
+`POST /sessions/{id}/discount` accepts exactly one of the following shapes:
+
+```json
+{ "amount": 30000, "reason": "Staff goodwill" }
+{ "percent": 10, "reason": "Promotion" }
+```
+
+The backend stores the applied monetary amount, clamps it to the bill subtotal, and returns `discount`, `discount_reason`, and recalculated totals. Sending `{ "amount": 0, "reason": "Remove promotion" }` removes it. Discounts are manager/admin only and are refused after a payment order is created. For a percentage set during play, the backend recalculates it when the table is stopped; always replace local bill state with the response.
+
+The live table total already includes `discount` when the backend supplies it. On a bill, show the discount as a negative line between the product subtotal and grand total. Do not calculate or persist discounts in the browser.
+
+### Phase D — timed play
+
+`POST /tables/{id}/start` can now receive an optional `{ "planned_minutes": 60 }` body. `POST /sessions/{id}/extend` accepts `{ "minutes": 30 }`, where a request value must be 1–480. The backend returns `ends_at`; active-table responses additionally expose `remaining_seconds` and `is_overtime`.
+
+Timed play is a countdown, not automatic stopping or a prepaid price: actual start/stop times still decide billing. Show a countdown while `remaining_seconds >= 0`, an overtime warning afterwards, and make extension manager/admin-only. The current POS supplies a manager `+30 min` shortcut. A planned-duration selector belongs alongside package selection in the next POS iteration.
+
+### Phase E/F — package catalogue and package starts (next UI increment)
+
+The backend contract introduces `GET/POST /billiard/packages`, `GET/PUT/DELETE /billiard/packages/{id}`. Delete deactivates the package; it never deletes history. A start request may include `{ "package_id": 12 }` (and may also include `planned_minutes`).
+
+Package sessions return a frozen package snapshot and bill fields such as `package_name`, `package_price`, `package_minutes`, and `overtime_minutes`. Included products appear as zero-priced item lines up to their included quantity. Do not re-price existing lines when a package is edited. The dedicated package-management and package-picker screens are deliberately the next step, after the CRUD endpoints have landed and their OpenAPI schema has been generated.
+
+### Added acceptance checks
+
+| # | Scenario | Expected result |
+| --- | --- | --- |
+| 50 | Reserve an available table, then release it | Board moves it `available → reserved → available`; Start stays hidden while reserved |
+| 51 | Mark a table in maintenance, then try Start from another browser | Start receives `409 Table is maintenance`; Release restores availability |
+| 52 | Cancel an active session with a reason | Bill becomes `cancelled`, total is zero, table is available, game is cancelled |
+| 53 | Try cancelling a stopped/paid session or without a reason | `409`/`422`; retain and refresh the displayed bill |
+| 54 | Apply an amount discount and a percent discount | Returned `grand_total` changes; both fields together are rejected with `422` |
+| 55 | Extend a timed active session | `ends_at` advances; completed/cancelled sessions return `409` |

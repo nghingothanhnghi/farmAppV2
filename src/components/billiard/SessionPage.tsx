@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
-import { IconAlertCircle, IconArrowLeft, IconPlus, IconPrinter } from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowLeft, IconClockPlus, IconDiscount2, IconPlus, IconPrinter, IconX } from '@tabler/icons-react';
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -47,6 +47,12 @@ const SessionPage: React.FC = () => {
   const [confirmStopOpen, setConfirmStopOpen] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [printOpen, setPrintOpen] = useState(false);
+  const [cancelOpen, setCancelOpen] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(false);
+  const [cancelReason, setCancelReason] = useState('');
+  const [discountAmount, setDiscountAmount] = useState('');
+  const [discountPercent, setDiscountPercent] = useState('');
+  const [discountReason, setDiscountReason] = useState('');
   const { current: openShift, checked: shiftChecked } = useCurrentShift(payOpen);
 
   const backButton = (
@@ -78,6 +84,9 @@ const SessionPage: React.FC = () => {
 
   const live = bySessionId.get(id);
   const elapsed = Math.max(0, Math.floor((now - parseUtc(bill.start_time)) / 1000));
+  const remainingSeconds = bill.ends_at
+    ? Math.floor((parseUtc(bill.ends_at) - now) / 1000)
+    : null;
 
   const handleAddItem = async (payload: Parameters<typeof actions.addItem>[0]) => {
     const ok = await actions.addItem(payload);
@@ -113,7 +122,26 @@ const SessionPage: React.FC = () => {
           ">
             {formatElapsed(elapsed)}
           </div>
+          {remainingSeconds !== null && (
+            <div className={`text-xs font-medium ${remainingSeconds < 0 ? 'text-red-600 dark:text-red-300' : 'text-gray-500 dark:text-gray-300'}`}>
+              {remainingSeconds < 0 ? 'Overtime ' : 'Remaining '}
+              {formatElapsed(Math.abs(remainingSeconds))}
+            </div>
+          )}
           <div className="flex items-center gap-2">
+            {canVoid && (
+              <>
+                <Button label="+30 min" variant="secondary" rounded="lg" disabled={busy}
+                  icon={<IconClockPlus size={16} />} iconPosition="left"
+                  onClick={() => actions.extend(30)} />
+                <Button label="Discount" variant="secondary" rounded="lg" disabled={busy}
+                  icon={<IconDiscount2 size={16} />} iconPosition="left"
+                  onClick={() => setDiscountOpen(true)} />
+                <Button label="Cancel session" variant="danger" rounded="lg" disabled={busy}
+                  icon={<IconX size={16} />} iconPosition="left"
+                  onClick={() => setCancelOpen(true)} />
+              </>
+            )}
             <Button
               label={t("btn.add_items_billard")}
               variant="secondary"
@@ -220,6 +248,12 @@ const SessionPage: React.FC = () => {
           <Button label={t("btn.back_to_tables")} variant="secondary" rounded="lg" onClick={() => navigate('/billiard')} />
         </div>
       )}
+      {state === 'cancelled' && (
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 dark:border-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+          <p className="font-medium">This session was cancelled. No payment can be taken.</p>
+          {bill.cancel_reason && <p className="mt-1">Reason: {bill.cancel_reason}</p>}
+        </div>
+      )}
 
       <AddItemModal isOpen={addOpen} onClose={() => setAddOpen(false)} busy={busy} onSubmit={handleAddItem} />
 
@@ -254,6 +288,52 @@ const SessionPage: React.FC = () => {
             />
           </div>
         }
+      />
+
+      <Modal
+        showCloseButton={false}
+        size="xsmall"
+        isOpen={cancelOpen}
+        onClose={() => !busy && setCancelOpen(false)}
+        title="Cancel active session?"
+        content={<div className="space-y-3 px-6 py-5 text-sm">
+          <p>This frees the table and sets the bill to zero. A reason is required.</p>
+          <textarea className="w-full rounded border p-2 dark:bg-gray-800" rows={3} value={cancelReason}
+            onChange={(event) => setCancelReason(event.target.value)} placeholder="Reason (at least 3 characters)" />
+        </div>}
+        actions={<div className="flex gap-3">
+          <Button label={busy ? 'Cancelling...' : 'Cancel session'} variant="danger" rounded="lg" disabled={busy || cancelReason.trim().length < 3}
+            onClick={async () => { const result = await actions.cancel(cancelReason.trim()); if (result) setCancelOpen(false); }} />
+          <Button label="Keep session" variant="secondary" rounded="lg" disabled={busy} onClick={() => setCancelOpen(false)} />
+        </div>}
+      />
+
+      <Modal
+        showCloseButton={false}
+        size="xsmall"
+        isOpen={discountOpen}
+        onClose={() => !busy && setDiscountOpen(false)}
+        title="Apply discount"
+        content={<div className="space-y-3 px-6 py-5 text-sm">
+          <p>Enter an amount or percent, not both. Enter amount 0 to remove a discount.</p>
+          <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="numeric" value={discountAmount}
+            onChange={(event) => { setDiscountAmount(event.target.value); if (event.target.value) setDiscountPercent(''); }} placeholder="Amount (VND)" />
+          <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="decimal" value={discountPercent}
+            onChange={(event) => { setDiscountPercent(event.target.value); if (event.target.value) setDiscountAmount(''); }} placeholder="Percent" />
+          <input className="w-full rounded border p-2 dark:bg-gray-800" value={discountReason}
+            onChange={(event) => setDiscountReason(event.target.value)} placeholder="Reason" />
+        </div>}
+        actions={<div className="flex gap-3">
+          <Button label={busy ? 'Saving...' : 'Save discount'} rounded="lg" disabled={busy || !discountReason.trim() || (!discountAmount && !discountPercent)}
+            onClick={async () => {
+              const amount = discountAmount === '' ? undefined : Number(discountAmount);
+              const percent = discountPercent === '' ? undefined : Number(discountPercent);
+              if ((amount !== undefined && !Number.isFinite(amount)) || (percent !== undefined && !Number.isFinite(percent))) return;
+              const result = await actions.setDiscount({ amount, percent, reason: discountReason.trim() });
+              if (result) setDiscountOpen(false);
+            }} />
+          <Button label="Cancel" variant="secondary" rounded="lg" disabled={busy} onClick={() => setDiscountOpen(false)} />
+        </div>}
       />
 
       <PayModal

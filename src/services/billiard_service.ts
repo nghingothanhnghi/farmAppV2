@@ -21,6 +21,10 @@ import type {
   PricingRulePayload,
   ScorePayload,
   SessionStart,
+  StartTablePayload,
+  TableStatusAction,
+  SessionCancelPayload,
+  SessionDiscountPayload,
   TableCreate,
   TableUpdate,
   TableDeactivateResponse,
@@ -56,16 +60,23 @@ export const billiardService = {
 
   async getActiveTables(): Promise<ActiveTable[]> {
     const res = await apiClient.get('/tables/active');
-    const list: any[] = Array.isArray(res.data) ? res.data : [];
+    const list: Array<Partial<ActiveTable> & { id?: number; name?: string }> =
+      Array.isArray(res.data) ? res.data : [];
     return list.map((r) => ({
       ...r,
       table_id: r.table_id ?? r.id,
       table_name: r.table_name ?? r.name,
-    }));
+    })) as ActiveTable[];
   },
 
-  async startTable(tableId: number): Promise<SessionStart> {
-    const res = await apiClient.post(`/tables/${tableId}/start`);
+  async startTable(tableId: number, data?: StartTablePayload): Promise<SessionStart> {
+    const res = await apiClient.post(`/tables/${tableId}/start`, data);
+    return res.data;
+  },
+
+  /** Manager/admin table-state controls. They deliberately store no reservation details. */
+  async setTableStatus(tableId: number, action: TableStatusAction): Promise<BilliardTable> {
+    const res = await apiClient.post(`/tables/${tableId}/${action}`);
     return res.data;
   },
 
@@ -82,6 +93,23 @@ export const billiardService = {
 
   async stopSession(sessionId: number): Promise<BillResponse> {
     const res = await apiClient.post(`/sessions/${sessionId}/stop`);
+    return res.data;
+  },
+
+  /** Cancel is for an accidentally opened active session, never a completed bill. */
+  async cancelSession(sessionId: number, payload: SessionCancelPayload): Promise<BillResponse> {
+    const res = await apiClient.post(`/sessions/${sessionId}/cancel`, payload);
+    return res.data;
+  },
+
+  /** Manager/admin only. The backend snapshots the resolved monetary discount. */
+  async setDiscount(sessionId: number, payload: SessionDiscountPayload): Promise<BillResponse> {
+    const res = await apiClient.post(`/sessions/${sessionId}/discount`, payload);
+    return res.data;
+  },
+
+  async extendSession(sessionId: number, minutes: number): Promise<BillResponse> {
+    const res = await apiClient.post(`/sessions/${sessionId}/extend`, { minutes });
     return res.data;
   },
 

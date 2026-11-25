@@ -856,7 +856,8 @@
         "active": "Đang chơi",
         "stopped": "Chờ thanh toán",
         "pending": "Đang xử lý thanh toán",
-        "paid": "Đã thanh toán"
+        "paid": "Đã thanh toán",
+        "cancelled": "Đã hủy"
     },       
     "bank_account": {
         "page_header": {

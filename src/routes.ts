@@ -19,6 +19,14 @@ export default [
     route("model-training", "components/ModelTraining/ModelTrainingPage.tsx"),
     route("hydroponic-system", "components/HydroponicSystemPage/HydroponicSystemPage.tsx"),
     route("payments", "components/Payments/PaymentManagementPage.tsx"),
+    route("billiard", "components/billiard/TablesPage.tsx"),
+    route("billiard/sessions/:sessionId", "components/billiard/SessionPage.tsx"),
+    route("billiard/reports", "components/billiard/ReportsPage.tsx"),
+    route("billiard/pricing-rules", "components/billiard/PricingRulesPage.tsx"),
+    route("billiard/controllers", "components/billiard/ControllersPage.tsx"),
+    route("billiard/shifts", "components/billiard/ShiftsPage.tsx"),
+    route("billiard/bank-inbox", "components/billiard/BankInboxPage.tsx"),
+    route("billiard/bank-account", "components/billiard/BankAccountPage.tsx"),
   ]),
 
 ] satisfies RouteConfig;

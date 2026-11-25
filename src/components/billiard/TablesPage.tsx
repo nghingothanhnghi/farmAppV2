@@ -47,6 +47,7 @@ const TablesPage: React.FC = () => {
     creating,
     updating,
     deactivatingId,
+    statusChangingId,
     actions,
   } = useTables();
 
@@ -107,6 +108,14 @@ const TablesPage: React.FC = () => {
     if (result === true) {
       setTableToDeactivate(null);
     }
+  };
+
+  const handleStatusChange = async (
+    table: BilliardTable,
+    action: 'reserve' | 'maintenance' | 'release',
+  ) => {
+    const changed = await actions.setTableStatus(table.id, action);
+    if (changed) refetchLive();
   };
 
   const knownStatuses = GROUPS.map((g) => g.status as string);
@@ -246,14 +255,16 @@ const TablesPage: React.FC = () => {
                     live={byTableId.get(table.id)}
                     now={now}
                     starting={startingId === table.id}
-                    disabled={startingId !== null || deactivatingId !== null}
+                    disabled={startingId !== null || deactivatingId !== null || statusChangingId !== null}
                     onStart={handleStart}
                     onOpen={(sessionId) =>
                       navigate(`/billiard/sessions/${sessionId}`)
                     }
                     onEdit={canManage ? openEditForm : undefined}
                     onDeactivate={canManage ? openDeactivateConfirmation : undefined}
+                    onStatusChange={canManage ? handleStatusChange : undefined}
                     deactivating={deactivatingId === table.id}
+                    statusChanging={statusChangingId === table.id}
                   />
                 ))}
               </div>

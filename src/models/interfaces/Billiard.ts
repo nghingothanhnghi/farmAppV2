@@ -95,6 +95,28 @@ export interface TableDeactivateResponse {
   is_active: boolean;
 }
 
+/** Optional controls accepted when a cashier opens a table. */
+export interface StartTablePayload {
+  /** Countdown only; billing continues to use the real elapsed time. */
+  planned_minutes?: number;
+  /** An active package owned by this club. */
+  package_id?: number;
+}
+
+export type TableStatusAction = 'reserve' | 'maintenance' | 'release';
+
+export interface SessionCancelPayload {
+  /** Required by the API; at least three characters. */
+  reason: string;
+}
+
+/** Send exactly one of amount or percent. Zero amount removes a discount. */
+export interface SessionDiscountPayload {
+  amount?: number;
+  percent?: number;
+  reason: string;
+}
+
 export interface ActiveTable {
   table_id: number;      // mapped from `id`
   table_name?: string;   // mapped from `name`
@@ -108,6 +130,9 @@ export interface ActiveTable {
   current_table_fee: string;
   current_product_fee: string;
   current_total: string;
+  ends_at?: string | null;
+  remaining_seconds?: number | null;
+  is_overtime?: boolean;
   currency?: string; // not sent; falls back to DEFAULT_CURRENCY
 }
 
@@ -138,7 +163,7 @@ export type PricingParams = {
   [key: string]: unknown;
 };
 
-export type BillState = 'active' | 'stopped' | 'pending' | 'paid';
+export type BillState = 'active' | 'stopped' | 'pending' | 'paid' | 'cancelled';
 
 export interface BillResponse {
   session_id: number;
@@ -159,6 +184,13 @@ export interface BillResponse {
   total_product_fee: string;
   items: BillItem[];
   grand_total: string;
+  /** `active`, `completed`, or `cancelled`; payment_state is kept for payment UI. */
+  status?: 'active' | 'completed' | 'cancelled' | (string & {});
+  cancel_reason?: string | null;
+  discount?: string;
+  discount_reason?: string | null;
+  ends_at?: string | null;
+  planned_minutes?: number | null;
   currency: string;
   payment_state?: string; // "unpaid" | "pending" | "paid"
   payment_method?: BillPaymentMethod | null;

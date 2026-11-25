@@ -857,7 +857,8 @@
         "active": "Playing",
         "stopped": "Awaiting payment",
         "pending": "Payment in progress",
-        "paid": "Paid"
+        "paid": "Paid",
+        "cancelled": "Cancelled"
     },    
     "bank_account": {
         "page_header": {
