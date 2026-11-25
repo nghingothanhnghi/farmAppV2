@@ -4620,6 +4620,57 @@ export interface paths {
         patch: operations["update_table_tables__table_id__patch"];
         trace?: never;
     };
+    "/tables/{table_id}/reserve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Reserve Table */
+        post: operations["reserve_table_tables__table_id__reserve_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tables/{table_id}/maintenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Maintenance Table */
+        post: operations["maintenance_table_tables__table_id__maintenance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/tables/{table_id}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Release Table */
+        post: operations["release_table_tables__table_id__release_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/tables/active": {
         parameters: {
             query?: never;
@@ -4788,6 +4839,26 @@ export interface paths {
         put?: never;
         /** Stop Session */
         post: operations["stop_session_sessions__session_id__stop_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/sessions/{session_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Cancel Session
+         * @description Manager only. Cancel an ACTIVE session opened by mistake: no bill, table freed, reason audited.
+         */
+        post: operations["cancel_session_sessions__session_id__cancel_post"];
         delete?: never;
         options?: never;
         head?: never;
@@ -5354,6 +5425,11 @@ export interface components {
             /** Currency */
             currency: string;
             /**
+             * Status
+             * @default completed
+             */
+            status: string;
+            /**
              * Start Time
              * Format: date-time
              */
@@ -5406,6 +5482,12 @@ export interface components {
             stopped_by?: string | null;
             /** Paid By */
             paid_by?: string | null;
+            /** Cancelled At */
+            cancelled_at?: string | null;
+            /** Cancelled By */
+            cancelled_by?: string | null;
+            /** Cancel Reason */
+            cancel_reason?: string | null;
         };
         /** Body_detect_objects_object_detection_detect_post */
         Body_detect_objects_object_detection_detect_post: {
@@ -5607,6 +5689,14 @@ export interface components {
         CancelPaymentLineRequest: {
             /** Reason */
             reason?: string | null;
+        };
+        /**
+         * CancelSessionRequest
+         * @description Why the session is cancelled. Required and kept for audit.
+         */
+        CancelSessionRequest: {
+            /** Reason */
+            reason: string;
         };
         /** CashMovementRequest */
         CashMovementRequest: {
@@ -7575,6 +7665,11 @@ export interface components {
             /** Currency */
             currency: string;
             /**
+             * Status
+             * @default completed
+             */
+            status: string;
+            /**
              * Start Time
              * Format: date-time
              */
@@ -7627,6 +7722,12 @@ export interface components {
             stopped_by?: string | null;
             /** Paid By */
             paid_by?: string | null;
+            /** Cancelled At */
+            cancelled_at?: string | null;
+            /** Cancelled By */
+            cancelled_by?: string | null;
+            /** Cancel Reason */
+            cancel_reason?: string | null;
             /** Gateway */
             gateway?: {
                 [key: string]: unknown;
@@ -18310,6 +18411,99 @@ export interface operations {
             };
         };
     };
+    reserve_table_tables__table_id__reserve_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    maintenance_table_tables__table_id__maintenance_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    release_table_tables__table_id__release_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                table_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TableResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     active_tables_tables_active_get: {
         parameters: {
             query?: never;
@@ -18627,6 +18821,41 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BillResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    cancel_session_sessions__session_id__cancel_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                session_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CancelSessionRequest"];
+            };
+        };
         responses: {
             /** @description Successful Response */
             200: {

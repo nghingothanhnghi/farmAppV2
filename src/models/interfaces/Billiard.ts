@@ -103,6 +103,7 @@ export interface StartTablePayload {
   package_id?: number;
 }
 
+/* TableStatusAction is a command the frontend sends to Backend change that state: */
 export type TableStatusAction = 'reserve' | 'maintenance' | 'release';
 
 export interface SessionCancelPayload {
