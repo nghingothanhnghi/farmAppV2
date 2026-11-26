@@ -10,6 +10,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
   align = 'left',        // new prop
   justify = 'between',
   width = '500px',
+  hideTitle = false,
 }) => {
   // Alignment classes
   const alignClasses = {
@@ -29,6 +30,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
   }[justify];
   return (
     <div className={`hidden lg:flex flex-col sm:flex-row lg:gap-10 justify-between gap-4 mb-5 ${alignClasses} ${justifyClasses}`}>
+      {!hideTitle && (
       <div className={`flex-1 min-w-0 lg:w-[${width}]`}>
         <h1 className="text-xl font-semibold text-zinc-950 sm:text-xl/8 dark:text-white">
           {title}
@@ -39,6 +41,7 @@ const PageTitle: React.FC<PageTitleProps> = ({
           </p>
         )}
       </div>
+      )}
       {actions && <div className="flex items-center justify-end space-x-2 shrink-0">{actions}</div>}
     </div>
   );

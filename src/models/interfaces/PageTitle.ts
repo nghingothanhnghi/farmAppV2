@@ -7,4 +7,5 @@ export interface PageTitleProps {
   align?: 'left' | 'center' | 'right';
   justify?: 'start' | 'center' | 'end' | 'between' | 'around' | 'evenly';
   width?: string; // e.g. "400px" or "50%"
+  hideTitle?: boolean;
 }

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { IconAlertCircle, IconArrowLeft, IconClockPlus, IconDiscount2, IconPlus, IconPrinter, IconX } from '@tabler/icons-react';
+import BilliardThumbnailImg from '../../assets/images/billiard_table.jpg'
 import PageTitle from '../common/PageTitle';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -103,17 +104,28 @@ const SessionPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 mx-auto max-w-2xl">
+    <div className="space-y-6 mx-auto max-w-3xl">
       <PageTitle
         title={`${bill.table_name ?? `${t('billiard_tables.cards.session_billiard.table')} #${bill.table_id}`} · ${t('billiard_tables.cards.session_billiard.label')} #${bill.session_id}`}
+        hideTitle={state === 'active'}
         actions={backButton}
       />
-
       {state === 'active' && (
-        <div className="flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 flex-wrap bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 space-y-4">
+          <div className="flex flex-col sm:w-2/3 sm:flex-row ">
+            <img
+              src={BilliardThumbnailImg}
+              alt="Workspace"
+              className="sm:w-1/3 w-full h-48 sm:h-full object-cover rounded-lg"
+            />
+            <div className='p-6'>
+              <h1 className='text-xl font-semibold text-zinc-950 sm:text-xl/8 dark:text-white'>{`${bill.table_name ?? `${t('billiard_tables.cards.session_billiard.table')} #${bill.table_id}`}`}</h1>
+              <p className='text-sm text-gray-500 dark:text-gray-400'>{`· ${t('billiard_tables.cards.session_billiard.label')} #${bill.session_id}`}</p>
+            </div>
+          </div>
           <div className="
             number-digital 
-            text-3xl 
+            text-4xl 
             font-semibold 
             text-cyan-950 dark:text-cyan-100
             [text-shadow:0_0_5px_#22d3ee,0_0_10px_#22d3ee,0_0_20px_#22d3ee,0_0_40px_#22d3ee]
@@ -127,7 +139,8 @@ const SessionPage: React.FC = () => {
               {formatElapsed(Math.abs(remainingSeconds))}
             </div>
           )}
-          <div className="flex items-center gap-2">
+          <div className={`grid w-full grid-cols-2 gap-2 ${canVoid ? 'sm:grid-cols-5' : 'sm:grid-cols-2'
+            }`}>
             {canVoid && (
               <>
                 <Button label="+30 min" variant="secondary" rounded="lg" disabled={busy}
@@ -136,7 +149,7 @@ const SessionPage: React.FC = () => {
                 <Button label="Discount" variant="secondary" rounded="lg" disabled={busy || !canAdjustDiscount}
                   icon={<IconDiscount2 size={16} />} iconPosition="left"
                   onClick={() => setDiscountOpen(true)} />
-                <Button label="Cancel session" variant="danger" rounded="lg" disabled={busy}
+                <Button label="Cancel session" variant="secondary" rounded="lg" disabled={busy}
                   icon={<IconX size={16} />} iconPosition="left"
                   onClick={() => setCancelOpen(true)} />
               </>
