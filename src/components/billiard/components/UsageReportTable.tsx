@@ -79,16 +79,66 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
     [currency, t]
   );
 
-  const stat = (label: string, value: string) => (
-    <div className=" bg-white rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4">
+  const stat = (label: string, value: string, className = '') => (
+    <div className={`bg-white min-w-0 rounded-lg shadow border border-gray-100 dark:border-white/5 bg-gradient-to-b from-white to-zinc-50 dark:from-gray-900 dark:to-gray-800 dark:shadow-[0_2px_6px_rgba(0,0,0,0.5)] p-4 ${className}`}>
       <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 tracking-wide">{label}</h3>
-      <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
+      <p className="break-words text-2xl font-bold text-gray-800 dark:text-gray-100">{value}</p>
     </div>
   );
 
   return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+    <div className="grid h-full min-h-0 min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
+      {/* Left: DataGrid */}
+      <div className="order-2 min-h-0 min-w-0 xl:order-1">
+        <DataGrid
+          rowData={rows}
+          columnDefs={columnDefs}
+          pagination
+          paginationPageSize={10}
+          height="auto"
+        />
+      </div>
+
+      {/* Right: Statistics */}
+      <div className="order-1 grid min-h-0 min-w-0 grid-cols-2 content-start gap-3 xl:order-2">
+        {stat(
+          t("billiard_tables.cards.times_played_billiard.label"),
+          String(totals.times_played)
+        )}
+
+        {stat(
+          t("billiard_tables.cards.total_time_billiard.label"),
+          formatDuration(totals.total_minutes)
+        )}
+
+        {stat(
+          'Table revenue',
+          formatMoneyString(totals.table_revenue, currency)
+        )}
+
+        {stat(
+          'Product revenue',
+          formatMoneyString(totals.product_revenue, currency)
+        )}
+
+        {stat(
+          'Discounts',
+          `−${formatMoneyString(totals.discount_total, currency)}`
+        )}
+
+        {stat(
+          t("billiard_tables.cards.total_revenue_billiard.label"),
+          formatMoneyString(totals.total_revenue, currency)
+        )}
+
+        {stat(
+          t("billiard_tables.cards.total_unPaid_billiard.label"),
+          formatMoneyString(totals.unpaid_total, currency),
+          'col-span-2'
+        )}
+      </div>
+
+      {/* <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
         {stat(t("billiard_tables.cards.times_played_billiard.label"), String(totals.times_played))}
         {stat(t("billiard_tables.cards.total_time_billiard.label"), formatDuration(totals.total_minutes))}
         {stat('Table revenue', formatMoneyString(totals.table_revenue, currency))}
@@ -103,7 +153,7 @@ const UsageReportTable: React.FC<Props> = ({ report, currency = DEFAULT_CURRENCY
         pagination
         paginationPageSize={10}
         height="auto"
-      />
+      /> */}
     </div>
   );
 };
