@@ -12,6 +12,7 @@ import { useSession } from '../../hooks/useSession';
 import { useGames } from '../../hooks/useGames';
 import { useActiveTables } from '../../hooks/useActiveTables';
 import { useNow } from '../../hooks/useNow';
+import DiscountModal from './components/DiscountModal';
 import StartStopButtons from './components/StartStopButtons';
 import AddItemModal from './components/AddItemModal';
 import GamesPanel from './components/GamesPanel';
@@ -51,9 +52,6 @@ const SessionPage: React.FC = () => {
   const [cancelOpen, setCancelOpen] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
-  const [discountAmount, setDiscountAmount] = useState('');
-  const [discountPercent, setDiscountPercent] = useState('');
-  const [discountReason, setDiscountReason] = useState('');
   const { current: openShift, checked: shiftChecked } = useCurrentShift(payOpen);
 
   const backButton = (
@@ -146,7 +144,7 @@ const SessionPage: React.FC = () => {
             <Button
               label={t("btn.add_items_billard")}
               variant="secondary"
-              icon={<IconPlus size={16}/>}
+              icon={<IconPlus size={16} />}
               iconPosition="left"
               rounded="lg"
               disabled={busy}
@@ -314,37 +312,11 @@ const SessionPage: React.FC = () => {
         </div>}
       />
 
-      <Modal
-        showCloseButton={false}
-        size="xsmall"
+      <DiscountModal
         isOpen={discountOpen}
-        onClose={() => !busy && setDiscountOpen(false)}
-        title="Apply discount"
-        content={<div className="space-y-3 px-6 py-5 text-sm">
-          <p>Enter an amount or percent, not both. A reason is required for a non-zero discount. Enter amount 0 to remove it.</p>
-          <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="numeric" value={discountAmount}
-            onChange={(event) => { setDiscountAmount(event.target.value); if (event.target.value) setDiscountPercent(''); }} placeholder="Amount (VND)" />
-          <input className="w-full rounded border p-2 dark:bg-gray-800" inputMode="decimal" value={discountPercent}
-            onChange={(event) => { setDiscountPercent(event.target.value); if (event.target.value) setDiscountAmount(''); }} placeholder="Percent" />
-          <input className="w-full rounded border p-2 dark:bg-gray-800" value={discountReason}
-            onChange={(event) => setDiscountReason(event.target.value)} placeholder="Reason" />
-        </div>}
-        actions={<div className="flex gap-3">
-          <Button label={busy ? 'Saving...' : 'Save discount'} rounded="lg" disabled={busy || (!discountAmount && !discountPercent)}
-            onClick={async () => {
-              const amount = discountAmount === '' ? undefined : Number(discountAmount);
-              const percent = discountPercent === '' ? undefined : Number(discountPercent);
-              if (
-                (amount !== undefined && (!Number.isFinite(amount) || amount < 0)) ||
-                (percent !== undefined && (!Number.isFinite(percent) || percent <= 0 || percent > 100))
-              ) return;
-              const isRemoving = amount === 0;
-              if (!isRemoving && !discountReason.trim()) return;
-              const result = await actions.setDiscount({ amount, percent, reason: discountReason.trim() || undefined });
-              if (result) setDiscountOpen(false);
-            }} />
-          <Button label="Cancel" variant="secondary" rounded="lg" disabled={busy} onClick={() => setDiscountOpen(false)} />
-        </div>}
+        onClose={() => setDiscountOpen(false)}
+        busy={busy}
+        onSubmit={actions.setDiscount}
       />
 
       <PayModal
